@@ -1,5 +1,3 @@
-import tkinter as tk
-from tkinter import *
 from FondMarin import *
 from attaque import *
 

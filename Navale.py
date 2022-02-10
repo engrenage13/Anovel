@@ -1,5 +1,4 @@
 from random import *
-from tkinter import *
 from FondMarin import *
 from placement import *
 from objets.Joueur import Joueur
@@ -21,7 +20,7 @@ def jouer(event):
     # Joueur 2
     Joueur2 = Joueur(2, liBat2, True)
 
-    fond.create_rectangle(0, 0, xf, yf*0.05, fill='#3322AA')
+    fond.create_rectangle(0, 0, xf, yf*0.05, fill=mauve)
     fond.create_text(xf*0.1, yf*0.027, text=(f"{Joueur1.nom} - Installation"), font=Poli1, fill='white', tag='titre')
     fond.create_text(xf*0.985, yf*0.022, text="x", font=Lili3, fill='red', tag='auRevoir')
     fond.after(100, plusDeTuile)

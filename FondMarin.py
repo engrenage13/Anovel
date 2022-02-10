@@ -5,7 +5,7 @@ from tkinter import *
 from tkinter.font import Font
 
 TITRE_F = 'NAVALE'
-version = "0.1.5"
+version = "0.1.6"
 
 def trouveEcran(x, y): # Trouve l'écran utilisé
     monitors = screeninfo.get_monitors()
@@ -40,11 +40,15 @@ Lili3 = Font(family='Lilita One', size=int(yf*0.04))
 # Couleurs
 gris = "#333333"
 grisClair = "#555555"
+mauve = "#3322AA"
 bleuBt = "#0044BB"
 bleu1 = '#0066FF'
 bleu2 = '#0055EE'
 grisBlanc = '#CCCCCC'
+blanc = 'white'
 vertFluo = "#00FF00"
+rouge = 'red'
+orange = 'orange'
 
 mer = [bleu1, bleu2]
 
