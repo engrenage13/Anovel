@@ -78,7 +78,7 @@ def monter(pas: float): # Fait descendre les plateaux.
         fond.after(30, monter, pas)
     else:
         fond.itemconfigure('titre', text=joueurs[0].nom)
-        fond.tag_bind('cTire2', '<Button-1>', aj1)
+        connect()
         attaque(joueurs[0], a[1])
 
 def descendre(pas: float): # Fait monter les plateaux.
@@ -89,53 +89,63 @@ def descendre(pas: float): # Fait monter les plateaux.
         fond.after(30, descendre, pas)
     else:
         fond.itemconfigure('titre', text=joueurs[1].nom)
-        fond.tag_bind('cTire1', '<Button-1>', aj2)
+        connect()
         attaque(joueurs[1], a[1])
 
 def monterOuQuitter(): # Vérifie si le joueur qui joue à gagner...
     if aPerduJoueur(joueurs[0]):
         ecranFin(joueurs[1].nom)
     else:
-        fond.tag_bind('pointeur', '<Button-1>', cliqueCurseur)
         monter(pasApas)
 
 def descendreOuQuitter(): # Vérifie si le joueur qui joue à gagner...
     if aPerduJoueur(joueurs[1]):
         ecranFin(joueurs[0].nom)
     else:
-        fond.tag_bind('pointeur', '<Button-1>', cliqueCurseur)
         descendre(pasApas)
 
+def deconnect():
+    fond.tag_unbind('pointeur', '<Button-1>')
+    fond.tag_unbind('cTire2', '<Button-1>')
+    fond.tag_unbind('cTire1', '<Button-1>')
+
+def connect():
+    fond.tag_bind('cTire1', '<Button-1>', aj2)
+    fond.tag_bind('cTire2', '<Button-1>', aj1)
+    fond.tag_bind('pointeur', '<Button-1>', cliqueCurseur)
+
 def cliqueCurseur(event): # Réagit à un clique sur le pointeur/viseur.
-    p1 = getEtatCase(fond.itemcget('affiTgVis', 'text'), 'c1')
-    p2 = getEtatCase(fond.itemcget('affiTgVis', 'text'), 'c2')
-    if p1 or p2:
-        c = fond.coords(joueurs[0].cTire[0][0])
-        fond.tag_unbind('pointeur', '<Button-1>')
-        fond.tag_unbind('cTire2', '<Button-1>')
-        fond.tag_unbind('cTire1', '<Button-1>')
-        if int(c[1]) == int(origyp):
-            marquerCase(fond.itemcget('affiTgVis', 'text'), 'c1', joueurs[1])
-            fond.after(1000, descendreOuQuitter)
-            fond.tag_bind('cTire2', '<Button-1>', aj1)
-        else:
-            marquerCase(fond.itemcget('affiTgVis', 'text'), 'c2', joueurs[0])
-            fond.after(1000, monterOuQuitter)
-            fond.tag_bind('cTire1', '<Button-1>', aj2)
+    t = fond.itemcget('affiTgVis', 'text')
+    if t != "X":
+        deconnect()
+        p1 = getEtatCase(fond.itemcget('affiTgVis', 'text'), 'c1')
+        p2 = getEtatCase(fond.itemcget('affiTgVis', 'text'), 'c2')
+        if p1 or p2:
+            c = fond.coords(joueurs[0].cTire[0][0])
+            if int(c[1]) == int(origyp):
+                marquerCase(fond.itemcget('affiTgVis', 'text'), 'c1', joueurs[1])
+                fond.after(1000, descendreOuQuitter)
+            else:
+                marquerCase(fond.itemcget('affiTgVis', 'text'), 'c2', joueurs[0])
+                fond.after(1000, monterOuQuitter)
 
 def aj1(event): # Affiche le plateau d'attaque du premier joueur.
-    p = getEtatCase(fond.itemcget('affiTgVis', 'text'), 'c2')
-    if p:
-        marquerCase(fond.itemcget('affiTgVis', 'text'), 'c2', joueurs[0])
-        fond.tag_unbind('cTire2', '<Button-1>')
-        fond.after(1000, monterOuQuitter)
+    t = fond.itemcget('affiTgVis', 'text')
+    if t != "X":
+        deconnect()
+        p = getEtatCase(fond.itemcget('affiTgVis', 'text'), 'c2')
+        if p:
+            marquerCase(fond.itemcget('affiTgVis', 'text'), 'c2', joueurs[0])
+            fond.after(1000, monterOuQuitter)
 
 def aj2(event): # Affiche le plateau d'attaque du second joueur.
-    p = getEtatCase(fond.itemcget('affiTgVis', 'text'), 'c1')
-    if p:
-        marquerCase(fond.itemcget('affiTgVis', 'text'), 'c1', joueurs[1])
-        fond.tag_unbind('cTire1', '<Button-1>')
-        fond.after(1000, descendreOuQuitter)
+    t = fond.itemcget('affiTgVis', 'text')
+    if t != "X":
+        deconnect()
+        p = getEtatCase(fond.itemcget('affiTgVis', 'text'), 'c1')
+        if p:
+            marquerCase(fond.itemcget('affiTgVis', 'text'), 'c1', joueurs[1])
+            fond.after(1000, descendreOuQuitter)
 
 fond.tag_bind('cTire1', '<Button-1>', aj2)
 fond.tag_bind('cTire2', '<Button-1>', aj1)
