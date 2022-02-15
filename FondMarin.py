@@ -55,5 +55,8 @@ mer = [bleu1, bleu2]
 # Autres
 joueurs = []
 
+# Stats
+tour = 1
+
 fond = Canvas(Fen, width=xf, height=yf, bg='black', bd=-2)
 fond.grid(row=0, column=0, sticky="nswe")
