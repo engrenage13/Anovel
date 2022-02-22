@@ -1,3 +1,4 @@
+import random
 from FondMarin import *
 
 def plateau(x: int, y: int, couleurs: list, idtag: str): # Crée un plateau.
@@ -12,7 +13,7 @@ def plateau(x: int, y: int, couleurs: list, idtag: str): # Crée un plateau.
         f = []
         for j in range(x):
             d = c[i] + str(j+1) + idtag[0] + idtag[len(idtag)-1]
-            fond.create_rectangle(a, b, a+taille, b+taille, fill=random.choice(couleurs), 
+            fond.create_rectangle(a, b, a+taille, b+taille, fill=random.choice(couleurs), state='hidden', 
                                   tags=(d, idtag, 'plateau'))
             f.append(d)
             a = a + taille
