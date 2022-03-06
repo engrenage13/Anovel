@@ -2,6 +2,17 @@ import random
 from FondMarin import *
 
 def plateau(x: int, y: int, couleurs: list, idtag: str): # Crée un plateau.
+    """Crée un plateau de jeu.
+
+    Args:
+        x (int): Nombre de cases dans la longueur.
+        y (int): Nombre de cases dans la hauteur.
+        couleurs (list): Liste de couleurs à apporter au plateau (disposition aléatoire).
+        idtag (str): Tag du plateau (permet de l'identifier).
+
+    Returns:
+        _type_: _description_
+    """
     taille = yf*0.84/x
     g = fond.coords('pg')
     b = yf*0.105

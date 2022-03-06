@@ -1,15 +1,15 @@
 from FondMarin import *
 
 class Bateau(): # Crée les bateaux.
-    def __init__(self, nom: str, taille: int, id: int, cdJ: int):
+    def __init__(self, nom: str, taille: int, id: int, joueur: object):
         self.taille = taille
         self.orient = 'h'
         self.nom = nom
         self.pos = None
         self.defil = False
-        self.tag = 'bat' + str(id) + '.' + str(cdJ)
-        self.tagPlus = 'tbat' + str(id) + '.' + str(cdJ)
-        self.proprio = joueurs[cdJ-1]
+        self.tag = 'bat' + str(id) + '.' + str(joueur.getId())
+        self.tagPlus = 'tbat' + str(id) + '.' + str(joueur.getId())
+        self.proprio = joueur
         self.etatSeg = ['o']*taille
         self.coule = False
         self.sens = 1

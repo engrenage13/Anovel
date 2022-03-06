@@ -11,6 +11,11 @@ class Bouton:
         fond.tag_bind(self.nom[0], '<Button-1>', self.reaction)
 
     def dessine(self, coord: tuple=(xf/2, yf/2)) -> None:
+        """Dessine le bouton à l'écran aux coordonnées passées en paramètre.
+
+        Args:
+            coord (tuple, optional): Coordonnées du milieu du bouton. Defaults to (xf/2, yf/2).
+        """
         t = int((yf*0.02)/3*3)
         xr = tlatba*0.8
         yr = yf*0.1
@@ -25,9 +30,19 @@ class Bouton:
         fond.create_text(coord[0], coord[1], text=self.texte, fill=blanc, font=p, tags=self.nom)
 
     def getEtat(self) -> bool:
+        """Retourne l'état du bouton.
+
+        Returns:
+            bool: état du bouton sous forme de Actif/Inactif -> True/False.
+        """
         return self.etat
 
     def setEtat(self, etat: bool) -> None:
+        """Permet de modifier l'etat du bouton (actif/inactif).
+
+        Args:
+            etat (bool): True pour le rendre actif, False pour le désactiver.
+        """
         if etat:
             c = self.couleur
         else:
@@ -36,5 +51,10 @@ class Bouton:
         self.etat = etat
 
     def reaction(self, event) -> None:
+        """Méthode appelé lors du clic sur le bouton.
+
+        Args:
+            event (_type_): _description_
+        """
         if self.etat:
             self.fonction()

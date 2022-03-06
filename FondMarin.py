@@ -4,7 +4,7 @@ from tkinter import *
 from tkinter.font import Font
 
 TITRE_F = 'NAVALE'
-version = "0.1.8"
+version = "0.1.9"
 
 def trouveEcran(x, y): # Trouve l'écran utilisé
     monitors = screeninfo.get_monitors()
@@ -55,9 +55,6 @@ orange = 'orange'
 noir = 'black'
 
 mer = [bleu1, bleu2]
-
-# Autres
-joueurs = []
 
 fond = Canvas(Fen, width=xf, height=yf, bg='black', bd=-2)
 fond.grid(row=0, column=0, sticky="nswe")

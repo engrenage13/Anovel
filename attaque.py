@@ -1,152 +1,267 @@
 from FondMarin import *
 from objets.Bateau import *
-from finPartie import ecranFin
+from finPartie import Fin
 
-def localiseCurseur(plateau: list) -> object:
-    # Renvoie le tag de la case sur laquelle est le curseur, ou None, sinon.
-    a = fond.winfo_pointerxy()
-    b = False
-    i = 0
-    while i < len(plateau) and not b:
-        j = 0
-        while j < len(plateau[i]) and not b:
-            c = fond.coords(plateau[i][j])
-            if a[0] >= c[0] and a[0] <= c[2] and a[1] >= c[1] and a[1] <= c[3]:
-                b = True
+class Attaque:
+    def __init__(self, joueur1: object, joueur2: object) -> None:
+        self.j1 = joueur1
+        self.j2 = joueur2
+        self.joueurs = [joueur1, joueur2]
+        self.tour = 0
+        self.incrementTour()
+        self.connect()
+        self.affStats(0)
+        c = fond.coords(self.j1.cTire[0][0])
+        self.attaque(self.j1, c[1])
+
+    def incrementTour(self) -> None:
+        """Incrémente le compteur de tour
+        """
+        self.tour = self.tour + 1
+        fond.itemconfigure('tour', text=f"Tour {self.tour}")
+
+    def affStats(self, indice: int) -> None:
+        """Affiche les statistiques du joueurs de l'indice pssé en paramètre.
+
+        Args:
+            indice (int): Indice du joueur voulu par rapport à `self.joueur`.
+        """
+        fond.delete('stats')
+        l = ["Nb. Cases Touchées", "Touché", "Raté"]
+        lv = self.joueurs[indice].getStats()
+        y = yf*0.1
+        for i in range(len(l)):
+            if type(lv[i]) != list:
+                t = f"{l[i]} : {lv[i]}"
             else:
-                j = j + 1
-        if not b:
-            i = i + 1
-    if b:
-        sortie = plateau[i][j]
-    else:
-        sortie = None
-    return sortie
+                t = f"{l[i]} : {lv[i][0]} ({lv[i][1]}%)"
+            x = xf-int(yf*0.01)*(len(t)/2+2)
+            fond.create_text(x, y, text=t, font=Lili1, fill=blanc, tags=('stats'))
+            y = y + yf*0.04
 
-def attaque(joueur: object, position: float) -> None:
-    # boucle pour laisser le viseur en place tant que le joueur n'a pas tirer.
-    fond.delete('pointeur')
-    a = localiseCurseur(joueur.cTire)
-    d = fond.find_withtag('ecranFin')
-    if a != None and len(d) == 0:
-        b = fond.coords(a)
+    def localiseCurseur(self, plateau: list) -> str:
+        """Regarde la position du curseur sur le plateau et renvoie le code de la case coresspondante.
+
+        Args:
+            plateau (list): Le plateau où se situe le curseur.
+
+        Returns:
+            str: Le code de la case sur laquelle se trouve le curseur.
+        """
+        a = fond.winfo_pointerxy()
+        b = False
+        i = 0
+        while i < len(plateau) and not b:
+            j = 0
+            while j < len(plateau[i]) and not b:
+                c = fond.coords(plateau[i][j])
+                if a[0] >= c[0] and a[0] <= c[2] and a[1] >= c[1] and a[1] <= c[3]:
+                    b = True
+                else:
+                    j = j + 1
+            if not b:
+                i = i + 1
+        if b:
+            sortie = plateau[i][j]
+        else:
+            sortie = None
+        return sortie
+
+    def dessineViseur(self, coo: tuple, case: str) -> None:
+        """Dessine le curseur aux coordonnées passés en paramètres.
+
+        Args:
+            coo (tuple): Là où apparaitra le curseur (les coordonnées de la case)
+            case (str): Le code de la case (qui contient son nom)
+        """
+        b = coo
         fond.create_rectangle(b[0], b[1], b[2], b[3], fill='', outline='white', width=4, tag='pointeur')
         fond.create_oval(b[0]+(b[2]-b[0])*0.2, b[1]+(b[3]-b[1])*0.2, b[2]-(b[2]-b[0])*0.2, b[3]-(b[3]-b[1])*0.2, 
-                         fill='', outline=grisClair, width=3, tag='pointeur')
-        if getEtatCase(a):
-            case = a[0:len(a)-2]
+                        fill='', outline=grisClair, width=3, tag='pointeur')
+        if self.getEtatCase(case):
+            case = case[0:len(case)-2]
             col = blanc
         else:
             case = "X"
             col = orange
         fond.create_line(b[0]+(b[2]-b[0])/2, b[1]+(b[3]-b[1])*0.1, b[0]+(b[2]-b[0])/2, b[1]+(b[3]-b[1])*0.35, 
-                         width=2, fill=grisClair, tag='pointeur')
+                        width=2, fill=grisClair, tag='pointeur')
         fond.create_line(b[2]-(b[2]-b[0])*0.1, b[1]+(b[3]-b[1])/2, b[2]-(b[2]-b[0])*0.35, b[1]+(b[3]-b[1])/2, 
-                         width=2, fill=grisClair, tag='pointeur')
+                        width=2, fill=grisClair, tag='pointeur')
         fond.create_line(b[0]+(b[2]-b[0])/2, b[3]-(b[3]-b[1])*0.1, b[0]+(b[2]-b[0])/2, b[3]-(b[3]-b[1])*0.35, 
-                         width=2, fill=grisClair, tag='pointeur')
+                        width=2, fill=grisClair, tag='pointeur')
         fond.create_line(b[0]+(b[2]-b[0])*0.1, b[1]+(b[3]-b[1])/2, b[0]+(b[2]-b[0])*0.35, b[1]+(b[3]-b[1])/2, 
-                         width=2, fill=grisClair, tag='pointeur')
+                        width=2, fill=grisClair, tag='pointeur')
         fond.create_text(b[0]+(b[2]-b[0])/2, b[1]+(b[3]-b[1])/2, text=case, font=Lili1, fill=col, 
-                         tags=('pointeur', 'affiTgVis'))
-    c = fond.coords(joueur.cTire[0][0])
-    if int(c[1]) == int(position) and len(d) == 0:
-        fond.after(50, attaque, joueur, c[1])
-    else:
+                        tags=('pointeur', 'affiTgVis'))
+
+    def attaque(self, joueur: object, position: float) -> None:
+        """Reboucle tant que le joueur n'a pas attaqué.
+
+        Args:
+            joueur (object): Le joueur qui doit attaqué.
+            position (float): La position `y du haut du plateau`.
+        """
         fond.delete('pointeur')
+        a = self.localiseCurseur(joueur.cTire)
+        d = fond.find_withtag('ecranFin')
+        if a != None and len(d) == 0:
+            b = fond.coords(a)
+            self.dessineViseur(b, a)
+        c = fond.coords(joueur.cTire[0][0])
+        if int(c[1]) == int(position) and len(d) == 0:
+            fond.after(50, self.attaque, joueur, c[1])
+        else:
+            fond.delete('pointeur')
 
-def marquerCase(idCase: str, idplateau: str, joueurCible: object) -> None: # Marque les cases touchées.
-    tag = idCase+idplateau
-    c = grisBlanc
-    if estToucheBateau(joueurCible, idCase):
-        c = 'red'
-    fond.itemconfigure(tag, fill=c)
+    def marquerCase(self, idCase: str, idplateau: str, joueurCible: object) -> None:
+        """Marque les cases touchées.
 
-def getEtatCase(idCase: str, idPlateau: str="") -> bool: # Renvoie l'état de la case (touché ou non).
-    tag = idCase+idPlateau
-    c = fond.itemcget(tag, 'fill')
-    rep = True
-    if c == 'red' or c == grisBlanc:
-        rep = False
-    return rep
+        Args:
+            idCase (str): Le code de la case
+            idplateau (str): Le plateau auquel elle correspond
+            joueurCible (object): Le joueur victime du tir
+        """
+        tag = idCase+idplateau
+        c = grisBlanc
+        if estToucheBateau(joueurCible, idCase):
+            c = 'red'
+        fond.itemconfigure(tag, fill=c)
 
-def monter(pas: float): # Fait descendre les plateaux.
-    for i in range(len(joueurs)):
-        fond.move(('cTire'+str(i+1)), 0, pas)
-    a = fond.coords(joueurs[0].cTire[0][0])
-    if int(a[1]) != int(origyp):
-        fond.after(30, monter, pas)
-    else:
-        fond.itemconfigure('titre', text=joueurs[0].nom)
-        connect()
-        attaque(joueurs[0], a[1])
+    def getEtatCase(self, idCase: str, idPlateau: str="") -> bool:
+        """Renvoie True si la case passée en paramètre est touchable.
 
-def descendre(pas: float): # Fait monter les plateaux.
-    for i in range(len(joueurs)):
-        fond.move(('cTire'+str(i+1)), 0, -pas)
-    a = fond.coords(joueurs[1].cTire[0][0])
-    if int(a[1]) != int(origyp):
-        fond.after(30, descendre, pas)
-    else:
-        fond.itemconfigure('titre', text=joueurs[1].nom)
-        connect()
-        attaque(joueurs[1], a[1])
+        Args:
+            idCase (str): Le code de la case à tester
+            idPlateau (str, optional): Le code du plateau si l'on ne dispose que du nom de la case. Defaults to "".
 
-def monterOuQuitter(): # Vérifie si le joueur qui joue à gagner...
-    if aPerduJoueur(joueurs[0]):
-        ecranFin(joueurs[1].nom)
-    else:
-        monter(pasApas)
+        Returns:
+            bool: Vrai ou Faux selon la possibilité de touché ou non la case.
+        """
+        tag = idCase+idPlateau
+        c = fond.itemcget(tag, 'fill')
+        rep = True
+        if c == 'red' or c == grisBlanc:
+            rep = False
+        return rep
 
-def descendreOuQuitter(): # Vérifie si le joueur qui joue à gagner...
-    if aPerduJoueur(joueurs[1]):
-        ecranFin(joueurs[0].nom)
-    else:
-        descendre(pasApas)
+    def monter(self, pas: float):
+        """Fait descendre les plateaux (animations)
 
-def deconnect():
-    fond.tag_unbind('pointeur', '<Button-1>')
-    fond.tag_unbind('cTire2', '<Button-1>')
-    fond.tag_unbind('cTire1', '<Button-1>')
+        Args:
+            pas (float): La vitesse de déplacement du plateau.
+        """
+        for i in range(len(self.joueurs)):
+            fond.move(('cTire'+str(i+1)), 0, pas)
+        a = fond.coords(self.j1.cTire[0][0])
+        if int(a[1]) != int(origyp):
+            fond.after(30, self.monter, pas)
+        else:
+            fond.itemconfigure('titre', text=self.j1.nom)
+            self.incrementTour()
+            self.connect()
+            self.affStats(0)
+            self.attaque(self.j1, a[1])
 
-def connect():
-    fond.tag_bind('cTire1', '<Button-1>', aj2)
-    fond.tag_bind('cTire2', '<Button-1>', aj1)
-    fond.tag_bind('pointeur', '<Button-1>', cliqueCurseur)
+    def descendre(self, pas: float):
+        """Fait monter les plateaux (animations)
 
-def cliqueCurseur(event): # Réagit à un clique sur le pointeur/viseur.
-    t = fond.itemcget('affiTgVis', 'text')
-    if t != "X":
-        deconnect()
-        p1 = getEtatCase(fond.itemcget('affiTgVis', 'text'), 'c1')
-        p2 = getEtatCase(fond.itemcget('affiTgVis', 'text'), 'c2')
-        if p1 or p2:
-            c = fond.coords(joueurs[0].cTire[0][0])
-            if int(c[1]) == int(origyp):
-                marquerCase(fond.itemcget('affiTgVis', 'text'), 'c1', joueurs[1])
-                fond.after(1000, descendreOuQuitter)
-            else:
-                marquerCase(fond.itemcget('affiTgVis', 'text'), 'c2', joueurs[0])
-                fond.after(1000, monterOuQuitter)
+        Args:
+            pas (float): La vitesse de déplacement du plateau.
+        """
+        for i in range(len(self.joueurs)):
+            fond.move(('cTire'+str(i+1)), 0, -pas)
+        a = fond.coords(self.j2.cTire[0][0])
+        if int(a[1]) != int(origyp):
+            fond.after(30, self.descendre, pas)
+        else:
+            fond.itemconfigure('titre', text=self.j2.nom)
+            self.connect()
+            self.affStats(1)
+            self.attaque(self.j2, a[1])
 
-def aj1(event): # Affiche le plateau d'attaque du premier joueur.
-    t = fond.itemcget('affiTgVis', 'text')
-    if t != "X":
-        deconnect()
-        p = getEtatCase(fond.itemcget('affiTgVis', 'text'), 'c2')
-        if p:
-            marquerCase(fond.itemcget('affiTgVis', 'text'), 'c2', joueurs[0])
-            fond.after(1000, monterOuQuitter)
+    def monterOuQuitter(self):
+        """Vérifie si le premier joueur a perdu, sinon, il déclenche son tour.
+        """
+        if aPerduJoueur(self.j1):
+            Fin(self.joueurs, 1, self.tour)
+        else:
+            self.monter(pasApas)
 
-def aj2(event): # Affiche le plateau d'attaque du second joueur.
-    t = fond.itemcget('affiTgVis', 'text')
-    if t != "X":
-        deconnect()
-        p = getEtatCase(fond.itemcget('affiTgVis', 'text'), 'c1')
-        if p:
-            marquerCase(fond.itemcget('affiTgVis', 'text'), 'c1', joueurs[1])
-            fond.after(1000, descendreOuQuitter)
+    def descendreOuQuitter(self):
+        """Vérifie si le second joueur a perdu, sinon, il déclenche son tour.
+        """
+        if aPerduJoueur(self.j2):
+            Fin(self.joueurs, 0, self.tour)
+        else:
+            self.descendre(pasApas)
 
-fond.tag_bind('cTire1', '<Button-1>', aj2)
-fond.tag_bind('cTire2', '<Button-1>', aj1)
-fond.tag_bind('pointeur', '<Button-1>', cliqueCurseur)
+    def deconnect(self):
+        """Supprimme les événements liés au clic de la souris.
+        """
+        fond.tag_unbind('pointeur', '<Button-1>')
+        fond.tag_unbind('cTire2', '<Button-1>')
+        fond.tag_unbind('cTire1', '<Button-1>')
+
+    def connect(self):
+        """(Re)crée les événements liés au clic de la souris.
+        """
+        fond.tag_bind('cTire1', '<Button-1>', self.aj2)
+        fond.tag_bind('cTire2', '<Button-1>', self.aj1)
+        fond.tag_bind('pointeur', '<Button-1>', self.cliqueCurseur)
+
+    def cliqueCurseur(self, event):
+        """Réagis à un clique sur le curseur.
+
+        Args:
+            event (_type_): _description_
+        """
+        t = fond.itemcget('affiTgVis', 'text')
+        if t != "X":
+            self.deconnect()
+            p1 = self.getEtatCase(t, 'c1')
+            p2 = self.getEtatCase(t, 'c2')
+            if p1 or p2:
+                c = fond.coords(self.j1.cTire[0][0])
+                if int(c[1]) == int(origyp):
+                    self.j1.toucheCase(estToucheBateau(self.j2, t))
+                    self.affStats(0)
+                    self.marquerCase(t, 'c1', self.j2)
+                    fond.after(1000, self.descendreOuQuitter)
+                else:
+                    self.j2.toucheCase(estToucheBateau(self.j1, t))
+                    self.affStats(1)
+                    self.marquerCase(t, 'c2', self.j1)
+                    fond.after(1000, self.monterOuQuitter)
+
+    def aj1(self, event):
+        """Réagit à un clique sur le plateau d'attaque du second joueur.
+
+        Args:
+            event (_type_): _description_
+        """
+        t = fond.itemcget('affiTgVis', 'text')
+        if t != "X":
+            self.deconnect()
+            p = self.getEtatCase(t, 'c2')
+            self.j2.toucheCase(estToucheBateau(self.j1, t))
+            self.affStats(1)
+            if p:
+                self.marquerCase(t, 'c2', self.j1)
+                fond.after(1000, self.monterOuQuitter)
+
+    def aj2(self, event):
+        """Réagit à un clique sur le plateau d'attaque du premier joueur.
+
+        Args:
+            event (_type_): _description_
+        """
+        t = fond.itemcget('affiTgVis', 'text')
+        if t != "X":
+            self.deconnect()
+            p = self.getEtatCase(t, 'c1')
+            self.j1.toucheCase(estToucheBateau(self.j2, t))
+            self.affStats(0)
+            if p:
+                self.marquerCase(t, 'c1', self.j2)
+                fond.after(1000, self.descendreOuQuitter)

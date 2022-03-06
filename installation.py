@@ -12,6 +12,8 @@ class Install:
         self.joueur.miseEnPlace()
 
     def sup(self) -> None:
+        """Gère la suppression correcte de l'installateur.
+        """
         l = self.joueur.getBateaux()
         for i in range(len(l)):
             t = l[i].getTags()
@@ -22,7 +24,9 @@ class Install:
         fond.delete('install')
         fond.itemconfigure('base'+str(self.joueur.id), state='hidden')
 
-    def fin(self): # Place le bouton dans les états "veille" et "actif", en fonction de la position des bateaux.
+    def fin(self):
+        """Place le bouton dans les états "veille" et "actif", en fonction de la position des bateaux.
+        """
         d = True
         i = 0
         l = self.joueur.getBateaux()
