@@ -61,7 +61,7 @@ class Partie:
         fond.delete('accueil')
         fond.create_rectangle(0, yf*0.05, tlatba, yf, fill=noir, tags=('pg'))
         fond.create_rectangle(dpd, yf*0.05, xf, yf, fill=noir, tags=('pd'))
-        fond.create_text(xf*0.015, yf*0.987, text=version, font=Lili1, fill=gris)
+        fond.create_text(xf*0.003*len(version), yf*0.987, text=version, font=Lili1, fill=gris)
         self.creerJoueurs()
         self.barreTitre()
         self.inst = Install(self.getJoueur(0), self.checkEtat)

@@ -22,7 +22,7 @@ class Fin:
                          tags=('ecranFin', 'vict1', 'artifice'))
         etincelle = Etincelle(couleurs=[rouge, gris]+mer)
         etincelle.eblouissement()
-        suite = Bouton(self.suite, "Continuer", bleuBt, nom=['ecranFin', 'vict2', 'artifice'])
+        suite = Bouton(self.suite, "Continuer", bleuBt, nom=['btsuite', 'ecranFin', 'vict2', 'artifice'])
         suite.dessine((xf/2, yf+yf*0.7))
 
     def maitreGlisse(self, liste: list, indice: int=0) -> None:
@@ -64,16 +64,20 @@ class Fin:
             c = grisClair
             j = self.joueurs[len(self.joueurs)-self.gagnant-1]
             valeurs = self.joueurs[len(self.joueurs)-self.gagnant-1].getStats()
+            desc = "Perdant"
             if i == 0:
                 c = bleuBt
                 j = self.joueurs[self.gagnant]
                 valeurs = self.joueurs[self.gagnant].getStats()
+                desc = "Gagnant"
             t = j.getNom()
             fond.create_rectangle(xo, yo, xo+l, yo+h, fill=gris, width=3, 
                                   tags=('ecranFin', 'statsCad'))
             fond.create_rectangle(xo, yo, xo+l, yo+yf*0.08, fill=c, tags=('ecranFin', 'statsCad'))
             fond.create_text(xo+xf*0.01*len(t), yo+yf*0.04, text=t.upper(), font=Lili3, fill=blanc, 
                             tags=('ecranFin', 'statsCad'))
+            fond.create_text(xo+l*0.93, yo+yf*0.04, text=desc, font=Lili2, fill=blanc, 
+                             tags=('ecranFin', 'statsCad'))
             x = xo*2.5
             y = yo+h*0.35
             for j in range(len(titres)):

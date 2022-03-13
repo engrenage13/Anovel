@@ -4,7 +4,7 @@ from tkinter import *
 from tkinter.font import Font
 
 TITRE_F = 'NAVALE'
-version = "0.1.9"
+version = "0.1.10"
 
 def trouveEcran(x, y): # Trouve l'écran utilisé
     monitors = screeninfo.get_monitors()
