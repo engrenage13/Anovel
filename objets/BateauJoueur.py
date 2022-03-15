@@ -17,9 +17,19 @@ class Bateau(): # Crée les bateaux.
         fond.tag_bind(self.tag, '<Button-3>', self.tourne)
 
     def getTags(self) -> list:
+        """Retourne les tags du bateau
+
+        Returns:
+            list: Tag du bateau et de son nom.
+        """
         return [self.tag, self.tagPlus]
 
-    def dessine(self, cdJ: int): # Dessine le bateau.
+    def dessine(self, cdJ: int):
+        """Dessine le bateau.
+
+        Args:
+            cdJ (int): Le code du joueur (propriétaire).
+        """
         a = fond.coords('pg')
         x = a[2]*0.05
         y = a[3]*0.05
@@ -29,13 +39,20 @@ class Bateau(): # Crée les bateaux.
                               tags=('bateaux', self.tag, ('set'+str(cdJ))))
         self.miniature = fond.coords(self.tag)
 
-    def switchMode(self, event): # Sélectionne et déselectionne le bateau.
+    def switchMode(self, event):
+        """Sélectionne et déselectionne le bateau.
+
+        Args:
+            event (_type_): _description_
+        """
         if self.defil:
             self.immobile()
         else:
             self.declenMouv()
 
-    def immobile(self): # Désélectionne le bateau.
+    def immobile(self):
+        """Désélectionne le bateau.
+        """
         self.defil = False
         fond.itemconfigure(self.tag, outline='black', width=1)
         a = fond.find_withtag('Pharos')
@@ -50,7 +67,9 @@ class Bateau(): # Crée les bateaux.
         else:
             self.resetBat()
 
-    def declenMouv(self): # Sélectionne le bateau.
+    def declenMouv(self):
+        """Sélectionne le bateau.
+        """
         self.defil = True
         self.orient = 'h'
         fond.itemconfigure(self.tag, outline=vertFluo, width=3)
@@ -62,7 +81,9 @@ class Bateau(): # Crée les bateaux.
         self.proprio.blocVert(self)
         self.scotchBat()
 
-    def scotchBat(self): # Fait en sorte que le bateau suive la souris.
+    def scotchBat(self):
+        """Fait en sorte que le bateau suive la souris.
+        """
         a = fond.winfo_pointerxy()
         e = fond.find_withtag(self.tag)
         if len(e) >= 1:
@@ -75,7 +96,9 @@ class Bateau(): # Crée les bateaux.
         if self.defil:
             fond.after(5, self.scotchBat)
 
-    def neonCase(self): # Liste les cases actuellement occupées par le bateau.
+    def neonCase(self):
+        """Liste les cases actuellement occupées par le bateau.
+        """
         co = fond.coords(self.tag)
         milieu = co[1]+((co[3]-co[1])/2)
         fixe1 = (co[0], milieu)
@@ -102,7 +125,12 @@ class Bateau(): # Crée les bateaux.
         self.pos = li
         self.brillePlacement(self.proprio.getBateaux())
 
-    def tourne(self, event): # Fait tourner le bateau.
+    def tourne(self, event):
+        """Fait tourner le bateau.
+
+        Args:
+            event (_type_): _description_
+        """
         if self.defil:
             a = fond.coords(self.tag)
             l = (a[2]-a[0])/2
@@ -118,7 +146,11 @@ class Bateau(): # Crée les bateaux.
             fond.coords(self.tag, x1, y1, x2, y2)
 
     def positionneBien(self, coo: tuple): 
-        # Fait en sorte que le bateau appelé soit bien positionné sur le plateau.
+        """Fait en sorte que le bateau appelé soit bien positionné sur le plateau.
+
+        Args:
+            coo (tuple): position du bateau.
+        """
         t = self.getTags()
         a = fond.coords(t[0])
         b = coo[0] - a[0]
@@ -131,7 +163,8 @@ class Bateau(): # Crée les bateaux.
             self.proprio.verifFonction()
 
     def resetBat(self):
-        # Supprime le modèle "grande taille" du bateau pour recréer le modèle "petite taille."
+        """Supprime le modèle "grande taille" du bateau pour recréer le modèle "petite taille."
+        """
         c = fond.coords('pg')
         x = c[2]*0.05
         y = c[3]*0.05
@@ -142,7 +175,12 @@ class Bateau(): # Crée les bateaux.
                             tags=('bateau', t[0], ('set'+str(self.proprio.id))))
         self.reposeBat((x, y))
 
-    def reposeBat(self, coo: tuple): # Remet le bateau en place dans le panneau latéral de gauche.
+    def reposeBat(self, coo: tuple):
+        """Remet le bateau en place dans le panneau latéral de gauche.
+
+        Args:
+            coo (tuple): coordonnées du bateau.
+        """
         t = self.getTags()
         a = fond.coords(t[0])
         b = int(a[0])-int(coo[0])
@@ -155,7 +193,12 @@ class Bateau(): # Crée les bateaux.
             self.proprio.vigile()
 
     def glisseListe(self, souris: tuple, milieu: tuple):
-        # Corrige les éventuels problèmes de vitesse rencontrés lors de la localisation des bateaux.
+        """Corrige les éventuels problèmes de vitesse rencontrés lors de la localisation des bateaux.
+
+        Args:
+            souris (tuple): Position de la souris.
+            milieu (tuple): Position du milieu du bateau.
+        """
         if self.orient == 'h':
             if souris[0] < milieu[0]:
                 self.sens = -1
@@ -167,7 +210,15 @@ class Bateau(): # Crée les bateaux.
             else:
                 self.sens = 0
 
-    def localCase(self, coo: tuple) -> str: # Trouve les cases individuellement.
+    def localCase(self, coo: tuple) -> str:
+        """Trouve les cases individuellement.
+
+        Args:
+            coo (tuple): Coordonnée du bateau.
+
+        Returns:
+            str: Nom d'une case.
+        """
         b = None
         for i in range(len(self.proprio.base)):
             for j in range(len(self.proprio.base[i])):
@@ -176,14 +227,29 @@ class Bateau(): # Crée les bateaux.
                     b = self.proprio.base[i][j]
         return b
 
-    def iNon(self, val) -> bool: # Check si la valeur passée en paramètre est nulle ou non...
+    def iNon(self, val) -> bool:
+        """Check si la valeur passée en paramètre est nulle ou non...
+
+        Args:
+            val (_type_): valeur à comparer.
+
+        Returns:
+            bool: True, si pas nul, et False, sinon...
+        """
         a = True
         if val == None:
             a = False
         return a
 
     def trouveCase(self, case: str) -> list:
-        # Cherche la position sur le plateau de la case passée en paramètre.
+        """Cherche la position sur le plateau de la case passée en paramètre.
+
+        Args:
+            case (str): Nom de la case.
+
+        Returns:
+            list: coordonnées d'une case.
+        """
         y = 0
         a = False
         while y < len(self.proprio.base) and not a:
@@ -196,7 +262,13 @@ class Bateau(): # Crée les bateaux.
         return [x-1, y-1]
 
     def rempliListe(self, coo: list, position: list, bout: str):
-        # Remplis la liste de position du bateau.
+        """Remplis la liste de position du bateau.
+
+        Args:
+            coo (list): Coordonnées de la base du bateau.
+            position (list): Position du bateau.
+            bout (str): Extrémité du bateau.
+        """
         if bout == 'av':
             mul = 1
         elif bout == 'ar':
@@ -218,7 +290,11 @@ class Bateau(): # Crée les bateaux.
             position.reverse()
 
     def brillePlacement(self, liste: list):
-        # Mets en évidence les cases où le bateau sélectionné se trouvera une fois relaché.
+        """Mets en évidence les cases où le bateau sélectionné se trouvera une fois relaché.
+
+        Args:
+            liste (list): Liste des cases du bateau.
+        """
         fond.delete('Pharos')
         c = 'white'
         if None in self.pos:
@@ -235,8 +311,15 @@ class Bateau(): # Crée les bateaux.
                 fond.create_rectangle(a[0], a[1], a[2], a[3], fill='', outline=c, width=4, tags=(b, 'Pharos'))
                 fond.tag_raise(self.tag, 'Pharos')
 
-    def voisin(self, bateau: object):
-        # Vérifie si le bateau sélectionné n'empiète pas sur un autre bateau déjà placé.
+    def voisin(self, bateau: object) -> bool:
+        """Vérifie si le bateau sélectionné n'empiète pas sur un autre bateau déjà placé.
+
+        Args:
+            bateau (object): bateau.
+
+        Returns:
+            bool: True si les deux bateaux ont au moins une case en commun.
+        """
         a = True
         i = 0
         while i < len(self.pos) and a:
