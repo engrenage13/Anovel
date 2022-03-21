@@ -32,6 +32,9 @@ origyp = yf*0.105
 pasApas = yf*0.05
 dpd = xf-tlatba
 
+# barre - menu
+hbarre = yf*0.05
+
 # Polices
 Poli1 = Font(family='Stencil', size=int(yf*0.02))
 Poli2 = Font(family='Stencil', size=int((yf*0.02)/3*5))

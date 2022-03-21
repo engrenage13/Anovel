@@ -1,7 +1,8 @@
-from FondMarin import fond, xf, yf, dpd, tlatba, version, Poli1, Lili1, Lili3, gris, mauve, blanc, noir, rouge
+from FondMarin import fond, xf, yf, dpd, tlatba, hbarre, version, Poli1, Lili1, gris, mauve, blanc, noir
 from installation import Install
 from objets.Joueur import Joueur
 from attaque import Attaque
+from museeNoyee import *
 
 class Partie:
     def __init__(self):
@@ -50,10 +51,10 @@ class Partie:
     def barreTitre(self) -> None:
         """Crée la barre de titre en haut de la fenêtre.
         """
-        fond.create_rectangle(0, 0, xf, yf*0.05, fill=mauve)
+        fond.create_rectangle(0, 0, xf, hbarre, fill=mauve)
         fond.create_text(xf*0.1, yf*0.027, text="", font=Poli1, fill=blanc, tag='titre')
         fond.create_text(xf*0.5, yf*0.027, text="", font=Poli1, fill=blanc, tag='tour')
-        fond.create_text(xf*0.985, yf*0.022, text="x", font=Lili3, fill=rouge, tag='auRevoir')
+        fond.create_image(xf*0.985, hbarre/2, image=croix, tag='auRevoir')
 
     def miseEnPlace(self) -> None:
         """Lance la procédure de mise en place pour le premier joueur.

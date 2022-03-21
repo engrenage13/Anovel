@@ -58,19 +58,19 @@ class Fin:
         xo = xf*0.05
         l = xf*0.65
         yo = yf*1.1
-        h = yf*0.3
+        h = yf*0.4
         titres = ["Nb. Cases Touchées", "Nb. Touché", "Nb. Raté"]
         for i in range(len(self.joueurs)):
             c = grisClair
-            j = self.joueurs[len(self.joueurs)-self.gagnant-1]
+            jo = self.joueurs[len(self.joueurs)-self.gagnant-1]
             valeurs = self.joueurs[len(self.joueurs)-self.gagnant-1].getStats()
             desc = "Perdant"
             if i == 0:
                 c = bleuBt
-                j = self.joueurs[self.gagnant]
+                jo = self.joueurs[self.gagnant]
                 valeurs = self.joueurs[self.gagnant].getStats()
                 desc = "Gagnant"
-            t = j.getNom()
+            t = jo.getNom()
             fond.create_rectangle(xo, yo, xo+l, yo+h, fill=gris, width=3, 
                                   tags=('ecranFin', 'statsCad'))
             fond.create_rectangle(xo, yo, xo+l, yo+yf*0.08, fill=c, tags=('ecranFin', 'statsCad'))
@@ -80,24 +80,51 @@ class Fin:
                              tags=('ecranFin', 'statsCad'))
             x = xo*2.5
             y = yo+h*0.35
-            for j in range(len(titres)):
-                if type(valeurs[j]) != list:
-                    valeur = valeurs[j]
+            for k in range(len(titres)):
+                if type(valeurs[k]) != list:
+                    valeur = valeurs[k]
                 else:
-                    valeur = f"{valeurs[j][0]} ({valeurs[j][1]}%)"
+                    valeur = f"{valeurs[k][0]} ({valeurs[k][1]}%)"
                 taille = Lili3
                 if len(str(valeur)) > 4:
                     taille = Lili2
-                fond.create_text(x, y, text=titres[j], font=Lili2, fill=blanc, tags=('ecranFin', 'statsCad'))
+                fond.create_text(x, y, text=titres[k], font=Lili2, fill=blanc, tags=('ecranFin', 'statsCad'))
                 fond.create_text(x, y+yf*0.04, text=valeur, font=taille, fill=blanc, 
                                  tags=('ecranFin', 'statsCad'))
                 x = x + l/6
-            yo = yo + h*1.3
+            self.dessBateaux(jo, yo+h*0.6)
+            yo = yo + h + yf*0.05
+
+    def dessBateaux(self, joueur: object, y: float) -> None:
+        """Dessine les bateaux du joueur dans son cadre de récap.
+
+        Args:
+            joueur (object): Propriétaire des bateaux.
+            y (float): Hauteur à laquelle afficher les bateaux.
+        """
+        batos = joueur.getBateaux()
+        ct = tlatba*0.12
+        xo = xf*0.07
+        yo = y
+        for i in range(len(batos)):
+            t = ct*batos[i].taille
+            touche = batos[i].etatSeg
+            fond.create_rectangle(xo, yo, xo+t, yo+ct, fill=grisClair, tags=('ecranFin', 'statsCad'))
+            xr = xo
+            for j in range(len(touche)):
+                if touche[j] == 'x':
+                    fond.create_rectangle(xr, yo, xr+ct, yo+ct, fill=rouge, outline='', 
+                                          tags=('ecranFin', 'statsCad'))
+                xr = xr + ct
+            xo = xo + t + ct
+            if i > 0 and (i+1)%4 == 0:
+                yo = yo + ct*1.4
+                xo = xf*0.07
 
     def suite(self) -> None:
         """Réagit au clic sur le bouton "Continuer" de la première partie (fait apparaître les stats).
         """
-        fond.create_text(xf-tlatba*0.55, yf*1.1, text=f"Nombre de tours : {self.longPartie}", font=Poli1, 
+        fond.create_text(xf-tlatba*0.55, yf*1.14, text=f"Nombre de tours : {self.longPartie}", font=Poli1, 
                          fill=blanc, tags=('ecranFin', 'vict3'))
         quit = Bouton(auRevoir, "Quitter", rouge, nom=['auRevoir', 'ecranFin', 'vict3'])
         quit.dessine((xf-tlatba*0.55, yf*1.7))
