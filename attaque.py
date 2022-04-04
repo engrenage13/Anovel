@@ -1,12 +1,15 @@
 from FondMarin import *
 from objets.Bateau import *
 from finPartie import Fin
+from objets.Joueur import Joueur
 
 class Attaque:
     def __init__(self, joueur1: object, joueur2: object) -> None:
         self.j1 = joueur1
         self.j2 = joueur2
         self.joueurs = [joueur1, joueur2]
+        self.listeBateaux1 = [False]*5
+        self.listeBateaux2 = [False]*5
         self.tour = 0
         self.incrementTour()
         self.connect()
@@ -103,30 +106,59 @@ class Attaque:
             position (float): La position `y du haut du plateau`.
         """
         fond.delete('pointeur')
-        a = self.localiseCurseur(joueur.cTire)
         d = fond.find_withtag('ecranFin')
-        if a != None and len(d) == 0:
-            b = fond.coords(a)
-            self.dessineViseur(b, a)
+        if not self.getEtatNotifs(joueur):
+            a = self.localiseCurseur(joueur.cTire)
+            if a != None and len(d) == 0:
+                b = fond.coords(a)
+                self.dessineViseur(b, a)
         c = fond.coords(joueur.cTire[0][0])
         if int(c[1]) == int(position) and len(d) == 0:
             fond.after(50, self.attaque, joueur, c[1])
         else:
             fond.delete('pointeur')
 
-    def marquerCase(self, idCase: str, idplateau: str, joueurCible: object) -> None:
+    def getEtatNotifs(self, joueur: Joueur) -> bool:
+        """Regarde si les notification d'un joueur son visible à l'écran.
+
+        Args:
+            joueur (Joueur): Propriétaire des informations à vérifier.
+
+        Returns:
+            bool: True s'il y a au moins une notif et False sinon.
+        """
+        rep = joueur.notifTouche.getEtat()
+        if not rep:
+            rep = joueur.notifCoule.getEtat()
+        return rep
+
+    def marquerCase(self, idCase: str, idplateau: str, joueurCible: Joueur, joueur: Joueur) -> None:
         """Marque les cases touchées.
 
         Args:
-            idCase (str): Le code de la case
-            idplateau (str): Le plateau auquel elle correspond
-            joueurCible (object): Le joueur victime du tir
+            idCase (str): Le code de la case.
+            idplateau (str): Le plateau auquel elle correspond.
+            joueurCible (Joueur): Le joueur victime du tir.
+            joueur (Joueur): Le joueur qui est en train de jouer.
         """
         tag = idCase+idplateau
         c = grisBlanc
-        if estToucheBateau(joueurCible, idCase):
+        listeBateau = self.listeBateaux1
+        if joueurCible == self.j2:
+            listeBateau = self.listeBateaux2
+        repTouche = estToucheBateau(joueurCible, idCase)
+        if repTouche[0]:
             c = 'red'
         fond.itemconfigure(tag, fill=c)
+        bateaux = joueurCible.getBateaux()
+        if estCoule(bateaux[repTouche[1]]) and not listeBateau[repTouche[1]]:
+            plongerDanslAbysse(bateaux[repTouche[1]])
+            listeBateau[repTouche[1]] = True
+            joueur.notifCoule.modifMessage(joueurCible.getBateaux()[repTouche[1]].nom)
+            joueur.notifCoule.montre()
+        elif repTouche[0]:
+            joueur.notifTouche.modifMessage(case=idCase)
+            joueur.notifTouche.montre()
 
     def getEtatCase(self, idCase: str, idPlateau: str="") -> bool:
         """Renvoie True si la case passée en paramètre est touchable.
@@ -181,20 +213,26 @@ class Attaque:
             self.attaque(self.j2, a[1])
 
     def monterOuQuitter(self):
-        """Vérifie si le premier joueur a perdu, sinon, il déclenche son tour.
+        """Vérifie si le premier joueur a perdu, ou si le second joueur n'a pas de notif, 
+           sinon il déclenche le tour du premier joueur.
         """
         if aPerduJoueur(self.j1):
             Fin(self.joueurs, 1, self.tour)
-        else:
+        elif not self.getEtatNotifs(self.j2):
             self.monter(pasApas)
+        else:
+            fond.after(50, self.monterOuQuitter)
 
     def descendreOuQuitter(self):
-        """Vérifie si le second joueur a perdu, sinon, il déclenche son tour.
+        """Vérifie si le second joueur a perdu, ou si le premier joueur n'a pas de notif, 
+           sinon il déclenche le tour du second joueur.
         """
         if aPerduJoueur(self.j2):
             Fin(self.joueurs, 0, self.tour)
-        else:
+        elif not self.getEtatNotifs(self.j1):
             self.descendre(pasApas)
+        else:
+            fond.after(50, self.descendreOuQuitter)
 
     def deconnect(self):
         """Supprimme les événements liés au clic de la souris.
@@ -224,14 +262,14 @@ class Attaque:
             if p1 or p2:
                 c = fond.coords(self.j1.cTire[0][0])
                 if int(c[1]) == int(origyp):
-                    self.j1.toucheCase(estToucheBateau(self.j2, t))
+                    self.j1.toucheCase(estToucheBateau(self.j2, t)[0])
                     self.affStats(0)
-                    self.marquerCase(t, 'c1', self.j2)
+                    self.marquerCase(t, 'c1', self.j2, self.j1)
                     fond.after(1000, self.descendreOuQuitter)
                 else:
-                    self.j2.toucheCase(estToucheBateau(self.j1, t))
+                    self.j2.toucheCase(estToucheBateau(self.j1, t)[0])
                     self.affStats(1)
-                    self.marquerCase(t, 'c2', self.j1)
+                    self.marquerCase(t, 'c2', self.j1, self.j2)
                     fond.after(1000, self.monterOuQuitter)
 
     def aj1(self, event):
@@ -244,10 +282,10 @@ class Attaque:
         if t != "X":
             self.deconnect()
             p = self.getEtatCase(t, 'c2')
-            self.j2.toucheCase(estToucheBateau(self.j1, t))
+            self.j2.toucheCase(estToucheBateau(self.j1, t)[0])
             self.affStats(1)
             if p:
-                self.marquerCase(t, 'c2', self.j1)
+                self.marquerCase(t, 'c2', self.j1, self.j2)
                 fond.after(1000, self.monterOuQuitter)
 
     def aj2(self, event):
@@ -260,8 +298,8 @@ class Attaque:
         if t != "X":
             self.deconnect()
             p = self.getEtatCase(t, 'c1')
-            self.j1.toucheCase(estToucheBateau(self.j2, t))
+            self.j1.toucheCase(estToucheBateau(self.j2, t)[0])
             self.affStats(0)
             if p:
-                self.marquerCase(t, 'c1', self.j2)
+                self.marquerCase(t, 'c1', self.j2, self.j1)
                 fond.after(1000, self.descendreOuQuitter)

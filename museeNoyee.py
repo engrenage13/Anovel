@@ -1,6 +1,9 @@
 from FondMarin import hbarre
 from Image import Ima
 
-cruz = Ima('images/Croix.png')
-croix = cruz.reDim(hbarre*0.9, hbarre*0.9)
-croix = cruz.createPhotoImage(croix)
+cruzoff = Ima('images/CroSom.png')
+croixSombre = cruzoff.reDim(hbarre*0.9, hbarre*0.9)
+croixSombre = cruzoff.createPhotoImage(croixSombre)
+cruzon = Ima('images/CroLum.png')
+croixLumineuse = cruzon.reDim(hbarre*0.9, hbarre*0.9)
+croixLumineuse = cruzon.createPhotoImage(croixLumineuse)

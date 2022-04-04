@@ -1,4 +1,7 @@
-def estTouche(bateau: object, posi: str) -> bool:
+from objets.BateauJoueur import Bateau
+from FondMarin import fond, noir
+
+def estTouche(bateau: Bateau, posi: str) -> bool:
     """
     Dit si le bateau passé en paramètres est sur la case qui est regardée.
     param: bateau: le bateau
@@ -15,26 +18,26 @@ def estTouche(bateau: object, posi: str) -> bool:
         i = i + 1
     return a
 
-def estToucheBateau(joueur: object, case: str) -> bool:
+def estToucheBateau(joueur: Bateau, case: str) -> bool:
     """
     Retourne vrai si l'un des bateaux du joueur est touché.
     param: joueur: le joueur
     param: case: la case touchée
-    return: booléen
+    return: liste composé du booléen réponse et de l'indice du bateau correspondant.
     """
     a = False
     i = 0
     while i < len(joueur.SetBateaux) and not a:
         a = estTouche(joueur.SetBateaux[i], case)
         i = i + 1
-    return a
+    return [a, i-1]
 
-def estCoule(bateau: object) -> bool:
+def estCoule(bateau: Bateau) -> bool:
     """
     Dit si le bateau regardé est coulé ou non.
 
-    bateau: le bateau
-    return: booléen
+    bateau: le bateau.
+    return: booléen.
     """
     a = False
     if bateau.coule:
@@ -45,7 +48,7 @@ def estCoule(bateau: object) -> bool:
             a = True
     return a
 
-def aPerduJoueur(joueur: object) -> bool:
+def aPerduJoueur(joueur: Bateau) -> bool:
     """
     Vérifie si le joueur passé en paramètre a encore des bateaux non-coulés.
 
@@ -59,3 +62,13 @@ def aPerduJoueur(joueur: object) -> bool:
             a = False
         i = i + 1
     return a
+
+def plongerDanslAbysse(bateau: Bateau) -> None:
+    """Colorie toutes les cases occupé par le bateau en noir.
+
+    Args:
+        bateau (Bateau): Bateau coulé.
+    """
+    for i in range(len(bateau.pos)):
+        cible = bateau.pos[i][0:len(bateau.pos[i])-2] + "c" + str(3-bateau.proprio.id)
+        fond.itemconfigure(cible, fill=noir)

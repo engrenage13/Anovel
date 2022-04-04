@@ -54,7 +54,7 @@ class Partie:
         fond.create_rectangle(0, 0, xf, hbarre, fill=mauve)
         fond.create_text(xf*0.1, yf*0.027, text="", font=Poli1, fill=blanc, tag='titre')
         fond.create_text(xf*0.5, yf*0.027, text="", font=Poli1, fill=blanc, tag='tour')
-        fond.create_image(xf*0.985, hbarre/2, image=croix, tag='auRevoir')
+        fond.create_image(xf*0.985, hbarre/2, image=croixSombre, activeimage=croixLumineuse, tag='auRevoir')
 
     def miseEnPlace(self) -> None:
         """Lance la procédure de mise en place pour le premier joueur.

@@ -109,13 +109,16 @@ class Fin:
         for i in range(len(batos)):
             t = ct*batos[i].taille
             touche = batos[i].etatSeg
-            fond.create_rectangle(xo, yo, xo+t, yo+ct, fill=grisClair, tags=('ecranFin', 'statsCad'))
-            xr = xo
-            for j in range(len(touche)):
-                if touche[j] == 'x':
-                    fond.create_rectangle(xr, yo, xr+ct, yo+ct, fill=rouge, outline='', 
-                                          tags=('ecranFin', 'statsCad'))
-                xr = xr + ct
+            if not batos[i].coule:
+                fond.create_rectangle(xo, yo, xo+t, yo+ct, fill=grisClair, tags=('ecranFin', 'statsCad'))
+                xr = xo
+                for j in range(len(touche)):
+                    if touche[j] == 'x':
+                        fond.create_rectangle(xr, yo, xr+ct, yo+ct, fill=rouge, outline='', 
+                                            tags=('ecranFin', 'statsCad'))
+                    xr = xr + ct
+            else:
+                fond.create_rectangle(xo, yo, xo+t, yo+ct, fill=noir, tags=('ecranFin', 'statsCad'))
             xo = xo + t + ct
             if i > 0 and (i+1)%4 == 0:
                 yo = yo + ct*1.4

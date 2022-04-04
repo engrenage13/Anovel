@@ -2,11 +2,14 @@ from random import *
 from FondMarin import *
 from objets.BateauJoueur import Bateau
 from objets.plateau import plateau
+from ui.notif import Notification
 
 class Joueur(): # Initialise un joueur.
     def __init__(self, code: int):
         a = 'base' + str(code)
         f = 'cTire' + str(code)
+        d = 'notifTouche' + str(code)
+        e = 'notifCoule' + str(code)
         b = ["Porte Avion", "Croiseur", "Sous-marin n°1", "Sous-marin n°2", "Torpilleur"]
         c = [5, 4, 3, 3, 2]
         self.id = code
@@ -22,6 +25,10 @@ class Joueur(): # Initialise un joueur.
             self.SetBateaux.append(bat)
         # /bateaux
         shuffle(self.SetBateaux)
+        # notifs
+        self.notifTouche = Notification("Touché !", d)
+        self.notifCoule = Notification("Coulé !", e)
+        # /notifs
 
     def getBateaux(self) -> list:
         """Retourne la liste des bateaux du joueur.

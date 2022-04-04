@@ -1,6 +1,6 @@
 from PIL import Image, ImageDraw, ImageEnhance, ImageTk
 
-class Ima: # Classe permettant de créer des images utilisables et modifiables par Horlengre.
+class Ima:
     def __init__(self, adresse: str):
         self.original = Image.open(adresse)
         self.liCopie = []
