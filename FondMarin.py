@@ -4,7 +4,7 @@ from tkinter import *
 from tkinter.font import Font
 
 TITRE_F = 'NAVALE'
-version = "0.1.11"
+version = "0.1.12"
 
 def trouveEcran(x, y): # Trouve l'écran utilisé
     monitors = screeninfo.get_monitors()
@@ -26,11 +26,12 @@ def auRevoir(): # Ferme le jeu.
 # Dimensions
 xf = ecran.width
 yf = ecran.height
-tlatba = (xf - yf*0.84)/2
+tlatba = int(xf - yf*0.84)/2
 yp = yf*0.15
 origyp = yf*0.105
 pasApas = yf*0.05
 dpd = xf-tlatba
+tailleCase = int(yf*0.84/10)
 
 # barre - menu
 hbarre = yf*0.05

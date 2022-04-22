@@ -2,9 +2,17 @@ from FondMarin import *
 from objets.Bateau import *
 from finPartie import Fin
 from objets.Joueur import Joueur
+from museeNoyee import touche, rate
+from objets.plateau import Plateau
 
 class Attaque:
-    def __init__(self, joueur1: object, joueur2: object) -> None:
+    def __init__(self, joueur1: Joueur, joueur2: Joueur) -> None:
+        """Gère toute la partie attaque du jeu.
+
+        Args:
+            joueur1 (Joueur): L'un des deux joueurs.
+            joueur2 (Joueur): L'autre joueur.
+        """
         self.j1 = joueur1
         self.j2 = joueur2
         self.joueurs = [joueur1, joueur2]
@@ -14,7 +22,10 @@ class Attaque:
         self.incrementTour()
         self.connect()
         self.affStats(0)
-        c = fond.coords(self.j1.cTire[0][0])
+        self.alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 
+                         'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+        ligne = self.j1.cTire.getLigne('a')
+        c = fond.coords(ligne[0])
         self.attaque(self.j1, c[1])
 
     def incrementTour(self) -> None:
@@ -24,7 +35,7 @@ class Attaque:
         fond.itemconfigure('tour', text=f"Tour {self.tour}")
 
     def affStats(self, indice: int) -> None:
-        """Affiche les statistiques du joueurs de l'indice pssé en paramètre.
+        """Affiche les statistiques du joueurs de l'indice passé en paramètre.
 
         Args:
             indice (int): Indice du joueur voulu par rapport à `self.joueur`.
@@ -41,31 +52,32 @@ class Attaque:
             x = xf-int(yf*0.01)*(len(t)/2+2)
             fond.create_text(x, y, text=t, font=Lili1, fill=blanc, tags=('stats'))
             y = y + yf*0.04
-
-    def localiseCurseur(self, plateau: list) -> str:
+    
+    def localiseCurseur(self, plateau: Plateau) -> str:
         """Regarde la position du curseur sur le plateau et renvoie le code de la case coresspondante.
 
         Args:
-            plateau (list): Le plateau où se situe le curseur.
+            plateau (Plateau): Le plateau où se situe le curseur.
 
         Returns:
             str: Le code de la case sur laquelle se trouve le curseur.
         """
-        a = fond.winfo_pointerxy()
+        sou = fond.winfo_pointerxy()
         b = False
         i = 0
-        while i < len(plateau) and not b:
+        while i < plateau.getDimensions()[0] and not b:
             j = 0
-            while j < len(plateau[i]) and not b:
-                c = fond.coords(plateau[i][j])
-                if a[0] >= c[0] and a[0] <= c[2] and a[1] >= c[1] and a[1] <= c[3]:
+            ligne = plateau.getLigne(self.alphabet[i])
+            while j < plateau.getDimensions()[1] and not b:
+                c = fond.coords(ligne[j])
+                if sou[0] >= c[0] and sou[0] <= c[2] and sou[1] >= c[1] and sou[1] <= c[3]:
                     b = True
                 else:
                     j = j + 1
             if not b:
                 i = i + 1
         if b:
-            sortie = plateau[i][j]
+            sortie = ligne[j]
         else:
             sortie = None
         return sortie
@@ -103,7 +115,7 @@ class Attaque:
 
         Args:
             joueur (object): Le joueur qui doit attaqué.
-            position (float): La position `y du haut du plateau`.
+            position (float): La position y du haut du plateau.
         """
         fond.delete('pointeur')
         d = fond.find_withtag('ecranFin')
@@ -112,7 +124,8 @@ class Attaque:
             if a != None and len(d) == 0:
                 b = fond.coords(a)
                 self.dessineViseur(b, a)
-        c = fond.coords(joueur.cTire[0][0])
+        ligne = joueur.cTire.getLigne('a')
+        c = fond.coords(ligne[0])
         if int(c[1]) == int(position) and len(d) == 0:
             fond.after(50, self.attaque, joueur, c[1])
         else:
@@ -142,22 +155,21 @@ class Attaque:
             joueur (Joueur): Le joueur qui est en train de jouer.
         """
         tag = idCase+idplateau
-        c = grisBlanc
+        i = rate
         listeBateau = self.listeBateaux1
         if joueurCible == self.j2:
             listeBateau = self.listeBateaux2
         repTouche = estToucheBateau(joueurCible, idCase)
         if repTouche[0]:
-            c = 'red'
-        fond.itemconfigure(tag, fill=c)
+            i = touche
+        fond.itemconfigure('i'+tag, image=i)
         bateaux = joueurCible.getBateaux()
         if estCoule(bateaux[repTouche[1]]) and not listeBateau[repTouche[1]]:
-            plongerDanslAbysse(bateaux[repTouche[1]])
             listeBateau[repTouche[1]] = True
-            joueur.notifCoule.modifMessage(joueurCible.getBateaux()[repTouche[1]].nom)
+            joueur.notifCoule.modifMessage(idCase)
             joueur.notifCoule.montre()
         elif repTouche[0]:
-            joueur.notifTouche.modifMessage(case=idCase)
+            joueur.notifTouche.modifMessage(idCase)
             joueur.notifTouche.montre()
 
     def getEtatCase(self, idCase: str, idPlateau: str="") -> bool:
@@ -171,9 +183,9 @@ class Attaque:
             bool: Vrai ou Faux selon la possibilité de touché ou non la case.
         """
         tag = idCase+idPlateau
-        c = fond.itemcget(tag, 'fill')
         rep = True
-        if c == 'red' or c == grisBlanc:
+        case = fond.itemcget('i'+tag, 'image')
+        if case != '':
             rep = False
         return rep
 
@@ -184,8 +196,9 @@ class Attaque:
             pas (float): La vitesse de déplacement du plateau.
         """
         for i in range(len(self.joueurs)):
-            fond.move(('cTire'+str(i+1)), 0, pas)
-        a = fond.coords(self.j1.cTire[0][0])
+            self.joueurs[i].cTire.deplace(0, pas)
+        ligne = self.j1.cTire.getLigne('a')
+        a = fond.coords(ligne[0])
         if int(a[1]) != int(origyp):
             fond.after(30, self.monter, pas)
         else:
@@ -202,8 +215,9 @@ class Attaque:
             pas (float): La vitesse de déplacement du plateau.
         """
         for i in range(len(self.joueurs)):
-            fond.move(('cTire'+str(i+1)), 0, -pas)
-        a = fond.coords(self.j2.cTire[0][0])
+            self.joueurs[i].cTire.deplace(0, -pas)
+        ligne = self.j2.cTire.getLigne('a')
+        a = fond.coords(ligne[0])
         if int(a[1]) != int(origyp):
             fond.after(30, self.descendre, pas)
         else:
@@ -260,7 +274,8 @@ class Attaque:
             p1 = self.getEtatCase(t, 'c1')
             p2 = self.getEtatCase(t, 'c2')
             if p1 or p2:
-                c = fond.coords(self.j1.cTire[0][0])
+                ligne = self.j1.cTire.getLigne('a')
+                c = fond.coords(ligne[0])
                 if int(c[1]) == int(origyp):
                     self.j1.toucheCase(estToucheBateau(self.j2, t)[0])
                     self.affStats(0)

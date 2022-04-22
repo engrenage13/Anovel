@@ -2,7 +2,7 @@ from FondMarin import fond, xf, yf, dpd, tlatba, hbarre, version, Poli1, Lili1, 
 from installation import Install
 from objets.Joueur import Joueur
 from attaque import Attaque
-from museeNoyee import *
+from museeNoyee import croixLumineuse, croixSombre, mer
 
 class Partie:
     def __init__(self):
@@ -51,7 +51,7 @@ class Partie:
     def barreTitre(self) -> None:
         """Crée la barre de titre en haut de la fenêtre.
         """
-        fond.create_rectangle(0, 0, xf, hbarre, fill=mauve)
+        fond.create_rectangle(0, 0, xf, hbarre, fill=mauve, stipple='gray50', outline='')
         fond.create_text(xf*0.1, yf*0.027, text="", font=Poli1, fill=blanc, tag='titre')
         fond.create_text(xf*0.5, yf*0.027, text="", font=Poli1, fill=blanc, tag='tour')
         fond.create_image(xf*0.985, hbarre/2, image=croixSombre, activeimage=croixLumineuse, tag='auRevoir')
@@ -60,8 +60,9 @@ class Partie:
         """Lance la procédure de mise en place pour le premier joueur.
         """
         fond.delete('accueil')
-        fond.create_rectangle(0, yf*0.05, tlatba, yf, fill=noir, tags=('pg'))
-        fond.create_rectangle(dpd, yf*0.05, xf, yf, fill=noir, tags=('pd'))
+        fond.create_image(xf/2, yf/2, image=mer)
+        fond.create_rectangle(0, yf*0.05, tlatba, yf, fill='', outline='', tags=('pg'))
+        fond.create_rectangle(dpd, yf*0.05, xf, yf, fill='', outline='', tags=('pd'))
         fond.create_text(xf*0.003*len(version), yf*0.987, text=version, font=Lili1, fill=gris)
         self.creerJoueurs()
         self.barreTitre()
@@ -82,10 +83,9 @@ class Partie:
         del(self.inst)
         fond.itemconfigure('titre', text=(self.getJoueur(0).nom))
         fond.move('titre', -xf*0.055, 0)
+        lat = fond.coords('pg')
         for i in range(len(j)):
-            t = 'cTire' + str(j[i].id)
-            fond.itemconfigure(t, state='normal')
-            fond.move(t, 0, yf*i)
+            j[i].cTire.dessine((lat[2], yf*0.105+yf*i))
         Attaque(j[0], j[1])
 
     def checkEtat(self) -> None:

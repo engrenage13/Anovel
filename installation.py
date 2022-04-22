@@ -1,8 +1,15 @@
-from FondMarin import fond, dpd, tlatba, xf, yf, yp, Poli2, gris, bleuBt, blanc
+from FondMarin import fond, tlatba, xf, yf, bleuBt
 from ui.bouton import Bouton
+from objets.Joueur import Joueur
 
 class Install:
-    def __init__(self, joueur: object, fonction) -> None:
+    def __init__(self, joueur: Joueur, fonction) -> None:
+        """Crée la fenêtre d'installation de bateaux pour un joueur.
+
+        Args:
+            joueur (Joueur): Joueur concerné par l'installation.
+            fonction (_type_): Fonction de validation de l'installation.
+        """
         self.joueur = joueur
         self.liBat = self.joueur.getBateaux()
         fond.itemconfigure('titre', text=f"{joueur.nom.upper()} - INSTALLATION")
@@ -22,7 +29,7 @@ class Install:
             fond.tag_unbind(t[0], '<Button-1>')
             fond.tag_unbind(t[0], '<Button-3>')
         fond.delete('install')
-        fond.itemconfigure('base'+str(self.joueur.id), state='hidden')
+        self.joueur.base.efface()
 
     def fin(self):
         """Place le bouton dans les états "veille" et "actif", en fonction de la position des bateaux.

@@ -1,8 +1,9 @@
 from random import *
 from FondMarin import *
 from objets.BateauJoueur import Bateau
-from objets.plateau import plateau
+from objets.plateau import Plateau
 from ui.notif import Notification
+from Image import Ima
 
 class Joueur(): # Initialise un joueur.
     def __init__(self, code: int):
@@ -10,18 +11,20 @@ class Joueur(): # Initialise un joueur.
         f = 'cTire' + str(code)
         d = 'notifTouche' + str(code)
         e = 'notifCoule' + str(code)
-        b = ["Porte Avion", "Croiseur", "Sous-marin n°1", "Sous-marin n°2", "Torpilleur"]
-        c = [5, 4, 3, 3, 2]
+        nomBats = ["Porte Avion", "Croiseur", "Sous-marin n°1", "Sous-marin n°2", "Torpilleur"]
+        tailleBats = [5, 4, 3, 3, 2]
+        imaBats = [Ima('images/bateaux/5.png'), Ima('images/bateaux/4.png'), Ima('images/bateaux/3.png'), 
+                   Ima('images/bateaux/3.png'), Ima('images/bateaux/2.png')]
         self.id = code
         self.nom = f"Joueur {self.id}"
-        self.base = plateau(10, 10, mer, a)
-        self.cTire = plateau(10, 10, mer, f)
+        self.base = Plateau(10, 10, a)
+        self.cTire = Plateau(10, 10, f)
         self.SetBateaux = []
         self.pret = False
         self.stats = [0, [0, 0], [0, 0]]
         # bateaux
-        for i in range(len(b)):
-            bat = Bateau(b[i], c[i], i, self)
+        for i in range(len(nomBats)):
+            bat = Bateau(nomBats[i], tailleBats[i], i, imaBats[i], self)
             self.SetBateaux.append(bat)
         # /bateaux
         shuffle(self.SetBateaux)
@@ -71,7 +74,8 @@ class Joueur(): # Initialise un joueur.
     def montreBase(self) -> None:
         """Affiche le plateau d'installation du joueur.
         """
-        fond.itemconfigure('base' + str(self.id), state='normal')
+        lat = fond.coords('pg')
+        self.base.dessine((lat[2], yf*0.105))
 
     def miseEnPlace(self) -> None:
         """Prépare le terrain pour que le joueur puisse positionner ses bateaux.
@@ -80,11 +84,11 @@ class Joueur(): # Initialise un joueur.
         self.dessineBateaux()
         self.placeLat()
 
-    def blocVert(self, bateau: object):
+    def blocVert(self, bateau: Bateau):
         """Déselectionne tous les bateaux sauf celui passé en paramètre.
 
         Args:
-            bateau (object): Bateau à ne pas déseclectionné.
+            bateau (Bateau): Bateau à ne pas déseclectionné.
         """
         for i in range(len(self.getBateaux())):
             if bateau != self.SetBateaux[i]:
@@ -100,7 +104,7 @@ class Joueur(): # Initialise un joueur.
         for i in range(len(l)):
             t = l[i].getTags()
             b = fond.coords(t[0])
-            if int(b[0]) <= int(c[2]*0.05):
+            if int(b[0]) <= int(c[2]*0.5):
                 a = True
         if a:
             self.placeLat()
@@ -110,17 +114,17 @@ class Joueur(): # Initialise un joueur.
     def placeLat(self):
         """Place les bateaux sur le panneau latéral de gauche.
         """
-        a = fond.coords('pg')
-        l = self.getBateaux()
-        for i in range(len(l)):
-            t = l[i].getTags()
-            b = fond.coords(t[0])
-            d = fond.coords(t[1])
-            c = int(a[3]*0.05)
-            if int(b[1]) == c:
-                fond.move(t[0], 0, yp*(i+1))
-            if int(d[1]) == int(c*0.4):
-                fond.move(t[1], 0, yp*(i+1))
+        plateau = fond.coords('pg')
+        liste = self.getBateaux()
+        for i in range(len(liste)):
+            tags = liste[i].getTags()
+            rect = fond.coords(tags[0])
+            titre = fond.coords(tags[1])
+            c = int(plateau[3]*0.05 + (tailleCase*0.8)/2)
+            if int(rect[1]) == c:
+                fond.move(tags[0], 0, yp*(i+1))
+            if int(titre[1]) == int(c*0.3):
+                fond.move(tags[1], 0, yp*(i+1))
             self.verifFonction()
         fond.delete('Pharos')
 

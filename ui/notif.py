@@ -19,6 +19,7 @@ class Notification:
         """Lance l'ascension de la notif.
         """
         self.__etat = True
+        fond.tag_raise(self.__id, 'plateau')
         self.monte()
     
     def monte(self) -> None:
@@ -51,16 +52,13 @@ class Notification:
         """
         return self.__etat
 
-    def modifMessage(self, bateau: str=None, case: str=None) -> None:
+    def modifMessage(self, case: str=None) -> None:
         """Permet de modifier le message transmis par la notification.
 
         Args:
-            bateau (str, optional): Nom de bateau. Defaults to None.
             case (str, optional): Nom de case. Defaults to None.
         """
         message = ""
-        if bateau != None:
-            message += f"{bateau} ennemi"
-        elif case != None:
+        if case != None:
             message += f"en {case}"
         fond.itemconfigure(self.__idMessage, text=message)
