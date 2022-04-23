@@ -1,5 +1,5 @@
 from FondMarin import *
-from objets.Bateau import *
+from objets.Bateau import Bateau
 from finPartie import Fin
 from objets.Joueur import Joueur
 from museeNoyee import touche, rate, viseur
@@ -150,12 +150,12 @@ class Attaque:
         listeBateau = self.listeBateaux1
         if joueurCible == self.j2:
             listeBateau = self.listeBateaux2
-        repTouche = estToucheBateau(joueurCible, idCase)
+        repTouche = joueurCible.estToucheBateau(idCase)
         if repTouche[0]:
             i = touche
         fond.itemconfigure('i'+tag, image=i)
         bateaux = joueurCible.getBateaux()
-        if estCoule(bateaux[repTouche[1]]) and not listeBateau[repTouche[1]]:
+        if bateaux[repTouche[1]].estCoule() and not listeBateau[repTouche[1]]:
             listeBateau[repTouche[1]] = True
             joueur.notifCoule.modifMessage(idCase)
             joueur.notifCoule.montre()
@@ -221,7 +221,7 @@ class Attaque:
         """Vérifie si le premier joueur a perdu, ou si le second joueur n'a pas de notif, 
            sinon il déclenche le tour du premier joueur.
         """
-        if aPerduJoueur(self.j1):
+        if self.j1.aPerdu():
             Fin(self.joueurs, 1, self.tour)
         elif not self.getEtatNotifs(self.j2):
             self.monter(pasApas)
@@ -232,7 +232,7 @@ class Attaque:
         """Vérifie si le second joueur a perdu, ou si le premier joueur n'a pas de notif, 
            sinon il déclenche le tour du second joueur.
         """
-        if aPerduJoueur(self.j2):
+        if self.j2.aPerdu():
             Fin(self.joueurs, 0, self.tour)
         elif not self.getEtatNotifs(self.j1):
             self.descendre(pasApas)
@@ -264,12 +264,12 @@ class Attaque:
                 ligne = self.j1.cTire.getLigne('a')
                 c = fond.coords(ligne[0])
                 if int(c[1]) == int(origyp):
-                    self.j1.toucheCase(estToucheBateau(self.j2, t)[0])
+                    self.j1.toucheCase(self.j2.estToucheBateau(t)[0])
                     self.affStats(0)
                     self.marquerCase(t, 'c1', self.j2, self.j1)
                     fond.after(1000, self.descendreOuQuitter)
                 else:
-                    self.j2.toucheCase(estToucheBateau(self.j1, t)[0])
+                    self.j2.toucheCase(self.j1.estToucheBateau(t)[0])
                     self.affStats(1)
                     self.marquerCase(t, 'c2', self.j1, self.j2)
                     fond.after(1000, self.monterOuQuitter)

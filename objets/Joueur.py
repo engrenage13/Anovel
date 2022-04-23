@@ -1,6 +1,6 @@
 from random import *
 from FondMarin import *
-from objets.BateauJoueur import Bateau
+from objets.BateauJoueur import BateauJoueur
 from objets.plateau import Plateau
 from ui.notif import Notification
 from Image import Ima
@@ -24,7 +24,7 @@ class Joueur(): # Initialise un joueur.
         self.stats = [0, [0, 0], [0, 0]]
         # bateaux
         for i in range(len(nomBats)):
-            bat = Bateau(nomBats[i], tailleBats[i], i, imaBats[i], self)
+            bat = BateauJoueur(nomBats[i], tailleBats[i], i, imaBats[i], self)
             self.SetBateaux.append(bat)
         # /bateaux
         shuffle(self.SetBateaux)
@@ -84,11 +84,11 @@ class Joueur(): # Initialise un joueur.
         self.dessineBateaux()
         self.placeLat()
 
-    def blocVert(self, bateau: Bateau):
+    def blocVert(self, bateau: BateauJoueur):
         """Déselectionne tous les bateaux sauf celui passé en paramètre.
 
         Args:
-            bateau (Bateau): Bateau à ne pas déseclectionné.
+            bateau (BateauJoueur): Bateau à ne pas déseclectionné.
         """
         for i in range(len(self.getBateaux())):
             if bateau != self.SetBateaux[i]:
@@ -96,7 +96,7 @@ class Joueur(): # Initialise un joueur.
                     self.SetBateaux[i].immobile()
 
     def vigile(self):
-        """Remet tout les bateaux mal positionnés, coorectement en place à côté du plateau.
+        """Remet tout les bateaux mal positionnés, correctement en place à côté du plateau.
         """
         a = False
         c = fond.coords('pg')
@@ -146,3 +146,33 @@ class Joueur(): # Initialise un joueur.
             self.stats[2][0] = self.stats[2][0] + 1
         self.stats[1][1] = round(self.stats[1][0]*100/self.stats[0], 1)
         self.stats[2][1] = round(self.stats[2][0]*100/self.stats[0], 1)
+
+    def estToucheBateau(self, case: str) -> list:
+        """Vérifie si l'un des bateaux du joueur est touché.
+
+        Args:
+            case (str): Case à comparer.
+
+        Returns:
+            list: Une liste composé d'un booléen, ainsi que l'indice du bateau touché dans la liste du joueur.
+        """
+        a = False
+        i = 0
+        while i < len(self.SetBateaux) and not a:
+            a = self.SetBateaux[i].estTouche(case)
+            i = i + 1
+        return [a, i-1]
+
+    def aPerdu(self) -> bool:
+        """Vérifie si le joueur a encore des bateaux non-coulés.
+
+        Returns:
+            bool: True si tous les bateaux du joueur ont coulés.
+        """
+        a = True
+        i = 0
+        while i < len(self.SetBateaux) and a:
+            if not self.SetBateaux[i].estCoule():
+                a = False
+            i = i + 1
+        return a

@@ -1,74 +1,68 @@
-from objets.BateauJoueur import Bateau
-from objets.Joueur import Joueur
+from random import choice
+from Image import Ima
+from FondMarin import tailleCase
 
-def estTouche(bateau: Bateau, posi: str) -> bool:
-    """Dit si le bateau passé en paramètres est sur la case qui est regardée.
+class Bateau:
+    def __init__(self, nom: str, taille: int, id: int, image: Ima, proprietaire: object):
+        """Crée un bateau.
 
-    Args:
-        bateau (Bateau): Bateau comparer.
-        posi (str): Case vérifier.
+        Args:
+            nom (str): Le nom du bateau.
+            taille (int): Le nombre de cases qu'occupe le bateau sur le plateau.
+            id (int): Le numéro d'identification du bateau pour son propriétaire.
+            image (Ima): Apparence du bateau.
+            proprietaire (Joueur): Propriétaire du bateau.
+        """
+        self.taille = taille
+        self.orient = 'h'
+        self.nom = nom
+        self.pos = None
+        self.tag = 'bat' + str(id) + '.' + str(proprietaire.getId())
+        self.tagPlus = 'tbat' + str(id) + '.' + str(proprietaire.getId())
+        self.proprio = proprietaire
+        self.etatSeg = ['o']*taille
+        self.coule = False
+        self.alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 
+                         'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+        # Images
+        lideg = [90, -90]
+        dimensions = image.getDimensions()
+        horiz = image.reDim(prop=(tailleCase*0.88)*self.taille/dimensions[0])
+        self.horiz = image.createPhotoImage(horiz)
+        self.verti = image.tourne(choice(lideg), horiz)
+        self.verti = image.createPhotoImage(self.verti)
+        # /Images
 
-    Returns:
-        bool: True si le bateau est sur la case touché.
-    """
-    a = False
-    i = 0
-    while i < len(bateau.pos) and not a:
-        b = bateau.pos[i][0:len(bateau.pos[i])-2]
-        if b == posi:
-            bateau.etatSeg[i] = 'x'
+    def estTouche(self, position: str) -> bool:
+        """Dit si le bateau passé en paramètres est sur la case qui est regardée.
+
+        Args:
+            position (str): Case à vérifier.
+
+        Returns:
+            bool: True si le bateau est sur la case touché.
+        """
+        a = False
+        i = 0
+        while i < self.taille and not a:
+            b = self.pos[i][0:len(self.pos[i])-2]
+            if b == position:
+                self.etatSeg[i] = 'x'
+                a = True
+            i = i + 1
+        return a
+
+    def estCoule(self) -> bool:
+        """Dit si le bateau est coulé ou non.
+
+        Returns:
+            bool: True si le bateau est coulé.
+        """
+        a = False
+        if self.coule:
             a = True
-        i = i + 1
-    return a
-
-def estToucheBateau(joueur: Joueur, case: str) -> list:
-    """Vérifie si l'un des bateaux du joueur est touché.
-
-    Args:
-        joueur (Joueur): Joueur pour lequel, il faut vérifier.
-        case (str): Case à comparer.
-
-    Returns:
-        list: Une liste composé d'un booléen, ainsi que l'indice du bateau touché dans la liste du joueur.
-    """
-    a = False
-    i = 0
-    while i < len(joueur.SetBateaux) and not a:
-        a = estTouche(joueur.SetBateaux[i], case)
-        i = i + 1
-    return [a, i-1]
-
-def estCoule(bateau: Bateau) -> bool:
-    """Dit si le bateau testé est coulé ou non.
-
-    Args:
-        bateau (Bateau): Bateau à vérifier.
-
-    Returns:
-        bool: True si le bateau est coulé.
-    """
-    a = False
-    if bateau.coule:
-        a = True
-    else:
-        if 'o' not in bateau.etatSeg:
-            bateau.coule = True
-            a = True
-    return a
-
-def aPerduJoueur(joueur: Joueur) -> bool:
-    """Vérifie si le joueur passé en paramètre a encore des bateaux non-coulés.
-
-    Args:
-        joueur (Joueur): Joueur à tester.
-
-    Returns:
-        bool: True si tous les bateaux du joueur ont coulés.
-    """
-    a = True
-    i = 0
-    while i < len(joueur.SetBateaux) and a:
-        if not estCoule(joueur.SetBateaux[i]):
-            a = False
-        i = i + 1
-    return a
+        else:
+            if 'o' not in self.etatSeg:
+                self.coule = True
+                a = True
+        return a

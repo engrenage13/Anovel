@@ -1,9 +1,9 @@
-from FondMarin import *
+from FondMarin import fond, tailleCase, Poli1
 from Image import Ima
-from random import choice
+from objets.Bateau import Bateau
 
-class Bateau():
-    def __init__(self, nom: str, taille: int, id: int, image: Ima, joueur: object):
+class BateauJoueur(Bateau):
+    def __init__(self, nom: str, taille: int, id: int, image: Ima, proprietaire: object):
         """Crée un bateau lié à un joueur.
 
         Args:
@@ -11,28 +11,10 @@ class Bateau():
             taille (int): Le nombre de cases qu'occupe le bateau sur le plateau.
             id (int): Le numéro d'identification du bateau pour son propriétaire.
             image (Ima): Apparence du bateau.
-            joueur (Joueur): Propriétaire du bateau.
+            propriétaire (Joueur): Propriétaire du bateau.
         """
-        self.taille = taille
-        self.orient = 'h'
-        self.nom = nom
-        self.pos = None
+        super().__init__(nom, taille, id, image, proprietaire)
         self.defil = False
-        self.tag = 'bat' + str(id) + '.' + str(joueur.getId())
-        self.tagPlus = 'tbat' + str(id) + '.' + str(joueur.getId())
-        self.proprio = joueur
-        self.etatSeg = ['o']*taille
-        self.coule = False
-        self.alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 
-                         'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-        # Images
-        lideg = [90, -90]
-        dimensions = image.getDimensions()
-        horiz = image.reDim(prop=(tailleCase*0.88)*self.taille/dimensions[0])
-        self.horiz = image.createPhotoImage(horiz)
-        self.verti = image.tourne(choice(lideg), horiz)
-        self.verti = image.createPhotoImage(self.verti)
-        # /Images
         fond.tag_bind(self.tag, '<Button-1>', self.switchMode)
         fond.tag_bind(self.tag, '<Button-3>', self.tourne)
 
