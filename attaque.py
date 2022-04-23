@@ -2,7 +2,7 @@ from FondMarin import *
 from objets.Bateau import *
 from finPartie import Fin
 from objets.Joueur import Joueur
-from museeNoyee import touche, rate
+from museeNoyee import touche, rate, viseur
 from objets.plateau import Plateau
 
 class Attaque:
@@ -90,23 +90,14 @@ class Attaque:
             case (str): Le code de la case (qui contient son nom)
         """
         b = coo
-        fond.create_rectangle(b[0], b[1], b[2], b[3], fill='', outline='white', width=4, tag='pointeur')
-        fond.create_oval(b[0]+(b[2]-b[0])*0.2, b[1]+(b[3]-b[1])*0.2, b[2]-(b[2]-b[0])*0.2, b[3]-(b[3]-b[1])*0.2, 
-                        fill='', outline=grisClair, width=3, tag='pointeur')
+        fond.create_rectangle(b[0], b[1], b[2], b[3], fill='', outline='white', width=3, tag='pointeur')
+        fond.create_image(b[0]+(b[2]-b[0])/2, b[1]+(b[3]-b[1])/2, image=viseur, tag='pointeur')
         if self.getEtatCase(case):
             case = case[0:len(case)-2]
             col = blanc
         else:
             case = "X"
             col = orange
-        fond.create_line(b[0]+(b[2]-b[0])/2, b[1]+(b[3]-b[1])*0.1, b[0]+(b[2]-b[0])/2, b[1]+(b[3]-b[1])*0.35, 
-                        width=2, fill=grisClair, tag='pointeur')
-        fond.create_line(b[2]-(b[2]-b[0])*0.1, b[1]+(b[3]-b[1])/2, b[2]-(b[2]-b[0])*0.35, b[1]+(b[3]-b[1])/2, 
-                        width=2, fill=grisClair, tag='pointeur')
-        fond.create_line(b[0]+(b[2]-b[0])/2, b[3]-(b[3]-b[1])*0.1, b[0]+(b[2]-b[0])/2, b[3]-(b[3]-b[1])*0.35, 
-                        width=2, fill=grisClair, tag='pointeur')
-        fond.create_line(b[0]+(b[2]-b[0])*0.1, b[1]+(b[3]-b[1])/2, b[0]+(b[2]-b[0])*0.35, b[1]+(b[3]-b[1])/2, 
-                        width=2, fill=grisClair, tag='pointeur')
         fond.create_text(b[0]+(b[2]-b[0])/2, b[1]+(b[3]-b[1])/2, text=case, font=Lili1, fill=col, 
                         tags=('pointeur', 'affiTgVis'))
 
@@ -252,14 +243,10 @@ class Attaque:
         """Supprimme les événements liés au clic de la souris.
         """
         fond.tag_unbind('pointeur', '<Button-1>')
-        fond.tag_unbind('cTire2', '<Button-1>')
-        fond.tag_unbind('cTire1', '<Button-1>')
 
     def connect(self):
         """(Re)crée les événements liés au clic de la souris.
         """
-        fond.tag_bind('cTire1', '<Button-1>', self.aj2)
-        fond.tag_bind('cTire2', '<Button-1>', self.aj1)
         fond.tag_bind('pointeur', '<Button-1>', self.cliqueCurseur)
 
     def cliqueCurseur(self, event):
@@ -286,35 +273,3 @@ class Attaque:
                     self.affStats(1)
                     self.marquerCase(t, 'c2', self.j1, self.j2)
                     fond.after(1000, self.monterOuQuitter)
-
-    def aj1(self, event):
-        """Réagit à un clique sur le plateau d'attaque du second joueur.
-
-        Args:
-            event (_type_): _description_
-        """
-        t = fond.itemcget('affiTgVis', 'text')
-        if t != "X":
-            self.deconnect()
-            p = self.getEtatCase(t, 'c2')
-            self.j2.toucheCase(estToucheBateau(self.j1, t)[0])
-            self.affStats(1)
-            if p:
-                self.marquerCase(t, 'c2', self.j1, self.j2)
-                fond.after(1000, self.monterOuQuitter)
-
-    def aj2(self, event):
-        """Réagit à un clique sur le plateau d'attaque du premier joueur.
-
-        Args:
-            event (_type_): _description_
-        """
-        t = fond.itemcget('affiTgVis', 'text')
-        if t != "X":
-            self.deconnect()
-            p = self.getEtatCase(t, 'c1')
-            self.j1.toucheCase(estToucheBateau(self.j2, t)[0])
-            self.affStats(0)
-            if p:
-                self.marquerCase(t, 'c1', self.j2, self.j1)
-                fond.after(1000, self.descendreOuQuitter)
