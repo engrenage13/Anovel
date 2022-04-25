@@ -1,9 +1,9 @@
-from FondMarin import *
+from FondMarin import fond, tailleCase, Poli1, tlatba, yf
 from Image import Ima
-from random import choice
+from objets.Bateau import Bateau
 
-class Bateau():
-    def __init__(self, nom: str, taille: int, id: int, image: Ima, joueur: object):
+class BateauJoueur(Bateau):
+    def __init__(self, nom: str, taille: int, id: int, image: Ima, proprietaire: object):
         """Crée un bateau lié à un joueur.
 
         Args:
@@ -11,28 +11,10 @@ class Bateau():
             taille (int): Le nombre de cases qu'occupe le bateau sur le plateau.
             id (int): Le numéro d'identification du bateau pour son propriétaire.
             image (Ima): Apparence du bateau.
-            joueur (Joueur): Propriétaire du bateau.
+            propriétaire (Joueur): Propriétaire du bateau.
         """
-        self.taille = taille
-        self.orient = 'h'
-        self.nom = nom
-        self.pos = None
+        super().__init__(nom, taille, id, image, proprietaire)
         self.defil = False
-        self.tag = 'bat' + str(id) + '.' + str(joueur.getId())
-        self.tagPlus = 'tbat' + str(id) + '.' + str(joueur.getId())
-        self.proprio = joueur
-        self.etatSeg = ['o']*taille
-        self.coule = False
-        self.alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 
-                         'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-        # Images
-        lideg = [90, -90]
-        dimensions = image.getDimensions()
-        horiz = image.reDim(prop=(tailleCase*0.88)*self.taille/dimensions[0])
-        self.horiz = image.createPhotoImage(horiz)
-        self.verti = image.tourne(choice(lideg), horiz)
-        self.verti = image.createPhotoImage(self.verti)
-        # /Images
         fond.tag_bind(self.tag, '<Button-1>', self.switchMode)
         fond.tag_bind(self.tag, '<Button-3>', self.tourne)
 
@@ -50,10 +32,9 @@ class Bateau():
         Args:
             cdJ (int): Le code du joueur (propriétaire).
         """
-        a = fond.coords('pg')
         case = tailleCase
-        x = a[2]*0.5
-        y = a[3]*0.05 + (case*0.8)/2
+        x = tlatba*0.5
+        y = yf*0.05 + (case*0.8)/2
         fond.create_text(x, y*0.3, text=self.nom, fill='white', font=Poli1, 
                          tags=(self.tagPlus, 'nomBat', ('nSet'+str(cdJ))))
         fond.create_image(x, y, image=self.horiz, tags=('bateaux', self.tag, ('set'+str(cdJ))))
@@ -73,7 +54,6 @@ class Bateau():
         """Désélectionne le bateau.
         """
         self.defil = False
-        debaras = fond.coords('pg')
         a = fond.find_withtag('Pharos')
         if len(a) >= 1:
             b = fond.itemcget('Pharos', 'outline')
@@ -87,9 +67,9 @@ class Bateau():
                     y = c1[1]+(cmax[3]-c1[1])/2
                 self.positionneBien((x, y))
             else:
-                self.repose((debaras[2]*0.5, debaras[3]*0.05 + (tailleCase*0.8)/2))
+                self.repose((tlatba*0.5, yf*0.05 + (tailleCase*0.8)/2))
         else:
-            self.repose((debaras[2]*0.5, debaras[3]*0.05 + (tailleCase*0.8)/2))
+            self.repose((tlatba*0.5, yf*0.05 + (tailleCase*0.8)/2))
 
     def declenMouv(self):
         """Sélectionne le bateau.
@@ -117,7 +97,13 @@ class Bateau():
         co = fond.coords(self.tag)
         milieu = self.localCase((co[0], co[1]))
         if milieu != None:
-            self.rempliListe(milieu)
+            cooca = fond.coords(milieu)
+            total = cooca[0]+(cooca[2]-cooca[0])
+            pourcent = round(co[0]*100/total, 1)
+            if self.orient == 'v':
+                total = cooca[1]+(cooca[3]-cooca[1])
+                pourcent = round(co[1]*100/total, 1)
+            self.rempliListe(milieu, pourcent)
         else:
             self.pos = [None]*self.taille
         self.brillePlacement(self.proprio.getBateaux())
@@ -189,14 +175,18 @@ class Bateau():
                     b = ligne[j]
         return b
 
-    def rempliListe(self, nom: str):
+    def rempliListe(self, nom: str, pourcentage: float) -> None:
         """Remplis la liste de position du bateau.
 
         Args:
             nom (str): Nom de la case occupée par le centre du bateau.
+            pourcentage (float): Précision sur la position du milieu du bateau sur la case.
         """
         avant = int((self.taille-1)/2)
         arriere = self.taille-1-avant
+        if pourcentage < 50:
+            arriere = int((self.taille-1)/2)
+            avant = self.taille-1-arriere
         if self.orient == 'h':
             ligne = self.proprio.base.getLigne(nom[0])
         else:

@@ -8,6 +8,9 @@ croixSombre = cruzoff.createPhotoImage(croixSombre)
 cruzon = Ima('images/ui/CroLum.png')
 croixLumineuse = cruzon.reDim(hbarre*0.9, hbarre*0.9)
 croixLumineuse = cruzon.createPhotoImage(croixLumineuse)
+pointe = Ima('images/bataille/viseur.png')
+viseur = pointe.reDim(tailleCase*0.96, tailleCase*0.96)
+viseur = pointe.createPhotoImage(viseur)
 
 # Marqueurs
 croix = Ima('images/bataille/croix.png')

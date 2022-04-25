@@ -1,8 +1,7 @@
 from FondMarin import *
-from objets.Bateau import *
 from finPartie import Fin
 from objets.Joueur import Joueur
-from museeNoyee import touche, rate
+from museeNoyee import touche, rate, viseur
 from objets.plateau import Plateau
 
 class Attaque:
@@ -90,23 +89,14 @@ class Attaque:
             case (str): Le code de la case (qui contient son nom)
         """
         b = coo
-        fond.create_rectangle(b[0], b[1], b[2], b[3], fill='', outline='white', width=4, tag='pointeur')
-        fond.create_oval(b[0]+(b[2]-b[0])*0.2, b[1]+(b[3]-b[1])*0.2, b[2]-(b[2]-b[0])*0.2, b[3]-(b[3]-b[1])*0.2, 
-                        fill='', outline=grisClair, width=3, tag='pointeur')
+        fond.create_rectangle(b[0], b[1], b[2], b[3], fill='', outline='white', width=3, tag='pointeur')
+        fond.create_image(b[0]+(b[2]-b[0])/2, b[1]+(b[3]-b[1])/2, image=viseur, tag='pointeur')
         if self.getEtatCase(case):
             case = case[0:len(case)-2]
             col = blanc
         else:
             case = "X"
             col = orange
-        fond.create_line(b[0]+(b[2]-b[0])/2, b[1]+(b[3]-b[1])*0.1, b[0]+(b[2]-b[0])/2, b[1]+(b[3]-b[1])*0.35, 
-                        width=2, fill=grisClair, tag='pointeur')
-        fond.create_line(b[2]-(b[2]-b[0])*0.1, b[1]+(b[3]-b[1])/2, b[2]-(b[2]-b[0])*0.35, b[1]+(b[3]-b[1])/2, 
-                        width=2, fill=grisClair, tag='pointeur')
-        fond.create_line(b[0]+(b[2]-b[0])/2, b[3]-(b[3]-b[1])*0.1, b[0]+(b[2]-b[0])/2, b[3]-(b[3]-b[1])*0.35, 
-                        width=2, fill=grisClair, tag='pointeur')
-        fond.create_line(b[0]+(b[2]-b[0])*0.1, b[1]+(b[3]-b[1])/2, b[0]+(b[2]-b[0])*0.35, b[1]+(b[3]-b[1])/2, 
-                        width=2, fill=grisClair, tag='pointeur')
         fond.create_text(b[0]+(b[2]-b[0])/2, b[1]+(b[3]-b[1])/2, text=case, font=Lili1, fill=col, 
                         tags=('pointeur', 'affiTgVis'))
 
@@ -159,12 +149,12 @@ class Attaque:
         listeBateau = self.listeBateaux1
         if joueurCible == self.j2:
             listeBateau = self.listeBateaux2
-        repTouche = estToucheBateau(joueurCible, idCase)
+        repTouche = joueurCible.estToucheBateau(idCase)
         if repTouche[0]:
             i = touche
         fond.itemconfigure('i'+tag, image=i)
         bateaux = joueurCible.getBateaux()
-        if estCoule(bateaux[repTouche[1]]) and not listeBateau[repTouche[1]]:
+        if bateaux[repTouche[1]].estCoule() and not listeBateau[repTouche[1]]:
             listeBateau[repTouche[1]] = True
             joueur.notifCoule.modifMessage(idCase)
             joueur.notifCoule.montre()
@@ -230,7 +220,7 @@ class Attaque:
         """Vérifie si le premier joueur a perdu, ou si le second joueur n'a pas de notif, 
            sinon il déclenche le tour du premier joueur.
         """
-        if aPerduJoueur(self.j1):
+        if self.j1.aPerdu():
             Fin(self.joueurs, 1, self.tour)
         elif not self.getEtatNotifs(self.j2):
             self.monter(pasApas)
@@ -241,7 +231,7 @@ class Attaque:
         """Vérifie si le second joueur a perdu, ou si le premier joueur n'a pas de notif, 
            sinon il déclenche le tour du second joueur.
         """
-        if aPerduJoueur(self.j2):
+        if self.j2.aPerdu():
             Fin(self.joueurs, 0, self.tour)
         elif not self.getEtatNotifs(self.j1):
             self.descendre(pasApas)
@@ -252,14 +242,10 @@ class Attaque:
         """Supprimme les événements liés au clic de la souris.
         """
         fond.tag_unbind('pointeur', '<Button-1>')
-        fond.tag_unbind('cTire2', '<Button-1>')
-        fond.tag_unbind('cTire1', '<Button-1>')
 
     def connect(self):
         """(Re)crée les événements liés au clic de la souris.
         """
-        fond.tag_bind('cTire1', '<Button-1>', self.aj2)
-        fond.tag_bind('cTire2', '<Button-1>', self.aj1)
         fond.tag_bind('pointeur', '<Button-1>', self.cliqueCurseur)
 
     def cliqueCurseur(self, event):
@@ -277,44 +263,12 @@ class Attaque:
                 ligne = self.j1.cTire.getLigne('a')
                 c = fond.coords(ligne[0])
                 if int(c[1]) == int(origyp):
-                    self.j1.toucheCase(estToucheBateau(self.j2, t)[0])
+                    self.j1.toucheCase(self.j2.estToucheBateau(t)[0])
                     self.affStats(0)
                     self.marquerCase(t, 'c1', self.j2, self.j1)
                     fond.after(1000, self.descendreOuQuitter)
                 else:
-                    self.j2.toucheCase(estToucheBateau(self.j1, t)[0])
+                    self.j2.toucheCase(self.j1.estToucheBateau(t)[0])
                     self.affStats(1)
                     self.marquerCase(t, 'c2', self.j1, self.j2)
                     fond.after(1000, self.monterOuQuitter)
-
-    def aj1(self, event):
-        """Réagit à un clique sur le plateau d'attaque du second joueur.
-
-        Args:
-            event (_type_): _description_
-        """
-        t = fond.itemcget('affiTgVis', 'text')
-        if t != "X":
-            self.deconnect()
-            p = self.getEtatCase(t, 'c2')
-            self.j2.toucheCase(estToucheBateau(self.j1, t)[0])
-            self.affStats(1)
-            if p:
-                self.marquerCase(t, 'c2', self.j1, self.j2)
-                fond.after(1000, self.monterOuQuitter)
-
-    def aj2(self, event):
-        """Réagit à un clique sur le plateau d'attaque du premier joueur.
-
-        Args:
-            event (_type_): _description_
-        """
-        t = fond.itemcget('affiTgVis', 'text')
-        if t != "X":
-            self.deconnect()
-            p = self.getEtatCase(t, 'c1')
-            self.j1.toucheCase(estToucheBateau(self.j2, t)[0])
-            self.affStats(0)
-            if p:
-                self.marquerCase(t, 'c1', self.j2, self.j1)
-                fond.after(1000, self.descendreOuQuitter)
