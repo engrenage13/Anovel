@@ -5,7 +5,7 @@ from objets.plateau import Plateau
 from ui.notif import Notification
 from Image import Ima
 
-class Joueur(): # Initialise un joueur.
+class Joueur():
     def __init__(self, code: int):
         """Crée un joueur (incarné par une personne).
 
@@ -110,12 +110,11 @@ class Joueur(): # Initialise un joueur.
         """Remet tous les bateaux mal positionnés, correctement en place à côté du plateau.
         """
         a = False
-        c = fond.coords('pg')
         l = self.getBateaux()
         for i in range(len(l)):
             t = l[i].getTags()
             b = fond.coords(t[0])
-            if int(b[0]) <= int(c[2]*0.5):
+            if int(b[0]) <= int(tlatba*0.5):
                 a = True
         if a:
             self.placeLat()

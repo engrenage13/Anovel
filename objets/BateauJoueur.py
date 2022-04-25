@@ -1,4 +1,4 @@
-from FondMarin import fond, tailleCase, Poli1
+from FondMarin import fond, tailleCase, Poli1, tlatba, yf
 from Image import Ima
 from objets.Bateau import Bateau
 
@@ -32,10 +32,9 @@ class BateauJoueur(Bateau):
         Args:
             cdJ (int): Le code du joueur (propriétaire).
         """
-        a = fond.coords('pg')
         case = tailleCase
-        x = a[2]*0.5
-        y = a[3]*0.05 + (case*0.8)/2
+        x = tlatba*0.5
+        y = yf*0.05 + (case*0.8)/2
         fond.create_text(x, y*0.3, text=self.nom, fill='white', font=Poli1, 
                          tags=(self.tagPlus, 'nomBat', ('nSet'+str(cdJ))))
         fond.create_image(x, y, image=self.horiz, tags=('bateaux', self.tag, ('set'+str(cdJ))))
@@ -55,7 +54,6 @@ class BateauJoueur(Bateau):
         """Désélectionne le bateau.
         """
         self.defil = False
-        debaras = fond.coords('pg')
         a = fond.find_withtag('Pharos')
         if len(a) >= 1:
             b = fond.itemcget('Pharos', 'outline')
@@ -69,9 +67,9 @@ class BateauJoueur(Bateau):
                     y = c1[1]+(cmax[3]-c1[1])/2
                 self.positionneBien((x, y))
             else:
-                self.repose((debaras[2]*0.5, debaras[3]*0.05 + (tailleCase*0.8)/2))
+                self.repose((tlatba*0.5, yf*0.05 + (tailleCase*0.8)/2))
         else:
-            self.repose((debaras[2]*0.5, debaras[3]*0.05 + (tailleCase*0.8)/2))
+            self.repose((tlatba*0.5, yf*0.05 + (tailleCase*0.8)/2))
 
     def declenMouv(self):
         """Sélectionne le bateau.

@@ -1,4 +1,4 @@
-from FondMarin import fond, xf, yf, dpd, tlatba, hbarre, version, Poli1, Lili1, gris, mauve, blanc, noir
+from FondMarin import fond, xf, yf, hbarre, version, Poli1, Lili1, gris, mauve, blanc, tlatba
 from installation import Installateur
 from objets.Joueur import Joueur
 from attaque import Attaque
@@ -61,8 +61,6 @@ class Partie:
         """
         fond.delete('accueil')
         fond.create_image(xf/2, yf/2, image=mer)
-        fond.create_rectangle(0, yf*0.05, tlatba, yf, fill='', outline='', tags=('pg'))
-        fond.create_rectangle(dpd, yf*0.05, xf, yf, fill='', outline='', tags=('pd'))
         fond.create_text(xf*0.003*len(version), yf*0.987, text=version, font=Lili1, fill=gris)
         self.creerJoueurs()
         self.barreTitre()
@@ -83,9 +81,8 @@ class Partie:
         del(self.inst)
         fond.itemconfigure('titre', text=(self.getJoueur(0).nom))
         fond.move('titre', -xf*0.055, 0)
-        lat = fond.coords('pg')
         for i in range(len(j)):
-            j[i].cTire.dessine((lat[2], yf*0.105+yf*i))
+            j[i].cTire.dessine((tlatba, yf*0.105+yf*i))
         Attaque(j[0], j[1])
 
     def checkEtat(self) -> None:

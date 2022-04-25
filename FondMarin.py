@@ -30,7 +30,6 @@ tlatba = int(xf - yf*0.84)/2
 yp = yf*0.15
 origyp = yf*0.105
 pasApas = yf*0.05
-dpd = xf-tlatba
 tailleCase = int(yf*0.84/10)
 
 # barre - menu
