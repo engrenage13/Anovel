@@ -1,5 +1,5 @@
 from FondMarin import fond, xf, yf, dpd, tlatba, hbarre, version, Poli1, Lili1, gris, mauve, blanc, noir
-from installation import Install
+from installation import Installateur
 from objets.Joueur import Joueur
 from attaque import Attaque
 from museeNoyee import croixLumineuse, croixSombre, mer
@@ -66,14 +66,14 @@ class Partie:
         fond.create_text(xf*0.003*len(version), yf*0.987, text=version, font=Lili1, fill=gris)
         self.creerJoueurs()
         self.barreTitre()
-        self.inst = Install(self.getJoueur(0), self.checkEtat)
+        self.inst = Installateur(self.getJoueur(0), self.checkEtat)
 
     def suite(self) -> None:
         """Mise en place pour le second joueur.
         """
         self.inst.sup()
         del(self.inst)
-        self.inst = Install(self.getJoueur(1), self.checkEtat)
+        self.inst = Installateur(self.getJoueur(1), self.checkEtat)
 
     def jeu(self) -> None:
         """Lance la partie.

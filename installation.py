@@ -1,8 +1,8 @@
-from FondMarin import fond, tlatba, xf, yf, bleuBt
+from FondMarin import fond, tlatba, xf, yf, bleuBt, tailleCase, yp
 from ui.bouton import Bouton
 from objets.Joueur import Joueur
 
-class Install:
+class Installateur:
     def __init__(self, joueur: Joueur, fonction) -> None:
         """Crée la fenêtre d'installation de bateaux pour un joueur.
 
@@ -14,9 +14,17 @@ class Install:
         self.liBat = self.joueur.getBateaux()
         fond.itemconfigure('titre', text=f"{joueur.nom.upper()} - INSTALLATION")
         self.bt = Bouton(fonction, "VALIDER LE PLAN", bleuBt, False, ['valid', 'install'])
+        self.joueur.montreBase()
+        self.dessineBateaux()
+        self.joueur.placeLat()
         self.bt.dessine((xf-tlatba/2, (yf*0.945)-(yf*0.84/20)))
         self.joueur.setVerif(self.fin)
-        self.joueur.miseEnPlace()
+
+    def dessineBateaux(self) -> None:
+        """Dessine tous les bateaux du joueur.
+        """
+        for i in range(len(self.liBat)):
+            self.liBat[i].dessine(self.joueur.id)
 
     def sup(self) -> None:
         """Gère la suppression correcte de l'installateur.

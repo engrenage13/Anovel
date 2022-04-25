@@ -7,14 +7,15 @@ from Image import Ima
 
 class Joueur(): # Initialise un joueur.
     def __init__(self, code: int):
+        """Crée un joueur (incarné par une personne).
+
+        Args:
+            code (int): L'identifiant numérique du joueur.
+        """
         a = 'base' + str(code)
         f = 'cTire' + str(code)
         d = 'notifTouche' + str(code)
         e = 'notifCoule' + str(code)
-        nomBats = ["Porte Avion", "Croiseur", "Sous-marin n°1", "Sous-marin n°2", "Torpilleur"]
-        tailleBats = [5, 4, 3, 3, 2]
-        imaBats = [Ima('images/bateaux/5.png'), Ima('images/bateaux/4.png'), Ima('images/bateaux/3.png'), 
-                   Ima('images/bateaux/3.png'), Ima('images/bateaux/2.png')]
         self.id = code
         self.nom = f"Joueur {self.id}"
         self.base = Plateau(10, 10, a)
@@ -23,6 +24,10 @@ class Joueur(): # Initialise un joueur.
         self.pret = False
         self.stats = [0, [0, 0], [0, 0]]
         # bateaux
+        nomBats = ["Porte Avion", "Croiseur", "Sous-marin n°1", "Sous-marin n°2", "Torpilleur"]
+        tailleBats = [5, 4, 3, 3, 2]
+        imaBats = [Ima('images/bateaux/5.png'), Ima('images/bateaux/4.png'), Ima('images/bateaux/3.png'), 
+                   Ima('images/bateaux/3.png'), Ima('images/bateaux/2.png')]
         for i in range(len(nomBats)):
             bat = BateauJoueur(nomBats[i], tailleBats[i], i, imaBats[i], self)
             self.SetBateaux.append(bat)
@@ -65,23 +70,14 @@ class Joueur(): # Initialise un joueur.
         """
         return self.stats
 
-    def dessineBateaux(self) -> None:
-        """Dessine tous les bateaux du joueur.
-        """
-        for i in range(len(self.SetBateaux)):
-            self.SetBateaux[i].dessine(self.id)
-
     def montreBase(self) -> None:
         """Affiche le plateau d'installation du joueur.
         """
-        lat = fond.coords('pg')
-        self.base.dessine((lat[2], yf*0.105))
+        self.base.dessine((tlatba, yf*0.105))
 
     def miseEnPlace(self) -> None:
         """Prépare le terrain pour que le joueur puisse positionner ses bateaux.
         """
-        self.montreBase()
-        self.dessineBateaux()
         self.placeLat()
 
     def blocVert(self, bateau: BateauJoueur):
@@ -95,8 +91,23 @@ class Joueur(): # Initialise un joueur.
                 if self.SetBateaux[i].defil:
                     self.SetBateaux[i].immobile()
 
+    def placeLat(self):
+        """Place correctement les bateaux à gauche.
+        """
+        plateau = [tlatba, yf]
+        for i in range(len(self.getBateaux())):
+            tags = self.getBateaux()[i].getTags()
+            rect = fond.coords(tags[0])
+            titre = fond.coords(tags[1])
+            c = int(plateau[1]*0.05 + (tailleCase*0.8)/2)
+            if int(rect[1]) == c:
+                fond.move(tags[0], 0, yp*(i+1))
+            if int(titre[1]) == int(c*0.3):
+                fond.move(tags[1], 0, yp*(i+1))
+        fond.delete('Pharos')
+
     def vigile(self):
-        """Remet tout les bateaux mal positionnés, correctement en place à côté du plateau.
+        """Remet tous les bateaux mal positionnés, correctement en place à côté du plateau.
         """
         a = False
         c = fond.coords('pg')
@@ -111,25 +122,8 @@ class Joueur(): # Initialise un joueur.
         else:
             fond.after(1000, self.vigile)
 
-    def placeLat(self):
-        """Place les bateaux sur le panneau latéral de gauche.
-        """
-        plateau = fond.coords('pg')
-        liste = self.getBateaux()
-        for i in range(len(liste)):
-            tags = liste[i].getTags()
-            rect = fond.coords(tags[0])
-            titre = fond.coords(tags[1])
-            c = int(plateau[3]*0.05 + (tailleCase*0.8)/2)
-            if int(rect[1]) == c:
-                fond.move(tags[0], 0, yp*(i+1))
-            if int(titre[1]) == int(c*0.3):
-                fond.move(tags[1], 0, yp*(i+1))
-            self.verifFonction()
-        fond.delete('Pharos')
-
     def setVerif(self, fonction):
-        """Paramètre la foction de vérification avec celle passée en paramètre.
+        """Paramètre la fonction de vérification avec celle passée en paramètre.
 
         Args:
             fonction (_type_): Le vérificateur
