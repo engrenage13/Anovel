@@ -97,7 +97,13 @@ class BateauJoueur(Bateau):
         co = fond.coords(self.tag)
         milieu = self.localCase((co[0], co[1]))
         if milieu != None:
-            self.rempliListe(milieu)
+            cooca = fond.coords(milieu)
+            total = cooca[0]+(cooca[2]-cooca[0])
+            pourcent = round(co[0]*100/total, 1)
+            if self.orient == 'v':
+                total = cooca[1]+(cooca[3]-cooca[1])
+                pourcent = round(co[1]*100/total, 1)
+            self.rempliListe(milieu, pourcent)
         else:
             self.pos = [None]*self.taille
         self.brillePlacement(self.proprio.getBateaux())
@@ -169,14 +175,18 @@ class BateauJoueur(Bateau):
                     b = ligne[j]
         return b
 
-    def rempliListe(self, nom: str):
+    def rempliListe(self, nom: str, pourcentage: float) -> None:
         """Remplis la liste de position du bateau.
 
         Args:
             nom (str): Nom de la case occupée par le centre du bateau.
+            pourcentage (float): Précision sur la position du milieu du bateau sur la case.
         """
         avant = int((self.taille-1)/2)
         arriere = self.taille-1-avant
+        if pourcentage < 50:
+            arriere = int((self.taille-1)/2)
+            avant = self.taille-1-arriere
         if self.orient == 'h':
             ligne = self.proprio.base.getLigne(nom[0])
         else:
