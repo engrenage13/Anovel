@@ -1,8 +1,14 @@
 from random import choice, randint
-from FondMarin import *
+from systeme.FondMarin import *
 
 class Paillette:
     def __init__(self, zone: tuple, couleurs: list):
+        """Crée une paillette (objet d'animation).
+
+        Args:
+            zone (tuple): Zone dans laquelle la paillette peut apparaître.
+            couleurs (list): Couleurs possibles pour la paillette.
+        """
         self.zone = zone
         self.taille = 0
         self.couleurs = couleurs
@@ -11,15 +17,21 @@ class Paillette:
         self.setParam()
 
     def setParam(self):
-        self.position = (randint(0, self.zone[0]), randint(0, self.zone[1]))
+        """Modifie certains paramètres importants de la paillette.
+        """
+        self.position = (randint(self.zone[0], self.zone[2]), randint(self.zone[1], self.zone[3]))
         self.max = randint(15, 45)
         self.couleur = choice(self.couleurs)
         
     def dessine(self):
+        """Dessine la paillette.
+        """
         draw_poly(self.position, 4, self.taille, 0, self.couleur)
         self.redim()
 
     def redim(self):
+        """Gère l'anim de la paillette.
+        """
         if self.mode and self.horloge == 0:
             if self.taille < self.max:
                 self.taille = self.taille + 1

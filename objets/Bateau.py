@@ -1,6 +1,6 @@
 from random import choice
 from Image import Ima
-from FondMarin import tailleCase
+from systeme.FondMarin import tailleCase
 
 class Bateau:
     def __init__(self, nom: str, taille: int, id: int, image: Ima, proprietaire: object):

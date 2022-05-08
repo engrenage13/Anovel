@@ -1,4 +1,4 @@
-from FondMarin import fond, tlatba, xf, yf, bleuBt, tailleCase, yp
+from systeme.FondMarin import fond, tlatba, xf, yf, bleuBt, tailleCase, yp
 from ui.bouton import Bouton
 from objets.Joueur import Joueur
 

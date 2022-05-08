@@ -1,4 +1,4 @@
-from FondMarin import hbarre, tailleCase, yf
+from systeme.FondMarin import hbarre, tailleCase, yf
 from Image import Ima
 
 # Interface

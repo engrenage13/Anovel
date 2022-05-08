@@ -1,4 +1,4 @@
-from FondMarin import *
+from systeme.FondMarin import *
 from finPartie import Fin
 from objets.Joueur import Joueur
 from museeNoyee import touche, rate, viseur

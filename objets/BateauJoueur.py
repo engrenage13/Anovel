@@ -1,4 +1,4 @@
-from FondMarin import fond, tailleCase, Poli1, tlatba, yf
+from systeme.FondMarin import fond, tailleCase, Poli1, tlatba, yf
 from Image import Ima
 from objets.Bateau import Bateau
 

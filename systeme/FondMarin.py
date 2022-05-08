@@ -2,14 +2,12 @@ from pyray import *
 from raylib.colors import *
 
 TITRE_F = 'NAVALE'
+etatVersion = "alpha"
 version = "0.1.14"
 
 init_window(get_monitor_width(0), get_monitor_height(0), TITRE_F)
 set_target_fps(60)
 toggle_fullscreen()
-
-def auRevoir(): # Ferme le jeu.
-    close_window()
 
 # Dimensions
 xf = get_screen_width()
@@ -28,3 +26,4 @@ police1 = load_font('polices/STENCIL.ttf')
 gen_texture_mipmaps([police1.texture])
 police2 = load_font('polices/lilita.ttf')
 gen_texture_mipmaps([police2.texture])
+police3 = get_font_default()

@@ -1,4 +1,4 @@
-from FondMarin import fond, xf, yf, hbarre, version, Poli1, Lili1, gris, mauve, blanc, tlatba
+from systeme.FondMarin import fond, xf, yf, hbarre, version, Poli1, Lili1, gris, mauve, blanc, tlatba
 from installation import Installateur
 from objets.Joueur import Joueur
 from attaque import Attaque

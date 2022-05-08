@@ -1,5 +1,5 @@
 from xml.dom import InvalidCharacterErr
-from FondMarin import *
+from systeme.FondMarin import *
 
 class Plateau:
     def __init__(self, x: int, y: int, idtag: str) -> None:

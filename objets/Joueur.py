@@ -1,5 +1,5 @@
 from random import *
-from FondMarin import *
+from systeme.FondMarin import *
 from objets.BateauJoueur import BateauJoueur
 from objets.plateau import Plateau
 from ui.notif import Notification
