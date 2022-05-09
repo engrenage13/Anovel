@@ -1,24 +1,27 @@
-from systeme.FondMarin import fond, tlatba, xf, yf, bleuBt, tailleCase, yp
+from systeme.FondMarin import *
 from ui.bouton import Bouton
 from objets.Joueur import Joueur
+from museeNoyee import mer
 
 class Installateur:
-    def __init__(self, joueur: Joueur, fonction) -> None:
+    def __init__(self, joueur: Joueur) -> None:
         """Crée la fenêtre d'installation de bateaux pour un joueur.
 
         Args:
             joueur (Joueur): Joueur concerné par l'installation.
-            fonction (_type_): Fonction de validation de l'installation.
         """
         self.joueur = joueur
         self.liBat = self.joueur.getBateaux()
-        fond.itemconfigure('titre', text=f"{joueur.nom.upper()} - INSTALLATION")
-        self.bt = Bouton(fonction, "VALIDER LE PLAN", bleuBt, False, ['valid', 'install'])
-        self.joueur.montreBase()
-        self.dessineBateaux()
-        self.joueur.placeLat()
-        self.bt.dessine((xf-tlatba/2, (yf*0.945)-(yf*0.84/20)))
-        self.joueur.setVerif(self.fin)
+        #fond.itemconfigure('titre', text=f"{joueur.nom.upper()} - INSTALLATION")
+        #self.bt = Bouton(fonction, "VALIDER LE PLAN", bleuBt, False, ['valid', 'install'])
+        #self.joueur.montreBase()
+        #self.dessineBateaux()
+        #self.joueur.placeLat()
+        #self.bt.dessine((xf-tlatba/2, (yf*0.945)-(yf*0.84/20)))
+        #self.joueur.setVerif(self.fin)
+
+    def dessine(self) -> None:
+        draw_texture(mer, 0, 0, WHITE)
 
     def dessineBateaux(self) -> None:
         """Dessine tous les bateaux du joueur.
@@ -32,11 +35,11 @@ class Installateur:
         l = self.joueur.getBateaux()
         for i in range(len(l)):
             t = l[i].getTags()
-            fond.delete(t[1])
-            fond.itemconfigure(t[0], state='hidden')
-            fond.tag_unbind(t[0], '<Button-1>')
-            fond.tag_unbind(t[0], '<Button-3>')
-        fond.delete('install')
+            #fond.delete(t[1])
+            #fond.itemconfigure(t[0], state='hidden')
+            #fond.tag_unbind(t[0], '<Button-1>')
+            #fond.tag_unbind(t[0], '<Button-3>')
+        #fond.delete('install')
         self.joueur.base.efface()
 
     def fin(self):

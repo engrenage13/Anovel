@@ -1,9 +1,8 @@
 from random import *
 from systeme.FondMarin import *
-from objets.BateauJoueur import BateauJoueur
-from objets.plateau import Plateau
-from ui.notif import Notification
-from Image import Ima
+#from objets.BateauJoueur import BateauJoueur
+#from objets.plateau import Plateau
+#from Image import Ima
 
 class Joueur():
     def __init__(self, code: int):
@@ -18,25 +17,21 @@ class Joueur():
         e = 'notifCoule' + str(code)
         self.id = code
         self.nom = f"Joueur {self.id}"
-        self.base = Plateau(10, 10, a)
-        self.cTire = Plateau(10, 10, f)
+        #self.base = Plateau(10, 10, a)
+        #self.cTire = Plateau(10, 10, f)
         self.SetBateaux = []
         self.pret = False
         self.stats = [0, [0, 0], [0, 0]]
         # bateaux
         nomBats = ["Porte Avion", "Croiseur", "Sous-marin n°1", "Sous-marin n°2", "Torpilleur"]
         tailleBats = [5, 4, 3, 3, 2]
-        imaBats = [Ima('images/bateaux/5.png'), Ima('images/bateaux/4.png'), Ima('images/bateaux/3.png'), 
-                   Ima('images/bateaux/3.png'), Ima('images/bateaux/2.png')]
-        for i in range(len(nomBats)):
-            bat = BateauJoueur(nomBats[i], tailleBats[i], i, imaBats[i], self)
-            self.SetBateaux.append(bat)
+        #imaBats = [Ima('images/bateaux/5.png'), Ima('images/bateaux/4.png'), Ima('images/bateaux/3.png'), 
+                   #Ima('images/bateaux/3.png'), Ima('images/bateaux/2.png')]
+        #for i in range(len(nomBats)):
+            #bat = BateauJoueur(nomBats[i], tailleBats[i], i, imaBats[i], self)
+            #self.SetBateaux.append(bat)
         # /bateaux
         shuffle(self.SetBateaux)
-        # notifs
-        self.notifTouche = Notification("Touché !", d)
-        self.notifCoule = Notification("Coulé !", e)
-        # /notifs
 
     def getBateaux(self) -> list:
         """Retourne la liste des bateaux du joueur.
@@ -80,16 +75,16 @@ class Joueur():
         """
         self.placeLat()
 
-    def blocVert(self, bateau: BateauJoueur):
+    #def blocVert(self, bateau: BateauJoueur):
         """Déselectionne tous les bateaux sauf celui passé en paramètre.
 
         Args:
             bateau (BateauJoueur): Bateau à ne pas déseclectionné.
         """
-        for i in range(len(self.getBateaux())):
-            if bateau != self.SetBateaux[i]:
-                if self.SetBateaux[i].defil:
-                    self.SetBateaux[i].immobile()
+        #for i in range(len(self.getBateaux())):
+            #if bateau != self.SetBateaux[i]:
+                #if self.SetBateaux[i].defil:
+                    #self.SetBateaux[i].immobile()
 
     def placeLat(self):
         """Place correctement les bateaux à gauche.
@@ -97,14 +92,14 @@ class Joueur():
         plateau = [tlatba, yf]
         for i in range(len(self.getBateaux())):
             tags = self.getBateaux()[i].getTags()
-            rect = fond.coords(tags[0])
-            titre = fond.coords(tags[1])
+            #rect = fond.coords(tags[0])
+            #titre = fond.coords(tags[1])
             c = int(plateau[1]*0.05 + (tailleCase*0.8)/2)
-            if int(rect[1]) == c:
-                fond.move(tags[0], 0, yp*(i+1))
-            if int(titre[1]) == int(c*0.3):
-                fond.move(tags[1], 0, yp*(i+1))
-        fond.delete('Pharos')
+            #if int(rect[1]) == c:
+                #fond.move(tags[0], 0, yp*(i+1))
+            #if int(titre[1]) == int(c*0.3):
+                #fond.move(tags[1], 0, yp*(i+1))
+        #fond.delete('Pharos')
 
     def vigile(self):
         """Remet tous les bateaux mal positionnés, correctement en place à côté du plateau.
@@ -113,13 +108,13 @@ class Joueur():
         l = self.getBateaux()
         for i in range(len(l)):
             t = l[i].getTags()
-            b = fond.coords(t[0])
-            if int(b[0]) <= int(tlatba*0.5):
-                a = True
+            #b = fond.coords(t[0])
+            #if int(b[0]) <= int(tlatba*0.5):
+                #a = True
         if a:
             self.placeLat()
-        else:
-            fond.after(1000, self.vigile)
+        #else:
+            #fond.after(1000, self.vigile)
 
     def setVerif(self, fonction):
         """Paramètre la fonction de vérification avec celle passée en paramètre.

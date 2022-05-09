@@ -1,12 +1,23 @@
-from systeme.FondMarin import fond, xf, yf, hbarre, version, Poli1, Lili1, gris, mauve, blanc, tlatba
-from installation import Installateur
+from systeme.FondMarin import *
+from Installateur.Installateur import Installateur
 from objets.Joueur import Joueur
-from attaque import Attaque
-from museeNoyee import croixLumineuse, croixSombre, mer
+#from attaque import Attaque
+#from museeNoyee import croixLumineuse, croixSombre, mer
 
 class Partie:
-    def __init__(self):
+    def __init__(self) -> None:
         self.joueurs = []
+        self.timeline = 0
+
+    def nouvelleEtape(self) -> None:
+        self.timeline = self.timeline + 1
+        if self.timeline == 1:
+            self.creeJoueurs()
+            self.installateur = Installateur(self.joueurs[0])
+
+    def dessine(self) -> None:
+        if self.timeline == 1 or self.timeline == 2:
+            self.installateur.dessine()
 
     def getJoueurs(self) -> list:
         """Renvoie la liste des joueurs présents dans la partie.
@@ -40,38 +51,39 @@ class Partie:
             raise IndexError("getJoueur : Aucun joueur n'a était créé.")
         return self.joueurs[indice]
 
-    def creerJoueurs(self) -> None:
+    def creeJoueurs(self) -> None:
         """Crée les joueurs pour la partie.
         """
         self.joueurs = []
         for i in range(2):
             j = Joueur(i+1)
             self.joueurs.append(j)
+            print(f"Joueur {i+1} créé")
 
     def barreTitre(self) -> None:
         """Crée la barre de titre en haut de la fenêtre.
         """
-        fond.create_rectangle(0, 0, xf, hbarre, fill=mauve, stipple='gray50', outline='')
-        fond.create_text(xf*0.1, yf*0.027, text="", font=Poli1, fill=blanc, tag='titre')
-        fond.create_text(xf*0.5, yf*0.027, text="", font=Poli1, fill=blanc, tag='tour')
-        fond.create_image(xf*0.985, hbarre/2, image=croixSombre, activeimage=croixLumineuse, tag='auRevoir')
+        #fond.create_rectangle(0, 0, xf, hbarre, fill=mauve, stipple='gray50', outline='')
+        #fond.create_text(xf*0.1, yf*0.027, text="", font=Poli1, fill=blanc, tag='titre')
+        #fond.create_text(xf*0.5, yf*0.027, text="", font=Poli1, fill=blanc, tag='tour')
+        #fond.create_image(xf*0.985, hbarre/2, image=croixSombre, activeimage=croixLumineuse, tag='auRevoir')
 
     def miseEnPlace(self) -> None:
         """Lance la procédure de mise en place pour le premier joueur.
         """
-        fond.delete('accueil')
-        fond.create_image(xf/2, yf/2, image=mer)
-        fond.create_text(xf*0.003*len(version), yf*0.987, text=version, font=Lili1, fill=gris)
+        #fond.delete('accueil')
+        #fond.create_image(xf/2, yf/2, image=mer)
+        #fond.create_text(xf*0.003*len(version), yf*0.987, text=version, font=Lili1, fill=gris)
         self.creerJoueurs()
         self.barreTitre()
-        self.inst = Installateur(self.getJoueur(0), self.checkEtat)
+        #self.inst = Installateur(self.getJoueur(0), self.checkEtat)
 
     def suite(self) -> None:
         """Mise en place pour le second joueur.
         """
         self.inst.sup()
         del(self.inst)
-        self.inst = Installateur(self.getJoueur(1), self.checkEtat)
+        #self.inst = Installateur(self.getJoueur(1), self.checkEtat)
 
     def jeu(self) -> None:
         """Lance la partie.
@@ -79,11 +91,11 @@ class Partie:
         j = self.getJoueurs()
         self.inst.sup()
         del(self.inst)
-        fond.itemconfigure('titre', text=(self.getJoueur(0).nom))
-        fond.move('titre', -xf*0.055, 0)
+        #fond.itemconfigure('titre', text=(self.getJoueur(0).nom))
+        #fond.move('titre', -xf*0.055, 0)
         for i in range(len(j)):
             j[i].cTire.dessine((tlatba, yf*0.105+yf*i))
-        Attaque(j[0], j[1])
+        #Attaque(j[0], j[1])
 
     def checkEtat(self) -> None:
         """Vérifie si les 2 joueurs ont correctements positionnés tout leurs bateaux.
