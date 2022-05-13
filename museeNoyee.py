@@ -2,12 +2,12 @@ from systeme.FondMarin import *
 #from Image import Ima
 
 # Interface
-#cruzoff = Ima('images/ui/CroSom.png')
-#croixSombre = cruzoff.reDim(hbarre*0.9, hbarre*0.9)
-#croixSombre = cruzoff.createPhotoImage(croixSombre)
-#cruzon = Ima('images/ui/CroLum.png')
-#croixLumineuse = cruzon.reDim(hbarre*0.9, hbarre*0.9)
-#croixLumineuse = cruzon.createPhotoImage(croixLumineuse)
+cruzoff = load_image('images/ui/CroSom.png')
+image_resize(cruzoff, int(hbarre*0.9), int(hbarre*0.9))
+croixSombre = load_texture_from_image(cruzoff)
+cruzon = load_image('images/ui/CroLum.png')
+image_resize(cruzon, int(hbarre*0.9), int(hbarre*0.9))
+croixLumineuse = load_texture_from_image(cruzon)
 #pointe = Ima('images/bataille/viseur.png')
 #viseur = pointe.reDim(tailleCase*0.96, tailleCase*0.96)
 #viseur = pointe.createPhotoImage(viseur)

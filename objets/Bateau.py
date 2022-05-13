@@ -1,37 +1,47 @@
 from random import choice
-from Image import Ima
-from systeme.FondMarin import tailleCase
+from systeme.FondMarin import *
 
 class Bateau:
-    def __init__(self, nom: str, taille: int, id: int, image: Ima, proprietaire: object):
+    def __init__(self, nom: str, taille: int, image: str, proprietaire: object):
         """Crée un bateau.
 
         Args:
             nom (str): Le nom du bateau.
             taille (int): Le nombre de cases qu'occupe le bateau sur le plateau.
-            id (int): Le numéro d'identification du bateau pour son propriétaire.
-            image (Ima): Apparence du bateau.
+            image (str): Chemin d'accès à l'image du bateau.
             proprietaire (Joueur): Propriétaire du bateau.
         """
         self.taille = taille
         self.orient = 'h'
         self.nom = nom
-        self.pos = None
-        self.tag = 'bat' + str(id) + '.' + str(proprietaire.getId())
-        self.tagPlus = 'tbat' + str(id) + '.' + str(proprietaire.getId())
+        self.pos = False
+        self.defil = False
         self.proprio = proprietaire
         self.etatSeg = ['o']*taille
         self.coule = False
         self.alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 
                          'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
         # Images
-        lideg = [90, -90]
-        dimensions = image.getDimensions()
-        horiz = image.reDim(prop=(tailleCase*0.88)*self.taille/dimensions[0])
-        self.horiz = image.createPhotoImage(horiz)
-        self.verti = image.tourne(choice(lideg), horiz)
-        self.verti = image.createPhotoImage(self.verti)
+        originale = load_image(image)
+        image_resize(originale, int(originale.width*(tailleCase*0.88)*self.taille/originale.width), 
+                     int(originale.height*(tailleCase*0.88)*self.taille/originale.width))
+        self.horiz = load_texture_from_image(originale)
+        lirot = [1, 3]
+        for i in range(choice(lirot)):
+            self.verti = image_rotate_cw(originale)
         # /Images
+
+    def dessine(self, x: int, y: int):
+        """Dessine le bateau.
+
+        Args:
+            x (int): Coordonné des absicesses de l'origine de l'image.
+            y (int): Coordonné des ordonnées de l'origine de l'image.
+        """
+        image = self.horiz
+        if self.orient == 'v':
+            image = self.verti
+        draw_texture(image, x, y, WHITE)
 
     def estTouche(self, position: str) -> bool:
         """Dit si le bateau passé en paramètres est sur la case qui est regardée.

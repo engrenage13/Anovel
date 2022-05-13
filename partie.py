@@ -1,11 +1,15 @@
 from systeme.FondMarin import *
+from systeme.fenetre import Fenetre
 from Installateur.Installateur import Installateur
 from objets.Joueur import Joueur
+from ui.clickIma import ClickIma
+from museeNoyee import croixLumineuse, croixSombre
 #from attaque import Attaque
-#from museeNoyee import croixLumineuse, croixSombre, mer
 
 class Partie:
-    def __init__(self) -> None:
+    def __init__(self, fenetre: Fenetre) -> None:
+        self.fenetre = fenetre
+        self.croix = ClickIma([fenetre.finDuJeu], [croixSombre, croixLumineuse])
         self.joueurs = []
         self.timeline = 0
 
@@ -13,7 +17,7 @@ class Partie:
         self.timeline = self.timeline + 1
         if self.timeline == 1:
             self.creeJoueurs()
-            self.installateur = Installateur(self.joueurs[0])
+            self.installateur = Installateur(self.joueurs[0], self)
 
     def dessine(self) -> None:
         if self.timeline == 1 or self.timeline == 2:
@@ -58,25 +62,6 @@ class Partie:
         for i in range(2):
             j = Joueur(i+1)
             self.joueurs.append(j)
-            print(f"Joueur {i+1} créé")
-
-    def barreTitre(self) -> None:
-        """Crée la barre de titre en haut de la fenêtre.
-        """
-        #fond.create_rectangle(0, 0, xf, hbarre, fill=mauve, stipple='gray50', outline='')
-        #fond.create_text(xf*0.1, yf*0.027, text="", font=Poli1, fill=blanc, tag='titre')
-        #fond.create_text(xf*0.5, yf*0.027, text="", font=Poli1, fill=blanc, tag='tour')
-        #fond.create_image(xf*0.985, hbarre/2, image=croixSombre, activeimage=croixLumineuse, tag='auRevoir')
-
-    def miseEnPlace(self) -> None:
-        """Lance la procédure de mise en place pour le premier joueur.
-        """
-        #fond.delete('accueil')
-        #fond.create_image(xf/2, yf/2, image=mer)
-        #fond.create_text(xf*0.003*len(version), yf*0.987, text=version, font=Lili1, fill=gris)
-        self.creerJoueurs()
-        self.barreTitre()
-        #self.inst = Installateur(self.getJoueur(0), self.checkEtat)
 
     def suite(self) -> None:
         """Mise en place pour le second joueur.

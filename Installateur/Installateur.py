@@ -1,62 +1,61 @@
 from systeme.FondMarin import *
 from ui.bouton import Bouton
 from objets.Joueur import Joueur
+from objets.plateau import Plateau
 from museeNoyee import mer
 
 class Installateur:
-    def __init__(self, joueur: Joueur) -> None:
+    def __init__(self, joueur: Joueur, creator: object) -> None:
         """Crée la fenêtre d'installation de bateaux pour un joueur.
 
         Args:
             joueur (Joueur): Joueur concerné par l'installation.
+            creator (Partie): Objet "Partie" qui a lancé l'installateur.
         """
+        self.proprio = creator
         self.joueur = joueur
         self.liBat = self.joueur.getBateaux()
-        #fond.itemconfigure('titre', text=f"{joueur.nom.upper()} - INSTALLATION")
-        #self.bt = Bouton(fonction, "VALIDER LE PLAN", bleuBt, False, ['valid', 'install'])
-        #self.joueur.montreBase()
-        #self.dessineBateaux()
-        #self.joueur.placeLat()
-        #self.bt.dessine((xf-tlatba/2, (yf*0.945)-(yf*0.84/20)))
-        #self.joueur.setVerif(self.fin)
+        self.taillecase = int(yf*0.084)
+        self.plateau = Plateau(10, 10)
+        self.btValid = Bouton([self.proprio.nouvelleEtape, self.verif], "Valider", [BLUE, DARKBLUE, WHITE])
+        self.btValid.setTexteNotif("Action Impossible", "Tous les bateaux doivent être placés")
 
     def dessine(self) -> None:
+        ory = int((yf-hbarre)/2-self.taillecase*5)+hbarre
         draw_texture(mer, 0, 0, WHITE)
+        self.barreTitre()
+        self.plateau.dessine((tlatba, ory), self.taillecase)
+        self.dessineBateaux()
+        self.btValid.dessine((int(xf-tlatba*0.5), ory+int(self.taillecase*9.5)))
 
     def dessineBateaux(self) -> None:
         """Dessine tous les bateaux du joueur.
         """
         for i in range(len(self.liBat)):
-            self.liBat[i].dessine(self.joueur.id)
+            if not self.liBat[i].pos and not self.liBat[i].defil:
+                x = int(xf*0.01)
+                y = int((yf*0.15)*(i+1))
+            draw_text_pro(police1, self.liBat[i].nom, (int(xf*0.01), int((yf*0.15)*(i+1)-yf*0.03)), (0, 0),
+                          0, 20, 0, WHITE)
+            self.liBat[i].dessine(x, y)
 
-    def sup(self) -> None:
-        """Gère la suppression correcte de l'installateur.
+    def barreTitre(self) -> None:
+        """Crée la barre de titre en haut de la fenêtre.
         """
-        l = self.joueur.getBateaux()
-        for i in range(len(l)):
-            t = l[i].getTags()
-            #fond.delete(t[1])
-            #fond.itemconfigure(t[0], state='hidden')
-            #fond.tag_unbind(t[0], '<Button-1>')
-            #fond.tag_unbind(t[0], '<Button-3>')
-        #fond.delete('install')
-        self.joueur.base.efface()
+        draw_rectangle_gradient_h(0, 0, xf, hbarre, [112, 31, 126, 120], [150, 51, 140, 100])
+        draw_text_pro(police1, f"Installation : {self.joueur.getNom()}", (int(hbarre/4), int(hbarre/4)), 
+                      (0, 0), 0, 25, 0, WHITE)
+        self.proprio.croix.dessine((xf-hbarre, int(hbarre*0.05)))
 
-    def fin(self):
-        """Place le bouton dans les états "veille" et "actif", en fonction de la position des bateaux.
+    def verif(self) -> bool:
+        """Vérifie si tous les bateaux du joueur ont étaient placés correctement.
+
+        Returns:
+            bool: True si tous les bateaux sont placés de manière acceptable.
         """
-        d = True
+        rep = True
         i = 0
-        l = self.joueur.getBateaux()
-        while d and i < len(l):
-            if l[i].pos == None:
-                d = False
-            elif type(l[i].pos) == list:
-                if None in l[i].pos:
-                    d = False
-                    l[i].pos = None
-            i = i + 1
-        if d:
-            self.bt.setEtat(True)
-        else:
-            self.bt.setEtat(False)
+        while i < len(self.liBat) and rep:
+            if not self.liBat[i].pos:
+                rep = False
+        return rep

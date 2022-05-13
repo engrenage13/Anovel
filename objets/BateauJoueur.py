@@ -14,7 +14,6 @@ class BateauJoueur(Bateau):
             propriétaire (Joueur): Propriétaire du bateau.
         """
         super().__init__(nom, taille, id, image, proprietaire)
-        self.defil = False
         fond.tag_bind(self.tag, '<Button-1>', self.switchMode)
         fond.tag_bind(self.tag, '<Button-3>', self.tourne)
 
@@ -25,19 +24,6 @@ class BateauJoueur(Bateau):
             list: Tag du bateau et de son nom.
         """
         return [self.tag, self.tagPlus]
-
-    def dessine(self, cdJ: int):
-        """Dessine le bateau.
-
-        Args:
-            cdJ (int): Le code du joueur (propriétaire).
-        """
-        case = tailleCase
-        x = tlatba*0.5
-        y = yf*0.05 + (case*0.8)/2
-        fond.create_text(x, y*0.3, text=self.nom, fill='white', font=Poli1, 
-                         tags=(self.tagPlus, 'nomBat', ('nSet'+str(cdJ))))
-        fond.create_image(x, y, image=self.horiz, tags=('bateaux', self.tag, ('set'+str(cdJ))))
 
     def switchMode(self, event):
         """Sélectionne et déselectionne le bateau.

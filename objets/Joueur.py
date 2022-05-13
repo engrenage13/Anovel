@@ -1,8 +1,6 @@
 from random import *
 from systeme.FondMarin import *
-#from objets.BateauJoueur import BateauJoueur
-#from objets.plateau import Plateau
-#from Image import Ima
+from objets.Bateau import Bateau
 
 class Joueur():
     def __init__(self, code: int):
@@ -11,25 +9,18 @@ class Joueur():
         Args:
             code (int): L'identifiant numérique du joueur.
         """
-        a = 'base' + str(code)
-        f = 'cTire' + str(code)
-        d = 'notifTouche' + str(code)
-        e = 'notifCoule' + str(code)
         self.id = code
         self.nom = f"Joueur {self.id}"
-        #self.base = Plateau(10, 10, a)
-        #self.cTire = Plateau(10, 10, f)
         self.SetBateaux = []
         self.pret = False
         self.stats = [0, [0, 0], [0, 0]]
         # bateaux
-        nomBats = ["Porte Avion", "Croiseur", "Sous-marin n°1", "Sous-marin n°2", "Torpilleur"]
+        nomBats = ["Porte Avion", "Croiseur", "Sous-marin 1", "Sous-marin 2", "Torpilleur"]
         tailleBats = [5, 4, 3, 3, 2]
-        #imaBats = [Ima('images/bateaux/5.png'), Ima('images/bateaux/4.png'), Ima('images/bateaux/3.png'), 
-                   #Ima('images/bateaux/3.png'), Ima('images/bateaux/2.png')]
-        #for i in range(len(nomBats)):
-            #bat = BateauJoueur(nomBats[i], tailleBats[i], i, imaBats[i], self)
-            #self.SetBateaux.append(bat)
+        urlBats = 'images/bateaux/'
+        for i in range(len(nomBats)):
+            bat = Bateau(nomBats[i], tailleBats[i], urlBats+str(tailleBats[i])+'.png', self)
+            self.SetBateaux.append(bat)
         # /bateaux
         shuffle(self.SetBateaux)
 
@@ -65,16 +56,6 @@ class Joueur():
         """
         return self.stats
 
-    def montreBase(self) -> None:
-        """Affiche le plateau d'installation du joueur.
-        """
-        self.base.dessine((tlatba, yf*0.105))
-
-    def miseEnPlace(self) -> None:
-        """Prépare le terrain pour que le joueur puisse positionner ses bateaux.
-        """
-        self.placeLat()
-
     #def blocVert(self, bateau: BateauJoueur):
         """Déselectionne tous les bateaux sauf celui passé en paramètre.
 
@@ -85,21 +66,6 @@ class Joueur():
             #if bateau != self.SetBateaux[i]:
                 #if self.SetBateaux[i].defil:
                     #self.SetBateaux[i].immobile()
-
-    def placeLat(self):
-        """Place correctement les bateaux à gauche.
-        """
-        plateau = [tlatba, yf]
-        for i in range(len(self.getBateaux())):
-            tags = self.getBateaux()[i].getTags()
-            #rect = fond.coords(tags[0])
-            #titre = fond.coords(tags[1])
-            c = int(plateau[1]*0.05 + (tailleCase*0.8)/2)
-            #if int(rect[1]) == c:
-                #fond.move(tags[0], 0, yp*(i+1))
-            #if int(titre[1]) == int(c*0.3):
-                #fond.move(tags[1], 0, yp*(i+1))
-        #fond.delete('Pharos')
 
     def vigile(self):
         """Remet tous les bateaux mal positionnés, correctement en place à côté du plateau.

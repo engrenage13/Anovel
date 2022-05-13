@@ -2,28 +2,31 @@ from systeme.FondMarin import *
 from ui.notif import Notification
 
 class Bouton:
-    def __init__(self, fonction, texte: str, couleurs: list) -> None:
+    def __init__(self, fonctions: list, texte: str, couleurs: list) -> None:
         """Crée un bouton.
 
         Args:
-            fonction (_type_): Fonction qu'appelle le bouton quand il est utilisé.
+            fonctions (list): Fonctions qu'appel le bouton quand il est utilisé.
             texte (str): Ecritaut sur le bouton.
             couleurs (list): Liste des couleurs utilisés pour le bouton.
         """
         self.texte = texte
         self.couleur = couleurs
-        self.etat = True
-        self.fonction = fonction
+        self.fonction = fonctions[0]
+        if len(fonctions) > 1 and fonctions[1] != '':
+            self.verifFonction = fonctions[1]
+        else:
+            self.verifFonction = self.verification
         self.dims = [int(tlatba*0.8), int(yf*0.1)]
         self.notif = Notification("Option indisbonible", "Ce bouton est désactivé")
-        self.notif.setPosition('gauche')
+        self.notif.setPosition(1)
         self.etatNotif = False
 
     def dessine(self, coord: tuple) -> None:
         """Dessine le bouton à l'écran aux coordonnées passées en paramètre.
 
         Args:
-            coord (tuple, optional): Coordonnées du centre du bouton.
+            coord (tuple): Coordonnées du centre du bouton.
         """
         tt = measure_text_ex(police1, self.texte, 30, 0)
         self.coords = [coord[0]-int(self.dims[0]/2), coord[1]-int(self.dims[1]/2), coord[0]+int(self.dims[0]/2), 
@@ -48,26 +51,18 @@ class Bouton:
         """
         if is_mouse_button_pressed(0):
             if self.getContact():
-                if self.etat:
+                if self.verifFonction():
                     self.fonction()
                 else:
                     self.etatNotif = True
 
-    def getEtat(self) -> bool:
-        """Retourne l'état du bouton.
+    def verification(self) -> bool:
+        """Fonction par défaut pour la vérification d'instruction spéciale.
 
         Returns:
-            bool: état du bouton sous forme de Actif/Inactif -> True/False.
+            bool: True.
         """
-        return self.etat
-
-    def setEtat(self, etat: bool) -> None:
-        """Permet de modifier l'etat du bouton (actif/inactif).
-
-        Args:
-            etat (bool): True pour le rendre actif, False pour le désactiver.
-        """
-        self.etat = etat
+        return True
 
     def getTexte(self) -> str:
         """Retourne le texte écrit sur le bouton du bouton.
@@ -92,9 +87,9 @@ class Bouton:
             titre (str): Modifie le titre de la notif.
             texte (str): Modifie le message de la notif.
         """
-        if self.titre != "":
+        if titre != "":
             self.notif.modifTitre(str(titre))
-        if self.texte != "":
+        if texte != "":
             self.notif.modifTexte(str(texte))
 
     def getCouleurs(self) -> list:

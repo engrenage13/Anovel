@@ -55,9 +55,9 @@ class Notification:
         if self.mode and self.horloge == 0:
             self.fini = False
             if self.x < self.max[0] and self.pos == 1:
-                self.x = self.x + self.pas*3
+                self.x = self.x + self.pas*4
             elif self.x > self.max[0] and self.pos == 2:
-                self.x = self.x - self.pas*3
+                self.x = self.x - self.pas*4
             elif self.y > self.max[1]:
                 self.y = self.y - self.pas
             else:
@@ -72,7 +72,6 @@ class Notification:
             else:
                 self.horloge = 0
         else:
-            print(self.invisible(), self.couleur)
             if self.pos == 0:
                 if self.y < yf:
                     self.y = self.y + self.pas

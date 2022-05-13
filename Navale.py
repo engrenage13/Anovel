@@ -6,10 +6,10 @@ from systeme.fenetre import Fenetre
 
 fen = Fenetre()
 
-partie = Partie()
+partie = Partie(fen)
 
-start = Bouton(partie.nouvelleEtape, "Jouer", [BLUE, DARKBLUE, WHITE])
-quit = Bouton(fen.switchEtat, "Quitter", [DARKGRAY, DARKBLUE, WHITE])
+start = Bouton([partie.nouvelleEtape], "Jouer", [BLUE, DARKBLUE, WHITE])
+quit = Bouton([fen.switchEtat], "Quitter", [DARKGRAY, DARKBLUE, WHITE])
 
 def accueil():
     draw_rectangle_gradient_v(0, 0, xf, yf, (0, 0, 60, 200), (0, 0, 30, 100))
