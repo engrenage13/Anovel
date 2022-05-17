@@ -16,19 +16,18 @@ class Installateur:
         self.proprio = creator
         self.joueur = joueur
         self.liBat = self.joueur.getBateaux()
-        self.taillecase = int(yf*0.084)
         self.listeBrillante = []
         self.plateau = Plateau(10, 10)
         self.btValid = Bouton([self.proprio.nouvelleEtape, self.verif], "Valider", [BLUE, DARKBLUE, WHITE])
         self.btValid.setTexteNotif("Action Impossible", "Tous les bateaux doivent être placés")
 
     def dessine(self) -> None:
-        ory = int((yf-hbarre)/2-self.taillecase*5)+hbarre
+        ory = int((yf-hbarre)/2-tailleCase*5)+hbarre
         draw_texture(mer, 0, 0, WHITE)
         self.barreTitre()
-        self.plateau.dessine((tlatba, ory), self.taillecase, self.listeBrillante)
+        self.plateau.dessine((tlatba, ory), tailleCase, self.listeBrillante)
         self.dessineBateaux([tlatba, ory, tailleCase, 10])
-        self.btValid.dessine((int(xf-tlatba*0.5), ory+int(self.taillecase*9.5)))
+        self.btValid.dessine((int(xf-tlatba*0.5), ory+int(tailleCase*9.5)))
 
     def dessineBateaux(self, plateau: list) -> None:
         """Dessine tous les bateaux du joueur.

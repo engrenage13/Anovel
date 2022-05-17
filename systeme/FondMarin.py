@@ -16,7 +16,7 @@ tlatba = int((xf - yf*0.84)/2)
 yp = int(yf*0.15)
 origyp = int(yf*0.105)
 pasApas = int(yf*0.05)
-tailleCase = int(yf*0.84/10)
+tailleCase = int(yf*0.084)
 
 # barre - menu
 hbarre = int(yf*0.05)

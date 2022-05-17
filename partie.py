@@ -4,7 +4,7 @@ from Installateur.Installateur import Installateur
 from objets.Joueur import Joueur
 from ui.clickIma import ClickIma
 from museeNoyee import croixLumineuse, croixSombre
-#from attaque import Attaque
+from attaque import Attaque
 
 class Partie:
     def __init__(self, fenetre: Fenetre) -> None:
@@ -20,10 +20,14 @@ class Partie:
             self.installateur = Installateur(self.joueurs[0], self)
         elif self.timeline == 2:
             self.installateur.setJoueur(self.joueurs[1])
+        elif self.timeline == 3:
+            self.baston = Attaque(self.joueurs[0], self.joueurs[1], self)
 
     def dessine(self) -> None:
         if self.timeline == 1 or self.timeline == 2:
             self.installateur.dessine()
+        elif self.timeline == 3:
+            self.baston.dessine()
 
     def getJoueurs(self) -> list:
         """Renvoie la liste des joueurs présents dans la partie.
@@ -64,32 +68,3 @@ class Partie:
         for i in range(2):
             j = Joueur(i+1)
             self.joueurs.append(j)
-
-    def jeu(self) -> None:
-        """Lance la partie.
-        """
-        j = self.getJoueurs()
-        self.inst.sup()
-        del(self.inst)
-        #fond.itemconfigure('titre', text=(self.getJoueur(0).nom))
-        #fond.move('titre', -xf*0.055, 0)
-        for i in range(len(j)):
-            j[i].cTire.dessine((tlatba, yf*0.105+yf*i))
-        #Attaque(j[0], j[1])
-
-    def checkEtat(self) -> None:
-        """Vérifie si les 2 joueurs ont correctements positionnés tout leurs bateaux.
-        """
-        b = 0
-        i = 0
-        j = self.getJoueurs()
-        while i < len(j) and b < 2:
-            if not j[i].pret:
-                b = b + 1
-                if b == 1:
-                    j[i].pret = True
-            i = i + 1
-        if b < 2:
-            self.jeu()
-        else:
-            self.suite()

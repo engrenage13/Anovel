@@ -1,5 +1,4 @@
 from systeme.FondMarin import *
-#from Image import Ima
 
 # Interface
 cruzoff = load_image('images/ui/CroSom.png')
@@ -8,17 +7,17 @@ croixSombre = load_texture_from_image(cruzoff)
 cruzon = load_image('images/ui/CroLum.png')
 image_resize(cruzon, int(hbarre*0.9), int(hbarre*0.9))
 croixLumineuse = load_texture_from_image(cruzon)
-#pointe = Ima('images/bataille/viseur.png')
-#viseur = pointe.reDim(tailleCase*0.96, tailleCase*0.96)
-#viseur = pointe.createPhotoImage(viseur)
+pointe = load_image('images/bataille/viseur.png')
+image_resize(pointe, int(tailleCase*0.96), int(tailleCase*0.96))
+viseur = load_texture_from_image(pointe)
 
 # Marqueurs
-#croix = Ima('images/bataille/croix.png')
-#touche = croix.reDim(tailleCase, tailleCase)
-#touche = croix.createPhotoImage(touche)
-#loupe = Ima('images/bataille/loupe.png')
-#rate = loupe.reDim(tailleCase, tailleCase)
-#rate = loupe.createPhotoImage(rate)
+marqueX = load_image('images/bataille/croix.png')
+image_resize(marqueX, tailleCase, tailleCase)
+croix = load_texture_from_image(marqueX)
+marqueO = load_image('images/bataille/rond.png')
+image_resize(marqueO, tailleCase, tailleCase)
+rond = load_texture_from_image(marqueO)
 
 # Environnement
 env = load_image('images/envs/mer.png')
