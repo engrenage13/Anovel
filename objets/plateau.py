@@ -19,11 +19,13 @@ class Plateau:
                 ligne.append(case)
             self.cases.append(ligne)
 
-    def dessine(self, coordonnes: tuple, taille: int) -> None:
+    def dessine(self, coordonnes: tuple, taille: int, cibles: list=[]) -> None:
         """Dessine le plateau de jeu à l'écran.
 
         Args:
             coordonnes (tuple): "x et y" du coin en haut à gauche du plateau de jeu.
+            taille (int): Taille voulu pour les cases.
+            cibles (list): Liste des cases à mettre en surbrillance et la couleur à appliquer.
         """
         coo = coordonnes[:]
         y = coo[1]
@@ -31,7 +33,12 @@ class Plateau:
         for i in range(len(self.cases)):
             x = coo[0]
             for j in range(len(self.cases[i])):
-                draw_rectangle_lines(x, y, taille, taille, BLACK)
+                couleur = BLACK
+                epais = 1
+                if len(cibles) > 1 and self.cases[i][j][0] in cibles[0]:
+                    couleur = cibles[1]
+                    epais = 3
+                draw_rectangle_lines_ex((x, y, taille, taille), epais, couleur)
                 x = x + taille
             y = y + taille
 

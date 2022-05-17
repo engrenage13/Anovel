@@ -28,7 +28,8 @@ class Bateau:
         self.horiz = load_texture_from_image(originale)
         lirot = [1, 3]
         for i in range(choice(lirot)):
-            self.verti = image_rotate_cw(originale)
+            image_rotate_cw(originale)
+            self.verti = load_texture_from_image(originale)
         # /Images
 
     def dessine(self, x: int, y: int):

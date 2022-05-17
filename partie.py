@@ -9,7 +9,7 @@ from museeNoyee import croixLumineuse, croixSombre
 class Partie:
     def __init__(self, fenetre: Fenetre) -> None:
         self.fenetre = fenetre
-        self.croix = ClickIma([fenetre.finDuJeu], [croixSombre, croixLumineuse])
+        self.croix = ClickIma([fenetre.switchEtat], [croixSombre, croixLumineuse])
         self.joueurs = []
         self.timeline = 0
 
@@ -18,6 +18,8 @@ class Partie:
         if self.timeline == 1:
             self.creeJoueurs()
             self.installateur = Installateur(self.joueurs[0], self)
+        elif self.timeline == 2:
+            self.installateur.setJoueur(self.joueurs[1])
 
     def dessine(self) -> None:
         if self.timeline == 1 or self.timeline == 2:
@@ -62,13 +64,6 @@ class Partie:
         for i in range(2):
             j = Joueur(i+1)
             self.joueurs.append(j)
-
-    def suite(self) -> None:
-        """Mise en place pour le second joueur.
-        """
-        self.inst.sup()
-        del(self.inst)
-        #self.inst = Installateur(self.getJoueur(1), self.checkEtat)
 
     def jeu(self) -> None:
         """Lance la partie.

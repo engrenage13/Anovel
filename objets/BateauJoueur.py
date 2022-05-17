@@ -1,35 +1,47 @@
-from systeme.FondMarin import fond, tailleCase, Poli1, tlatba, yf
-from Image import Ima
+from systeme.FondMarin import *
 from objets.Bateau import Bateau
 
 class BateauJoueur(Bateau):
-    def __init__(self, nom: str, taille: int, id: int, image: Ima, proprietaire: object):
+    def __init__(self, nom: str, taille: int, image: str, proprietaire: object):
         """Crée un bateau lié à un joueur.
 
         Args:
             nom (str): Le nom du bateau.
             taille (int): Le nombre de cases qu'occupe le bateau sur le plateau.
-            id (int): Le numéro d'identification du bateau pour son propriétaire.
             image (Ima): Apparence du bateau.
             propriétaire (Joueur): Propriétaire du bateau.
         """
-        super().__init__(nom, taille, id, image, proprietaire)
-        fond.tag_bind(self.tag, '<Button-1>', self.switchMode)
-        fond.tag_bind(self.tag, '<Button-3>', self.tourne)
+        super().__init__(nom, taille, image, proprietaire)
 
-    def getTags(self) -> list:
-        """Retourne les tags du bateau
-
-        Returns:
-            list: Tag du bateau et de son nom.
-        """
-        return [self.tag, self.tagPlus]
-
-    def switchMode(self, event):
-        """Sélectionne et déselectionne le bateau.
+    def dessine(self, x: int, y: int):
+        """Dessine le bateau.
 
         Args:
-            event (_type_): _description_
+            x (int): Coordonné des absicesses de l'origine de l'image.
+            y (int): Coordonné des ordonnées de l'origine de l'image.
+        """
+        image = self.horiz
+        if self.orient == 'v':
+            image = self.verti
+        self.coord = [x, y, image.width, image.height]
+        draw_texture(image, x, y, WHITE)
+
+    def getContact(self) -> bool:
+        """Vérifie si le curseur est sur le bateau.
+
+        Returns:
+            bool: True si le curseur est sur le bateau, False dans le cas contraire.
+        """
+        rep = False
+        x = get_mouse_x()
+        y = get_mouse_y()
+        if x >= self.coord[0] and x <= self.coord[0]+self.coord[2]:
+            if y >= self.coord[1] and y <= self.coord[1]+self.coord[3]:
+                rep = True
+        return rep
+
+    def switchMode(self):
+        """Sélectionne et déselectionne le bateau.
         """
         if self.defil:
             self.immobile()
@@ -40,194 +52,36 @@ class BateauJoueur(Bateau):
         """Désélectionne le bateau.
         """
         self.defil = False
-        a = fond.find_withtag('Pharos')
-        if len(a) >= 1:
-            b = fond.itemcget('Pharos', 'outline')
-            if b == 'white':
-                c1 = fond.coords('Pharo1')
-                cmax = fond.coords('Pharo'+str(self.taille))
-                x = c1[0]+(cmax[2]-c1[0])/2
-                y = c1[1]+(c1[3]-c1[1])/2
-                if self.orient == 'v':
-                    x = c1[0]+(c1[2]-c1[0])/2
-                    y = c1[1]+(cmax[3]-c1[1])/2
-                self.positionneBien((x, y))
-            else:
-                self.repose((tlatba*0.5, yf*0.05 + (tailleCase*0.8)/2))
-        else:
-            self.repose((tlatba*0.5, yf*0.05 + (tailleCase*0.8)/2))
+        if not self.pos or False in self.pos:
+            self.pos = False
+            self.orient = 'h'
 
     def declenMouv(self):
         """Sélectionne le bateau.
         """
         self.defil = True
         self.orient = 'h'
-        fond.itemconfigure(self.tag, image=self.horiz)
-        self.proprio.blocVert(self)
-        self.scotchBat()
 
-    def scotchBat(self):
-        """Fait en sorte que le bateau suive la souris.
-        """
-        a = fond.winfo_pointerxy()
-        e = fond.find_withtag(self.tag)
-        if len(e) >= 1:
-            fond.coords(self.tag, a[0], a[1])
-            self.neonCase()
-        if self.defil:
-            fond.after(5, self.scotchBat)
-
-    def neonCase(self):
-        """Liste les cases actuellement occupées par le bateau.
-        """
-        co = fond.coords(self.tag)
-        milieu = self.localCase((co[0], co[1]))
-        if milieu != None:
-            cooca = fond.coords(milieu)
-            total = cooca[0]+(cooca[2]-cooca[0])
-            pourcent = round(co[0]*100/total, 1)
-            if self.orient == 'v':
-                total = cooca[1]+(cooca[3]-cooca[1])
-                pourcent = round(co[1]*100/total, 1)
-            self.rempliListe(milieu, pourcent)
+    def setPosition(self, coord: list, zone: int) -> None:
+        pos = []
+        if zone == 1:
+            for i in range(self.taille-len(coord)):
+                pos.append(False)
+            for i in range(len(coord)):
+                pos.append(coord[len(coord)-1-i])
+        elif zone == 2:
+            pos = coord
         else:
-            self.pos = [None]*self.taille
-        self.brillePlacement(self.proprio.getBateaux())
+            pos = coord
+            for i in range(self.taille-len(coord)):
+                pos.append(False)
+        self.pos = pos
 
-    def tourne(self, event):
+    def tourne(self):
         """Fait tourner le bateau.
-
-        Args:
-            event (_type_): _description_
         """
         if self.defil:
             if self.orient == 'h':
                 self.orient = 'v'
-                fond.itemconfigure(self.tag, image=self.verti)
             else:
                 self.orient = 'h'
-                fond.itemconfigure(self.tag, image=self.horiz)
-
-    def positionneBien(self, coo: tuple): 
-        """Fait en sorte que le bateau appelé soit bien positionné sur le plateau.
-
-        Args:
-            coo (tuple): position que le bateau doit atteindre.
-        """
-        t = self.getTags()
-        a = fond.coords(t[0])
-        b = coo[0] - a[0]
-        c = coo[1] - a[1]
-        fond.move(t[0], int(b), int(c))
-        if int(b) != 0:
-            fond.after(50, self.positionneBien, coo)
-        else:
-            fond.delete('Pharos')
-            self.proprio.verifFonction()
-
-    def repose(self, coo: tuple):
-        """Remet le bateau en place dans le panneau latéral de gauche.
-
-        Args:
-            coo (tuple): coordonnées du bateau.
-        """
-        t = self.getTags()
-        a = fond.coords(t[0])
-        b = int(a[0])-int(coo[0])
-        d = int(a[1])-int(coo[1])
-        fond.move(t[0], -b, -d)
-        fond.itemconfigure(self.tag, image=self.horiz)
-        if int(b) != 0:
-            fond.after(50, self.repose, coo)
-        else:
-            self.pos = None
-            self.proprio.vigile()
-
-    def localCase(self, coo: tuple) -> str:
-        """Trouve les cases individuellement.
-
-        Args:
-            coo (tuple): Coordonnée du bateau.
-
-        Returns:
-            str: Nom d'une case.
-        """
-        b = None
-        for i in range(self.proprio.base.getDimensions()[0]):
-            ligne = self.proprio.base.getLigne(self.alphabet[i])
-            for j in range(len(ligne)):
-                a = fond.coords(ligne[j])
-                if coo[0] >= a[0] and coo[0] <= a[2] and coo[1] >= a[1] and coo[1] <= a[3]:
-                    b = ligne[j]
-        return b
-
-    def rempliListe(self, nom: str, pourcentage: float) -> None:
-        """Remplis la liste de position du bateau.
-
-        Args:
-            nom (str): Nom de la case occupée par le centre du bateau.
-            pourcentage (float): Précision sur la position du milieu du bateau sur la case.
-        """
-        avant = int((self.taille-1)/2)
-        arriere = self.taille-1-avant
-        if pourcentage < 50:
-            arriere = int((self.taille-1)/2)
-            avant = self.taille-1-arriere
-        if self.orient == 'h':
-            ligne = self.proprio.base.getLigne(nom[0])
-        else:
-            ligne = self.proprio.base.getColonne(int(nom[1:len(nom)-2]))
-        liste = []
-        base = ligne.index(nom)
-        for i in range(avant):
-            if base-1-i >= 0:
-                liste.append(ligne[base-1-i])
-            else:
-                liste.append(None)
-        liste.reverse()
-        liste.append(nom)
-        for i in range(arriere):
-            if base+1+i < len(ligne):
-                liste.append(ligne[base+1+i])
-            else:
-                liste.append(None)
-        self.pos = liste
-
-    def brillePlacement(self, liste: list):
-        """Mets en évidence les cases où le bateau sélectionné se trouvera une fois relaché.
-
-        Args:
-            liste (list): Liste des cases du bateau.
-        """
-        fond.delete('Pharos')
-        c = 'white'
-        if None in self.pos:
-            c = 'red'
-        else:
-            for j in range(len(liste)):
-                if liste[j] != self and liste[j].pos != None:
-                    if not self.voisin(liste[j]):
-                        c = 'red'
-        for i in range(len(self.pos)):
-            if self.pos[i] != None:
-                a = fond.coords(self.pos[i])
-                b = 'Pharo' + str(i+1)
-                fond.create_rectangle(a[0], a[1], a[2], a[3], fill='', outline=c, width=4, tags=(b, 'Pharos'))
-                fond.tag_raise(self.tag, 'Pharos')
-
-    def voisin(self, bateau: object) -> bool:
-        """Vérifie si le bateau sélectionné n'empiète pas sur un autre bateau déjà placé.
-
-        Args:
-            bateau (object): bateau.
-
-        Returns:
-            bool: True si les deux bateaux ont au moins une case en commun.
-        """
-        a = True
-        i = 0
-        while i < len(self.pos) and a:
-            if self.pos[i] in bateau.pos:
-                a = False
-            i = i + 1
-        return a

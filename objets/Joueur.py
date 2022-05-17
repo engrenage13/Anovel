@@ -1,6 +1,6 @@
 from random import *
 from systeme.FondMarin import *
-from objets.Bateau import Bateau
+from objets.BateauJoueur import BateauJoueur
 
 class Joueur():
     def __init__(self, code: int):
@@ -19,7 +19,7 @@ class Joueur():
         tailleBats = [5, 4, 3, 3, 2]
         urlBats = 'images/bateaux/'
         for i in range(len(nomBats)):
-            bat = Bateau(nomBats[i], tailleBats[i], urlBats+str(tailleBats[i])+'.png', self)
+            bat = BateauJoueur(nomBats[i], tailleBats[i], urlBats+str(tailleBats[i])+'.png', self)
             self.SetBateaux.append(bat)
         # /bateaux
         shuffle(self.SetBateaux)
@@ -55,32 +55,6 @@ class Joueur():
             list: Liste des statistiques individuelles.
         """
         return self.stats
-
-    #def blocVert(self, bateau: BateauJoueur):
-        """Déselectionne tous les bateaux sauf celui passé en paramètre.
-
-        Args:
-            bateau (BateauJoueur): Bateau à ne pas déseclectionné.
-        """
-        #for i in range(len(self.getBateaux())):
-            #if bateau != self.SetBateaux[i]:
-                #if self.SetBateaux[i].defil:
-                    #self.SetBateaux[i].immobile()
-
-    def vigile(self):
-        """Remet tous les bateaux mal positionnés, correctement en place à côté du plateau.
-        """
-        a = False
-        l = self.getBateaux()
-        for i in range(len(l)):
-            t = l[i].getTags()
-            #b = fond.coords(t[0])
-            #if int(b[0]) <= int(tlatba*0.5):
-                #a = True
-        if a:
-            self.placeLat()
-        #else:
-            #fond.after(1000, self.vigile)
 
     def setVerif(self, fonction):
         """Paramètre la fonction de vérification avec celle passée en paramètre.
