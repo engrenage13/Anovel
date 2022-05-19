@@ -56,14 +56,6 @@ class Joueur():
         """
         return self.stats
 
-    def setVerif(self, fonction):
-        """Paramètre la fonction de vérification avec celle passée en paramètre.
-
-        Args:
-            fonction (_type_): Le vérificateur
-        """
-        self.verifFonction = fonction
-
     def toucheCase(self, case: bool) -> None:
         """Incrémente le compteur de case touchées.
         """
@@ -74,33 +66,3 @@ class Joueur():
             self.stats[2][0] = self.stats[2][0] + 1
         self.stats[1][1] = round(self.stats[1][0]*100/self.stats[0], 1)
         self.stats[2][1] = round(self.stats[2][0]*100/self.stats[0], 1)
-
-    def estToucheBateau(self, case: str) -> list:
-        """Vérifie si l'un des bateaux du joueur est touché.
-
-        Args:
-            case (str): Case à comparer.
-
-        Returns:
-            list: Une liste composé d'un booléen, ainsi que l'indice du bateau touché dans la liste du joueur.
-        """
-        a = False
-        i = 0
-        while i < len(self.SetBateaux) and not a:
-            a = self.SetBateaux[i].estTouche(case)
-            i = i + 1
-        return [a, i-1]
-
-    def aPerdu(self) -> bool:
-        """Vérifie si le joueur a encore des bateaux non-coulés.
-
-        Returns:
-            bool: True si tous les bateaux du joueur ont coulés.
-        """
-        a = True
-        i = 0
-        while i < len(self.SetBateaux) and a:
-            if not self.SetBateaux[i].estCoule():
-                a = False
-            i = i + 1
-        return a

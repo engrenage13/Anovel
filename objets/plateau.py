@@ -1,4 +1,5 @@
 from systeme.FondMarin import *
+from museeNoyee import croix, rond
 
 class Plateau:
     def __init__(self, x: int, y: int) -> None:
@@ -39,6 +40,11 @@ class Plateau:
                     couleur = cibles[1]
                     epais = 3
                 draw_rectangle_lines_ex((x, y, taille, taille), epais, couleur)
+                if self.cases[i][j][1] != '':
+                    image = croix
+                    if self.cases[i][j][1].lower() == 'o':
+                        image = rond
+                    draw_texture(image, x, y, WHITE)
                 x = x + taille
             y = y + taille
 

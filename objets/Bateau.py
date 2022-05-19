@@ -56,8 +56,7 @@ class Bateau:
         a = False
         i = 0
         while i < self.taille and not a:
-            b = self.pos[i][0:len(self.pos[i])-2]
-            if b == position:
+            if self.pos[i] == position:
                 self.etatSeg[i] = 'x'
                 a = True
             i = i + 1
