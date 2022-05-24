@@ -15,10 +15,12 @@ class Attaque:
             createur (Partie): Partie qui est en cours.
         """
         self.proprio = createur
+        self.play = True
         # Joueurs
         self.j1 = joueur1
         self.j2 = joueur2
         self.joueurs = [joueur1, joueur2]
+        self.gagnant = False
         # /Joueurs
         self.joueurActuel = self.j1
         self.liBat = self.j2.getBateaux()
@@ -43,30 +45,33 @@ class Attaque:
             self.plateaux[i].dessine((tlatba, self.yPlateau+yf*i), tailleCase)
         self.stats(self.joueurActuel)
         self.barreTitre()
-        if self.viseur:
-            posiCurseur = self.localiseCurseur([tlatba, self.plateauYCible, tailleCase], 
-                                               self.joueurs.index(self.joueurActuel))
-            if posiCurseur:
-                viseur = self.dessineViseur(posiCurseur[0], posiCurseur[1])
-                if is_mouse_button_pressed(0):
-                    tire = self.tire(viseur, self.joueurs.index(self.joueurActuel))
-                    if self.getDefaite(self.joueurs[len(self.joueurs)-1-self.joueurs.index(self.joueurActuel)]):
-                        self.proprio.nouvelleEtape()
-                    elif viseur.lower() != 'x':
-                        if tire[2] != 'o':
-                            self.startNotif(self.liBat[tire[1]], viseur)
-                        self.joueurActuel.toucheCase(tire[0])
-                        self.viseur = False
-        else:
-            if self.affinotif:
-                self.notif.dessine()
-                if self.notif.getDisparition():
-                    self.affinotif = False
+        if self.play:
+            if self.viseur:
+                posiCurseur = self.localiseCurseur([tlatba, self.plateauYCible, tailleCase], 
+                                                self.joueurs.index(self.joueurActuel))
+                if posiCurseur:
+                    viseur = self.dessineViseur(posiCurseur[0], posiCurseur[1])
+                    if is_mouse_button_pressed(0):
+                        tire = self.tire(viseur, self.joueurs.index(self.joueurActuel))
+                        if self.getDefaite(self.joueurs[len(self.joueurs)-1-self.joueurs.index(self.joueurActuel)]):
+                            self.gagnant = self.joueurActuel
+                            self.proprio.nouvelleEtape()
+                            self.play = False
+                        if viseur.lower() != 'x':
+                            if tire[2] != 'o':
+                                self.startNotif(self.liBat[tire[1]], viseur)
+                            self.joueurActuel.toucheCase(tire[0])
+                            self.viseur = False
             else:
-                if self.joueurActuel == self.j1:
-                    self.monter()
+                if self.affinotif:
+                    self.notif.dessine()
+                    if self.notif.getDisparition():
+                        self.affinotif = False
                 else:
-                    self.descendre()
+                    if self.joueurActuel == self.j1:
+                        self.monter()
+                    else:
+                        self.descendre()
 
     def barreTitre(self) -> None:
         """Crée la barre de titre en haut de la fenêtre.
@@ -76,7 +81,8 @@ class Attaque:
         draw_text_pro(police1, self.joueurActuel.getNom(), (int(hbarre/4), int(hbarre/4)), (0, 0), 0, 25, 0, WHITE)
         draw_text_pro(police1, f"Tour {self.tour}", (int(xf/2-ttour.x/2), int(hbarre/4)), 
                       (0, 0), 0, 25, 0, WHITE)
-        self.proprio.croix.dessine((xf-hbarre, int(hbarre*0.05)))
+        if not self.gagnant:
+            self.proprio.croix.dessine((xf-hbarre, int(hbarre*0.05)))
 
     def incrementTour(self) -> None:
         """Incrémente le compteur de tour
