@@ -19,7 +19,7 @@ class Installateur:
         self.listeBrillante = []
         self.plateau = Plateau(10, 10)
         self.btValid = Bouton([self.proprio.nouvelleEtape, self.verif], "Valider", [BLUE, DARKBLUE, WHITE])
-        self.btValid.setTexteNotif("Action Impossible", "Tous les bateaux doivent être placés")
+        self.btValid.setTexteNotif("Action Impossible", "Vous devez placer tous vos bateaux.")
 
     def dessine(self) -> None:
         ory = int((yf-hbarre)/2-tailleCase*5)+hbarre

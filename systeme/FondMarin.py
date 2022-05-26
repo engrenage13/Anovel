@@ -1,4 +1,5 @@
 from pyray import *
+from raylib import TEXTURE_FILTER_TRILINEAR
 from raylib.colors import *
 
 TITRE_F = 'NAVALE'
@@ -22,8 +23,9 @@ tailleCase = int(yf*0.084)
 hbarre = int(yf*0.05)
 
 # polices
-police1 = load_font('polices/STENCIL.ttf')
+police1 = load_font('polices/STENCIL.otf')
 gen_texture_mipmaps([police1.texture])
-police2 = load_font('polices/lilita.ttf')
+set_texture_filter(police1.texture, TEXTURE_FILTER_TRILINEAR)
+police2 = load_font('polices/lilita.otf')
 gen_texture_mipmaps([police2.texture])
-police3 = get_font_default()
+set_texture_filter(police2.texture, TEXTURE_FILTER_TRILINEAR)
