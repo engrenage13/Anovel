@@ -7,8 +7,8 @@ class FinPartie:
     def __init__(self, joueurs: list, tour: int) -> None:
         self.joueurs = joueurs
         self.duree = tour
-        self.pos = yf
-        self.delai = 200
+        self.pos = False
+        self.saturation = 0
         self.paillettes = []
         x1 = 0
         x2 = int(xf/2)
@@ -20,20 +20,19 @@ class FinPartie:
                 [(40, 40, 40, 255), (10, 10, 10, 255), (20, 20, 20, 255), (30, 30, 30, 255), (0, 0, 30, 255)]))
 
     def dessine(self) -> None:
-        draw_rectangle(0, self.pos, xf, yf, BLACK)
-        if self.pos == 0:
-            for i in range(len(self.paillettes)):
-                self.paillettes[i].dessine()
-        draw_line_ex((int(xf/2), int(self.pos+yf*0.2)), (int(xf/2), int(self.pos+yf*0.83)), 4, GOLD)
+        draw_rectangle(0, 0, xf, yf, (0, 0, 0, self.saturation))
+        for i in range(len(self.paillettes)):
+            self.paillettes[i].dessine()
+        draw_line_ex((int(xf/2), int(yf*0.2)), (int(xf/2), int(yf*0.83)), 4, (255, 203, 0, self.saturation))
         tLong = measure_text_ex(police2, "Longueur de la partie", 20, 0)
         tTour = measure_text_ex(police2, f"{self.duree} Tours", 40, 0)
-        draw_text_pro(police2, "Longueur de la partie", (int(xf/2-tLong.x/2), int(self.pos+yf*0.1-tLong.y/2)), 
-                      (0, 0), 0, 20, 0, WHITE)
-        draw_text_pro(police2, f"{self.duree} Tours", (int(xf/2-tTour.x/2), int(self.pos+yf*0.14-tTour.y/2)), 
-                      (0, 0), 0, 40, 0, WHITE)
-        ytit = int(self.pos+yf*0.12)
-        ystat = int(ytit+yf*0.13)
-        ybat = int(ystat+yf*0.13)
+        draw_text_pro(police2, "Longueur de la partie", (int(xf/2-tLong.x/2), int(yf*0.1-tLong.y/2)), 
+                      (0, 0), 0, 20, 0, (255, 255, 255, self.saturation))
+        draw_text_pro(police2, f"{self.duree} Tours", (int(xf/2-tTour.x/2), int(yf*0.14-tTour.y/2)), 
+                      (0, 0), 0, 40, 0, (255, 255, 255, self.saturation))
+        ytit = int(yf*0.11)
+        ystat = int(ytit+yf*0.14)
+        ybat = int(ystat+yf*0.14)
         for i in range(len(self.joueurs)):
             xtit = int(xf*0.01)
             xstat = int(xf*0.1)
@@ -45,16 +44,16 @@ class FinPartie:
             self.dessineTitre((xtit, ytit), i)
             self.dessineStats((xstat, ystat), i)
             self.dessineBateaux((xbat, ybat), i)
-        if self.pos > 0:
-            self.defil()
+        if not self.pos or self.pos > 0:
+            self.apparition()
 
-    def defil(self) -> None:
-        """Fait défiler vers le haut de 1 écran, la fenêtre.
+    def apparition(self) -> None:
+        """Rend oppaque le fond de la fenêtre et fait apparaître le drapeau vainqueur.
         """
-        if self.delai > 0:
-            self.delai = self.delai - 1
+        if self.saturation < 255:
+            self.saturation = self.saturation + 5
         else:
-            self.pos = int(self.pos - yf*0.01)
+            self.pos = int(self.pos - xf*0.01)
             if self.pos < 0:
                 self.pos = 0
 
@@ -64,13 +63,21 @@ class FinPartie:
         tTit = measure_text_ex(police1, self.joueurs[indice][0].getNom(), 40, 0)
         tWin = measure_text_ex(police2, "VAINQUEUR", 28, 0)
         x1 = x
-        y1 = int(y + yf*0.07 - tTit.y/2)
+        y1 = int(y + yf*0.08 - tTit.y/2)
+        fagnon = (0, int(y1-yf*0.005), int(x+tWin.x+xf*0.02), int(tWin.y+yf*0.01))
+        multiplicateur = -1
         if indice == 1:
             x = x - tTit.x
             x1 = x1 - tWin.x
-        draw_text_pro(police1, self.joueurs[indice][0].getNom(), (x, y), (0, 0), 0, 40, 0, BLUE)
+            fagnon = (int(x1-xf*0.02), int(y1-yf*0.005), int(x+tWin.x+xf*0.02), int(tWin.y+yf*0.01))
+            multiplicateur = 1
+        if not self.pos and not (type(self.pos) == int and self.pos == 0):
+            self.pos = fagnon[2]
+        draw_text_pro(police1, self.joueurs[indice][0].getNom(), (x, y), (0, 0), 0, 40, 0, 
+                      (0, 121, 241, self.saturation))
         if self.joueurs[indice][1]:
-            draw_text_pro(police2, "VAINQUEUR", (x1, y1), (0, 0), 0, 28, 0, GOLD)
+            draw_rectangle(fagnon[0]+self.pos*multiplicateur, fagnon[1], fagnon[2], fagnon[3], GOLD)
+            draw_text_pro(police2, "VAINQUEUR", (x1+self.pos*multiplicateur, y1), (0, 0), 0, 28, 0, BLACK)
 
     def dessineStats(self, coord: tuple, indice: int) -> None:
         """Dessine les stats du joueur concerné.
@@ -79,15 +86,20 @@ class FinPartie:
         y = coord[1]
         images = [viseur, croix, rond]
         valeurs = self.joueurs[indice][0].getStats()
+        draw_line_ex((int(x-xf*0.05), int(y-yf*0.02)), (int(x+xf*0.35), int(y-yf*0.02)), 2, 
+                     (0, 121, 241, self.saturation))
         for i in range(len(images)):
             if type(valeurs[i]) != list:
                 valeur = str(valeurs[i])
             else:
                 valeur = str(valeurs[i][0])
             tVal = measure_text_ex(police2, valeur, 60, 0)
-            draw_text_pro(police2, valeur, (x, y), (0, 0), 0, 60, 0, WHITE)
-            draw_texture(images[i], int(x+tVal.x+xf*0.01), y, WHITE)
+            draw_text_pro(police2, valeur, (x, y), (0, 0), 0, 60, 0, (255, 255, 255, self.saturation))
+            draw_texture(images[i], int(x+tVal.x+xf*0.01), int(y-images[i].height/2+tVal.y/2), 
+                         (255, 255, 255, self.saturation))
             x = int(x + xf*0.1)
+        draw_line_ex((int(coord[0]-xf*0.05), int(y+tVal.y+yf*0.02)), (int(coord[0]+xf*0.35), 
+                     int(y+tVal.y+yf*0.02)), 2, (0, 121, 241, self.saturation))
 
     def dessineBateaux(self, coord: tuple, indice: int) -> None:
         """Dessine les bateaux du joueur dans son cadre de récap.
@@ -106,17 +118,18 @@ class FinPartie:
                 x = int(x-t)
             touche = liBat[i].etatSeg
             if not liBat[i].coule:
-                draw_rectangle(x, y, t, taille, GRAY)
+                draw_rectangle(x, y, t, taille, (130, 130, 130, self.saturation))
                 xt = x
                 for j in range(len(touche)):
                     if touche[j] == 'x':
-                        draw_rectangle(xt, y, taille, taille, RED)
+                        draw_rectangle(xt, y, taille, taille, (255, 0, 0, self.saturation))
                     xt = xt + taille
             else:
-                draw_rectangle(x, y, t, taille, (40, 40, 40, 255))
+                draw_rectangle(x, y, t, taille, (40, 40, 40, self.saturation))
             tNom = measure_text_ex(police2, liBat[i].nom, 25, 0)
             xText = int(x+t+taille)
             if indice == 1:
                 xText = int(x-taille-tNom.x)
-            draw_text_pro(police2, liBat[i].nom, (xText, int(y+taille/2-tNom.y/2)), (0, 0), 0, 25, 0, WHITE)
+            draw_text_pro(police2, liBat[i].nom, (xText, int(y+taille/2-tNom.y/2)), (0, 0), 0, 25, 0, 
+                          (255, 255, 255, self.saturation))
             y = int(y+tailleCase)

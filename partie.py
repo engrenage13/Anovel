@@ -1,4 +1,3 @@
-from animations.Paillette import Paillette
 from systeme.FondMarin import *
 from systeme.fenetre import Fenetre
 from Installateur.Installateur import Installateur
@@ -30,9 +29,6 @@ class Partie:
                 if self.joueurs[i] == self.baston.gagnant:
                     win[i] = True
             self.ecranFin = FinPartie(list(zip(self.joueurs, win)), self.baston.tour)
-            self.paillettes = []
-            for i in range(10):
-                self.paillettes.append(Paillette((0, 0, xf, yf), [BLUE, DARKBLUE, SKYBLUE]))
 
     def dessine(self) -> None:
         if self.timeline == 1 or self.timeline == 2:
@@ -41,17 +37,9 @@ class Partie:
             self.baston.dessine()
         elif self.timeline == 4:
             self.baston.dessine()
-            draw_rectangle(0, 0, xf, yf, (80, 80, 80, 167))
-            for i in range(len(self.paillettes)):
-                self.paillettes[i].dessine()
-            self.croix.dessine((xf-hbarre, int(hbarre*0.05)))
-            tNom = measure_text_ex(police1, self.baston.gagnant.getNom(), 180, 0)
-            tWin = measure_text_ex(police2, "GAGNE !", 80, 0)
-            draw_text_pro(police1, self.baston.gagnant.getNom(), (int(xf/2-tNom.x/2), int(yf*0.45-tNom.y/2)),
-                          (0, 0), 0, 180, 0, BLUE)
-            draw_text_pro(police2, "GAGNE !", (int(xf/2-tWin.x/2), int(yf*0.55)), (0, 0), 0, 80, 0, GREEN)
             self.ecranFin.dessine()
-            if self.ecranFin.pos == 0:
+            self.croix.dessine((xf-hbarre, int(hbarre*0.05)))
+            if self.ecranFin.saturation == 255:
                 self.nouvelleEtape()
         elif self.timeline == 5:
             self.ecranFin.dessine()
