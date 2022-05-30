@@ -12,8 +12,6 @@ class Joueur():
         self.id = code
         self.nom = f"Joueur {self.id}"
         self.SetBateaux = []
-        self.pret = False
-        self.stats = [0, [0, 0], [0, 0]]
         # bateaux
         nomBats = ["Porte Avion", "Croiseur", "Sous-marin 1", "Sous-marin 2", "Torpilleur"]
         tailleBats = [5, 4, 3, 3, 2]
@@ -22,7 +20,7 @@ class Joueur():
             bat = BateauJoueur(nomBats[i], tailleBats[i], urlBats+str(tailleBats[i])+'.png', self)
             self.SetBateaux.append(bat)
         # /bateaux
-        shuffle(self.SetBateaux)
+        self.rejouer()
 
     def getBateaux(self) -> list:
         """Retourne la liste des bateaux du joueur.
@@ -66,3 +64,10 @@ class Joueur():
             self.stats[2][0] = self.stats[2][0] + 1
         self.stats[1][1] = round(self.stats[1][0]*100/self.stats[0], 1)
         self.stats[2][1] = round(self.stats[2][0]*100/self.stats[0], 1)
+
+    def rejouer(self) -> None:
+        self.pret = False
+        self.stats = [0, [0, 0], [0, 0]]
+        for i in range(len(self.SetBateaux)):
+            self.SetBateaux[i].rejouer()
+        shuffle(self.SetBateaux)

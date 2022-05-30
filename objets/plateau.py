@@ -103,3 +103,9 @@ class Plateau:
             for i in range(self.getDimensions()[0]):
                 colonne.append(self.cases[i][indice][0])
             return colonne
+
+    def reinitialise(self) -> None:
+        for i in range(len(self.cases)):
+            for j in range(len(self.cases[i])):
+                if self.cases[i][j][1] != '':
+                    self.cases[i][j][1] = ''

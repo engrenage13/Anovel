@@ -4,11 +4,19 @@ from animations.Paillette import Paillette
 from ui.bouton import Bouton
 
 class FinPartie:
-    def __init__(self, joueurs: list, tour: int) -> None:
+    def __init__(self, joueurs: list, tour: int, createur: object) -> None:
+        self.proprio = createur
         self.joueurs = joueurs
         self.duree = tour
         self.pos = False
         self.saturation = 0
+        # Boutons
+        self.accueil = Bouton([self.goToMenu], "MENU", [[205, 111, 0, 255], ORANGE, WHITE])
+        self.rejouer = Bouton([self.proprio.rejouer], "REJOUER", [DARKBLUE, BLUE, WHITE])
+        self.hauteurBt = int(yf*1.11)
+        self.hBtIndice = int(yf*0.91)
+        # /Boutons
+        # Paillettes
         self.paillettes = []
         x1 = 0
         x2 = int(xf/2)
@@ -44,7 +52,9 @@ class FinPartie:
             self.dessineTitre((xtit, ytit), i)
             self.dessineStats((xstat, ystat), i)
             self.dessineBateaux((xbat, ybat), i)
-        if not self.pos or self.pos > 0:
+        self.accueil.dessine((int(xf*0.35), self.hauteurBt))
+        self.rejouer.dessine((int(xf*0.65), self.hauteurBt))
+        if self.hauteurBt > self.hBtIndice:
             self.apparition()
 
     def apparition(self) -> None:
@@ -52,10 +62,12 @@ class FinPartie:
         """
         if self.saturation < 255:
             self.saturation = self.saturation + 5
-        else:
+        elif self.pos > 0:
             self.pos = int(self.pos - xf*0.01)
             if self.pos < 0:
                 self.pos = 0
+        elif self.hauteurBt > self.hBtIndice:
+            self.hauteurBt = int(self.hauteurBt-int(yf*0.01))
 
     def dessineTitre(self, coord: tuple, indice: int) -> None:
         x = coord[0]
@@ -133,3 +145,7 @@ class FinPartie:
             draw_text_pro(police2, liBat[i].nom, (xText, int(y+taille/2-tNom.y/2)), (0, 0), 0, 25, 0, 
                           (255, 255, 255, self.saturation))
             y = int(y+tailleCase)
+
+    def goToMenu(self) -> None:
+        self.proprio.timeline = 0
+        self.proprio.rejouer()

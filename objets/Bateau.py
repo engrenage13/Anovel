@@ -12,13 +12,10 @@ class Bateau:
             proprietaire (Joueur): Propriétaire du bateau.
         """
         self.taille = taille
-        self.orient = 'h'
         self.nom = nom
-        self.pos = False
         self.defil = False
         self.proprio = proprietaire
-        self.etatSeg = ['o']*taille
-        self.coule = False
+        self.rejouer()
         self.alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 
                          'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
         # Images
@@ -76,3 +73,9 @@ class Bateau:
                 self.coule = True
                 a = True
         return a
+
+    def rejouer(self) -> None:
+        self.orient = 'h'
+        self.pos = False
+        self.coule = False
+        self.etatSeg = ['o']*self.taille

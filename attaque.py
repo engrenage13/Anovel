@@ -237,3 +237,14 @@ class Attaque:
             self.joueurActuel = self.j1
             self.liBat = self.j2.getBateaux()
             self.incrementTour()
+
+    def rejouer(self) -> None:
+        for i in range(len(self.plateaux)):
+            self.plateaux[i].reinitialise()
+        self.tour = 1
+        self.play = True
+        self.gagnant = False
+        self.viseur = True
+        self.yPlateau = self.plateauYCible
+        self.joueurActuel = self.j1
+        self.liBat = self.j2.getBateaux()

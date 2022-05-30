@@ -45,7 +45,7 @@ class Notification:
         draw_rectangle_rounded((self.x, self.y, self.longueur, self.hauteur), 0.2, 30, self.couleur[0])
         draw_text_pro(police2, self.titre, (orixt-int(tt1.x/2), self.y+int(tt1.y*0.2)), (0, 0), 0, 35, 0, 
                       self.couleur[1])
-        draw_text_pro(police2, self.texte, (orixt-int(tt2.x/2), self.y+int(tt1.y*1.7)), (0, 0), 0, 22, 2, 
+        draw_text_pro(police2, self.texte, (orixt-int(tt2.x/2), self.y+int(tt1.y*1.7)), (0, 0), 0, 22, 0, 
                       self.couleur[2])
         self.deplace()
 

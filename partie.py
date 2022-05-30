@@ -13,22 +13,20 @@ class Partie:
         self.croix = ClickIma([fenetre.switchEtat], [croixSombre, croixLumineuse])
         self.joueurs = []
         self.timeline = 0
+        self.creeJoueurs()
+        self.installateur = Installateur(self.joueurs[0], self)
+        self.baston = Attaque(self.joueurs[0], self.joueurs[1], self)
 
     def nouvelleEtape(self) -> None:
         self.timeline = self.timeline + 1
-        if self.timeline == 1:
-            self.creeJoueurs()
-            self.installateur = Installateur(self.joueurs[0], self)
-        elif self.timeline == 2:
+        if self.timeline == 2:
             self.installateur.setJoueur(self.joueurs[1])
-        elif self.timeline == 3:
-            self.baston = Attaque(self.joueurs[0], self.joueurs[1], self)
         elif self.timeline == 4:
             win = [False]*len(self.joueurs)
             for i in range(len(self.joueurs)):
                 if self.joueurs[i] == self.baston.gagnant:
                     win[i] = True
-            self.ecranFin = FinPartie(list(zip(self.joueurs, win)), self.baston.tour)
+            self.ecranFin = FinPartie(list(zip(self.joueurs, win)), self.baston.tour, self)
 
     def dessine(self) -> None:
         if self.timeline == 1 or self.timeline == 2:
@@ -84,3 +82,12 @@ class Partie:
         for i in range(2):
             j = Joueur(i+1)
             self.joueurs.append(j)
+
+    def rejouer(self) -> None:
+        for i in range(len(self.joueurs)):
+            self.joueurs[i].rejouer()
+        self.installateur.setJoueur(self.joueurs[0])
+        self.baston.rejouer()
+        if self.timeline > 0:
+            self.timeline = 1
+        del self.ecranFin
