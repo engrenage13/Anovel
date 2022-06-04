@@ -40,7 +40,7 @@ class Notification:
         """Dessine la notification à l'écran.
         """
         tt1 = measure_text_ex(police2, self.titre, 35, 0)
-        tt2 = measure_text_ex(police2, self.texte, 22, 2)
+        tt2 = measure_text_ex(police2, self.texte, 22, 0)
         orixt = self.x + int(self.longueur/2)
         draw_rectangle_rounded((self.x, self.y, self.longueur, self.hauteur), 0.2, 30, self.couleur[0])
         draw_text_pro(police2, self.titre, (orixt-int(tt1.x/2), self.y+int(tt1.y*0.2)), (0, 0), 0, 35, 0, 

@@ -8,8 +8,8 @@ fen = Fenetre()
 
 partie = Partie(fen)
 
-start = Bouton([partie.nouvelleEtape], "Jouer", [BLUE, DARKBLUE, WHITE])
-quit = Bouton([fen.switchEtat], "Quitter", [DARKGRAY, DARKBLUE, WHITE])
+start = Bouton([partie.nouvelleEtape], "Jouer", [DARKBLUE, BLUE, WHITE])
+quit = Bouton([fen.switchEtat], "Quitter", [DARKGRAY, GRAY, WHITE])
 
 def accueil():
     draw_rectangle_gradient_v(0, 0, xf, yf, (0, 0, 60, 200), (0, 0, 30, 100))

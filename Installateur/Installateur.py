@@ -18,7 +18,7 @@ class Installateur:
         self.liBat = self.joueur.getBateaux()
         self.listeBrillante = []
         self.plateau = Plateau(10, 10)
-        self.btValid = Bouton([self.proprio.nouvelleEtape, self.verif], "Valider", [BLUE, DARKBLUE, WHITE])
+        self.btValid = Bouton([self.proprio.nouvelleEtape, self.verif], "Valider", [DARKBLUE, BLUE, WHITE])
         self.btValid.setTexteNotif("Action Impossible", "Vous devez placer tous vos bateaux.")
 
     def dessine(self) -> None:
@@ -125,7 +125,8 @@ class Installateur:
                     rep.append(ligne[origine+i*sens])
         else:
             indice = int((bateau.coord[0]+int(bateau.coord[2]/2)-plateau[0])/plateau[2])+1
-            if indice <= plateau[3] and indice >= 0:
+            if indice <= plateau[3] and indice > 0:
+                print(indice)
                 ligne = self.plateau.getColonne(indice)
                 zone = 2
                 boucle = bateau.taille

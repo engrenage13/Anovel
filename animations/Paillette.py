@@ -19,8 +19,9 @@ class Paillette:
     def setParam(self):
         """Modifie certains paramètres importants de la paillette.
         """
-        self.position = (randint(self.zone[0], self.zone[2]), randint(self.zone[1], self.zone[3]))
         self.max = randint(15, 45)
+        self.position = (randint(self.zone[0]+self.max, self.zone[2]-self.max), 
+                         randint(self.zone[1]+self.max, self.zone[3]-self.max))
         self.couleur = choice(self.couleurs)
         
     def dessine(self):
