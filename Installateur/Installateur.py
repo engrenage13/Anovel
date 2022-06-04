@@ -126,7 +126,6 @@ class Installateur:
         else:
             indice = int((bateau.coord[0]+int(bateau.coord[2]/2)-plateau[0])/plateau[2])+1
             if indice <= plateau[3] and indice > 0:
-                print(indice)
                 ligne = self.plateau.getColonne(indice)
                 zone = 2
                 boucle = bateau.taille
