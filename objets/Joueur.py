@@ -66,6 +66,8 @@ class Joueur():
         self.stats[2][1] = round(self.stats[2][0]*100/self.stats[0], 1)
 
     def rejouer(self) -> None:
+        """Réinitialise certains paramètres du joueur pour une nouvelle partie.
+        """
         self.pret = False
         self.stats = [0, [0, 0], [0, 0]]
         for i in range(len(self.SetBateaux)):

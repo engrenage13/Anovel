@@ -9,6 +9,11 @@ from finPartie import FinPartie
 
 class Partie:
     def __init__(self, fenetre: Fenetre) -> None:
+        """Crée l'entité qui gère la totalité de la partie.
+
+        Args:
+            fenetre (Fenetre): La fenêtre affiché à l'écran.
+        """
         self.fenetre = fenetre
         self.croix = ClickIma([fenetre.switchEtat], [croixSombre, croixLumineuse])
         self.joueurs = []
@@ -18,6 +23,8 @@ class Partie:
         self.baston = Attaque(self.joueurs[0], self.joueurs[1], self)
 
     def nouvelleEtape(self) -> None:
+        """Incrémente le marqueur sur la chronologie de la partie.
+        """
         self.timeline = self.timeline + 1
         if self.timeline == 2:
             self.installateur.setJoueur(self.joueurs[1])
@@ -29,6 +36,8 @@ class Partie:
             self.ecranFin = FinPartie(list(zip(self.joueurs, win)), self.baston.tour, self)
 
     def dessine(self) -> None:
+        """Dessine les éléments de la partie à l'écran.
+        """
         if self.timeline == 1 or self.timeline == 2:
             self.installateur.dessine()
         elif self.timeline == 3:
@@ -84,6 +93,8 @@ class Partie:
             self.joueurs.append(j)
 
     def rejouer(self) -> None:
+        """Réinitialise certains paramètres de la partie pour rejouer.
+        """
         for i in range(len(self.joueurs)):
             self.joueurs[i].rejouer()
         self.installateur.setJoueur(self.joueurs[0])

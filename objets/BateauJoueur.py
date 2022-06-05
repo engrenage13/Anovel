@@ -63,6 +63,12 @@ class BateauJoueur(Bateau):
         self.orient = 'h'
 
     def setPosition(self, coord: list, zone: int) -> None:
+        """Modifie la position du bateau sur le plateau.
+
+        Args:
+            coord (list): Liste des cases ciblé.
+            zone (int): Zone de l'écran où se trouve le bateau.
+        """
         pos = []
         if zone == 1:
             for i in range(self.taille-len(coord)):

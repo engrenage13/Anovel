@@ -5,6 +5,13 @@ from ui.bouton import Bouton
 
 class FinPartie:
     def __init__(self, joueurs: list, tour: int, createur: object) -> None:
+        """Crée la fenêtre de fin de partie.
+
+        Args:
+            joueurs (list): Les joueurs ayant joué la partie.
+            tour (int): Le nombre de tour qu'à durer la partie.
+            createur (object): L'entité qui crée la fenêtre et gère la partie.
+        """
         self.proprio = createur
         self.joueurs = joueurs
         self.duree = tour
@@ -28,6 +35,8 @@ class FinPartie:
                 [(40, 40, 40, 255), (10, 10, 10, 255), (20, 20, 20, 255), (30, 30, 30, 255), (0, 0, 30, 255)]))
 
     def dessine(self) -> None:
+        """Dessine la fenêtre à l'écran.
+        """
         draw_rectangle(0, 0, xf, yf, (0, 0, 0, self.saturation))
         for i in range(len(self.paillettes)):
             self.paillettes[i].dessine()
@@ -70,6 +79,12 @@ class FinPartie:
             self.hauteurBt = int(self.hauteurBt-int(yf*0.01))
 
     def dessineTitre(self, coord: tuple, indice: int) -> None:
+        """Dessine les noms des joueurs et la bannière "VAINQUEUR".
+
+        Args:
+            coord (tuple): Origine voulue pour les noms.
+            indice (int): Indice du joueur qui a gagné.
+        """
         x = coord[0]
         y = coord[1]
         tTit = measure_text_ex(police1, self.joueurs[indice][0].getNom(), 40, 0)
@@ -147,5 +162,7 @@ class FinPartie:
             y = int(y+tailleCase)
 
     def goToMenu(self) -> None:
+        """Permet de retourner au menu du démarrage du jeu.
+        """
         self.proprio.timeline = 0
         self.proprio.rejouer()

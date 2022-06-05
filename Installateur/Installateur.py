@@ -22,6 +22,8 @@ class Installateur:
         self.btValid.setTexteNotif("Action Impossible", "Vous devez placer tous vos bateaux.")
 
     def dessine(self) -> None:
+        """Dessine l'installateur à l'écran.
+        """
         ory = int((yf-hbarre)/2-tailleCase*5)+hbarre
         draw_texture(mer, 0, 0, WHITE)
         self.barreTitre()
@@ -75,6 +77,14 @@ class Installateur:
         self.proprio.croix.dessine((xf-hbarre, int(hbarre*0.05)))
 
     def dansLeCadre(self, bateau: BateauJoueur) -> tuple:
+        """Trouve les coordonnées du bateau sur le plateau.
+
+        Args:
+            bateau (BateauJoueur): Le bateau sélectionné.
+
+        Returns:
+            tuple: Les coordonnées (x, y) de l'origine du bateau.
+        """
         x = get_mouse_x()-int(bateau.coord[2]/2)
         y = get_mouse_y()-int(bateau.coord[3]/2)
         if x < 0:
@@ -87,7 +97,12 @@ class Installateur:
             y = yf-bateau.coord[3]
         return (x, y)
 
-    def ckeckSelect(self, bateau: BateauJoueur) -> bool:
+    def ckeckSelect(self, bateau: BateauJoueur) -> None:
+        """Agit si l'une des touches de la souris est appuyé.
+
+        Args:
+            bateau (BateauJoueur): Bateau survolé par la souris au moment où il y a l'interaction.
+        """
         if is_mouse_button_pressed(0):
             if bateau.getContact():
                 self.listeBrillante = []
@@ -97,6 +112,15 @@ class Installateur:
                 bateau.tourne()
 
     def getCasesCibles(self, plateau: list, bateau: BateauJoueur) -> list:
+        """Renvoie les cases survolés par le bateau.
+
+        Args:
+            plateau (list): Coordonnées du plateau.
+            bateau (BateauJoueur): Le bateau cible.
+
+        Returns:
+            list: Liste de nom de cases.
+        """
         rep = []
         couleur = BLACK
         zone = 1
@@ -160,6 +184,15 @@ class Installateur:
         return reponse
 
     def getContactBateaux(self, position: list, idBateau: int) -> bool:
+        """Vérifie si le bateau ne touche aucun autre bateau.
+
+        Args:
+            position (list): Les cases occupées par le bateau.
+            idBateau (int): L'indice du bateau sélectionné.
+
+        Returns:
+            bool: True si le bateau est sur une case déjà occupé par un autre.
+        """
         rep = False
         i = 0
         while i < len(position) and not rep:
@@ -173,6 +206,11 @@ class Installateur:
         return [rep, i]
 
     def setJoueur(self, joueur: Joueur) -> None:
+        """Permet de changer le joueur qui utilise l'installateur.
+
+        Args:
+            joueur (Joueur): Nouveau joueur.
+        """
         self.joueur = joueur
         self.liBat = self.joueur.getBateaux()
 

@@ -105,6 +105,8 @@ class Plateau:
             return colonne
 
     def reinitialise(self) -> None:
+        """Vide le contenu des cases pour lancer une nouvelle partie.
+        """
         for i in range(len(self.cases)):
             for j in range(len(self.cases[i])):
                 if self.cases[i][j][1] != '':

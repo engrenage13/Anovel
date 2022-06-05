@@ -75,6 +75,8 @@ class Bateau:
         return a
 
     def rejouer(self) -> None:
+        """Réinitialise certains paramètres du bateau pour rejouer une nouvelle partie.
+        """
         self.orient = 'h'
         self.pos = False
         self.coule = False

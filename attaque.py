@@ -40,6 +40,8 @@ class Attaque:
         # /Notification
 
     def dessine(self) -> None:
+        """Dessine les éléments du jeu de la partie attaque à l'écran.
+        """
         draw_texture(mer, 0, 0, WHITE)
         for i in range(len(self.plateaux)):
             self.plateaux[i].dessine((tlatba, self.yPlateau+yf*i), tailleCase)
@@ -207,6 +209,12 @@ class Attaque:
         return rep
 
     def startNotif(self, bateau: Bateau, case: str) -> None:
+        """Lance l'affichage de la notif.
+
+        Args:
+            bateau (Bateau): Le bateau touché.
+            case (str): La case touché.
+        """
         titre = "Touche"
         if bateau.estCoule():
             titre = "Coule"
@@ -239,6 +247,8 @@ class Attaque:
             self.incrementTour()
 
     def rejouer(self) -> None:
+        """Réinitialise certains paramètre de la partie pour rejouer.
+        """
         for i in range(len(self.plateaux)):
             self.plateaux[i].reinitialise()
         self.tour = 1
