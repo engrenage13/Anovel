@@ -17,7 +17,7 @@ class Bouton:
             self.verifFonction = fonctions[1]
         else:
             self.verifFonction = self.verification
-        self.dims = [int(tlatba*0.8), int(yf*0.1)]
+        self.dims = [int(tlatba*0.7), int(yf*0.1)]
         self.notif = Notification("Option indisbonible", "Ce bouton est désactivé")
         self.notif.setPosition(1)
         self.etatNotif = False
