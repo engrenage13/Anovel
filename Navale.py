@@ -1,25 +1,39 @@
-from FondMarin import *
+from systeme.FondMarin import *
 from partie import Partie
-from animations.Carrelage import Etincelle
 from ui.bouton import Bouton
+from systeme.fenetre import Fenetre
 
-def jouer():
-    jeu = Partie()
-    jeu.miseEnPlace()
-    etincelle.fin()
+fen = Fenetre()
 
-fond.create_rectangle(0, 0, xf, yf, fill='black', tag='accueil')
-fond.create_text(xf*0.5, yf*0.4, text=TITRE_F, font=Poli3, fill=bleu2, tags=('accueil', 'plafDec'))
-fond.create_rectangle(xf*0.6, yf*0.46, xf*0.678, yf*0.495, fill=bleu2, tag='accueil')
-fond.create_text(xf*0.62, yf*0.4775, text="alpha", font=Lili2, fill=noir, tag='accueil')
-fond.create_text(xf*0.658, yf*0.4775, text=version, font=Lili2, fill=blanc, tag='accueil')
-etincelle = Etincelle()
-etincelle.eblouissement()
-start = Bouton(jouer, "Jouer", bleuBt, nom=['start', 'accueil'])
-start.dessine((xf/2, yf*0.65))
-quit = Bouton(auRevoir, "Quitter", nom=['auRevoir', 'accueil'])
-quit.dessine((xf/2, yf*0.77))
+partie = Partie(fen)
 
-Fen.title(TITRE_F)
-Fen.attributes('-fullscreen', True)
-Fen.mainloop()
+# Boutons
+start = Bouton([partie.nouvelleEtape], "Jouer", [DARKBLUE, BLUE, WHITE])
+quit = Bouton([fen.switchEtat], "Quitter", [DARKGRAY, GRAY, WHITE])
+
+# Images
+nanav = load_image('images/logos/Navale.png')
+image_resize(nanav, int(nanav.width*0.19), int(nanav.height*0.19))
+logo = load_texture_from_image(nanav)
+tableau = load_image('images/backgrounds/valley.png')
+ratio = yf/tableau.height
+image_resize(tableau, int(tableau.width*ratio), int(tableau.height*ratio))
+fond = load_texture_from_image(tableau)
+
+def accueil():
+    draw_texture(fond, 0, 0, WHITE)
+    draw_texture(logo, 0, 0, WHITE)
+    draw_text_pro(police2, version, (int(xf*0.005), int(yf*0.975)), (0, 0), 0, 21, 0, WHITE)
+    start.dessine((int(xf*0.35), int(yf*0.92)))
+    quit.dessine((int(xf*0.65), int(yf*0.92)))
+
+while not fen.jeuDoitFermer():
+    begin_drawing()
+    clear_background(BLACK)
+    if partie.timeline == 0:
+        accueil()
+    else:
+        partie.dessine()
+    end_drawing()
+
+fen.finDuJeu()
