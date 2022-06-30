@@ -20,9 +20,21 @@ class BateauJoueur(Bateau):
             x (int): Coordonné des absicesses de l'origine de l'image.
             y (int): Coordonné des ordonnées de l'origine de l'image.
         """
-        image = self.horiz
-        if self.orient == 'v':
-            image = self.verti
+        if self.orient == 'h':
+            if self.direction == 1:
+                self.direction = 2
+                image_rotate_cw(self.originale)
+            elif self.direction == 3:
+                self.direction = 0
+                image_rotate_cw(self.originale)
+        else:
+            if self.direction == 0:
+                self.direction = 1
+                image_rotate_cw(self.originale)
+            elif self.direction == 2:
+                self.direction = 3
+                image_rotate_cw(self.originale)
+        image = load_texture_from_image(self.originale)
         self.coord = [x, y, image.width, image.height]
         draw_texture(image, x, y, WHITE)
 
@@ -55,12 +67,15 @@ class BateauJoueur(Bateau):
         if not self.pos or False in self.pos:
             self.pos = False
             self.orient = 'h'
+            if self.direction != 0:
+                for i in range(4-self.direction):
+                    image_rotate_cw(self.originale)
+                self.direction = 0
 
     def declenMouv(self):
         """Sélectionne le bateau.
         """
         self.defil = True
-        self.orient = 'h'
 
     def setPosition(self, coord: list, zone: int) -> None:
         """Modifie la position du bateau sur le plateau.

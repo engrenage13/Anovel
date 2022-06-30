@@ -19,14 +19,10 @@ class Bateau:
         self.alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 
                          'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
         # Images
-        originale = load_image(image)
-        image_resize(originale, int(originale.width*(tailleCase*0.88)*self.taille/originale.width), 
-                     int(originale.height*(tailleCase*0.88)*self.taille/originale.width))
-        self.horiz = load_texture_from_image(originale)
-        lirot = [1, 3]
-        for i in range(choice(lirot)):
-            image_rotate_cw(originale)
-            self.verti = load_texture_from_image(originale)
+        self.originale = load_image(image)
+        image_resize(self.originale, int(self.originale.width*(tailleCase*0.88)*self.taille/self.originale.width), 
+                     int(self.originale.height*(tailleCase*0.88)*self.taille/self.originale.width))
+        self.direction = 0
         # /Images
 
     def dessine(self, x: int, y: int):
@@ -36,9 +32,21 @@ class Bateau:
             x (int): Coordonné des absicesses de l'origine de l'image.
             y (int): Coordonné des ordonnées de l'origine de l'image.
         """
-        image = self.horiz
-        if self.orient == 'v':
-            image = self.verti
+        if self.orient == 'h':
+            if self.direction == 1:
+                self.direction = 2
+                image_rotate_cw(self.originale)
+            elif self.direction == 3:
+                self.direction = 0
+                image_rotate_cw(self.originale)
+        else:
+            if self.direction == 0:
+                self.direction = 1
+                image_rotate_cw(self.originale)
+            elif self.direction == 2:
+                self.direction = 3
+                image_rotate_cw(self.originale)
+        image = load_texture_from_image(self.originale)
         draw_texture(image, x, y, WHITE)
 
     def estTouche(self, position: str) -> bool:

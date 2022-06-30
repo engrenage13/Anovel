@@ -21,7 +21,7 @@ image_resize(tableau, int(tableau.width*ratio), int(tableau.height*ratio))
 fond = load_texture_from_image(tableau)
 
 def accueil():
-    draw_texture(fond, 0, 0, WHITE)
+    #draw_texture(fond, 0, 0, WHITE)
     draw_texture(logo, 0, 0, WHITE)
     draw_text_pro(police2, version, (int(xf*0.005), int(yf*0.975)), (0, 0), 0, 21, 0, WHITE)
     start.dessine((int(xf*0.35), int(yf*0.92)))

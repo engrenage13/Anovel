@@ -2,9 +2,9 @@ from pyray import *
 from raylib import TEXTURE_FILTER_TRILINEAR
 from raylib.colors import *
 
-TITRE_F = 'NAVALE'
+TITRE_F = 'ANOVEL'
 etatVersion = "alpha"
-version = "0.1.14"
+version = "0.1.15"
 
 init_window(get_monitor_width(0), get_monitor_height(0), TITRE_F)
 set_target_fps(60)
