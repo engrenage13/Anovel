@@ -3,6 +3,7 @@ from systeme.FondMarin import *
 from ui.bouton import Bouton
 from objets.Joueur import Joueur
 from objets.plateau import Plateau
+from Installateur.tiroir import Tiroir
 from museeNoyee import mer
 
 class Installateur:
@@ -16,6 +17,8 @@ class Installateur:
         self.proprio = creator
         self.joueur = joueur
         self.liBat = self.joueur.getBateaux()
+        self.tiroir = Tiroir()
+        self.tiroir.setListe(self.liBat)
         self.listeBrillante = []
         self.plateau = Plateau(10, 10)
         self.btValid = Bouton([self.proprio.nouvelleEtape, self.verif], "Valider", [DARKBLUE, BLUE, WHITE])
@@ -28,7 +31,8 @@ class Installateur:
         draw_texture(mer, 0, 0, WHITE)
         self.barreTitre()
         self.plateau.dessine((tlatba, ory), tailleCase, self.listeBrillante)
-        self.dessineBateaux([tlatba, ory, tailleCase, 10])
+        self.tiroir.dessine(int((yf-hbarre)/2)+hbarre)
+        #self.dessineBateaux([tlatba, ory, tailleCase, 10])
         self.btValid.dessine((int(xf-tlatba*0.5), ory+int(tailleCase*9.5)))
 
     def dessineBateaux(self, plateau: list) -> None:
