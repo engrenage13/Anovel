@@ -12,6 +12,7 @@ class BateauJoueur(Bateau):
             propriétaire (Joueur): Propriétaire du bateau.
         """
         super().__init__(nom, taille, image, proprietaire)
+        self.coord = [0, 0, 1, 1]
 
     def dessine(self, x: int, y: int):
         """Dessine le bateau.

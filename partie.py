@@ -1,6 +1,6 @@
 from systeme.FondMarin import *
 from systeme.fenetre import Fenetre
-from Installateur.Installateur import Installateur
+from Editeur.editeur import Installateur
 from objets.Joueur import Joueur
 from ui.clickIma import ClickIma
 from museeNoyee import croixLumineuse, croixSombre

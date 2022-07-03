@@ -3,7 +3,7 @@ from systeme.FondMarin import *
 from ui.bouton import Bouton
 from objets.Joueur import Joueur
 from objets.plateau import Plateau
-from Installateur.tiroir import Tiroir
+from Editeur.tiroir import Tiroir
 from museeNoyee import mer
 
 class Installateur:
