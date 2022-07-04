@@ -10,6 +10,11 @@ class Tiroir:
         self.tCase = 1.6*tailleCase
         self.originex = -20
         self.largeur = int(xf*0.16)
+        # Images
+        coraux = load_image('images/decors/coraux1.png')
+        ratio = self.largeur/coraux.width
+        image_resize(coraux, int(coraux.width*ratio), int(coraux.height*ratio))
+        self.coraux = load_texture_from_image(coraux)
 
     def dessine(self, y: int) -> None:
         if len(self.liste) > 0:
@@ -19,6 +24,7 @@ class Tiroir:
                                    [255, 255, 255, 50])
             draw_rectangle_rounded_lines((self.originex, originey, self.largeur, tailley), 
                                          0.2, 30, 3, WHITE)
+            #draw_texture(self.coraux, self.originex, originey+tailley-self.coraux.height, WHITE)
             for i in range(len(self.liste)):
                 xbat = 0
                 if self.getContactBateau(i):

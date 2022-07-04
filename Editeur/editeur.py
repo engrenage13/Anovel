@@ -6,13 +6,13 @@ from objets.plateau import Plateau
 from Editeur.tiroir import Tiroir
 from museeNoyee import mer
 
-class Installateur:
+class Editeur:
     def __init__(self, joueur: Joueur, creator: object) -> None:
         """Crée la fenêtre d'installation de bateaux pour un joueur.
 
         Args:
             joueur (Joueur): Joueur concerné par l'installation.
-            creator (Partie): Objet "Partie" qui a lancé l'installateur.
+            creator (Partie): Objet "Partie" qui a lancé l'éditeur.
         """
         self.proprio = creator
         self.joueur = joueur
@@ -25,14 +25,14 @@ class Installateur:
         self.btValid.setTexteNotif("Action Impossible", "Vous devez placer tous vos bateaux.")
 
     def dessine(self) -> None:
-        """Dessine l'installateur à l'écran.
+        """Dessine l'éditeur à l'écran.
         """
         ory = int((yf-hbarre)/2-tailleCase*5)+hbarre
         draw_texture(mer, 0, 0, WHITE)
         self.barreTitre()
         self.plateau.dessine((tlatba, ory), tailleCase, self.listeBrillante)
         self.tiroir.dessine(int((yf-hbarre)/2)+hbarre)
-        #self.dessineBateaux([tlatba, ory, tailleCase, 10])
+        self.dessineBateaux([tlatba, ory, tailleCase, 10])
         self.btValid.dessine((int(xf-tlatba*0.5), ory+int(tailleCase*9.5)))
 
     def dessineBateaux(self, plateau: list) -> None:
@@ -42,10 +42,7 @@ class Installateur:
             plateau (list): Infos sur le plateau.
         """
         for i in range(len(self.liBat)):
-            if not self.liBat[i].pos and not self.liBat[i].defil:
-                x = int(xf*0.01)
-                y = int((yf*0.15)*(i+1))
-            elif self.liBat[i].defil:
+            if self.liBat[i].defil:
                 coo = self.dansLeCadre(self.liBat[i])
                 x = coo[0]
                 y = coo[1]
@@ -56,7 +53,8 @@ class Installateur:
                         self.listeBrillante = []
                 else:
                     self.listeBrillante = []
-            else:
+                self.liBat[i].dessine(x, y)
+            elif not self.liBat[i].defil and self.liBat[i].pos:
                 colonne = float(self.liBat[i].pos[0][1:len(self.liBat[i].pos[0])])
                 ligne = float(self.plateau.alphabet.index(self.liBat[i].pos[0][0]))
                 if self.liBat[i].orient == 'h':
@@ -67,9 +65,7 @@ class Installateur:
                     ligne = ligne + self.liBat[i].taille/2
                 x = int(plateau[0]+plateau[2]*(colonne-1)-int(self.liBat[i].coord[2]/2))
                 y = int(plateau[1]+plateau[2]*ligne-int(self.liBat[i].coord[3]/2))
-            draw_text_pro(police1, self.liBat[i].nom, (int(xf*0.01), int((yf*0.15)*(i+1)-yf*0.03)), (0, 0),
-                          0, 20, 0, WHITE)
-            self.liBat[i].dessine(x, y)
+                self.liBat[i].dessine(x, y)
             self.ckeckSelect(self.liBat[i])
 
     def barreTitre(self) -> None:
@@ -210,7 +206,7 @@ class Installateur:
         return [rep, i]
 
     def setJoueur(self, joueur: Joueur) -> None:
-        """Permet de changer le joueur qui utilise l'installateur.
+        """Permet de changer le joueur qui utilise l'éditeur.
 
         Args:
             joueur (Joueur): Nouveau joueur.

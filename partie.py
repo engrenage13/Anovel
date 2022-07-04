@@ -1,6 +1,6 @@
 from systeme.FondMarin import *
 from systeme.fenetre import Fenetre
-from Editeur.editeur import Installateur
+from Editeur.editeur import Editeur
 from objets.Joueur import Joueur
 from ui.clickIma import ClickIma
 from museeNoyee import croixLumineuse, croixSombre
@@ -19,7 +19,7 @@ class Partie:
         self.joueurs = []
         self.timeline = 0
         self.creeJoueurs()
-        self.installateur = Installateur(self.joueurs[0], self)
+        self.editeur = Editeur(self.joueurs[0], self)
         self.baston = Attaque(self.joueurs[0], self.joueurs[1], self)
 
     def nouvelleEtape(self) -> None:
@@ -27,7 +27,7 @@ class Partie:
         """
         self.timeline = self.timeline + 1
         if self.timeline == 2:
-            self.installateur.setJoueur(self.joueurs[1])
+            self.editeur.setJoueur(self.joueurs[1])
         elif self.timeline == 4:
             win = [False]*len(self.joueurs)
             for i in range(len(self.joueurs)):
@@ -39,7 +39,7 @@ class Partie:
         """Dessine les éléments de la partie à l'écran.
         """
         if self.timeline == 1 or self.timeline == 2:
-            self.installateur.dessine()
+            self.editeur.dessine()
         elif self.timeline == 3:
             self.baston.dessine()
         elif self.timeline == 4:
@@ -97,7 +97,7 @@ class Partie:
         """
         for i in range(len(self.joueurs)):
             self.joueurs[i].rejouer()
-        self.installateur.setJoueur(self.joueurs[0])
+        self.editeur.setJoueur(self.joueurs[0])
         self.baston.rejouer()
         if self.timeline > 0:
             self.timeline = 1
