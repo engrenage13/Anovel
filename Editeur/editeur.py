@@ -14,14 +14,15 @@ class Editeur:
             joueur (Joueur): Joueur concerné par l'installation.
             creator (Partie): Objet "Partie" qui a lancé l'éditeur.
         """
-        self.proprio = creator
+        self.createur = creator
         self.joueur = joueur
-        self.liBat = self.joueur.getBateaux()
-        self.tiroir = Tiroir()
-        self.tiroir.setListe(self.liBat)
+        self.bateaux = []
+        self.tiroir = Tiroir(self)
+        self.tiroir.setListe(self.joueur.getBateaux())
         self.listeBrillante = []
+        self.attente = 0
         self.plateau = Plateau(10, 10)
-        self.btValid = Bouton([self.proprio.nouvelleEtape, self.verif], "Valider", [DARKBLUE, BLUE, WHITE])
+        self.btValid = Bouton([self.createur.nouvelleEtape, self.verif], "Valider", [DARKBLUE, BLUE, WHITE])
         self.btValid.setTexteNotif("Action Impossible", "Vous devez placer tous vos bateaux.")
 
     def dessine(self) -> None:
@@ -41,32 +42,37 @@ class Editeur:
         Args:
             plateau (list): Infos sur le plateau.
         """
-        for i in range(len(self.liBat)):
-            if self.liBat[i].defil:
-                coo = self.dansLeCadre(self.liBat[i])
+        i = 0
+        while i < len(self.bateaux):
+            if self.bateaux[i].defil:
+                coo = self.dansLeCadre(self.bateaux[i])
                 x = coo[0]
                 y = coo[1]
-                if x+self.liBat[i].coord[2] >= tlatba and x <= xf-tlatba:
-                    if y+self.liBat[i].coord[3] >= plateau[1] and y <= plateau[1]+plateau[3]*tailleCase:
-                        self.listeBrillante = self.getCasesCibles(plateau, self.liBat[i])
+                if x+self.bateaux[i].coord[2] >= tlatba and x <= xf-tlatba:
+                    if y+self.bateaux[i].coord[3] >= plateau[1] and y <= plateau[1]+plateau[3]*tailleCase:
+                        self.listeBrillante = self.getCasesCibles(plateau, self.bateaux[i])
                     else:
                         self.listeBrillante = []
                 else:
                     self.listeBrillante = []
-                self.liBat[i].dessine(x, y)
-            elif not self.liBat[i].defil and self.liBat[i].pos:
-                colonne = float(self.liBat[i].pos[0][1:len(self.liBat[i].pos[0])])
-                ligne = float(self.plateau.alphabet.index(self.liBat[i].pos[0][0]))
-                if self.liBat[i].orient == 'h':
-                    colonne = colonne + self.liBat[i].taille/2
+                self.bateaux[i].dessine(x, y)
+            elif not self.bateaux[i].defil and self.bateaux[i].pos:
+                colonne = float(self.bateaux[i].pos[0][1:len(self.bateaux[i].pos[0])])
+                ligne = float(self.plateau.alphabet.index(self.bateaux[i].pos[0][0]))
+                if self.bateaux[i].orient == 'h':
+                    colonne = colonne + self.bateaux[i].taille/2
                     ligne = ligne + 0.5
                 else:
                     colonne = colonne + 0.5
-                    ligne = ligne + self.liBat[i].taille/2
-                x = int(plateau[0]+plateau[2]*(colonne-1)-int(self.liBat[i].coord[2]/2))
-                y = int(plateau[1]+plateau[2]*ligne-int(self.liBat[i].coord[3]/2))
-                self.liBat[i].dessine(x, y)
-            self.ckeckSelect(self.liBat[i])
+                    ligne = ligne + self.bateaux[i].taille/2
+                x = int(plateau[0]+plateau[2]*(colonne-1)-int(self.bateaux[i].coord[2]/2))
+                y = int(plateau[1]+plateau[2]*ligne-int(self.bateaux[i].coord[3]/2))
+                self.bateaux[i].dessine(x, y)
+            if self.attente <= 0:
+                self.ckeckSelect(self.bateaux[i])
+            else:
+                self.attente = self.attente - 1
+            i = i + 1
 
     def barreTitre(self) -> None:
         """Crée la barre de titre en haut de la fenêtre.
@@ -74,7 +80,7 @@ class Editeur:
         draw_rectangle_gradient_h(0, 0, xf, hbarre, [112, 31, 126, 120], [150, 51, 140, 100])
         draw_text_pro(police1, f"Installation : {self.joueur.getNom()}", (int(hbarre/4), int(hbarre/4)), 
                       (0, 0), 0, 25, 0, WHITE)
-        self.proprio.croix.dessine((xf-hbarre, int(hbarre*0.05)))
+        self.createur.croix.dessine((xf-hbarre, int(hbarre*0.05)))
 
     def dansLeCadre(self, bateau: BateauJoueur) -> tuple:
         """Trouve les coordonnées du bateau sur le plateau.
@@ -98,18 +104,25 @@ class Editeur:
         return (x, y)
 
     def ckeckSelect(self, bateau: BateauJoueur) -> None:
-        """Agit si l'une des touches de la souris est appuyé.
-
-        Args:
-            bateau (BateauJoueur): Bateau survolé par la souris au moment où il y a l'interaction.
+        """Agit si l'une des touches de la souris est appuyée et que le pointeur est sur le bateau visé.
         """
         if is_mouse_button_pressed(0):
             if bateau.getContact():
                 self.listeBrillante = []
-                bateau.switchMode()
+                signal = bateau.switchMode()
+                if not signal and not bateau.pos:
+                    if self.checkClone(bateau, self.tiroir.liste):
+                        self.tiroir.ajValListe(bateau)
+                    del self.bateaux[self.bateaux.index(bateau)]
         elif is_mouse_button_pressed(1):
             if bateau.getContact():
                 bateau.tourne()
+
+    def checkClone(self, valeur: object, liste: list) -> bool:
+        rep = True
+        if valeur in liste:
+            rep = False
+        return rep
 
     def getCasesCibles(self, plateau: list, bateau: BateauJoueur) -> list:
         """Renvoie les cases survolés par le bateau.
@@ -174,7 +187,7 @@ class Editeur:
         reponse = rep
         if couleur != BLACK:
             reponse = [rep, couleur]
-        contact = self.getContactBateaux(rep, self.liBat.index(bateau))
+        contact = self.getContactBateaux(rep, self.bateaux.index(bateau))
         if contact[0]:
             ididi = contact[1]
             if ididi >= len(rep):
@@ -197,9 +210,9 @@ class Editeur:
         i = 0
         while i < len(position) and not rep:
             j = 0
-            while j < len(self.liBat) and not rep:
-                if j != idBateau and self.liBat[j].pos:
-                    if position[i] in self.liBat[j].pos:
+            while j < len(self.bateaux) and not rep:
+                if j != idBateau and self.bateaux[j].pos:
+                    if position[i] in self.bateaux[j].pos:
                         rep = True
                 j = j + 1
             i = i + 1
@@ -212,7 +225,8 @@ class Editeur:
             joueur (Joueur): Nouveau joueur.
         """
         self.joueur = joueur
-        self.liBat = self.joueur.getBateaux()
+        self.tiroir.setListe(self.joueur.getBateaux())
+        self.bateaux = []
 
     def verif(self) -> bool:
         """Vérifie si tous les bateaux du joueur ont étaient placés correctement.
@@ -222,8 +236,11 @@ class Editeur:
         """
         rep = True
         i = 0
-        while i < len(self.liBat) and rep:
-            if not self.liBat[i].pos or False in self.liBat[i].pos:
-                rep = False
-            i = i + 1
+        if len(self.tiroir.liste) > 0:
+            rep = False
+        else:
+            while i < len(self.bateaux) and rep:
+                if not self.bateaux[i].pos or False in self.bateaux[i].pos:
+                    rep = False
+                i = i + 1
         return rep

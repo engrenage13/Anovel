@@ -53,13 +53,19 @@ class BateauJoueur(Bateau):
                 rep = True
         return rep
 
-    def switchMode(self):
+    def switchMode(self) -> bool:
         """Sélectionne et déselectionne le bateau.
+
+        Returns:
+            bool: True si le bateau entre en phase de placement, False s'il est relâché.
         """
         if self.defil:
             self.immobile()
+            rep = False
         else:
             self.declenMouv()
+            rep = True
+        return rep
 
     def immobile(self):
         """Désélectionne le bateau.
