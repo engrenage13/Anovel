@@ -12,20 +12,24 @@ class Tiroir:
         self.originex = -40
         self.largeur = int(xf*0.16)
         # Images
-        coraux = load_image('images/decors/coraux1.png')
-        ratio = self.largeur/coraux.width
-        image_resize(coraux, int(coraux.width*ratio), int(coraux.height*ratio))
-        self.coraux = load_texture_from_image(coraux)
+        deco1 = load_image('images/decors/coraux1.png')
+        ratio = self.largeur/deco1.width
+        image_resize(deco1, int(deco1.width*ratio), int(deco1.height*ratio))
+        self.decos = [load_texture_from_image(deco1)]
+        image_flip_vertical(deco1)
+        self.decos.append(load_texture_from_image(deco1))
 
     def dessine(self, y: int) -> None:
         if len(self.liste) > 0:
             originey = y-int(self.tCase/2*len(self.liste))
             tailley = int(self.tCase*len(self.liste))
-            draw_rectangle_rounded((self.originex, originey, self.largeur+self.originex*-1, tailley), 0.2, 30, 
-                                   [255, 255, 255, 50])
+            draw_rectangle_rounded((self.originex, originey, self.largeur+self.originex*-1, tailley), 
+                                   0.2, 30, [255, 255, 255, 50])
+            draw_texture(self.decos[0], self.largeur-self.decos[0].width, 
+                         originey+tailley-self.decos[0].height, [255, 255, 255, 50])
+            draw_texture(self.decos[1], self.largeur-self.decos[1].width, originey, [255, 255, 255, 50])
             draw_rectangle_rounded_lines((self.originex, originey, self.largeur+self.originex*-1, tailley), 
                                          0.2, 30, 3, WHITE)
-            #draw_texture(self.coraux, self.originex, originey+tailley-self.coraux.height, WHITE)
             i = 0
             while i < len(self.liste):
                 xbat = 0
