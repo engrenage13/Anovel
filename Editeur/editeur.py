@@ -17,6 +17,7 @@ class Editeur:
         self.createur = creator
         self.joueur = joueur
         self.bateaux = []
+        self.ordre = []
         self.tiroir = Tiroir(self)
         self.tiroir.setListe(self.joueur.getBateaux())
         self.listeBrillante = []
@@ -42,34 +43,36 @@ class Editeur:
         Args:
             plateau (list): Infos sur le plateau.
         """
+        self.ordreBateaux()
         i = 0
         while i < len(self.bateaux):
-            if self.bateaux[i].defil:
-                coo = self.dansLeCadre(self.bateaux[i])
+            bateau = self.bateaux[self.ordre[i]]
+            if bateau.defil:
+                coo = self.dansLeCadre(bateau)
                 x = coo[0]
                 y = coo[1]
-                if x+self.bateaux[i].coord[2] >= tlatba and x <= xf-tlatba:
-                    if y+self.bateaux[i].coord[3] >= plateau[1] and y <= plateau[1]+plateau[3]*tailleCase:
-                        self.listeBrillante = self.getCasesCibles(plateau, self.bateaux[i])
+                if x+bateau.coord[2] >= tlatba and x <= xf-tlatba:
+                    if y+bateau.coord[3] >= plateau[1] and y <= plateau[1]+plateau[3]*tailleCase:
+                        self.listeBrillante = self.getCasesCibles(plateau, bateau)
                     else:
                         self.listeBrillante = []
                 else:
                     self.listeBrillante = []
-                self.bateaux[i].dessine(x, y)
-            elif not self.bateaux[i].defil and self.bateaux[i].pos:
-                colonne = float(self.bateaux[i].pos[0][1:len(self.bateaux[i].pos[0])])
-                ligne = float(self.plateau.alphabet.index(self.bateaux[i].pos[0][0]))
-                if self.bateaux[i].orient == 'h':
-                    colonne = colonne + self.bateaux[i].taille/2
+                bateau.dessine(x, y)
+            elif not bateau.defil and bateau.pos:
+                colonne = float(bateau.pos[0][1:len(bateau.pos[0])])
+                ligne = float(self.plateau.alphabet.index(bateau.pos[0][0]))
+                if bateau.orient == 'h':
+                    colonne = colonne + bateau.taille/2
                     ligne = ligne + 0.5
                 else:
                     colonne = colonne + 0.5
-                    ligne = ligne + self.bateaux[i].taille/2
-                x = int(plateau[0]+plateau[2]*(colonne-1)-int(self.bateaux[i].coord[2]/2))
-                y = int(plateau[1]+plateau[2]*ligne-int(self.bateaux[i].coord[3]/2))
-                self.bateaux[i].dessine(x, y)
+                    ligne = ligne + bateau.taille/2
+                x = int(plateau[0]+plateau[2]*(colonne-1)-int(bateau.coord[2]/2))
+                y = int(plateau[1]+plateau[2]*ligne-int(bateau.coord[3]/2))
+                bateau.dessine(x, y)
             if self.attente <= 0:
-                self.ckeckSelect(self.bateaux[i])
+                self.ckeckSelect(bateau)
             else:
                 self.attente = self.attente - 1
             i = i + 1
@@ -81,6 +84,14 @@ class Editeur:
         draw_text_pro(police1, f"Installation : {self.joueur.getNom()}", (int(hbarre/4), int(hbarre/4)), 
                       (0, 0), 0, 25, 0, WHITE)
         self.createur.croix.dessine((xf-hbarre, int(hbarre*0.05)))
+
+    def ordreBateaux(self) -> None:
+        self.ordre = []
+        for i in range(len(self.bateaux)):
+            if not self.bateaux[i].defil:
+                self.ordre = [i] + self.ordre
+            else:
+                self.ordre.append(i)
 
     def dansLeCadre(self, bateau: BateauJoueur) -> tuple:
         """Trouve les coordonnées du bateau sur le plateau.
@@ -114,6 +125,7 @@ class Editeur:
                     if self.checkClone(bateau, self.tiroir.liste):
                         self.tiroir.ajValListe(bateau)
                     del self.bateaux[self.bateaux.index(bateau)]
+                    self.ordreBateaux()
         elif is_mouse_button_pressed(1):
             if bateau.getContact():
                 bateau.tourne()

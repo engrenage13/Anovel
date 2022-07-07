@@ -80,9 +80,27 @@ class Tiroir:
     def checkSelect(self, bateau: BateauJoueur) -> bool:
         rep = False
         if is_mouse_button_pressed(0):
+            parasite = self.checkBateauVolant()
             bateau.defil = True
             self.createur.attente = 50
             self.createur.bateaux.append(bateau)
-            self.supValListe(self.liste.index(bateau))
+            if parasite >= 0:
+                self.createur.bateaux[parasite].pos = False
+                self.createur.bateaux[parasite].immobile()
+                self.liste[self.liste.index(bateau)] = self.createur.bateaux[parasite]
+                del self.createur.bateaux[parasite]
+                self.createur.ordreBateaux()
+            else:
+                self.supValListe(self.liste.index(bateau))
             rep = True
+        return rep
+
+    def checkBateauVolant(self) -> int:
+        rep = -1
+        i = 0
+        while i < len(self.createur.bateaux) and rep == -1:
+            if self.createur.bateaux[i].defil:
+                rep = i
+            else:
+                i = i + 1
         return rep
