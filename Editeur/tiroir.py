@@ -38,11 +38,11 @@ class Tiroir:
                     if contact[0]:
                         xbat = int(xf*0.01)
                         self.soulevement[i] = True
-                    elif self.liste[i].originale.width >= (self.largeur)*0.9:
+                    elif self.liste[i].images[0].width >= (self.largeur)*0.9:
                         self.soulevement[i] = False
-                        xbat = int((self.largeur)*0.9-self.liste[i].originale.width)
+                        xbat = int((self.largeur)*0.9-self.liste[i].images[0].width)
                     ybat = int(tailley*(self.positions[len(self.liste)-1][1][i]/100)+originey)
-                    self.liste[i].dessine(xbat, ybat-int(self.liste[i].originale.height/2))
+                    self.liste[i].dessine(xbat, ybat-int(self.liste[i].images[0].height/2))
                 i = i + 1
 
     def setListe(self, liste: list) -> None:
