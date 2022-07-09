@@ -39,17 +39,32 @@ class Tiroir:
                 xbat = 0
                 contact = self.getContactBateau(i)
                 if not contact[1]:
+                    ybat = int(tailley*(self.positions[len(self.liste)-1][1][i]/100)+originey)
                     if contact[0]:
                         xbat = int(xf*0.01)
                         self.soulevement[i][0] = True
+                        self.dessineNom(self.liste[i], xbat, ybat)
                     elif self.liste[i].images[0].width >= (self.largeur)*0.9:
                         self.soulevement[i][0] = False
                         xbat = int((self.largeur)*0.9-self.liste[i].images[0].width)
-                    ybat = int(tailley*(self.positions[len(self.liste)-1][1][i]/100)+originey)
                     self.liste[i].dessine(self.soulevement[i][1], ybat-int(self.liste[i].images[0].height/2))
                     # Animation des bateaux
                     self.bougeBat(i, xbat)
                 i = i + 1
+
+    def dessineNom(self, bateau: BateauJoueur, x: int, y: int) -> None:
+        tt1 = measure_text_ex(police2, bateau.nom, 40, 0)
+        tt2 = measure_text_ex(police2, f"{bateau.taille} cases", 27, 0)
+        max = tt1.x
+        if tt2.x > max:
+            max = tt2.x
+        hauteur = int(tailleCase*1.2)
+        longueur = int(x+bateau.images[0].width+max+hauteur/2)
+        draw_rectangle(0, y-int(hauteur/2), longueur, hauteur, [0, 12, 72, 255])
+        draw_text_pro(police2, bateau.nom, (int(x+bateau.images[0].width+hauteur/4), y-int(hauteur/3)), 
+                      (0, 0), 0, 40, 0, WHITE)
+        draw_text_pro(police2, f"{bateau.taille} cases", 
+                      (int(x+bateau.images[0].width+hauteur/4), y), (0, 0), 0, 27, 0, SKYBLUE)
 
     def setListe(self, liste: list) -> None:
         self.liste = liste[:]
