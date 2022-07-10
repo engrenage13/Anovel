@@ -59,12 +59,12 @@ class Tiroir:
         if tt2.x > max:
             max = tt2.x
         hauteur = int(tailleCase*1.2)
-        longueur = int(x+bateau.images[0].width+max+hauteur/2)
-        draw_rectangle(0, y-int(hauteur/2), longueur, hauteur, [0, 12, 72, 255])
-        draw_text_pro(police2, bateau.nom, (int(x+bateau.images[0].width+hauteur/4), y-int(hauteur/3)), 
+        longueur = int(x+bateau.images[0].width+max+hauteur/3)
+        draw_rectangle(0, y-int(hauteur/2), longueur, hauteur, [0, 12, 72, 155])
+        draw_text_pro(police2, bateau.nom, (int(x+bateau.images[0].width+hauteur/6), y-int(hauteur/3)), 
                       (0, 0), 0, 40, 0, WHITE)
         draw_text_pro(police2, f"{bateau.taille} cases", 
-                      (int(x+bateau.images[0].width+hauteur/4), y), (0, 0), 0, 27, 0, SKYBLUE)
+                      (int(x+bateau.images[0].width+hauteur/6), y), (0, 0), 0, 27, 0, SKYBLUE)
 
     def setListe(self, liste: list) -> None:
         self.liste = liste[:]
