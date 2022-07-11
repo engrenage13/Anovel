@@ -33,7 +33,6 @@ class Editeur:
         draw_texture(mer, 0, 0, WHITE)
         self.barreTitre()
         self.plateau.dessine((tlatba, ory), tailleCase, self.listeBrillante)
-        self.tiroir.dessine(int((yf-hbarre)/2)+hbarre)
         self.dessineBateaux([tlatba, ory, tailleCase, 10])
         self.btValid.dessine((int(xf-tlatba*0.5), ory+int(tailleCase*9.5)))
 
@@ -45,37 +44,47 @@ class Editeur:
         """
         self.ordreBateaux()
         i = 0
-        while i < len(self.bateaux):
-            bateau = self.bateaux[self.ordre[i]]
-            if bateau.defil:
-                coo = self.dansLeCadre(bateau)
-                x = coo[0]
-                y = coo[1]
-                if x+bateau.coord[2] >= tlatba and x <= xf-tlatba:
-                    if y+bateau.coord[3] >= plateau[1] and y <= plateau[1]+plateau[3]*tailleCase:
-                        self.listeBrillante = self.getCasesCibles(plateau, bateau)
-                    else:
-                        self.listeBrillante = []
+        defil = False
+        objectif = len(self.bateaux)
+        if len(self.bateaux) > 0 and self.bateaux[len(self.bateaux)-1].defil:
+            defil = True
+            objectif = len(self.bateaux)-1
+        while i < objectif:
+            self.dessineBateau(self.bateaux[self.ordre[i]], plateau)
+            i = i + 1
+        self.tiroir.dessine(int((yf-hbarre)/2)+hbarre)
+        if defil and len(self.bateaux) > 0 and i < len(self.bateaux):
+            self.dessineBateau(self.bateaux[self.ordre[i]], plateau)
+
+    def dessineBateau(self, bateau: BateauJoueur, plateau: list) -> None:
+        if bateau.defil:
+            coo = self.dansLeCadre(bateau)
+            x = coo[0]
+            y = coo[1]
+            if x+bateau.coord[2] >= tlatba and x <= xf-tlatba:
+                if y+bateau.coord[3] >= plateau[1] and y <= plateau[1]+plateau[3]*tailleCase:
+                    self.listeBrillante = self.getCasesCibles(plateau, bateau)
                 else:
                     self.listeBrillante = []
-                bateau.dessine(x, y)
-            elif not bateau.defil and bateau.pos:
-                colonne = float(bateau.pos[0][1:len(bateau.pos[0])])
-                ligne = float(self.plateau.alphabet.index(bateau.pos[0][0]))
-                if bateau.orient == 'h':
-                    colonne = colonne + bateau.taille/2
-                    ligne = ligne + 0.5
-                else:
-                    colonne = colonne + 0.5
-                    ligne = ligne + bateau.taille/2
-                x = int(plateau[0]+plateau[2]*(colonne-1)-int(bateau.coord[2]/2))
-                y = int(plateau[1]+plateau[2]*ligne-int(bateau.coord[3]/2))
-                bateau.dessine(x, y)
-            if self.attente <= 0:
-                self.ckeckSelect(bateau)
             else:
-                self.attente = self.attente - 1
-            i = i + 1
+                self.listeBrillante = []
+            bateau.dessine(x, y)
+        elif not bateau.defil and bateau.pos:
+            colonne = float(bateau.pos[0][1:len(bateau.pos[0])])
+            ligne = float(self.plateau.alphabet.index(bateau.pos[0][0]))
+            if bateau.orient == 'h':
+                colonne = colonne + bateau.taille/2
+                ligne = ligne + 0.5
+            else:
+                colonne = colonne + 0.5
+                ligne = ligne + bateau.taille/2
+            x = int(plateau[0]+plateau[2]*(colonne-1)-int(bateau.coord[2]/2))
+            y = int(plateau[1]+plateau[2]*ligne-int(bateau.coord[3]/2))
+            bateau.dessine(x, y)
+        if self.attente <= 0:
+            self.ckeckSelect(bateau)
+        else:
+            self.attente = self.attente - 1
 
     def barreTitre(self) -> None:
         """Crée la barre de titre en haut de la fenêtre.

@@ -53,18 +53,19 @@ class Tiroir:
                 i = i + 1
 
     def dessineNom(self, bateau: BateauJoueur, x: int, y: int) -> None:
-        tt1 = measure_text_ex(police2, bateau.nom, 40, 0)
-        tt2 = measure_text_ex(police2, f"{bateau.taille} cases", 27, 0)
+        hauteur = int(tailleCase*1.2)
+        tt1 = measure_text_ex(police2, bateau.nom, int(hauteur*0.37), 0)
+        tt2 = measure_text_ex(police2, f"{bateau.taille} cases", int(hauteur*0.27), 0)
         max = tt1.x
         if tt2.x > max:
             max = tt2.x
-        hauteur = int(tailleCase*1.2)
         longueur = int(x+bateau.images[0].width+max+hauteur/3)
         draw_rectangle(0, y-int(hauteur/2), longueur, hauteur, [0, 12, 72, 155])
-        draw_text_pro(police2, bateau.nom, (int(x+bateau.images[0].width+hauteur/6), y-int(hauteur/3)), 
-                      (0, 0), 0, 40, 0, WHITE)
+        draw_text_pro(police2, bateau.nom, (int(x+bateau.images[0].width+hauteur/6), y-tt1.y), 
+                      (0, 0), 0, int(hauteur*0.37), 0, WHITE)
         draw_text_pro(police2, f"{bateau.taille} cases", 
-                      (int(x+bateau.images[0].width+hauteur/6), y), (0, 0), 0, 27, 0, SKYBLUE)
+                      (int(x+bateau.images[0].width+hauteur/6), y), (0, 0), 0, int(hauteur*0.27), 0, 
+                       SKYBLUE)
 
     def setListe(self, liste: list) -> None:
         self.liste = liste[:]
@@ -78,6 +79,7 @@ class Tiroir:
             del self.soulevement[indice]
             if len(self.liste) == 0:
                 self.lumCadre = [0, 5]
+            self.createur.ordreBateaux()
 
     def ajValListe(self, valeur: BateauJoueur) -> None:
         self.liste.append(valeur)
