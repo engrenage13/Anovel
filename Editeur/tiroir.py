@@ -37,7 +37,7 @@ class Tiroir:
             draw_texture(self.decos[1], self.largeur-self.decos[1].width, originey, 
                          [255, 255, 255, self.lumCadre[0]])
             draw_rectangle_rounded_lines((self.originex, originey, self.largeur+self.originex*-1, tailley), 
-                                         0.2, 30, 3, [255, 255, 255, self.lumCadre[1]])
+                                         0.2, 30, 4, [255, 255, 255, self.lumCadre[1]])
             self.apparition()
             i = 0
             while i < len(self.liste):
