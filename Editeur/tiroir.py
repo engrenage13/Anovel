@@ -3,6 +3,11 @@ from objets.BateauJoueur import *
 
 class Tiroir:
     def __init__(self, createur: object) -> None:
+        """Crée le tiroir à bateaux.
+
+        Args:
+            createur (object): Elément qui crée le tiroir (normalment l'editeur).
+        """
         self.createur = createur
         self.liste = []
         self.positions = [(1, [50]), (2, [30, 70]), (3, [20, 50, 80]), (4, [15, 37, 63, 85]), 
@@ -27,6 +32,11 @@ class Tiroir:
         self.decos.append(load_texture_from_image(deco2))
 
     def dessine(self, y: int) -> None:
+        """Dessine le tiroir et les bateaux qui sont dedans.
+
+        Args:
+            y (int): Position cible du centre du tiroir en hauteur.
+        """
         if len(self.liste) > 0:
             tailley = int(self.tCase*len(self.liste))
             originey = y-int(self.tCase/2*len(self.liste))
@@ -61,6 +71,13 @@ class Tiroir:
                 i = i + 1
 
     def dessineNom(self, bateau: BateauJoueur, x: int, y: int) -> None:
+        """Dessine l'encadré du nom et de la taille des bateaux.
+
+        Args:
+            bateau (BateauJoueur): Bateau dont on doit afficher le nom et la taille.
+            x (int): position cible de l'origine x voulu pour la bannière.
+            y (int): position cible de l'origine y voulu pour la bannière.
+        """
         tt1 = measure_text_ex(police2, bateau.nom, int(self.hauteur_rect*0.37), 0)
         tt2 = measure_text_ex(police2, f"{bateau.taille} cases", int(self.hauteur_rect*0.27), 0)
         max = tt1.x
@@ -89,12 +106,22 @@ class Tiroir:
             self.soulevement[self.liste.index(bateau)][2] -= addit
 
     def setListe(self, liste: list) -> None:
+        """Permet de changer la liste de bateaux exploitée par le tiroir.
+
+        Args:
+            liste (list): Nouvelle liste pour le tiroir.
+        """
         self.liste = liste[:]
         self.lumCadre = [0, 5]
         for i in range(len(self.liste)):
             self.soulevement.append([False, 0-self.liste[i].images[0].width, 0])
 
     def supValListe(self, indice: int) -> None:
+        """Supprime un bateau de la liste de bateaux exploitée.
+
+        Args:
+            indice (int): Indice du bateau à supprimer.
+        """
         if indice >= 0 and indice < len(self.liste):
             del self.liste[indice]
             del self.soulevement[indice]
@@ -103,6 +130,11 @@ class Tiroir:
             self.createur.ordreBateaux()
 
     def ajValListe(self, valeur: BateauJoueur) -> None:
+        """Ajoute un bateau à la liste des bateaux exploitées.
+
+        Args:
+            valeur (BateauJoueur): Bateau à ajouter à la liste.
+        """
         self.liste.append(valeur)
         self.soulevement.append([False, 0-valeur.images[0].width, 0])
 
@@ -126,6 +158,14 @@ class Tiroir:
         return [rep, onse]
 
     def checkSelect(self, bateau: BateauJoueur) -> bool:
+        """Vérifie si la bateau est sélectionné par l'utilisateau.
+
+        Args:
+            bateau (BateauJoueur): Bateau à tester.
+
+        Returns:
+            bool: True si le bateau est sélectionné, False sinon.
+        """
         rep = False
         if is_mouse_button_pressed(0):
             parasite = self.checkBateauVolant()
@@ -144,6 +184,11 @@ class Tiroir:
         return rep
 
     def checkBateauVolant(self) -> int:
+        """Vérifie si il n'y a pas de bateau en déplacement dans ceux qui ne sont pas dans le tiroir.
+
+        Returns:
+            int: -1 s'il n'y en a pas ou l'indice du bateau s'il y en a un.
+        """
         rep = -1
         i = 0
         while i < len(self.createur.bateaux) and rep == -1:
@@ -154,11 +199,19 @@ class Tiroir:
         return rep
 
     def apparition(self) -> None:
+        """Gère l'apparition du tiroir lors de l'apparation de l'éditeur.
+        """
         if self.lumCadre[0] < 50:
             self.lumCadre[0] += 1
             self.lumCadre[1] += 5
 
     def bougeBat(self, bateau: int, verif: int) -> None:
+        """Gère le mouvement de va et viens d'un bateau dans le tiroir.
+
+        Args:
+            bateau (int): Bateau à déplacer.
+            verif (int): Condition de verification.
+        """
         if self.soulevement[bateau][1] < verif:
             pas = int((verif-self.soulevement[bateau][1])/9)
             if pas < 1:

@@ -57,6 +57,12 @@ class Editeur:
             self.dessineBateau(self.bateaux[self.ordre[i]], plateau)
 
     def dessineBateau(self, bateau: BateauJoueur, plateau: list) -> None:
+        """Dessine un bateau.
+
+        Args:
+            bateau (BateauJoueur): Bateau à dessiner.
+            plateau (list): Infos sur le plateau.
+        """
         if bateau.defil:
             coo = self.dansLeCadre(bateau)
             x = coo[0]
@@ -95,6 +101,8 @@ class Editeur:
         self.createur.croix.dessine((xf-hbarre, int(hbarre*0.05)))
 
     def ordreBateaux(self) -> None:
+        """Determine dans quel ordre, il est préférable d'afficher les bateaux.
+        """
         self.ordre = []
         for i in range(len(self.bateaux)):
             if not self.bateaux[i].defil:
@@ -140,6 +148,15 @@ class Editeur:
                 bateau.tourne()
 
     def checkClone(self, valeur: object, liste: list) -> bool:
+        """Vérifie si la valeur est déjà dans la liste.
+
+        Args:
+            valeur (object): Valeur à vérifier.
+            liste (list): Liste où il faut vérifier.
+
+        Returns:
+            bool: True si la valeur n'est pas dans une liste, False sinon.
+        """
         rep = True
         if valeur in liste:
             rep = False
