@@ -13,6 +13,7 @@ class Tiroir:
         self.originex = -40
         self.largeur = int(xf*0.16)
         self.lumCadre = [0, 5]
+        self.hauteur_rect = int(tailleCase*1.2)
         # Images
         deco1 = load_image('images/decors/coraux1.png')
         ratio = self.largeur/deco1.width
@@ -20,6 +21,10 @@ class Tiroir:
         self.decos = [load_texture_from_image(deco1)]
         image_flip_vertical(deco1)
         self.decos.append(load_texture_from_image(deco1))
+        deco2 = load_image('images/decors/poissons.png')
+        ratio = self.hauteur_rect/deco2.height
+        image_resize(deco2, int(deco2.width*ratio), int(deco2.height*ratio))
+        self.decos.append(load_texture_from_image(deco2))
 
     def dessine(self, y: int) -> None:
         if len(self.liste) > 0:
@@ -44,34 +49,50 @@ class Tiroir:
                         xbat = int(xf*0.01)
                         self.soulevement[i][0] = True
                         self.dessineNom(self.liste[i], xbat, ybat)
-                    elif self.liste[i].images[0].width >= (self.largeur)*0.9:
+                    else:
                         self.soulevement[i][0] = False
-                        xbat = int((self.largeur)*0.9-self.liste[i].images[0].width)
+                        if self.liste[i].images[0].width >= (self.largeur)*0.9:
+                            xbat = int((self.largeur)*0.9-self.liste[i].images[0].width)
+                    if self.soulevement[i][2] > 0:
+                        self.dessineNom(self.liste[i], xbat, ybat)
                     self.liste[i].dessine(self.soulevement[i][1], ybat-int(self.liste[i].images[0].height/2))
                     # Animation des bateaux
                     self.bougeBat(i, xbat)
                 i = i + 1
 
     def dessineNom(self, bateau: BateauJoueur, x: int, y: int) -> None:
-        hauteur = int(tailleCase*1.2)
-        tt1 = measure_text_ex(police2, bateau.nom, int(hauteur*0.37), 0)
-        tt2 = measure_text_ex(police2, f"{bateau.taille} cases", int(hauteur*0.27), 0)
+        tt1 = measure_text_ex(police2, bateau.nom, int(self.hauteur_rect*0.37), 0)
+        tt2 = measure_text_ex(police2, f"{bateau.taille} cases", int(self.hauteur_rect*0.27), 0)
         max = tt1.x
         if tt2.x > max:
             max = tt2.x
-        longueur = int(x+bateau.images[0].width+max+hauteur/3)
-        draw_rectangle(0, y-int(hauteur/2), longueur, hauteur, [0, 12, 72, 155])
-        draw_text_pro(police2, bateau.nom, (int(x+bateau.images[0].width+hauteur/6), y-tt1.y), 
-                      (0, 0), 0, int(hauteur*0.37), 0, WHITE)
+        longueur = int(x+bateau.images[0].width+max+self.hauteur_rect/3)
+        pourcentage = self.soulevement[self.liste.index(bateau)][2]
+        draw_rectangle(0, y-int(self.hauteur_rect/2), int(longueur*pourcentage), self.hauteur_rect, 
+                       [0, 12, 72, 155])
+        draw_texture(self.decos[2], 0, y-int(self.decos[2].height/2), [255, 255, 255, int(255*pourcentage)])
+        draw_text_pro(police2, bateau.nom, (int(x+bateau.images[0].width+self.hauteur_rect/6), y-tt1.y), 
+                      (0, 0), 0, int(self.hauteur_rect*0.37), 0, [255, 255, 255, int(255*pourcentage)])
         draw_text_pro(police2, f"{bateau.taille} cases", 
-                      (int(x+bateau.images[0].width+hauteur/6), y), (0, 0), 0, int(hauteur*0.27), 0, 
-                       SKYBLUE)
+                      (int(x+bateau.images[0].width+self.hauteur_rect/6), y), (0, 0), 0, 
+                      int(self.hauteur_rect*0.27), 0, [102, 191, 255, int(255*pourcentage)])
+        # animations
+        if self.soulevement[self.liste.index(bateau)][0] and pourcentage < 1:
+            addit = 0.1
+            if 1 - pourcentage < addit:
+                addit = 1 - pourcentage
+            self.soulevement[self.liste.index(bateau)][2] += addit
+        elif not self.soulevement[self.liste.index(bateau)][0] and pourcentage > 0:
+            addit = 0.1
+            if pourcentage < addit:
+                addit = pourcentage
+            self.soulevement[self.liste.index(bateau)][2] -= addit
 
     def setListe(self, liste: list) -> None:
         self.liste = liste[:]
         self.lumCadre = [0, 5]
         for i in range(len(self.liste)):
-            self.soulevement.append([False, 0-self.liste[i].images[0].width])
+            self.soulevement.append([False, 0-self.liste[i].images[0].width, 0])
 
     def supValListe(self, indice: int) -> None:
         if indice >= 0 and indice < len(self.liste):
@@ -83,7 +104,7 @@ class Tiroir:
 
     def ajValListe(self, valeur: BateauJoueur) -> None:
         self.liste.append(valeur)
-        self.soulevement.append([False, 0-valeur.images[0].width])
+        self.soulevement.append([False, 0-valeur.images[0].width, 0])
 
     def getContactBateau(self, indice: int) -> list:
         """Vérifie si le curseur est sur le bateau.

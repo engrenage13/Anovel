@@ -15,13 +15,13 @@ quit = Bouton([fen.switchEtat], "Quitter", [DARKGRAY, GRAY, WHITE])
 nanav = load_image('images/logos/Navale.png')
 image_resize(nanav, int(nanav.width*0.19), int(nanav.height*0.19))
 logo = load_texture_from_image(nanav)
-#tableau = load_image('images/backgrounds/valley.png')
-#ratio = yf/tableau.height
-#image_resize(tableau, int(tableau.width*ratio), int(tableau.height*ratio))
-#fond = load_texture_from_image(tableau)
+tableau = load_image('images/backgrounds/peinture1.png')
+ratio = yf/tableau.height
+image_resize(tableau, int(tableau.width*ratio), int(tableau.height*ratio))
+fond = load_texture_from_image(tableau)
 
 def accueil():
-    #draw_texture(fond, 0, 0, WHITE)
+    draw_texture(fond, 0, 0, WHITE)
     draw_texture(logo, 0, 0, WHITE)
     draw_text_pro(police2, version, (int(xf*0.005), int(yf*0.975)), (0, 0), 0, 19, 0, GRAY)
     start.dessine((int(xf*0.35), int(yf*0.92)))
