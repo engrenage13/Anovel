@@ -8,8 +8,8 @@ fen = Fenetre()
 partie = Partie(fen)
 
 # Boutons
-start = Bouton([partie.nouvelleEtape], "Jouer", [DARKBLUE, BLUE, WHITE])
-quit = Bouton([fen.switchEtat], "Quitter", [DARKGRAY, GRAY, WHITE])
+start = Bouton([partie.nouvelleEtape], [DARKBLUE, BLUE, WHITE], "Jouer")
+quit = Bouton([fen.switchEtat], [DARKGRAY, GRAY, WHITE], "Quitter")
 
 # Images
 nanav = load_image('images/logos/Navale.png')

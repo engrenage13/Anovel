@@ -1,16 +1,19 @@
+from types import NoneType
 from systeme.FondMarin import *
 from ui.notif import Notification
 
 class Bouton:
-    def __init__(self, fonctions: list, texte: str, couleurs: list) -> None:
+    def __init__(self, fonctions: list, couleurs: list, texte:str=None, icone:str=None) -> None:
         """Crée un bouton.
 
         Args:
             fonctions (list): Fonctions qu'appel le bouton quand il est utilisé.
-            texte (str): Ecritaut sur le bouton.
             couleurs (list): Liste des couleurs utilisés pour le bouton.
+            texte (str, optional): Ecritaut sur le bouton.. Defaults to None.
+            icone (str, optional): Icône sur le bouton. Defaults to None.
         """
         self.texte = texte
+        self.icone = icone
         self.couleur = couleurs
         self.fonction = fonctions[0]
         if len(fonctions) > 1 and fonctions[1] != '':
@@ -28,18 +31,18 @@ class Bouton:
         Args:
             coord (tuple): Coordonnées du centre du bouton.
         """
-        tt = measure_text_ex(police1, self.texte, 30, 0)
         self.coords = [coord[0]-int(self.dims[0]/2), coord[1]-int(self.dims[1]/2), coord[0]+int(self.dims[0]/2), 
                        coord[1]+int(self.dims[1]/2)]
         couleur = self.couleur[0]
         if self.getContact():
             couleur = self.couleur[1]
         couleur2 = [int(couleur[0]*0.5), int(couleur[1]*0.5), int(couleur[2]*0.5), couleur[3]]
-        draw_rectangle_rounded((self.coords[0], self.coords[1], self.dims[0], self.dims[1]), 0.2, 30, couleur)
-        draw_rectangle_rounded_lines((self.coords[0], self.coords[1], self.dims[0], self.dims[1]), 0.2, 30, 4, 
-                                     couleur2)
-        draw_text_pro(police1, self.texte, (coord[0]-int(tt.x/2), coord[1]-int(tt.y/3)), (0, 0), 0, 30, 0, 
-                      self.couleur[2])
+        draw_rectangle(self.coords[0]-2, self.coords[1]-2, self.dims[0]+4, self.dims[1]+4, BLACK)
+        draw_rectangle(self.coords[0], self.coords[1], self.dims[0], self.dims[1], couleur)
+        if type(self.texte) is not NoneType:
+            tt = measure_text_ex(police1, self.texte, 30, 0)
+            draw_text_pro(police1, self.texte, (coord[0]-int(tt.x/2), coord[1]-int(tt.y/3)), (0, 0), 0, 30, 0, 
+                          self.couleur[2])
         if self.etatNotif:
             self.notif.dessine()
             if self.notif.getDisparition():

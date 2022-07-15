@@ -23,7 +23,7 @@ class Editeur:
         self.listeBrillante = []
         self.attente = 0
         self.plateau = Plateau(10, 10)
-        self.btValid = Bouton([self.createur.nouvelleEtape, self.verif], "Valider", [DARKBLUE, BLUE, WHITE])
+        self.btValid = Bouton([self.createur.nouvelleEtape, self.verif], [DARKBLUE, BLUE, WHITE], "Valider")
         self.btValid.setTexteNotif("Action Impossible", "Vous devez placer tous vos bateaux.")
 
     def dessine(self) -> None:
