@@ -34,7 +34,7 @@ class Editeur:
         self.barreTitre()
         self.plateau.dessine((tlatba, ory), tailleCase, self.listeBrillante)
         self.dessineBateaux([tlatba, ory, tailleCase, 10])
-        self.btValid.dessine((int(xf-tlatba*0.5), ory+int(tailleCase*9.5)), False)
+        self.btValid.dessine((int(xf-tlatba*0.5), ory+int(tailleCase*9.5)), True)
 
     def dessineBateaux(self, plateau: list) -> None:
         """Dessine tous les bateaux du joueur.
