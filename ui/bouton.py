@@ -10,12 +10,11 @@ class Bouton:
             fonctions (list): Fonctions qu'appel le bouton quand il est utilisé.
             couleurs (list): Liste des couleurs utilisés pour le bouton.
             texte (str, optional): Ecritaut sur le bouton.. Defaults to None.
-            icone (str, optional): Icône sur le bouton. Defaults to None.
+            icone (str, optional): Icône sur le bouton. Defaults to ['', 'e'].
         """
         self.lset = int(tlatba*0.7)
         self.hset = int(yf*0.075)
         self.texte = texte
-        self.icone = icone
         self.couleur = couleurs
         self.fonction = fonctions[0]
         if len(fonctions) > 1 and fonctions[1] != '':
@@ -25,10 +24,12 @@ class Bouton:
         self.notif = Notification("Option indisbonible", "Ce bouton est désactivé")
         self.notif.setPosition(1)
         self.etatNotif = False
-        # Affichage
-        #bouton = load_image('images/ui/bouton.png')
-        #image_resize(bouton, int(bouton.width*0.13), int(bouton.height*0.13))
-        #self.fond = load_texture_from_image(bouton)
+        # Icône
+        if icone != None:
+            self.iconeOriginale = load_image(icone)
+        else:
+            self.iconeOriginale = None
+        self.icoCharge = False
 
     def dessine(self, coord: tuple, limites: bool) -> None:
         """Dessine le bouton à l'écran aux coordonnées passées en paramètre.
@@ -37,33 +38,66 @@ class Bouton:
             coord (tuple): Coordonnées du centre du bouton.
             limites (bool): Si True, le bouton sera bloqué à une taille prédéfinie.
         """
-        dims = self.mesureTaille(limites)
-        self.coords = [coord[0]-int(dims[0]/2), coord[1]-int(dims[1]/2), coord[0]+int(dims[0]/2), 
-                       coord[1]+int(dims[1]/2)]
+        dims = self.mesurePlus(limites)
+        if len(dims) == 1:
+            l = dims[0][0]
+            h = dims[0][1]
+            self.coords = [coord[0]-int(l/2), coord[1]-int(h/2), coord[0]+int(l/2), coord[1]+int(h/2)]
+        else:
+            l = dims[0][0] + dims[1][0]
+            h = dims[0][1]
+            if h < dims[1][1]:
+                h = dims[1][1]
+            self.coords = [coord[0]-int(l/2), coord[1]-int(h/2), coord[0]+int(l/2), coord[1]+int(h/2)]
         couleur = self.couleur[0]
         if self.getContact():
             couleur = self.couleur[1]
-        draw_rectangle_rounded((self.coords[0]+2, self.coords[1]+2, dims[0], dims[1]), 0.2, 30, BLACK)
-        draw_rectangle_rounded((self.coords[0], self.coords[1], dims[0], dims[1]), 0.2, 30, couleur)
-        if type(self.texte) != None:
-            self.blocTexte.dessine([coord, 'c'])
+        draw_rectangle_rounded((self.coords[0]+2, self.coords[1]+2, l, h), 0.2, 30, BLACK)
+        draw_rectangle_rounded((self.coords[0], self.coords[1], l, h), 0.2, 30, couleur)
+        if self.texte != None:
+            self.blocTexte.dessine([[int(self.coords[0]+dims[0][0]/2), int(self.coords[1]+dims[0][1]/2)], 'c'])
+        if len(dims) == 2:
+            image = dims[1][2]
+            draw_texture(image, self.coords[2]-image.width, 
+                         self.coords[1]+int((self.coords[3]-self.coords[1]-image.height)/2), WHITE)
         if self.etatNotif:
             self.notif.dessine()
             if self.notif.getDisparition():
                 self.etatNotif = False
         self.execute()
 
-    def mesureTaille(self, limites: bool) -> list:
-        dims = [self.lset, self.hset]
+    def mesurePlus(self, limites: bool) -> list:
+        dims = [[self.lset, self.hset]]
+        if self.iconeOriginale != None:
+            if not self.icoCharge:
+                ico = self.redimIc()
+                self.icone = ico
+            else:
+                ico = self.icone
+            dicone = [ico.width, ico.height, ico]
         if self.texte != None:
             if limites:
-                taille = [dims[0]-40, dims[1]-20]
+                taille = [dims[0][0]-40, dims[0][1]-20]
+                if self.iconeOriginale != None:
+                    taille[0] -= dicone[0]
             else:
                 taille = []
             self.blocTexte = BlocTexte(self.texte, police1, int(self.hset*0.45), taille)
             if not limites:
-                dims = [self.blocTexte.tCadre[0]+40, self.blocTexte.tCadre[1]+20]
+                ditexte = [self.blocTexte.tCadre[0]+40, self.blocTexte.tCadre[1]+20]
+                dims = ditexte
+            if self.iconeOriginale != None:
+                dims[0][0] -= dicone[0]
+        if self.iconeOriginale != None:
+            dims.append(dicone)
         return dims
+
+    def redimIc(self) -> object:
+        facteur = self.hset/self.iconeOriginale.height
+        ico = self.iconeOriginale
+        image_resize(ico, int(ico.width*facteur), int(ico.height*facteur))
+        self.icoCharge = True
+        return load_texture_from_image(ico)
 
     def execute(self) -> None:
         """Gère ce qui se passe quand on appuie sur le bouton.
