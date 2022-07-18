@@ -15,7 +15,8 @@ class Bouton:
         self.lset = int(tlatba*0.7)
         self.hset = int(yf*0.075)
         self.texte = texte
-        self.couleur = couleurs
+        self.couleurs = couleurs
+        self.coloPreset = 'max'
         self.fonction = fonctions[0]
         if len(fonctions) > 1 and fonctions[1] != '':
             self.verifFonction = fonctions[1]
@@ -31,12 +32,13 @@ class Bouton:
             self.iconeOriginale = None
         self.icoCharge = False
 
-    def dessine(self, coord: tuple, limites: bool) -> None:
+    def dessine(self, coord: tuple, limites: bool, important:bool=False) -> None:
         """Dessine le bouton à l'écran aux coordonnées passées en paramètre.
 
         Args:
             coord (tuple): Coordonnées du centre du bouton.
             limites (bool): Si True, le bouton sera bloqué à une taille prédéfinie.
+            important (bool, optional): Le bouton doit-il attirer l'attention. Defaults to False.
         """
         dims = self.mesurePlus(limites)
         if len(dims) == 1:
@@ -48,14 +50,26 @@ class Bouton:
             h = dims[0][1]
             if h < dims[1][1]:
                 h = dims[1][1]
-            self.coords = [coord[0]-int(l/2), coord[1]-int(h/2), coord[0]+int(l/2), coord[1]+int(h/2)]
-        couleur = self.couleur[0]
-        if self.getContact():
-            couleur = self.couleur[1]
+            self.coords = [coord[0]-int(l/2), coord[1]-int(h/2), coord[0]+int(l/2), coord[1]+int(h/2)]    
+        if important:
+            if not self.getContact():
+                self.couleur = [255, 221, 0, 255]
+            else:
+                self.Important()
+                draw_rectangle_rounded((self.coords[0]-self.lumi, self.coords[1]-self.lumi, l+self.lumi*2, h+self.lumi*2), 
+                                       0.2, 30, [self.couleur[0], self.couleur[1], self.couleur[2], 200])
+        else:
+            self.couleur = self.couleurs[0]
+            if self.getContact():
+                self.couleur = self.couleurs[1]
         draw_rectangle_rounded((self.coords[0]+2, self.coords[1]+2, l, h), 0.2, 30, BLACK)
-        draw_rectangle_rounded((self.coords[0], self.coords[1], l, h), 0.2, 30, couleur)
+        draw_rectangle_rounded((self.coords[0], self.coords[1], l, h), 0.2, 30, self.couleur)
         if self.texte != None:
-            self.blocTexte.dessine([[int(self.coords[0]+dims[0][0]/2), int(self.coords[1]+dims[0][1]/2)], 'c'])
+            coloTex = WHITE
+            if (self.couleur[0] > 160 and self.couleur[1] > 160 and self.couleur[2] > 160) or important:
+                coloTex = BLACK
+            self.blocTexte.dessine([[int(self.coords[0]+dims[0][0]/2), int(self.coords[1]+dims[0][1]/2)], 'c'], 
+                                   coloTex)
         if len(dims) == 2:
             image = dims[1][2]
             draw_texture(image, self.coords[2]-image.width, 
@@ -98,6 +112,32 @@ class Bouton:
         image_resize(ico, int(ico.width*facteur), int(ico.height*facteur))
         self.icoCharge = True
         return load_texture_from_image(ico)
+
+    def Important(self) -> None:
+        min = [173, 144, 50, 255]
+        max = [255, 221, 0, 255]
+        comparateur = max
+        if self.coloPreset == 'max':
+            if self.couleur != max:
+                comparateur = max
+            else:
+                self.coloPreset = 'min'
+        elif self.coloPreset == 'min':
+            if self.couleur != min:
+                comparateur = min
+            else:
+                self.coloPreset = 'max'
+        colo = []
+        for i in range(len(self.couleur)):
+            if self.couleur[i] < comparateur[i]:
+                colo.append(self.couleur[i] + 1)
+            elif self.couleur[i] > comparateur[i]:
+                colo.append(self.couleur[i] - 1)
+            else:
+                colo.append(self.couleur[i])
+        self.couleur = colo
+        pourc = (self.couleur[0] - min[0])/(max[0] - min[0])
+        self.lumi = int(7*pourc)
 
     def execute(self) -> None:
         """Gère ce qui se passe quand on appuie sur le bouton.

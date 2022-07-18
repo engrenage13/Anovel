@@ -18,8 +18,8 @@ class FinPartie:
         self.pos = False
         self.saturation = 0
         # Boutons
-        self.accueil = Bouton([self.goToMenu], [[205, 111, 0, 255], ORANGE, WHITE], "MENU")
-        self.rejouer = Bouton([self.proprio.rejouer], [DARKBLUE, BLUE, WHITE], "REJOUER")
+        self.accueil = Bouton([self.goToMenu], [[205, 111, 0, 255], ORANGE], "MENU")
+        self.rejouer = Bouton([self.proprio.rejouer], [DARKBLUE, BLUE], "REJOUER")
         self.hauteurBt = int(yf*1.11)
         self.hBtIndice = int(yf*0.91)
         # /Boutons
