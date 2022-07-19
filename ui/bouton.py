@@ -127,6 +127,8 @@ class Bouton:
                         self.decos[i][1] = additif + 1
                     elif position >= taille*0.80:
                         self.decos[i][1] = int(additif*0.60)
+                        if self.decos[i][1] < 1:
+                            self.decos[i][1] = 2
         if fin:
             if self.activeDeco:
                 self.activeDeco = False
