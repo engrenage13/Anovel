@@ -3,19 +3,19 @@ from ui.notif import Notification
 from ui.blocTexte import BlocTexte
 
 class Bouton:
-    def __init__(self, fonctions: list, couleurs: list, texte:str=None, icone:str=None) -> None:
+    def __init__(self, fonctions: list, couleur: list, texte:str=None, icone:str=None) -> None:
         """Crée un bouton.
 
         Args:
             fonctions (list): Fonctions qu'appel le bouton quand il est utilisé.
-            couleurs (list): Liste des couleurs utilisés pour le bouton.
+            couleur (list): Couleur de fond du bouton.
             texte (str, optional): Ecritaut sur le bouton.. Defaults to None.
             icone (str, optional): Icône sur le bouton. Defaults to ['', 'e'].
         """
         self.lset = int(tlatba*0.7)
         self.hset = int(yf*0.075)
         self.texte = texte
-        self.couleurs = couleurs
+        self.couleurVoulue = couleur
         self.coloPreset = 'max'
         self.fonction = fonctions[0]
         if len(fonctions) > 1 and fonctions[1] != '':
@@ -31,6 +31,12 @@ class Bouton:
         else:
             self.iconeOriginale = None
         self.icoCharge = False
+        # Decos
+        self.tailleBande = 10
+        self.decos = [[0, 1], [-(self.tailleBande+10), 1], [-(self.tailleBande+40), 1]]
+        self.activeDeco = False
+        self.bloqueActiveDeco = False
+        self.delaiImportant = 0
 
     def dessine(self, coord: tuple, limites: bool, important:bool=False) -> None:
         """Dessine le bouton à l'écran aux coordonnées passées en paramètre.
@@ -54,33 +60,92 @@ class Bouton:
         if important:
             if not self.getContact():
                 self.couleur = [255, 221, 0, 255]
+                self.activeDeco = True
             else:
                 self.Important()
                 draw_rectangle_rounded((self.coords[0]-self.lumi, self.coords[1]-self.lumi, l+self.lumi*2, h+self.lumi*2), 
                                        0.2, 30, [self.couleur[0], self.couleur[1], self.couleur[2], 200])
         else:
-            self.couleur = self.couleurs[0]
+            self.couleur = self.couleurVoulue
             if self.getContact():
-                self.couleur = self.couleurs[1]
+                if not self.bloqueActiveDeco:
+                    self.activeDeco = True
+                    self.bloqueActiveDeco = True
+            else:
+                self.bloqueActiveDeco = False
         draw_rectangle_rounded((self.coords[0]+2, self.coords[1]+2, l, h), 0.2, 30, BLACK)
         draw_rectangle_rounded((self.coords[0], self.coords[1], l, h), 0.2, 30, self.couleur)
+        # Texte
         if self.texte != None:
             coloTex = WHITE
             if (self.couleur[0] > 160 and self.couleur[1] > 160 and self.couleur[2] > 160) or important:
                 coloTex = BLACK
             self.blocTexte.dessine([[int(self.coords[0]+dims[0][0]/2), int(self.coords[1]+dims[0][1]/2)], 'c'], 
                                    coloTex)
+        # Icône
         if len(dims) == 2:
             image = dims[1][2]
-            draw_texture(image, self.coords[2]-image.width, 
+            draw_texture(image, int(self.coords[2]-image.width*1.1), 
                          self.coords[1]+int((self.coords[3]-self.coords[1]-image.height)/2), WHITE)
+        # Animation - Bandes
+        if self.activeDeco:
+            couleur = WHITE
+            if not important:
+                couleur = [255, 255, 255, 105]
+            self.bandes(important, couleur)
+        # Notification
         if self.etatNotif:
             self.notif.dessine()
             if self.notif.getDisparition():
                 self.etatNotif = False
         self.execute()
 
+    def bandes(self, important: bool, couleur: list) -> None:
+        """Crées et gères les bandes de l'animation avec des bandes.
+
+        Args:
+            important (bool): Précise si l'option important du bouton est activé ou non.
+            couleur (list): La couleur des bandes.
+        """
+        taille = self.coords[2]-self.coords[0]
+        fin = True
+        if self.delaiImportant == 0:
+            for i in range(len(self.decos)):
+                position = self.decos[i][0]
+                additif = self.decos[i][1]
+                if position <= taille:
+                    fin = False
+                    if position >= 0:
+                        draw_triangle([self.coords[0]+position-self.tailleBande, self.coords[1]], 
+                                    [self.coords[0]+position, self.coords[3]], 
+                                    [self.coords[0]+position, self.coords[1]], couleur)
+                        draw_triangle([self.coords[0]+position, self.coords[1]], 
+                                    [self.coords[0]+position, self.coords[3]], 
+                                    [self.coords[0]+position+self.tailleBande, self.coords[3]], couleur)
+                    self.decos[i][0] += additif
+                    if position < taille*0.75 and position > taille*0.1:
+                        self.decos[i][1] = additif + 1
+                    elif position >= taille*0.80:
+                        self.decos[i][1] = int(additif*0.60)
+        if fin:
+            if self.activeDeco:
+                self.activeDeco = False
+                self.decos = [[0, 1], [-(self.tailleBande+10), 1], [-(self.tailleBande+40), 1]]
+            if important:
+                if self.delaiImportant < 200:
+                    self.delaiImportant += 1
+                else:
+                    self.delaiImportant = 0
+
     def mesurePlus(self, limites: bool) -> list:
+        """Mesure et définit les dimensions du bateau et les positions du texte et de l'icône.
+
+        Args:
+            limites (bool): Dit si les dimensions du bouton sont figées ou non.
+
+        Returns:
+            list: Liste comprenant les dimensions du bouton, la position du texte et celle de l'icône.
+        """
         dims = [[self.lset, self.hset]]
         if self.iconeOriginale != None:
             if not self.icoCharge:
@@ -107,13 +172,20 @@ class Bouton:
         return dims
 
     def redimIc(self) -> object:
-        facteur = self.hset/self.iconeOriginale.height
+        """Redimensionne l'icône pour qu'elle s'adapte à la taille du bouton.
+
+        Returns:
+            object: La texture créée par l'icône.
+        """
+        facteur = self.hset*0.9/self.iconeOriginale.height
         ico = self.iconeOriginale
         image_resize(ico, int(ico.width*facteur), int(ico.height*facteur))
         self.icoCharge = True
         return load_texture_from_image(ico)
 
     def Important(self) -> None:
+        """Gère l'animation d'importance du bouton.
+        """
         min = [173, 144, 50, 255]
         max = [255, 221, 0, 255]
         comparateur = max

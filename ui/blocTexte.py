@@ -2,6 +2,14 @@ from systeme.FondMarin import *
 
 class BlocTexte:
     def __init__(self, texte: str, police: object, taille: int, limites:list=[]) -> None:
+        """Crée un bloc de texte.
+
+        Args:
+            texte (str): Le texte à mettre dans le bloc.
+            police (object): La police utilisée par le bloc.
+            taille (int): La taille souhaitée pour la police.
+            limites (list, optional): Eventuelles dimensions maximales souhatées pour le bloc. Defaults to [].
+        """
         self.texte = texte
         self.police = police
         self.taille = taille
@@ -13,6 +21,12 @@ class BlocTexte:
             self.tCadre = [tt.x, tt.y]
     
     def dessine(self, position: list, couleur:list=WHITE) -> None:
+        """Dessine le texte du bloc à l'écran.
+
+        Args:
+            position (list): Position voulue pour le bloc sous forme [[x, y], indication].
+            couleur (list, optional): Couleur du texte. Defaults to WHITE.
+        """
         centre = self.trouveOrigine(position[0], position[1])
         tt = measure_text_ex(self.police, self.texte, self.taille, 0)
         decomposition = self.texte.split("\n")
@@ -21,6 +35,15 @@ class BlocTexte:
                       (0, 0), 0, self.taille, 0, couleur)
 
     def trouveOrigine(self, position: tuple, indication: str) -> tuple:
+        """Regarde les indications fournis pour trouver la bonne origine pour le bloc.
+
+        Args:
+            position (tuple): Positions x et y fournies par l'utilisateur.
+            indication (str): Indicaton fournie par l'utilisateur.
+
+        Returns:
+            tuple: Coordonnées x et y de l'origine du bloc.
+        """
         rep = position
         indic = indication.lower()
         if indic == 'no':
@@ -34,6 +57,8 @@ class BlocTexte:
         return rep
 
     def adapte(self) -> None:
+        """Adapte le texte à la taille du bloc si celui-ci n'est pas redimensionnable.
+        """
         texte = self.texte.split(" ")
         grosseChaine = ""
         chaine = ""
