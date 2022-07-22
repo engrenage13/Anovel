@@ -32,8 +32,8 @@ class Bouton:
             self.iconeOriginale = None
         self.icoCharge = False
         # Decos
-        self.tailleBande = 10
-        self.decos = [[0, 1], [-(self.tailleBande+10), 1], [-(self.tailleBande+40), 1]]
+        self.tailleBande = 17
+        self.decos = [0, 1]
         self.activeDeco = False
         self.bloqueActiveDeco = False
         self.delaiImportant = 0
@@ -108,33 +108,35 @@ class Bouton:
             couleur (list): La couleur des bandes.
         """
         taille = self.coords[2]-self.coords[0]
-        fin = True
-        if self.delaiImportant == 0:
-            for i in range(len(self.decos)):
-                position = self.decos[i][0]
-                additif = self.decos[i][1]
-                if position <= taille:
-                    fin = False
-                    if position >= 0:
-                        draw_triangle([self.coords[0]+position-self.tailleBande, self.coords[1]], 
-                                    [self.coords[0]+position, self.coords[3]], 
-                                    [self.coords[0]+position, self.coords[1]], couleur)
-                        draw_triangle([self.coords[0]+position, self.coords[1]], 
-                                    [self.coords[0]+position, self.coords[3]], 
-                                    [self.coords[0]+position+self.tailleBande, self.coords[3]], couleur)
-                    self.decos[i][0] += additif
-                    if position < taille*0.75 and position > taille*0.1:
-                        self.decos[i][1] = additif + 1
-                    elif position >= taille*0.80:
-                        self.decos[i][1] = int(additif*0.60)
-                        if self.decos[i][1] < 1:
-                            self.decos[i][1] = 2
-        if fin:
+        position = self.decos[0]
+        additif = self.decos[1]
+        if self.delaiImportant == 0 and position <= taille:
+            if position >= 0:
+                tg = self.tailleBande
+                if position < tg:
+                    tg = position
+                draw_triangle([self.coords[0]+position-tg, self.coords[1]], 
+                              [self.coords[0]+position, self.coords[3]], 
+                              [self.coords[0]+position, self.coords[1]], couleur)
+                td = self.tailleBande
+                if taille - position < td:
+                    td = taille - position
+                draw_triangle([self.coords[0]+position, self.coords[1]], 
+                              [self.coords[0]+position, self.coords[3]], 
+                              [self.coords[0]+position+td, self.coords[3]], couleur)
+            self.decos[0] += additif
+            if position < taille*0.75 and position > taille*0.1:
+                self.decos[1] = additif + 1
+            elif position >= taille*0.80:
+                self.decos[1] = int(additif*0.60)
+                if self.decos[1] < 1:
+                    self.decos[1] = 2
+        else:
             if self.activeDeco:
                 self.activeDeco = False
-                self.decos = [[0, 1], [-(self.tailleBande+10), 1], [-(self.tailleBande+40), 1]]
+                self.decos = [0, 1]
             if important:
-                if self.delaiImportant < 200:
+                if self.delaiImportant < 500:
                     self.delaiImportant += 1
                 else:
                     self.delaiImportant = 0
