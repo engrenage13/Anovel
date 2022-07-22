@@ -4,7 +4,7 @@ from ui.bouton import Bouton
 from objets.Joueur import Joueur
 from objets.plateau import Plateau
 from Editeur.tiroir import Tiroir
-from fenetre.fenetre import Fenetre
+from fen_lat.fenetre import Fenetre
 from museeNoyee import mer
 
 class Editeur:
@@ -26,11 +26,10 @@ class Editeur:
         self.plateau = Plateau(10, 10)
         # Infos
         self.fenInfo = Fenetre("Le fonctionnement")
-        self.afficheFen = False
         # Boutons
         self.btValid = Bouton([self.createur.nouvelleEtape, self.verif], BLUE, "Valider")
         self.btValid.setTexteNotif("Action Impossible", "Vous devez placer tous vos bateaux.")
-        self.btInfos = Bouton([self.ouvreFenetre], LIGHTGRAY, "Besoin d'explication ?")
+        self.btInfos = Bouton([self.fenInfo.ouvre], LIGHTGRAY, "Besoin d'aide ?")
 
     def dessine(self) -> None:
         """Dessine l'éditeur à l'écran.
@@ -42,8 +41,7 @@ class Editeur:
         self.dessineBateaux([tlatba, ory, tailleCase, 10])
         self.btValid.dessine((int(xf-tlatba*0.5), ory+int(tailleCase*9.5)), True)
         self.btInfos.dessine((int(xf-tlatba*0.5), ory+int(tailleCase*0.1)), True, True)
-        if self.afficheFen:
-            self.fenInfo.dessine()
+        self.fenInfo.dessine()
 
     def dessineBateaux(self, plateau: list) -> None:
         """Dessine tous les bateaux du joueur.
@@ -108,9 +106,6 @@ class Editeur:
         draw_text_pro(police1, f"Installation : {self.joueur.getNom()}", (int(hbarre/4), int(hbarre/4)), 
                       (0, 0), 0, 25, 0, WHITE)
         self.createur.croix.dessine((xf-hbarre, int(hbarre*0.05)))
-
-    def ouvreFenetre(self) -> None:
-        self.afficheFen = True
 
     def ordreBateaux(self) -> None:
         """Determine dans quel ordre, il est préférable d'afficher les bateaux.
