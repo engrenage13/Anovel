@@ -25,7 +25,7 @@ class Editeur:
         self.attente = 0
         self.plateau = Plateau(10, 10)
         # Infos
-        self.fenInfo = Fenetre("Le fonctionnement")
+        self.fenInfo = Fenetre("Explications et Astuces")
         # Boutons
         self.btValid = Bouton([self.createur.nouvelleEtape, self.verif], BLUE, "Valider")
         self.btValid.setTexteNotif("Action Impossible", "Vous devez placer tous vos bateaux.")
