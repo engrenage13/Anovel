@@ -181,7 +181,7 @@ class Bouton:
         Returns:
             object: La texture créée par l'icône.
         """
-        facteur = self.hset*0.9/self.iconeOriginale.height
+        facteur = self.hset*0.8/self.iconeOriginale.height
         ico = self.iconeOriginale
         image_resize(ico, int(ico.width*facteur), int(ico.height*facteur))
         self.icoCharge = True

@@ -4,7 +4,7 @@ from ui.bouton import Bouton
 from objets.Joueur import Joueur
 from objets.plateau import Plateau
 from Editeur.tiroir import Tiroir
-from fen_lat.fenetre import Fenetre
+from interpreteur.fenetre import Fenetre
 from museeNoyee import mer
 
 class Editeur:
@@ -29,7 +29,7 @@ class Editeur:
         # Boutons
         self.btValid = Bouton([self.createur.nouvelleEtape, self.verif], BLUE, "Valider")
         self.btValid.setTexteNotif("Action Impossible", "Vous devez placer tous vos bateaux.")
-        self.btInfos = Bouton([self.fenInfo.ouvre], LIGHTGRAY, "Besoin d'aide ?")
+        self.btInfos = Bouton([self.fenInfo.ouvre], LIGHTGRAY, "Besoin d'aide", 'images/ui/question.png')
 
     def dessine(self) -> None:
         """Dessine l'éditeur à l'écran.
