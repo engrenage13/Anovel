@@ -1,20 +1,20 @@
 from systeme.FondMarin import *
 from ui.clickIma import ClickIma
 from interpreteur.article import Article
-from interpreteur.categorie import Categorie
 
 class Fenetre:
-    def __init__(self, fichier: str) -> None:
+    def __init__(self) -> None:
         self.ouvert = False
-        self.titre = None
+        self.titre = ""
         self.contenu = []
-        self.dims = [int(xf*0.6), yf]
-        # Fichier
-        self.fichier = fichier
-        self.decode = False
-        self.position = 'fen'
+        self.largeur = int(xf*0.5)
+        self.hauteurTitre = int(yf*0.08)
+        self.espace = int(yf*0.03)
+        self.hauteur = self.hauteurTitre + self.espace
+        self.tailleTitre = int(self.hauteurTitre*0.6)
+        self.evaluation = False
         # Croix
-        facteur = int(yf*0.05)
+        facteur = int(self.hauteurTitre*0.8)
         cruzoff = load_image('images/ui/CroSom.png')
         image_resize(cruzoff, facteur, facteur)
         croixSombre = load_texture_from_image(cruzoff)
@@ -27,82 +27,54 @@ class Fenetre:
 
     def dessine(self) -> None:
         if self.ouvert:
-            l = self.dims[0]
-            h = self.dims[1]
-            croix = [self.croix.images[0].width, self.croix.images[0].height]
-            decalage = int(yf*0.001)
+            if not self.evaluation:
+                self.mesureTaille()
+            l = self.largeur
+            h = self.hauteur
+            x = int(xf/2-l/2)
+            y = int(yf/2-h/2)
+            ph = y + self.hauteurTitre + self.espace
             draw_rectangle(0, 0, xf, yf, [0, 0, 0, 210])
-            draw_rectangle(xf-l, 0, l, h, [30, 30, 30, 255])
-            self.dessine2()
-            draw_rectangle(xf-l, int(yf*0.05-croix[1]*0.55-decalage*3), croix[0]+decalage*3, 
-                           int(croix[1]*1.1+decalage*6), RED)
-            draw_triangle((xf-l+croix[0]+decalage*3, int(yf*0.05-croix[1]*0.55-decalage*3)), 
-                          (xf-l+croix[0]+decalage*3, int(yf*0.05+croix[1]*0.55+decalage*3)), 
-                          (xf-l+int(croix[0]*1.5+decalage*6), int(yf*0.05-croix[1]*0.55-decalage*3)), RED)
-            draw_rectangle(xf-l, int(yf*0.05-croix[1]*0.55-decalage), croix[0]+decalage, 
-                           int(croix[1]*1.1+decalage*2), WHITE)
-            draw_triangle((xf-l+croix[0]+decalage, int(yf*0.05-croix[1]*0.55-decalage)), 
-                          (xf-l+croix[0]+decalage, int(yf*0.05+croix[1]*0.55+decalage)), 
-                          (xf-l+int(croix[0]*1.5+decalage*2), int(yf*0.05-croix[1]*0.55-decalage)), WHITE)
-            draw_rectangle(xf-l, int(yf*0.05-croix[1]*0.55), croix[0], int(croix[1]*1.1), RED)
-            draw_triangle((xf-l+croix[0], int(yf*0.05-croix[1]*0.55)), 
-                          (xf-l+croix[0], int(yf*0.05+croix[1]*0.55)), 
-                          (xf-l+int(croix[0]*1.5), int(yf*0.05-croix[1]*0.55)), RED)
-            self.croix.dessine((xf-int(l*0.995), int(yf*0.05-croix[1]/2)))
-    
-    def dessine2(self) -> None:
-        if not self.decode:
-            self.decodeur()
-        if len(self.contenu) > 0:
-            self.dessineContenu()
-        self.dessineTitre()
+            draw_rectangle(x, y+5, l, h, [80, 80, 80, 255])
+            draw_rectangle(x, y, l, h, [30, 30, 30, 255])
+            for i in range(len(self.contenu)):
+                self.contenu[i].dessine(int(x+l*0.025), ph)
+                ph = ph + self.contenu[i].getDims()[1] + self.espace
+            self.dessineTitre()
 
     def dessineTitre(self) -> None:
-        ttit = int(yf*0.04)
-        h = int(self.dims[1]*0.09)
-        if self.titre != None:
-            h = int(self.dims[1]*0.2)
-        draw_rectangle(xf-self.dims[0], 0, self.dims[0], h, [0, 43, 54, 255])
-        if self.titre != None:
-            ttt = measure_text_ex(police1, self.titre, ttit, 0)
-            draw_text_ex(police1, self.titre, [xf-int(xf*0.015)-ttt.x, int(yf*0.06)], ttit, 0, WHITE)
+        h = self.hauteurTitre
+        ht = self.hauteur
+        ttit = self.tailleTitre
+        croix = [self.croix.images[0].width, self.croix.images[0].height]
+        draw_rectangle(int(xf/2-self.largeur/2), int(yf/2-ht/2), self.largeur, h, [0, 43, 54, 255])
+        ttt = measure_text_ex(police1, self.titre, ttit, 0)
+        draw_text_ex(police1, self.titre, [int(xf/2-ttt.x/2), int(yf/2-ht/2+h/2-ttt.y*0.4)], 
+                     ttit, 0, WHITE)
+        self.croix.dessine((int(xf/2+self.largeur/2-(croix[0]+h*0.1)), int(yf/2-ht/2+h*0.1)))
 
-    def dessineContenu(self) -> None:
-        y = int(self.dims[1]*0.1)
-        if self.titre != None:
-            y = int(self.dims[1]*0.22)
-        contenu = self.contenu[len(self.contenu)-1]
-        if type(contenu) == str:
-            draw_text_ex(police2, self.contenu[len(self.contenu)-1], [xf-int(self.dims[0]*0.99), y], 
-                         30, 0, WHITE)
-
-    def decodeur(self) -> None:
-        if file_exists(self.fichier):
-            fic = load_file_text(self.fichier)
-            fil = fic.split("\n")
-            print(fil)
-            while len(fil) > 0:
-                #print(fil[0])
-                if self.position == 'fen':
-                    if len(fil[0]) > 0 and fil[0][0] == "#":
-                        ligne = fil[0].split(" ")
-                        del ligne[0]
-                        self.titre = " ".join(ligne)
-                    elif fil[0] == "_art//":
-                        self.contenu.append(Article())
-                        self.position = 'art'
-                    elif fil[0] == "_cat//":
-                        self.contenu.append(Categorie())
-                        self.position = 'cat'
-                elif self.position == 'art' or self.position == 'cat':
-                    rep = self.contenu[len(self.contenu)-1].decodeur(fil[0])
-                    if rep:
-                        self.position = 'fen'
-                del fil[0]
-            self.decode = True
+    def mesureTaille(self) -> None:
+        for i in range(len(self.contenu)):
+            dims = self.contenu[i].getDims()
+            self.hauteur += int(dims[1] + self.espace)
+        self.evaluation = True
 
     def ouvre(self) -> None:
         self.ouvert = True
 
     def ferme(self) -> None:
         self.ouvert = False
+
+    def setTitre(self, titre: str) -> None:
+        self.titre = titre
+        tt = measure_text_ex(police1, self.titre, self.tailleTitre, 0)
+        if int(tt.x + self.croix.images[0].width*3) > self.largeur:
+            self.largeur = int(tt.x + self.croix.images[0].width*3)
+
+    def ajouteContenu(self, contenu: Article) -> None:
+        self.contenu.append(contenu)
+        self.evaluation = False
+
+    def redim(self, x: int, y: int) -> None:
+        self.largeur = x
+        self.hauteur = y

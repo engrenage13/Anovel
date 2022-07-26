@@ -4,7 +4,7 @@ from ui.bouton import Bouton
 from objets.Joueur import Joueur
 from objets.plateau import Plateau
 from Editeur.tiroir import Tiroir
-from interpreteur.fenetre import Fenetre
+from interpreteur.interpreteurMd import InterpreteurMd
 from museeNoyee import mer
 
 class Editeur:
@@ -25,7 +25,7 @@ class Editeur:
         self.attente = 0
         self.plateau = Plateau(10, 10)
         # Infos
-        self.fenInfo = Fenetre("Editeur/expli.md")
+        self.fenInfo = InterpreteurMd("Editeur/expli.md")
         # Boutons
         self.btValid = Bouton([self.createur.nouvelleEtape, self.verif], BLUE, "Valider")
         self.btValid.setTexteNotif("Action Impossible", "Vous devez placer tous vos bateaux.")

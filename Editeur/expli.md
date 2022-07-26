@@ -1,16 +1,15 @@
-# Explications et Astuces
+# Le fonctionnement de l'Editeur
 
-_cat//
+_art//
 # Les commandes principales
 
-_art//
-# Selectionner/relacher un bateau
 Clique gauche, pour selectionner ou relacher un bateau.
+
+Clique droit sur un bateau selectionne pour le faire pivoter d'un quart de cercle dans le sens des aiguilles d'une montre.
 //art_
 
 _art//
-# Faire tourner un bateau
-Clique droit, pour faire tourner un bateau.
-//art_
+# Echange et tiroir
 
-//cat_
+Cliquer sur un bateau disponible dans le tiroir alors qu'un bateau est selectionne permet de les echanger.
+//art_
