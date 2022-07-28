@@ -35,11 +35,11 @@ class Fenetre:
             y = int(yf/2-h/2)
             ph = y + self.hauteurTitre + self.espace
             draw_rectangle(0, 0, xf, yf, [0, 0, 0, 210])
-            draw_rectangle(x, y+5, l, h, [80, 80, 80, 255])
+            draw_rectangle(x, y+4, l, h, [20, 20, 20, 255])
             draw_rectangle(x, y, l, h, [30, 30, 30, 255])
             for i in range(len(self.contenu)):
                 self.contenu[i].dessine(int(x+l*0.025), ph)
-                ph = ph + self.contenu[i].getDims()[1] + self.espace
+                ph = int(ph + self.contenu[i].getDims()[1] + self.espace)
             self.dessineTitre()
 
     def dessineTitre(self) -> None:
@@ -52,6 +52,16 @@ class Fenetre:
         draw_text_ex(police1, self.titre, [int(xf/2-ttt.x/2), int(yf/2-ht/2+h/2-ttt.y*0.4)], 
                      ttit, 0, WHITE)
         self.croix.dessine((int(xf/2+self.largeur/2-(croix[0]+h*0.1)), int(yf/2-ht/2+h*0.1)))
+
+    def decodeur(self, ligne: str) -> list:
+        rep = False
+        if len(ligne) > 0 and ligne[0] == "#":
+            li = ligne.split(" ")
+            del li[0]
+            self.setTitre(" ".join(li))
+        elif ligne == "//fen_":
+            rep = True
+        return rep
 
     def mesureTaille(self) -> None:
         for i in range(len(self.contenu)):

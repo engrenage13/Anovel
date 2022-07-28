@@ -96,14 +96,11 @@ class BlocTexte:
                 chaine += texte[i][0:int(len(texte[i])/2)] + "-\n"
                 grosseChaine += chaine
                 chaine = texte[i][int(len(texte[i])/2):int(len(texte[i])-1)] + " "
-                print(texte[i], 'a')
             elif ttt.x >= self.tCadre[0]:
                 grosseChaine = grosseChaine + chaine + "\n"
                 chaine = texte[i] + " "
-                print(texte[i], 'b')
             else:
                 chaine = chaine + texte[i] + " "
-                print(texte[i], 'c')
             tgc = measure_text_ex(self.police, grosseChaine, self.taille, 0)
             if tgc.x >= self.tCadre[0] or tgc.y >= self.tCadre[1]:
                 i = 0
@@ -115,7 +112,6 @@ class BlocTexte:
                 i = i + 1
         grosseChaine += chaine
         self.texte = grosseChaine
-        print(self.texte)
 
     def getDims(self) -> list:
         """Renvoi les dimensions du bloc de texte.
@@ -124,3 +120,9 @@ class BlocTexte:
             list: Largeur puis hauteur du bloc de texte.
         """
         return self.tCadre
+
+    def getNbLignes(self) -> int:
+        """Retourne le nombre de ligne du texte.
+        """
+        texte = self.texte.split("\n")
+        return len(texte)
