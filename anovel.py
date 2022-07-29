@@ -15,7 +15,7 @@ quit = Bouton([fen.switchEtat], DARKGRAY, "Quitter")
 nanav = load_image('images/logos/Navale.png')
 image_resize(nanav, int(nanav.width*0.19), int(nanav.height*0.19))
 logo = load_texture_from_image(nanav)
-tableau = load_image('images/backgrounds/peinture1.png')
+tableau = load_image('images/backgrounds/epave.png')
 ratio = yf/tableau.height
 image_resize(tableau, int(tableau.width*ratio), int(tableau.height*ratio))
 fond = load_texture_from_image(tableau)
