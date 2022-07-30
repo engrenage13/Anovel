@@ -9,7 +9,7 @@ class Article:
         self.hauteur = 0
         self.espace = int(yf*0.03)
         self.taillePolice = [int(yf*0.055), int(yf*0.035)]
-        self.balises = ['cad/', 'ast/', 'imp/']
+        self.balises = ['//', 'i/', '!/']
         self.types = ['cad', 'ast', 'imp']
 
     def dessine(self, x: int, y: int) -> None:
