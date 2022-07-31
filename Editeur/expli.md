@@ -1,5 +1,6 @@
 _fen//
 # L'Editeur
+[images/backgrounds/epave.png]
 //fen_
 
 L'editeur vous permet de placer vos bateaux sur votre plateau avant de commencer la partie.

@@ -4,12 +4,12 @@ from interpreteur.fenetre import Fenetre
 from ui.blocTexte import BlocTexte
 
 class InterpreteurMd:
-    def __init__(self, fichier: str) -> None:
+    def __init__(self, fichier: str, dims:tuple=(int(xf/2), int(yf/2)), redim:bool=True) -> None:
         self.fichier = fichier
         self.decode = False
         self.position = 'gen'
         # Fenetre
-        self.fenetre = Fenetre()
+        self.fenetre = Fenetre(dims, redim)
         self.element = None
         # Balises
         self.balises = ['//', 'i/', '!/']
@@ -34,17 +34,16 @@ class InterpreteurMd:
                         balise = self.types[self.balises.index(li[0])]
                         del li[0]
                         self.fenetre.ajouteContenu([balise, BlocTexte(" ".join(li), police2, 
-                                                   self.taillePolice, 
-                                                   [int(self.fenetre.largeur*0.9), ''])])
+                                                   self.taillePolice, [self.fenetre.largeurContenu, ''])])
                     elif fil[0] == "_fen//":
                         self.position = 'fen'
                     elif fil[0] == "_art//":
                         self.element = Article()
-                        self.element.redim(int(self.fenetre.largeur*0.95), self.element.hauteur)
+                        self.element.redim(self.fenetre.largeurContenu, self.element.hauteur)
                         self.position = 'art'
                     elif fil[0] != "":
                         self.fenetre.ajouteContenu(['t', BlocTexte(fil[0], police2, self.taillePolice, 
-                                                   [int(self.fenetre.largeur*0.95), ''])])
+                                                   [self.fenetre.largeurContenu, ''])])
                 elif self.position == 'fen':
                     rep = self.fenetre.decodeur(fil[0])
                     if rep:
