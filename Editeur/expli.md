@@ -3,7 +3,7 @@ _fen//
 //fen_
 
 L'editeur vous permet de placer vos bateaux sur votre plateau avant de commencer la partie.
-Pour vous aider au mieux, l'editeur propose un certain nombre d'outils et de commandes qui sont decrit-e-s ci-dessous.
+Pour vous aider au mieux, l'editeur propose de nombreuses commandes et outils qui sont decrits ci-dessous.
 
 _art//
 # Les commandes principales
@@ -15,4 +15,10 @@ Clique droit pour faire pivoter un bateau d'un quart de cercle dans le sens des 
 // Il faut selectionner un bateau pour le faire tourner.
 //art_
 
-i/ Cliquer sur un bateau disponible dans le tiroir alors qu'un bateau est selectionne permet de les echanger.
+_art//
+# Le tiroir
+
+Le tiroir se situe du cote gauche de l'ecran, c'est un presentoir pour vos bateaux non-places sur le plateau.
+
+i/ Lorsque vous cliquez sur un bateau du tiroir et que vous en avez deja un en main, les deux bateaux echangent leurs places.
+//art_

@@ -30,13 +30,21 @@ class Fenetre:
     def dessine(self) -> None:
         if not self.evaluation:
             self.mesureTaille()
+        pleinEcran = False
         l = self.largeur
         h = self.hauteur
         x = int(xf/2-l/2)
         y = int(yf/2-h/2)
+        if h >= yf:
+            l = xf
+            h = yf
+            x = 0
+            y = 0
+            pleinEcran = True
         ph = y + self.hauteurTitre + self.espace
-        draw_rectangle(0, 0, xf, yf, [0, 0, 0, 210])
-        draw_rectangle(x, y+4, l, h, [20, 20, 20, 255])
+        if not pleinEcran:
+            draw_rectangle(0, 0, xf, yf, [0, 0, 0, 210])
+            draw_rectangle(x, y+4, l, h, [20, 20, 20, 255])
         draw_rectangle(x, y, l, h, [30, 30, 30, 255])
         for i in range(len(self.contenu)):
             if type(self.contenu[i]) == Article:
@@ -63,18 +71,19 @@ class Fenetre:
                 if typ in self.types:
                     nbEspace = 2
                 ph = int(ph + tt[1] + self.espace*nbEspace)
-        self.dessineTitre()
+        self.dessineTitre(l, h)
 
-    def dessineTitre(self) -> None:
+    def dessineTitre(self, largeur: int, hauteur: int) -> None:
         h = self.hauteurTitre
-        ht = self.hauteur
+        l = largeur
+        ht = hauteur
         ttit = self.tailleTitre
         croix = [self.croix.images[0].width, self.croix.images[0].height]
-        draw_rectangle(int(xf/2-self.largeur/2), int(yf/2-ht/2), self.largeur, h, [0, 43, 54, 255])
+        draw_rectangle(int(xf/2-l/2), int(yf/2-ht/2), l, h, [0, 43, 54, 255])
         ttt = measure_text_ex(police1, self.titre, ttit, 0)
         draw_text_ex(police1, self.titre, [int(xf/2-ttt.x/2), int(yf/2-ht/2+h/2-ttt.y*0.4)], 
                      ttit, 0, WHITE)
-        self.croix.dessine((int(xf/2+self.largeur/2-(croix[0]+h*0.1)), int(yf/2-ht/2+h*0.1)))
+        self.croix.dessine((int(xf/2+l/2-(croix[0]+h*0.1)), int(yf/2-ht/2+h*0.1)))
 
     def decodeur(self, ligne: str) -> list:
         rep = False
