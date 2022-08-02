@@ -67,12 +67,13 @@ class Fenetre:
                 tt = contenu.getDims()
                 pt = [x+self.pasx, ph]
                 if typ in self.types:
-                    couleur = [20, 20, 20, 165]
+                    couleur = [20, 20, 20, 145]
                     if typ == 'ast':
-                        couleur = [82, 73, 245, 165]
+                        couleur = [22, 29, 124, 145]
                     elif typ == 'imp':
-                        couleur = [244, 80, 77, 165]
-                    draw_rectangle(x+self.pasx, ph, self.largeurContenu, int(tt[1]+self.espace), couleur)
+                        couleur = [145, 18, 18, 145]
+                    draw_rectangle_rounded([x+self.pasx, ph, self.largeurContenu, int(tt[1]+self.espace)], 
+                                           0.2, 30, couleur)
                     pt = [int(x+self.pasx*2), int(ph+self.espace/2)]
                 alig = 'g'
                 if typ in self.types and contenu.getNbLignes() == 1:
@@ -107,11 +108,12 @@ class Fenetre:
         ht = hauteur
         ttit = self.tailleTitre
         croix = [self.croix.images[0].width, self.croix.images[0].height]
-        draw_rectangle(int(xf/2-l/2), int(yf/2-ht/2), l, h, [0, 43, 54, 255])
+        draw_rectangle(int(xf/2-l/2), int(yf/2-ht/2), l, h, [0, 33, 34, 255])
+        draw_rectangle(int(xf/2-l/2), int(yf/2-ht/2)-3, l, h, [0, 43, 54, 255])
         ttt = measure_text_ex(police1, self.titre, ttit, 0)
         draw_text_ex(police1, self.titre, [int(xf/2-ttt.x/2), int(yf/2-ht/2+h/2-ttt.y*0.4)], 
                      ttit, 0, WHITE)
-        self.croix.dessine((int(xf/2+l/2-(croix[0]+h*0.1)), int(yf/2-ht/2+h*0.1)))
+        self.croix.dessine((int(xf/2+l/2-(croix[0]+h*0.1)), int(yf/2-ht/2+h*0.1-1.5)))
 
     def decodeur(self, ligne: str) -> list:
         rep = False

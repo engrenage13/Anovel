@@ -7,6 +7,7 @@ class Article:
         self.contenu = []
         self.largeur = 0
         self.hauteur = 0
+        self.hauteurCadre = 0
         self.espace = int(yf*0.03)
         self.taillePolice = [int(yf*0.055), int(yf*0.035)]
         self.balises = ['//', 'i/', '!/']
@@ -14,16 +15,15 @@ class Article:
 
     def dessine(self, x: int, y: int) -> None:
         l = self.largeur
-        h = self.hauteur
+        hc = self.hauteurCadre
         ph = y
-        draw_rectangle(x, y, l, h, [105, 105, 105, 170])
         if self.titre != "":
             tti = measure_text_ex(police2, self.titre, self.taillePolice[0], 0)
-            draw_rectangle(x, y, l, int(tti.y*1.4), [100, 100, 100, 170])
             draw_text_ex(police2, self.titre, [int(x+l/2-tti.x/2), int(ph+tti.y*0.2)], self.taillePolice[0], 
-                         0, WHITE)
-            ph = int(ph + tti.y*1.4 + self.espace)
-        ph + self.espace
+                         0, [0, 255, 255, 255])
+            ph = int(ph + tti.y + self.espace)
+        draw_rectangle_rounded([x, ph, l, hc], 0.1, 30, [200, 200, 200, 170])
+        ph = ph + self.espace
         if len(self.contenu) > 0:
             for i in range(len(self.contenu)):
                 type = self.contenu[i][0]
@@ -31,12 +31,13 @@ class Article:
                 tt = contenu.getDims()
                 pt = [int(x+l*0.025), ph]
                 if type in self.types:
-                    couleur = [20, 20, 20, 165]
+                    couleur = [20, 20, 20, 145]
                     if type == 'ast':
-                        couleur = [82, 73, 245, 165]
+                        couleur = [22, 29, 124, 145]
                     elif type == 'imp':
-                        couleur = [244, 80, 77, 165]
-                    draw_rectangle(int(x+l*0.025), ph, int(l*0.95), int(tt[1]+self.espace), couleur)
+                        couleur = [145, 18, 18, 145]
+                    draw_rectangle_rounded([int(x+l*0.025), ph, int(l*0.95), int(tt[1]+self.espace)], 
+                                           0.2, 30, couleur)
                     pt = [int(x+l*0.05), int(ph+self.espace/2)]
                 alig = 'g'
                 if type in self.types and contenu.getNbLignes() == 1:
@@ -49,6 +50,7 @@ class Article:
 
     def getDims(self) -> list:
         h = self.espace
+        hc = h
         if self.titre != "":
             ttit = measure_text_ex(police2, self.titre, self.taillePolice[0], 0)
             h = h + ttit.y + self.espace
@@ -60,10 +62,11 @@ class Article:
                 nbEspace = 1
                 if type in self.types:
                     nbEspace = 2
-                h = h + tt[1] + self.espace*nbEspace
-        if self.hauteur != h:
-            self.redim(self.largeur, h)
-        return [self.largeur, h]
+                hc = hc + tt[1] + self.espace*nbEspace
+        if self.hauteur != h + hc:
+            self.redim(self.largeur, h+hc)
+            self.hauteurCadre = hc
+        return [self.largeur, h+hc]
 
     def decodeur(self, ligne: str) -> list:
         rep = False
