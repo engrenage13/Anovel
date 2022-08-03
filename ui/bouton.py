@@ -17,11 +17,14 @@ class Bouton:
         self.texte = texte
         self.couleurVoulue = couleur
         self.coloPreset = 'max'
+        self.calcul = False
+        # Fonctions
         self.fonction = fonctions[0]
         if len(fonctions) > 1 and fonctions[1] != '':
             self.verifFonction = fonctions[1]
         else:
             self.verifFonction = self.verification
+        # Notifs
         self.notif = Notification("Option indisbonible", "Ce bouton est désactivé")
         self.notif.setPosition(1)
         self.etatNotif = False
@@ -32,7 +35,7 @@ class Bouton:
             self.iconeOriginale = None
         self.icoCharge = False
         # Decos
-        self.tailleBande = 17
+        self.tailleBande = int(xf*0.015)
         self.decos = [0, 1]
         self.activeDeco = False
         self.bloqueActiveDeco = False
@@ -154,7 +157,8 @@ class Bouton:
         if self.iconeOriginale != None:
             if not self.icoCharge:
                 ico = self.redimIc()
-                self.icone = ico
+                if not self.calcul:
+                    self.icone = ico
             else:
                 ico = self.icone
             dicone = [ico.width, ico.height, ico]
@@ -165,7 +169,8 @@ class Bouton:
                     taille[0] -= dicone[0]
             else:
                 taille = []
-            self.blocTexte = BlocTexte(self.texte, police1, int(self.hset*0.45), taille)
+            if not self.calcul:
+                self.blocTexte = BlocTexte(self.texte, police1, int(self.hset*0.45), taille)
             if not limites:
                 ditexte = [self.blocTexte.tCadre[0]+40, self.blocTexte.tCadre[1]+20]
                 dims = ditexte
@@ -173,6 +178,8 @@ class Bouton:
                 dims[0][0] -= dicone[0]
         if self.iconeOriginale != None:
             dims.append(dicone)
+        if not self.calcul:
+            self.calcul = True
         return dims
 
     def redimIc(self) -> object:
@@ -185,7 +192,9 @@ class Bouton:
         ico = self.iconeOriginale
         image_resize(ico, int(ico.width*facteur), int(ico.height*facteur))
         self.icoCharge = True
-        return load_texture_from_image(ico)
+        ima = load_texture_from_image(ico)
+        unload_image(self.iconeOriginale)
+        return ima
 
     def Important(self) -> None:
         """Gère l'animation d'importance du bouton.

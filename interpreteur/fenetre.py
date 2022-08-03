@@ -4,6 +4,12 @@ from interpreteur.article import Article
 
 class Fenetre:
     def __init__(self, dims: tuple, redim: bool) -> None:
+        """Crée la fenêtre de l'interpréteur.
+
+        Args:
+            dims (tuple): Dimensions souhaitées pour la fenêtre.
+            redim (bool): Option qui si elle est vraie dit que la taille de la fenêtre peut être adaptée à son contenu.
+        """
         self.ouvert = False
         self.titre = ""
         self.contenu = []
@@ -38,6 +44,8 @@ class Fenetre:
         self.croix = ClickIma([self.ferme], [croixSombre, croixLumineuse])
 
     def dessine(self) -> None:
+        """Dessine la fenêtre.
+        """
         if not self.evaluation:
             self.mesureTaille()
         l = self.largeur
@@ -89,6 +97,8 @@ class Fenetre:
         self.bougeChariot(y)
 
     def dessineBarre(self) -> None:
+        """Dessine la barre indiquant le défilement du contenu.
+        """
         ymin = int(yf/2-self.hauteur/2+self.hauteurTitre+self.espace*0.8)
         l = int(self.pasx*0.4)
         ht = int(self.hauteur-ymin-self.espace)
@@ -103,6 +113,12 @@ class Fenetre:
         draw_rectangle(x, y, l, h, BLUE)
 
     def dessineTitre(self, largeur: int, hauteur: int) -> None:
+        """Dessine la barre de titre de la fenêtre.
+
+        Args:
+            largeur (int): Largeur de la barre
+            hauteur (int): Hauteur de la barre
+        """
         h = self.hauteurTitre
         l = largeur
         ht = hauteur
@@ -115,7 +131,15 @@ class Fenetre:
                      ttit, 0, WHITE)
         self.croix.dessine((int(xf/2+l/2-(croix[0]+h*0.1)), int(yf/2-ht/2+h*0.1-1.5)))
 
-    def decodeur(self, ligne: str) -> list:
+    def decodeur(self, ligne: str) -> bool:
+        """Decode et traite le contenu texte du fichier en rapport avec la fenêtre.
+
+        Args:
+            ligne (str): La ligne du fichier à traiter.
+
+        Returns:
+            bool: True si la partie du fichier traitant de la fenêtre est terminée.
+        """
         rep = False
         if len(ligne) > 0 and ligne[0] == "#":
             li = ligne.split(" ")
@@ -133,6 +157,11 @@ class Fenetre:
         return rep
 
     def bougeChariot(self, y: int) -> None:
+        """Permet de faire défiler le contenu dans la fenêtre.
+
+        Args:
+            y (int): Position y de l'origine de la fenêtre.
+        """
         if self.hauteur == yf:
             roulette = int(get_mouse_wheel_move())
             roro = roulette
@@ -147,6 +176,8 @@ class Fenetre:
                         self.oyc = self.oyc - self.pasy
 
     def mesureTaille(self) -> None:
+        """Mesure et modifie la taille de la fenêtre pour qu'elle s'adapte à son contenu.
+        """
         h = 0
         for i in range(len(self.contenu)):
             if type(self.contenu[i]) == Article:
@@ -166,22 +197,42 @@ class Fenetre:
         self.evaluation = True
 
     def ouvre(self) -> None:
+        """Permet d'ouvrir la fenêtre.
+        """
         self.ouvert = True
 
     def ferme(self) -> None:
+        """Permet de fermer la fenêtre.
+        """
         self.ouvert = False
 
     def setTitre(self, titre: str) -> None:
+        """Permet de modifier le titre de la fenêtre.
+
+        Args:
+            titre (str): Le nouveau titre.
+        """
         self.titre = titre
         tt = measure_text_ex(police1, self.titre, self.tailleTitre, 0)
         if int(tt.x + self.croix.images[0].width*3) > self.largeur:
             self.largeur = int(tt.x + self.croix.images[0].width*3)
 
-    def ajouteContenu(self, contenu: Article) -> None:
+    def ajouteContenu(self, contenu: object) -> None:
+        """Permet d'ajouter du contenu dans la fenêtre.
+
+        Args:
+            contenu (Article, list): Le contenu qu'on ajoute.
+        """
         self.contenu.append(contenu)
         self.evaluation = False
 
     def redim(self, x: int, y: int) -> None:
+        """Permet de redimensionner la fenêtre.
+
+        Args:
+            x (int): Nouvelle largeur souhaitée.
+            y (int): Nouvelle hauteur souhaitée.
+        """
         if self.redimPossible:
             if x >= xf:
                 self.largeur = xf

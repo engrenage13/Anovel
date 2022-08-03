@@ -3,6 +3,8 @@ from systeme.FondMarin import *
 
 class Article:
     def __init__(self) -> None:
+        """Créu un article pour la fenêtre de l'interpréteur.
+        """
         self.titre = ""
         self.contenu = []
         self.largeur = 0
@@ -14,6 +16,12 @@ class Article:
         self.types = ['cad', 'ast', 'imp']
 
     def dessine(self, x: int, y: int) -> None:
+        """Dessine l'article.
+
+        Args:
+            x (int): Position en abscisse du coin en haut à gauche de l'article.
+            y (int): Position en ordonnée du coin en haut à droite de l'article.
+        """
         l = self.largeur
         hc = self.hauteurCadre
         ph = y
@@ -49,6 +57,11 @@ class Article:
                 ph = int(ph + tt[1] + self.espace*nbEspace)
 
     def getDims(self) -> list:
+        """Permet de mesurer la taille de l'article.
+
+        Returns:
+            list: Les dimensions de l'article.
+        """
         h = self.espace
         hc = h
         if self.titre != "":
@@ -68,7 +81,15 @@ class Article:
             self.hauteurCadre = hc
         return [self.largeur, h+hc]
 
-    def decodeur(self, ligne: str) -> list:
+    def decodeur(self, ligne: str) -> bool:
+        """Décode les lignes du fichier proposées (rapport avec un Article).
+
+        Args:
+            ligne (str): Ligne à décoder
+
+        Returns:
+            bool: True si la on quitte le mode Article dans le décodeur de l'interpréteur.
+        """
         rep = False
         li = ligne.split(" ")
         if len(ligne) > 0 and ligne[0] == "#":
@@ -87,11 +108,27 @@ class Article:
         return rep
 
     def setTitre(self, titre: str) -> None:
+        """Modifie le titre de l'article.
+
+        Args:
+            titre (str): Le nouveau titre à mettre en place.
+        """
         self.titre = titre
 
     def ajouteContenu(self, contenu: str) -> None:
+        """Ajoute du contenu dans l'article.
+
+        Args:
+            contenu (str): Le contenu à ajouter.
+        """
         self.contenu.append(contenu)
 
     def redim(self, x: int, y: int) -> None:
+        """Permet de redimensionner un Article.
+
+        Args:
+            x (int): Nouvelle largeur.
+            y (int): Nouvelle hauteur.
+        """
         self.largeur = int(x)
         self.hauteur = int(y)

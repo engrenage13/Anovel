@@ -4,7 +4,6 @@ from ui.bouton import Bouton
 from objets.Joueur import Joueur
 from objets.plateau import Plateau
 from Editeur.tiroir import Tiroir
-from interpreteur.interpreteurMd import InterpreteurMd
 from museeNoyee import mer
 
 class Editeur:
@@ -24,12 +23,9 @@ class Editeur:
         self.listeBrillante = []
         self.attente = 0
         self.plateau = Plateau(10, 10)
-        # Infos
-        self.fenInfo = InterpreteurMd("Editeur/expli.md")
         # Boutons
         self.btValid = Bouton([self.createur.nouvelleEtape, self.verif], BLUE, "Valider")
         self.btValid.setTexteNotif("Action Impossible", "Vous devez placer tous vos bateaux.")
-        self.btInfos = Bouton([self.fenInfo.ouvre], LIGHTGRAY, "Besoin d'aide", 'images/ui/question.png')
 
     def dessine(self) -> None:
         """Dessine l'éditeur à l'écran.
@@ -40,8 +36,6 @@ class Editeur:
         self.plateau.dessine((tlatba, ory), tailleCase, self.listeBrillante)
         self.dessineBateaux([tlatba, ory, tailleCase, 10])
         self.btValid.dessine((int(xf-tlatba*0.5), ory+int(tailleCase*9.5)), True)
-        self.btInfos.dessine((int(xf-tlatba*0.5), ory+int(tailleCase*0.1)), True, True)
-        self.fenInfo.dessine()
 
     def dessineBateaux(self, plateau: list) -> None:
         """Dessine tous les bateaux du joueur.

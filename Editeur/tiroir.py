@@ -26,10 +26,12 @@ class Tiroir:
         self.decos = [load_texture_from_image(deco1)]
         image_flip_vertical(deco1)
         self.decos.append(load_texture_from_image(deco1))
+        unload_image(deco1)
         deco2 = load_image('images/decors/poissons.png')
         ratio = self.hauteur_rect/deco2.height
         image_resize(deco2, int(deco2.width*ratio), int(deco2.height*ratio))
         self.decos.append(load_texture_from_image(deco2))
+        unload_image(deco2)
 
     def dessine(self, y: int) -> None:
         """Dessine le tiroir et les bateaux qui sont dedans.
