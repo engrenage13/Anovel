@@ -22,10 +22,10 @@ class Bateau:
         image_resize(originale, int(originale.width*(tailleCase*0.88)*self.taille/originale.width), 
                      int(originale.height*(tailleCase*0.88)*self.taille/originale.width))
         self.images = [load_texture_from_image(originale)]
-        unload_image(originale)
         for i in range(3):
             image_rotate_cw(originale)
             self.images.append(load_texture_from_image(originale))
+        unload_image(originale)
         self.direction = 0
         # /Images
 

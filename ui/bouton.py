@@ -1,5 +1,4 @@
 from systeme.FondMarin import *
-from ui.notif import Notification
 from ui.blocTexte import BlocTexte
 
 class Bouton:
@@ -24,10 +23,6 @@ class Bouton:
             self.verifFonction = fonctions[1]
         else:
             self.verifFonction = self.verification
-        # Notifs
-        self.notif = Notification("Option indisbonible", "Ce bouton est désactivé")
-        self.notif.setPosition(1)
-        self.etatNotif = False
         # Icône
         if icone != None:
             self.iconeOriginale = load_image(icone)
@@ -96,11 +91,6 @@ class Bouton:
             if not important:
                 couleur = [255, 255, 255, 105]
             self.bandes(important, couleur)
-        # Notification
-        if self.etatNotif:
-            self.notif.dessine()
-            if self.notif.getDisparition():
-                self.etatNotif = False
         self.execute()
 
     def bandes(self, important: bool, couleur: list) -> None:
@@ -231,8 +221,6 @@ class Bouton:
             if self.getContact():
                 if self.verifFonction():
                     self.fonction()
-                else:
-                    self.etatNotif = True
 
     def verification(self) -> bool:
         """Fonction par défaut pour la vérification d'instruction spéciale.
@@ -257,18 +245,6 @@ class Bouton:
             texte (str): Modifie le texte affiché sur le bouton.
         """
         self.texte = texte
-
-    def setTexteNotif(self, titre: str="", texte: str="") -> None:
-        """Permet de modifier le texte de la notification liée.
-
-        Args:
-            titre (str): Modifie le titre de la notif.
-            texte (str): Modifie le message de la notif.
-        """
-        if titre != "":
-            self.notif.modifTitre(str(titre))
-        if texte != "":
-            self.notif.modifTexte(str(texte))
 
     def getCouleurs(self) -> list:
         """Retourne les couleurs utilisés par le bouton.

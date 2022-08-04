@@ -1,6 +1,7 @@
 from objets.BateauJoueur import BateauJoueur
 from systeme.FondMarin import *
 from ui.bouton import Bouton
+from ui.notif import Notification
 from objets.Joueur import Joueur
 from objets.plateau import Plateau
 from Editeur.tiroir import Tiroir
@@ -24,8 +25,9 @@ class Editeur:
         self.attente = 0
         self.plateau = Plateau(10, 10)
         # Boutons
-        self.btValid = Bouton([self.createur.nouvelleEtape, self.verif], BLUE, "Valider")
-        self.btValid.setTexteNotif("Action Impossible", "Vous devez placer tous vos bateaux.")
+        self.btValid = Bouton([self.createur.nouvelleEtape, self.verification], [8, 223, 53, 255], "Valider")
+        # Notifs
+        self.notifs = []
 
     def dessine(self) -> None:
         """Dessine l'éditeur à l'écran.
@@ -36,6 +38,22 @@ class Editeur:
         self.plateau.dessine((tlatba, ory), tailleCase, self.listeBrillante)
         self.dessineBateaux([tlatba, ory, tailleCase, 10])
         self.btValid.dessine((int(xf-tlatba*0.5), ory+int(tailleCase*9.5)), True)
+        i = 0
+        survol = False
+        y = int(yf*0.4)
+        while i < len(self.notifs):
+            notif = self.notifs[len(self.notifs)-i-1]
+            notif.dessine(y)
+            if notif.getDisparition():
+                del self.notifs[i]
+            else:
+                i = i + 1
+            if survol:
+                del self.notifs[0]
+            y = y - int(notif.hauteur)*1.05
+            if y <= hbarre:
+                survol = True
+                y = int(yf*0.4)
 
     def dessineBateaux(self, plateau: list) -> None:
         """Dessine tous les bateaux du joueur.
@@ -266,6 +284,19 @@ class Editeur:
         self.joueur = joueur
         self.tiroir.setListe(self.joueur.getBateaux())
         self.bateaux = []
+
+    def verification(self) -> bool:
+        """Affiche les notifications adaptées en fonction de la position des bateaux lors de la validation.
+
+        Returns:
+            bool: Si oui ou non, les bateaux sont bien placés.
+        """
+        rep = self.verif()
+        if not rep:
+            self.notifs.append(Notification("Vous devez placer tous vos bateaux.", 'd', [210, 7, 22, 255]))
+        else:
+            self.notifs.append(Notification("Sauvegarde termine", 'd', [8, 223, 53, 255]))
+        return rep
 
     def verif(self) -> bool:
         """Vérifie si tous les bateaux du joueur ont étaient placés correctement.

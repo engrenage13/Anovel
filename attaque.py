@@ -35,7 +35,7 @@ class Attaque:
         self.tour = 0
         self.incrementTour()
         # Notification
-        self.notif = Notification("", "")
+        self.notif = Notification("", 'd', DARKGRAY)
         self.affinotif = False
         # /Notification
 

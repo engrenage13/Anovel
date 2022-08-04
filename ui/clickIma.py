@@ -15,9 +15,6 @@ class ClickIma:
             self.verifFonction = fonctions[1]
         else:
             self.verifFonction = self.verification
-        self.notif = Notification("Option indisbonible", "Ce bouton est désactivé")
-        self.notif.setPosition(1)
-        self.etatNotif = False
 
     def dessine(self, coord: tuple) -> None:
         """Dessine la clickIma à l'écran aux coordonnées passées en paramètre.
@@ -30,10 +27,6 @@ class ClickIma:
         if self.getContact():
             image = self.images[1]
         draw_texture(image, self.coords[0], self.coords[1], WHITE)
-        if self.etatNotif:
-            self.notif.dessine()
-            if self.notif.getDisparition():
-                self.etatNotif = False
         self.execute()
 
     def execute(self) -> None:
@@ -43,8 +36,6 @@ class ClickIma:
             if self.getContact():
                 if self.verifFonction():
                     self.fonction()
-                else:
-                    self.etatNotif = True
 
     def verification(self) -> bool:
         """Fonction par défaut pour la vérification d'instruction spéciale.
@@ -53,18 +44,6 @@ class ClickIma:
             bool: True.
         """
         return True
-
-    def setTexteNotif(self, titre: str="", texte: str="") -> None:
-        """Permet de modifier le texte de la notification liée.
-
-        Args:
-            titre (str): Modifie le titre de la notif.
-            texte (str): Modifie le message de la notif.
-        """
-        if titre != "":
-            self.notif.modifTitre(str(titre))
-        if texte != "":
-            self.notif.modifTexte(str(texte))
 
     def getImages(self) -> list:
         """Retourne les images utilisés par la clickIma.
