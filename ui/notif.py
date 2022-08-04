@@ -1,4 +1,5 @@
 from systeme.FondMarin import *
+from ui.blocTexte import BlocTexte
 
 class Notification:
     def __init__(self, texte: str, position: str, fond: list) -> None:
@@ -9,13 +10,15 @@ class Notification:
             position (str): Côté où doit apparaître la notification.
             fond (list): Couleur du fond de la notif.
         """
-        self.texte = texte[:]
+        self.largeur = int(xf*0.3)
+        self.largeurAdditionnelle = int(self.largeur*0.1)
+        self.hauteur = int(yf*0.09)
+        self.texte = BlocTexte(texte[:], police2, int(self.hauteur*0.33), 
+                               [int(self.largeur*0.75), int(self.hauteur*0.95)])
         self.mode = True
         self.fini = False
         self.horloge = 0
         self.couleur = [fond, list(WHITE)]
-        self.longueur = int(xf*0.3)
-        self.hauteur = int(yf*0.13)
         self.pas = 16
         # Position
         droite = ['d', 'droite', '->']
@@ -33,11 +36,11 @@ class Notification:
         """Redéfinit certaines variables utiles à la création de la notification.
         """
         if self.cote == 0:
-            self.x = -self.longueur
-            self.max = int(xf*0.02)
+            self.x = -self.largeur
+            self.max = 0
         else:
             self.x = xf
-            self.max = xf-int(xf*0.02)-self.longueur
+            self.max = xf-self.largeur
 
     def dessine(self, y: int) -> None:
         """Dessine la notification à l'écran.
@@ -45,11 +48,11 @@ class Notification:
         Args:
             y (int): Position y de l'origine de la notif.
         """
-        tt = measure_text_ex(police2, self.texte, 22, 0)
-        orixt = self.x + int(self.longueur/2)
-        draw_rectangle_rounded((self.x, y, self.longueur, self.hauteur), 0.2, 30, self.couleur[0])
-        draw_text_pro(police2, self.texte, (orixt-int(tt.x/2), y+int(self.hauteur*0.5)), (0, 0), 0, 22, 0, 
-                      self.couleur[1])
+        tt = self.texte.getDims()
+        draw_rectangle_rounded((self.x, y, self.largeur+self.largeurAdditionnelle, self.hauteur), 
+                               0.15, 30, self.couleur[0])
+        self.texte.dessine([[self.x+int(self.largeur*0.99-tt[0]), y+int(self.hauteur*0.025)], 'no'], 
+                           self.couleur[1])
         self.deplace()
 
     def deplace(self):

@@ -25,7 +25,8 @@ class Editeur:
         self.attente = 0
         self.plateau = Plateau(10, 10)
         # Boutons
-        self.btValid = Bouton([self.createur.nouvelleEtape, self.verification], [8, 223, 53, 255], "Valider")
+        self.btValid = Bouton([self.createur.nouvelleEtape, self.verification], 
+                              [8, 223, 53, 255], "Valider", "images/ui/check.png")
         # Notifs
         self.notifs = []
 
@@ -40,7 +41,7 @@ class Editeur:
         self.btValid.dessine((int(xf-tlatba*0.5), ory+int(tailleCase*9.5)), True)
         i = 0
         survol = False
-        y = int(yf*0.4)
+        y = int(yf*0.37)
         while i < len(self.notifs):
             notif = self.notifs[len(self.notifs)-i-1]
             notif.dessine(y)
