@@ -1,28 +1,36 @@
 from systeme.FondMarin import *
 from ui.blocTexte import BlocTexte
+from museeNoyee import vapeurD, vapeurG
 
 class Notification:
-    def __init__(self, texte: str, position: str, fond: list) -> None:
+    def __init__(self, texte: str, position: str, couleur: list) -> None:
         """Crée une notification.
 
         Args:
             texte (str): Déscription de la notif.
             position (str): Côté où doit apparaître la notification.
-            fond (list): Couleur du fond de la notif.
+            couleur (list): Couleur d'accentuation de la notif.
         """
-        self.largeur = int(xf*0.3)
-        self.largeurAdditionnelle = int(self.largeur*0.1)
+        self.lmax = int(xf*0.3)
+        self.lmin = int(tlatba*0.33)
+        self.largeurAdditionnelle = int(self.lmax*0.1)
         self.hauteur = int(yf*0.09)
-        self.texte = BlocTexte(texte[:], police2, int(self.hauteur*0.33), 
-                               [int(self.largeur*0.75), int(self.hauteur*0.95)])
+        tt = measure_text_ex(police2, texte, self.hauteur*0.33, 0)
+        if tt.x >= int(self.lmax*0.95):
+            self.texte = BlocTexte(texte[:], police2, int(self.hauteur*0.33), [int(self.lmax), ''])
+        else:
+            self.texte = BlocTexte(texte[:], police2, int(self.hauteur*0.33))
+        self.largeur = int(self.texte.getDims()[0]+self.lmax*0.05)
+        if self.largeur < self.lmin:
+            self.largeur = self.lmin+int(self.lmax*0.05)
         self.mode = True
         self.fini = False
         self.horloge = 0
-        self.couleur = [fond, list(WHITE)]
+        self.couleur = [[30, 30, 30, 200], couleur, list(WHITE)]
         self.pas = 16
         # Position
-        droite = ['d', 'droite', '->']
-        gauche = ['g', 'gauche', '<-']
+        droite = ['d', 'droite', '->', '>']
+        gauche = ['g', 'gauche', '<-', '<']
         self.cote = 1
         if type(position) == str:
             cote = position.lower()
@@ -30,6 +38,11 @@ class Notification:
                 self.cote = 1
             elif cote in gauche:
                 self.cote = 0
+        # Apparence
+        if self.cote == 0:
+            self.deco = vapeurG
+        else:
+            self.deco = vapeurD
         self.setVariable()
 
     def setVariable(self) -> None:
@@ -37,9 +50,13 @@ class Notification:
         """
         if self.cote == 0:
             self.x = -self.largeur
+            self.xDeco = self.x-self.pas
+            self.xT = self.x+int(self.largeur*0.01)
             self.max = 0
         else:
             self.x = xf
+            self.xDeco = int(self.x+self.largeur-self.deco.width+self.pas)
+            self.xT = self.x+int(self.largeur*0.99-self.texte.getDims()[0])
             self.max = xf-self.largeur
 
     def dessine(self, y: int) -> None:
@@ -49,10 +66,15 @@ class Notification:
             y (int): Position y de l'origine de la notif.
         """
         tt = self.texte.getDims()
-        draw_rectangle_rounded((self.x, y, self.largeur+self.largeurAdditionnelle, self.hauteur), 
+        if tt[1] > self.hauteur:
+            self.hauteur = int(tt[1]+yf*0.02)
+        decalage = 0
+        if self.cote == 0:
+            decalage = self.largeurAdditionnelle
+        draw_rectangle_rounded((self.x-decalage, y, self.largeur+self.largeurAdditionnelle, self.hauteur), 
                                0.15, 30, self.couleur[0])
-        self.texte.dessine([[self.x+int(self.largeur*0.99-tt[0]), y+int(self.hauteur*0.025)], 'no'], 
-                           self.couleur[1])
+        draw_texture(self.deco, self.xDeco, int(y+self.hauteur-self.deco.height), self.couleur[1])
+        self.texte.dessine([[self.xT, y+int(self.hauteur/2-tt[1]/2)], 'no'], self.couleur[2], 'd')
         self.deplace()
 
     def deplace(self):
@@ -61,8 +83,12 @@ class Notification:
         if self.mode and self.horloge == 0:
             if self.x < self.max and self.cote == 0:
                 self.x = self.x + self.pas
+                self.xT = self.xT + self.pas
+                self.xDeco = self.xDeco + self.pas
             elif self.x > self.max and self.cote == 1:
                 self.x = self.x - self.pas
+                self.xT = self.xT - self.pas
+                self.xDeco = self.xDeco - self.pas
             else:
                 self.mode = False
                 self.horloge = self.horloge + 1

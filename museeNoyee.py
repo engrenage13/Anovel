@@ -13,6 +13,13 @@ pointe = load_image('images/bataille/viseur.png')
 image_resize(pointe, int(tailleCase*0.96), int(tailleCase*0.96))
 viseur = load_texture_from_image(pointe)
 unload_image(pointe)
+fum = load_image("images/decors/vapeur.png")
+prop = int(yf*0.06)/fum.height
+image_resize(fum, int(fum.width*prop), int(fum.height*prop))
+vapeurD = load_texture_from_image(fum)
+image_flip_horizontal(fum)
+vapeurG = load_texture_from_image(fum)
+unload_image(fum)
 
 # Marqueurs
 marqueX = load_image('images/bataille/croix.png')
