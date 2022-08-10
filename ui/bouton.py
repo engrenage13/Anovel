@@ -129,7 +129,7 @@ class Bouton:
                 self.activeDeco = False
                 self.decos = [0, 1]
             if important:
-                if self.delaiImportant < 500:
+                if self.delaiImportant < 250:
                     self.delaiImportant += 1
                 else:
                     self.delaiImportant = 0
@@ -229,39 +229,6 @@ class Bouton:
             bool: True.
         """
         return True
-
-    def getTexte(self) -> str:
-        """Retourne le texte écrit sur le bouton du bouton.
-
-        Returns:
-            str: Texte du bouton.
-        """
-        return self.texte
-
-    def setTexte(self, texte: str) -> None:
-        """Permet de modifier le texte du bouton.
-
-        Args:
-            texte (str): Modifie le texte affiché sur le bouton.
-        """
-        self.texte = texte
-
-    def getCouleurs(self) -> list:
-        """Retourne les couleurs utilisés par le bouton.
-
-        Returns:
-            list: couleur de base du fond, couleur de surbrillement et couleur du texte.
-        """
-        return self.couleur
-
-    def setCouleurs(self, couleurs: list) -> None:
-        """Permet de modifier les couleurs utilisées par le bouton.
-
-        Args:
-            couleurs (list): Première pour le fond du bouton, seconde pour surbrillement et 
-            troisième pour le texte.
-        """
-        self.couleur = couleurs
 
     def getContact(self) -> bool:
         """Vérifie si le curseur est sur le bouton.
