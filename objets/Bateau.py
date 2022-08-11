@@ -12,7 +12,6 @@ class Bateau:
         """
         self.taille = taille
         self.nom = nom
-        self.defil = False
         self.proprio = proprietaire
         self.rejouer()
         self.alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 
@@ -29,7 +28,7 @@ class Bateau:
         self.direction = 0
         # /Images
 
-    def dessine(self, x: int, y: int):
+    def dessine(self, x: int, y: int) -> Image:
         """Dessine le bateau.
 
         Args:
@@ -47,6 +46,7 @@ class Bateau:
             elif self.direction == 2:
                 self.direction = 3
         draw_texture(self.images[self.direction], x, y, WHITE)
+        return self.images[self.direction]
 
     def estTouche(self, position: str) -> bool:
         """Dit si le bateau passé en paramètres est sur la case qui est regardée.

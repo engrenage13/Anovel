@@ -1,10 +1,11 @@
-from objets.BateauJoueur import BateauJoueur
+from objets.Bateau import Bateau
 from systeme.FondMarin import *
 from ui.bouton import Bouton
 from ui.ptiBouton import PtiBouton
 from ui.notif import Notification
 from objets.Joueur import Joueur
 from objets.plateau import Plateau
+from Editeur.positionneur import Positionneur
 from Editeur.tiroir import Tiroir
 from museeNoyee import mer
 
@@ -18,10 +19,12 @@ class Editeur:
         """
         self.createur = creator
         self.joueur = joueur
+        self.lBat = self.joueur.getBateaux()
         self.bateaux = []
         self.ordre = []
+        self.placeur = Positionneur(len(self.lBat))
         self.tiroir = Tiroir(self)
-        self.tiroir.setListe(self.joueur.getBateaux())
+        self.tiroir.setListe(self.lBat)
         self.listeBrillante = []
         self.attente = 0
         self.plateau = Plateau(10, 10)
@@ -67,7 +70,7 @@ class Editeur:
         i = 0
         defil = False
         objectif = len(self.bateaux)
-        if len(self.bateaux) > 0 and self.bateaux[len(self.bateaux)-1].defil:
+        if len(self.bateaux) > 0 and self.placeur.defil[self.lBat.index(self.bateaux[len(self.bateaux)-1])]:
             defil = True
             objectif = len(self.bateaux)-1
         while i < objectif:
@@ -77,26 +80,28 @@ class Editeur:
         if defil and len(self.bateaux) > 0 and i < len(self.bateaux):
             self.dessineBateau(self.bateaux[self.ordre[i]], plateau)
 
-    def dessineBateau(self, bateau: BateauJoueur, plateau: list) -> None:
+    def dessineBateau(self, bateau: Bateau, plateau: list) -> None:
         """Dessine un bateau.
 
         Args:
-            bateau (BateauJoueur): Bateau à dessiner.
+            bateau (Bateau): Bateau à dessiner.
             plateau (list): Infos sur le plateau.
         """
-        if bateau.defil:
+        cooBat = self.placeur.coords[self.lBat.index(bateau)]
+        if self.placeur.defil[self.lBat.index(bateau)]:
             coo = self.dansLeCadre(bateau)
             x = coo[0]
             y = coo[1]
-            if x+bateau.coord[2] >= tlatba and x <= xf-tlatba:
-                if y+bateau.coord[3] >= plateau[1] and y <= plateau[1]+plateau[3]*tailleCase:
+            if x+cooBat[2] >= tlatba and x <= xf-tlatba:
+                if y+cooBat[3] >= plateau[1] and y <= plateau[1]+plateau[3]*tailleCase:
                     self.listeBrillante = self.getCasesCibles(plateau, bateau)
                 else:
                     self.listeBrillante = []
             else:
                 self.listeBrillante = []
-            bateau.dessine(x, y)
-        elif not bateau.defil and bateau.pos:
+            ima = bateau.dessine(x, y)
+            self.placeur.setCoord(self.lBat.index(bateau), [x, y, ima.width, ima.height])
+        elif not self.placeur.defil[self.lBat.index(bateau)] and bateau.pos:
             colonne = float(bateau.pos[0][1:len(bateau.pos[0])])
             ligne = float(self.plateau.alphabet.index(bateau.pos[0][0]))
             if bateau.orient == 'h':
@@ -105,8 +110,8 @@ class Editeur:
             else:
                 colonne = colonne + 0.5
                 ligne = ligne + bateau.taille/2
-            x = int(plateau[0]+plateau[2]*(colonne-1)-int(bateau.coord[2]/2))
-            y = int(plateau[1]+plateau[2]*ligne-int(bateau.coord[3]/2))
+            x = int(plateau[0]+plateau[2]*(colonne-1)-int(cooBat[2]/2))
+            y = int(plateau[1]+plateau[2]*ligne-int(cooBat[3]/2))
             bateau.dessine(x, y)
         if self.attente <= 0:
             self.ckeckSelect(bateau)
@@ -126,69 +131,57 @@ class Editeur:
         """
         self.ordre = []
         for i in range(len(self.bateaux)):
-            if not self.bateaux[i].defil:
+            if not self.placeur.defil[self.lBat.index(self.bateaux[i])]:
                 self.ordre = [i] + self.ordre
             else:
                 self.ordre.append(i)
 
-    def dansLeCadre(self, bateau: BateauJoueur) -> tuple:
+    def dansLeCadre(self, bateau: Bateau) -> tuple:
         """Trouve les coordonnées du bateau sur le plateau.
 
         Args:
-            bateau (BateauJoueur): Le bateau sélectionné.
+            bateau (Bateau): Le bateau sélectionné.
 
         Returns:
             tuple: Les coordonnées (x, y) de l'origine du bateau.
         """
-        x = get_mouse_x()-int(bateau.coord[2]/2)
-        y = get_mouse_y()-int(bateau.coord[3]/2)
+        cooBat = self.placeur.coords[self.lBat.index(bateau)]
+        x = get_mouse_x()-int(cooBat[2]/2)
+        y = get_mouse_y()-int(cooBat[3]/2)
         if x < 0:
             x = 0
-        if x+bateau.coord[2] > xf:
-            x = xf-bateau.coord[2]
+        if x+cooBat[2] > xf:
+            x = xf-cooBat[2]
         if y < hbarre:
             y = hbarre
-        if y > yf-bateau.coord[3]:
-            y = yf-bateau.coord[3]
+        if y > yf-cooBat[3]:
+            y = yf-cooBat[3]
         return (x, y)
 
-    def ckeckSelect(self, bateau: BateauJoueur) -> None:
+    def ckeckSelect(self, bateau: Bateau) -> None:
         """Agit si l'une des touches de la souris est appuyée et que le pointeur est sur le bateau visé.
+
+        Args:
+            bateau (Bateau): Bateau sur lequel agir.
         """
-        if is_mouse_button_pressed(0):
-            if bateau.getContact():
+        if self.placeur.getContact(self.lBat.index(bateau)):
+            if is_mouse_button_pressed(0):
                 self.listeBrillante = []
-                signal = bateau.switchMode()
+                signal = self.placeur.switchMode(self.lBat.index(bateau), bateau)
                 if not signal and not bateau.pos:
-                    if self.checkClone(bateau, self.tiroir.liste):
+                    if self.placeur.checkClone(bateau, self.tiroir.liste):
                         self.tiroir.ajValListe(bateau)
                     del self.bateaux[self.bateaux.index(bateau)]
                     self.ordreBateaux()
-        elif is_mouse_button_pressed(1):
-            if bateau.getContact():
-                bateau.tourne()
+            elif is_mouse_button_pressed(1):
+                self.placeur.tourne(self.lBat.index(bateau), bateau)
 
-    def checkClone(self, valeur: object, liste: list) -> bool:
-        """Vérifie si la valeur est déjà dans la liste.
-
-        Args:
-            valeur (object): Valeur à vérifier.
-            liste (list): Liste où il faut vérifier.
-
-        Returns:
-            bool: True si la valeur n'est pas dans une liste, False sinon.
-        """
-        rep = True
-        if valeur in liste:
-            rep = False
-        return rep
-
-    def getCasesCibles(self, plateau: list, bateau: BateauJoueur) -> list:
+    def getCasesCibles(self, plateau: list, bateau: Bateau) -> list:
         """Renvoie les cases survolés par le bateau.
 
         Args:
             plateau (list): Coordonnées du plateau.
-            bateau (BateauJoueur): Le bateau cible.
+            bateau (Bateau): Le bateau cible.
 
         Returns:
             list: Liste de nom de cases.
@@ -196,22 +189,23 @@ class Editeur:
         rep = []
         couleur = BLACK
         zone = 1
+        cooBat = self.placeur.coords[self.lBat.index(bateau)]
         if bateau.orient == 'h':
-            indice = int((bateau.coord[1]+int(bateau.coord[3]/2)-plateau[1])/plateau[2])
+            indice = int((cooBat[1]+int(cooBat[3]/2)-plateau[1])/plateau[2])
             if indice < plateau[3] and indice >= 0:
                 ligne = self.plateau.getLigne(self.plateau.alphabet[indice])
                 zone = 2
                 boucle = bateau.taille
                 couleur = WHITE
-                if bateau.coord[0] >= plateau[0]:
-                    origine = int((bateau.coord[0]-plateau[0])/plateau[2])
+                if cooBat[0] >= plateau[0]:
+                    origine = int((cooBat[0]-plateau[0])/plateau[2])
                     sens = 1
                     if plateau[3]-origine < boucle:
                         boucle = plateau[3]-origine
                         couleur = RED
                         zone = 3
                 else:
-                    origine = int(((bateau.coord[0]+bateau.coord[2])-plateau[0])/plateau[2])
+                    origine = int(((cooBat[0]+cooBat[2])-plateau[0])/plateau[2])
                     sens = -1
                     if origine < boucle:
                         boucle = origine+1
@@ -220,21 +214,21 @@ class Editeur:
                 for i in range(boucle):
                     rep.append(ligne[origine+i*sens])
         else:
-            indice = int((bateau.coord[0]+int(bateau.coord[2]/2)-plateau[0])/plateau[2])+1
+            indice = int((cooBat[0]+int(cooBat[2]/2)-plateau[0])/plateau[2])+1
             if indice <= plateau[3] and indice > 0:
                 ligne = self.plateau.getColonne(indice)
                 zone = 2
                 boucle = bateau.taille
                 couleur = WHITE
-                if bateau.coord[1] >= plateau[1]:
-                    origine = int((bateau.coord[1]-plateau[1])/plateau[2])
+                if cooBat[1] >= plateau[1]:
+                    origine = int((cooBat[1]-plateau[1])/plateau[2])
                     sens = 1
                     if plateau[3]-origine < boucle:
                         boucle = plateau[3]-origine
                         couleur = RED
                         zone = 3
                 else:
-                    origine = int(((bateau.coord[1]+bateau.coord[3])-plateau[1])/plateau[2])
+                    origine = int(((cooBat[1]+cooBat[3])-plateau[1])/plateau[2])
                     sens = -1
                     if origine < boucle:
                         boucle = origine+1
@@ -242,11 +236,11 @@ class Editeur:
                         zone = 1
                 for i in range(boucle):
                     rep.append(ligne[origine+i*sens])
-        bateau.setPosition(rep, zone)
+        self.placeur.setPosition(rep, zone, bateau)
         reponse = rep
         if couleur != BLACK:
             reponse = [rep, couleur]
-        contact = self.getContactBateaux(rep, self.bateaux.index(bateau))
+        contact = self.placeur.getCaseJumelles(rep, self.bateaux.index(bateau), self.bateaux)
         if contact[0]:
             ididi = contact[1]
             if ididi >= len(rep):
@@ -255,28 +249,6 @@ class Editeur:
             reponse = [rep, RED]
         return reponse
 
-    def getContactBateaux(self, position: list, idBateau: int) -> bool:
-        """Vérifie si le bateau ne touche aucun autre bateau.
-
-        Args:
-            position (list): Les cases occupées par le bateau.
-            idBateau (int): L'indice du bateau sélectionné.
-
-        Returns:
-            bool: True si le bateau est sur une case déjà occupé par un autre.
-        """
-        rep = False
-        i = 0
-        while i < len(position) and not rep:
-            j = 0
-            while j < len(self.bateaux) and not rep:
-                if j != idBateau and self.bateaux[j].pos:
-                    if position[i] in self.bateaux[j].pos:
-                        rep = True
-                j = j + 1
-            i = i + 1
-        return [rep, i]
-
     def setJoueur(self, joueur: Joueur) -> None:
         """Permet de changer le joueur qui utilise l'éditeur.
 
@@ -284,7 +256,9 @@ class Editeur:
             joueur (Joueur): Nouveau joueur.
         """
         self.joueur = joueur
-        self.tiroir.setListe(self.joueur.getBateaux())
+        self.lBat = self.joueur.getBateaux()
+        self.placeur.reset(len(self.lBat))
+        self.tiroir.setListe(self.lBat)
         self.bateaux = []
 
     def verification(self) -> bool:

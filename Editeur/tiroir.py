@@ -1,12 +1,12 @@
 from systeme.FondMarin import *
-from objets.BateauJoueur import *
+from objets.Bateau import Bateau
 
 class Tiroir:
     def __init__(self, createur: object) -> None:
         """Crée le tiroir à bateaux.
 
         Args:
-            createur (object): Elément qui crée le tiroir (normalment l'editeur).
+            createur (Editeur): l'Editeur.
         """
         self.createur = createur
         self.liste = []
@@ -68,15 +68,18 @@ class Tiroir:
                     if self.soulevement[i][2] > 0:
                         self.dessineNom(self.liste[i], xbat, ybat)
                     self.liste[i].dessine(self.soulevement[i][1], ybat-int(self.liste[i].images[0].height/2))
+                    self.createur.placeur.coords[self.createur.lBat.index(self.liste[i])] = [self.soulevement[i][1], 
+                        ybat-int(self.liste[i].images[0].height/2), self.liste[i].images[0].width, 
+                        self.liste[i].images[0].height]
                     # Animation des bateaux
                     self.bougeBat(i, xbat)
                 i = i + 1
 
-    def dessineNom(self, bateau: BateauJoueur, x: int, y: int) -> None:
+    def dessineNom(self, bateau: Bateau, x: int, y: int) -> None:
         """Dessine l'encadré du nom et de la taille des bateaux.
 
         Args:
-            bateau (BateauJoueur): Bateau dont on doit afficher le nom et la taille.
+            bateau (Bateau): Bateau dont on doit afficher le nom et la taille.
             x (int): position cible de l'origine x voulu pour la bannière.
             y (int): position cible de l'origine y voulu pour la bannière.
         """
@@ -131,11 +134,11 @@ class Tiroir:
                 self.lumCadre = [0, 5]
             self.createur.ordreBateaux()
 
-    def ajValListe(self, valeur: BateauJoueur) -> None:
+    def ajValListe(self, valeur: Bateau) -> None:
         """Ajoute un bateau à la liste des bateaux exploitées.
 
         Args:
-            valeur (BateauJoueur): Bateau à ajouter à la liste.
+            valeur (Bateau): Bateau à ajouter à la liste.
         """
         self.liste.append(valeur)
         self.soulevement.append([False, 0-valeur.images[0].width, 0])
@@ -143,27 +146,31 @@ class Tiroir:
     def getContactBateau(self, indice: int) -> list:
         """Vérifie si le curseur est sur le bateau.
 
+        Args:
+            indice (int): L'indice du bateau testé.
+
         Returns:
             list: 1. True si le curseur est sur le bateau, False dans le cas contraire. 2. Valeurs spécifiques.
         """
         bateau = self.liste[indice]
+        coord = self.createur.placeur.coords[self.createur.lBat.index(bateau)]
         rep = False
         onse = False
         x = get_mouse_x()
         y = get_mouse_y()
-        if y >= bateau.coord[1] and y <= bateau.coord[1]+bateau.coord[3]:
-            if (not self.soulevement[indice][0] and x <= int(self.largeur)) or (self.soulevement[indice][0] and x <= int(bateau.coord[0]+bateau.coord[2])):
+        if y >= coord[1] and y <= coord[1]+coord[3]:
+            if (not self.soulevement[indice][0] and x <= int(self.largeur)) or (self.soulevement[indice][0] and x <= int(coord[0]+coord[2])):
                 rep = True
                 onse = self.checkSelect(bateau)
                 if onse:
                     rep = False
         return [rep, onse]
 
-    def checkSelect(self, bateau: BateauJoueur) -> bool:
+    def checkSelect(self, bateau: Bateau) -> bool:
         """Vérifie si la bateau est sélectionné par l'utilisateau.
 
         Args:
-            bateau (BateauJoueur): Bateau à tester.
+            bateau (Bateau): Bateau à tester.
 
         Returns:
             bool: True si le bateau est sélectionné, False sinon.
@@ -171,12 +178,12 @@ class Tiroir:
         rep = False
         if is_mouse_button_pressed(0):
             parasite = self.checkBateauVolant()
-            bateau.defil = True
+            self.createur.placeur.defil[self.createur.lBat.index(bateau)] = True
             self.createur.attente = 50
             self.createur.bateaux.append(bateau)
             if parasite >= 0:
                 self.createur.bateaux[parasite].pos = False
-                self.createur.bateaux[parasite].immobile()
+                self.createur.placeur.immobile(self.createur.lBat.index(self.createur.bateaux[parasite]), self.createur.bateaux[parasite])
                 self.liste[self.liste.index(bateau)] = self.createur.bateaux[parasite]
                 del self.createur.bateaux[parasite]
                 self.createur.ordreBateaux()
@@ -194,7 +201,7 @@ class Tiroir:
         rep = -1
         i = 0
         while i < len(self.createur.bateaux) and rep == -1:
-            if self.createur.bateaux[i].defil:
+            if self.createur.placeur.defil[self.createur.lBat.index(self.createur.bateaux[i])]:
                 rep = i
             else:
                 i = i + 1
