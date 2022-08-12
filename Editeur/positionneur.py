@@ -165,3 +165,13 @@ class Positionneur:
         if valeur in liste:
             rep = False
         return rep
+
+    def setCoord(self, bateau: int, coord: list) -> None:
+        """Permet de modifier les coordonnées du bateau à l'écran.
+
+        Args:
+            bateau (int): L'indice du bateau concerné.
+            coord (list): Les nouvelles coordonnées du bateau.
+        """
+        if bateau >= 0 and bateau < len(self.coords):
+            self.coords[bateau] = coord

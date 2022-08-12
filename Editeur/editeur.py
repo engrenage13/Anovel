@@ -1,5 +1,5 @@
-from objets.Bateau import Bateau
 from systeme.FondMarin import *
+from objets.Bateau import Bateau
 from ui.bouton import Bouton
 from ui.ptiBouton import PtiBouton
 from ui.notif import Notification
@@ -7,6 +7,7 @@ from objets.Joueur import Joueur
 from objets.plateau import Plateau
 from Editeur.positionneur import Positionneur
 from Editeur.tiroir import Tiroir
+from Editeur.grilleBt import GrilleBt
 from museeNoyee import mer
 
 class Editeur:
@@ -29,8 +30,9 @@ class Editeur:
         self.attente = 0
         self.plateau = Plateau(10, 10)
         # Boutons
-        self.btValid = PtiBouton([self.createur.nouvelleEtape, self.verification], 
-                                 [8, 223, 53, 255], "Valider", "images/ui/check.png")
+        self.grille = GrilleBt()
+        self.grille.ajouteElement(PtiBouton([self.createur.nouvelleEtape, self.verification], 
+                                 [8, 223, 53, 255], "Valider", "images/ui/check.png"), 0, 0)
         # Notifs
         self.notifs = []
 
@@ -42,7 +44,9 @@ class Editeur:
         self.barreTitre()
         self.plateau.dessine((tlatba, ory), tailleCase, self.listeBrillante)
         self.dessineBateaux([tlatba, ory, tailleCase, 10])
-        self.btValid.dessine((int(xf-tlatba*0.5), ory+int(tailleCase*9.5)))
+        valid = self.verif()
+        self.grille.dessine(int(xf-tlatba+(tlatba-self.grille.largeur)/2), 
+                            ory+int(tailleCase*10-self.grille.hauteur), [valid])
         i = 0
         survol = False
         y = int(yf*0.37)

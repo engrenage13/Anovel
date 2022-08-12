@@ -13,7 +13,7 @@ class PtiBouton:
             icone (str, optional): Icône sur le bouton. Defaults to ['', 'e'].
         """
         self.hauteur = int(yf*0.075)
-        self.largeur = int(tlatba*0.31)
+        self.largeur = int(tlatba*0.32)
         self.texte = None
         if type(texte) == str and texte != "":
             self.texte = BlocTexte(texte, police1, int(self.hauteur*0.4), [self.largeur, ''])
@@ -161,3 +161,11 @@ class PtiBouton:
             if y >= self.coords[1] and y <= self.coords[3]:
                 rep = True
         return rep
+
+    def getDims(self) -> list:
+        """Retourne les dimensions du bouton.
+
+        Returns:
+            list: 1. Largeur. 2. Hauteur.
+        """
+        return [self.largeur, self.hauteur]

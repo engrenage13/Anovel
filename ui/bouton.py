@@ -243,3 +243,11 @@ class Bouton:
             if y >= self.coords[1] and y <= self.coords[3]:
                 rep = True
         return rep
+
+    def getDims(self) -> list:
+        """Retourne les dimensions du bouton.
+
+        Returns:
+            list: 1. Largeur. 2. Hauteur.
+        """
+        return [self.lset, self.hset]

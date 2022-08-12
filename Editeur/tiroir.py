@@ -49,7 +49,7 @@ class Tiroir:
             draw_texture(self.decos[1], self.largeur-self.decos[1].width, originey, 
                          [255, 255, 255, self.lumCadre[0]])
             draw_rectangle_rounded_lines((self.originex, originey, self.largeur+self.originex*-1, tailley), 
-                                         0.2, 30, 4, [255, 255, 255, self.lumCadre[1]])
+                                         0.2, 30, 3, [255, 255, 255, self.lumCadre[1]])
             self.apparition()
             i = 0
             while i < len(self.liste):
@@ -68,9 +68,9 @@ class Tiroir:
                     if self.soulevement[i][2] > 0:
                         self.dessineNom(self.liste[i], xbat, ybat)
                     self.liste[i].dessine(self.soulevement[i][1], ybat-int(self.liste[i].images[0].height/2))
-                    self.createur.placeur.coords[self.createur.lBat.index(self.liste[i])] = [self.soulevement[i][1], 
+                    self.createur.placeur.setCoord(self.createur.lBat.index(self.liste[i]), [self.soulevement[i][1], 
                         ybat-int(self.liste[i].images[0].height/2), self.liste[i].images[0].width, 
-                        self.liste[i].images[0].height]
+                        self.liste[i].images[0].height])
                     # Animation des bateaux
                     self.bougeBat(i, xbat)
                 i = i + 1
