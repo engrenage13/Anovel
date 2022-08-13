@@ -26,23 +26,28 @@ class GrilleBt:
         k = 0
         for i in range(len(self.grille)):
             px = x + self.largeur - int(tlatba*0.05)
-            if len(self.grille[i]) == 1:
+            idligne = len(self.grille)-1-i
+            if len(self.grille[idligne]) == 1:
                 actif = important[len(important)-1-k]
                 k = k + 1
-                telem = self.grille[i][0].getDims()
-                if type(self.grille[i][0]) == PtiBouton:
-                    self.grille[i][0].dessine((x+int(self.largeur/2), py-int(telem[1]/2)), actif)
-                elif type(self.grille[i][0]) == Bouton:
-                    self.grille[i][0].dessine((x+int(self.largeur/2), py-int(telem[1]/2)), True, actif)
+                telem = self.grille[idligne][0].getDims()
+                if type(self.grille[idligne][0]) == PtiBouton:
+                    self.grille[idligne][0].dessine((x+int(self.largeur/2), py-int(telem[1]/2)), actif)
+                elif type(self.grille[idligne][0]) == Bouton:
+                    self.grille[idligne][0].dessine((x+int(self.largeur/2), py-int(telem[1]/2)), True, 
+                                                    actif)
             else:
-                for j in range(len(self.grille[i])):
+                for j in range(len(self.grille[idligne])):
+                    idcol = len(self.grille[idligne])-1-j
                     actif = important[len(important)-1-k]
                     k = k + 1
-                    telem = self.grille[i][j].getDims()
-                    if type(self.grille[i][j]) == PtiBouton:
-                        self.grille[i][j].dessine((px-int(telem[0]/2), py-int(telem[1]/2)), actif)
-                    elif type(self.grille[i][j]) == Bouton:
-                        self.grille[i][j].dessine((px-int(telem[0]/2), py-int(telem[1]/2)), True, actif)
+                    telem = self.grille[idligne][idcol].getDims()
+                    if type(self.grille[idligne][idcol]) == PtiBouton:
+                        self.grille[idligne][idcol].dessine((px-int(telem[0]/2), py-int(telem[1]/2)), 
+                                                            actif)
+                    elif type(self.grille[idligne][idcol]) == Bouton:
+                        self.grille[idligne][idcol].dessine((px-int(telem[0]/2), py-int(telem[1]/2)), True, 
+                                                            actif)
                     px -= telem[0] + self.espaceX
             py -= telem[1] + self.espaceY
 

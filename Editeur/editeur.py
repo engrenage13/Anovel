@@ -30,9 +30,20 @@ class Editeur:
         self.attente = 0
         self.plateau = Plateau(10, 10)
         # Boutons
-        self.grille = GrilleBt()
-        self.grille.ajouteElement(PtiBouton([self.createur.nouvelleEtape, self.verification], 
-                                 [8, 223, 53, 255], "Valider", "images/ui/check.png"), 0, 0)
+        self.affG1 = False
+        self.affG2 = False
+        self.grille1 = GrilleBt()
+        self.grille1.ajouteElement(PtiBouton([self.declencheG2, self.verification], [8, 223, 53, 255], 
+                                             "Valider", "images/ui/check.png"), 0, 0)
+        self.grille2 = GrilleBt()
+        self.grille2.ajouteElement(PtiBouton([self.createur.nouvelleEtape, self.verif], [8, 223, 53, 255], 
+                                             "Confirmer", "images/ui/check.png"), 0, 0)
+        self.grille2.ajouteElement(PtiBouton([self.declencheG1], [207, 35, 41, 255], "Annuler", 
+                                             "images/ui/croix.png"), 1, 0)
+        ory = int((yf-hbarre)/2-tailleCase*5)+hbarre
+        self.ymaxGrilles = [ory+int(tailleCase*10-self.grille1.hauteur), 
+                            ory+int(tailleCase*10-self.grille2.hauteur)]
+        self.yGrilles = [ory+int(tailleCase*10-self.grille1.hauteur), int(yf*1.1)]
         # Notifs
         self.notifs = []
 
@@ -45,8 +56,11 @@ class Editeur:
         self.plateau.dessine((tlatba, ory), tailleCase, self.listeBrillante)
         self.dessineBateaux([tlatba, ory, tailleCase, 10])
         valid = self.verif()
-        self.grille.dessine(int(xf-tlatba+(tlatba-self.grille.largeur)/2), 
-                            ory+int(tailleCase*10-self.grille.hauteur), [valid])
+        self.grille1.dessine(int(xf-tlatba+(tlatba-self.grille1.largeur)/2), self.yGrilles[0], 
+                             [valid])
+        self.grille2.dessine(int(xf-tlatba+(tlatba-self.grille2.largeur)/2), self.yGrilles[1], 
+                             [valid, False])
+        self.bougeGrille()
         i = 0
         survol = False
         y = int(yf*0.37)
@@ -263,6 +277,7 @@ class Editeur:
         self.lBat = self.joueur.getBateaux()
         self.placeur.reset(len(self.lBat))
         self.tiroir.setListe(self.lBat)
+        self.declencheG1()
         self.bateaux = []
 
     def verification(self) -> bool:
@@ -277,6 +292,39 @@ class Editeur:
         else:
             self.notifs.append(Notification("Sauvegarde termine", 'd', [8, 223, 53, 255]))
         return rep
+
+    def declencheG2(self) -> None:
+        """Déclenche le passage à la deuxième grille de bouton.
+        """
+        self.affG2 = True
+        self.affG1 = False
+
+    def declencheG1(self) -> None:
+        """Déclenche le passage à la première grille de bouton.
+        """
+        self.affG1 = True
+        self.affG2 = False
+
+    def bougeGrille(self) -> None:
+        """Permet de déplacer les grilles de boutons.
+        """
+        pas = int(yf*0.01)
+        if self.affG2:
+            if self.yGrilles[0] < int(yf*1.1):
+                self.yGrilles[0] += pas
+            elif self.yGrilles[1] > self.ymaxGrilles[1]:
+                if self.yGrilles[1]-self.ymaxGrilles[1] < pas:
+                    pas = self.yGrilles[1]-self.ymaxGrilles[1]
+                self.yGrilles[1] -= pas
+            else:
+                self.affG2 = False
+        elif self.affG1:
+            if self.yGrilles[1] < int(yf*1.1):
+                self.yGrilles[1] += pas
+            elif self.yGrilles[0] > self.ymaxGrilles[0]:
+                self.yGrilles[0] -= pas
+            else:
+                self.affG1 = False
 
     def verif(self) -> bool:
         """Vérifie si tous les bateaux du joueur ont étaient placés correctement.

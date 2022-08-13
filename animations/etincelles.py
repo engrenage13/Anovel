@@ -97,3 +97,12 @@ class Etincelles:
         particule.append(randint(self.tmin, self.tmax))
         particule.append(c)
         self.particules[position] = particule
+
+    def setCoordSource(self, coord: list) -> None:
+        """Permet de modifier la position de la source des étincelles.
+
+        Args:
+            coord (list): Les nouvelles coordonnées.
+        """
+        if len(coord) == 4:
+            self.source = coord

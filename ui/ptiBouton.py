@@ -16,7 +16,8 @@ class PtiBouton:
         self.largeur = int(tlatba*0.32)
         self.texte = None
         if type(texte) == str and texte != "":
-            self.texte = BlocTexte(texte, police1, int(self.hauteur*0.4), [self.largeur, ''])
+            self.texte = BlocTexte(texte, police1, int(self.hauteur*0.4), 
+                                   [int(self.largeur*0.95), int(self.hauteur*0.4)])
         self.couleur = couleur
         self.coloPreset = 'max'
         # Fonctions
@@ -57,6 +58,7 @@ class PtiBouton:
         if self.etincelles == None:
             self.etincelles = Etincelles([self.coords[0], self.coords[1], l, h], 
                                          [self.couleur, [246, 203, 33, 255]])
+        self.etincelles.setCoordSource([self.coords[0], self.coords[1], l, h])
         if important:
             if self.getContact():
                 artifice = True
@@ -80,8 +82,8 @@ class PtiBouton:
             coloTex = WHITE
             if couleur[0] > 170 and couleur[1] > 170 and couleur[2] > 170:
                 coloTex = BLACK
-            self.texte.dessine([[int(self.coords[0]+l/2), 
-                               int(self.coords[1]+h*0.98-self.texte.getDims()[1]/2)], 'c'], coloTex)
+            self.texte.dessine([[int(coord[0]), int(self.coords[1]+h*0.98-self.texte.getDims()[1]/2)], 
+                               'c'], coloTex)
         self.execute()
 
     def actif(self) -> list:
