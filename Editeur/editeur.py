@@ -36,6 +36,7 @@ class Editeur:
         self.grille1.ajouteElement(PtiBouton([self.declencheG2, self.verification], [8, 223, 53, 255], 
                                              "Valider", "images/ui/check.png"), 0, 0)
         self.grille2 = GrilleBt()
+        self.grille2.setChrono(5, self.createur.nouvelleEtape)
         self.grille2.ajouteElement(PtiBouton([self.createur.nouvelleEtape, self.verif], [8, 223, 53, 255], 
                                              "Confirmer", "images/ui/check.png"), 0, 0)
         self.grille2.ajouteElement(PtiBouton([self.declencheG1], [207, 35, 41, 255], "Annuler", 
@@ -304,6 +305,7 @@ class Editeur:
         """
         self.affG1 = True
         self.affG2 = False
+        self.grille2.stopChrono()
 
     def bougeGrille(self) -> None:
         """Permet de déplacer les grilles de boutons.
@@ -318,6 +320,7 @@ class Editeur:
                 self.yGrilles[1] -= pas
             else:
                 self.affG2 = False
+                self.grille2.startChrono()
         elif self.affG1:
             if self.yGrilles[1] < int(yf*1.1):
                 self.yGrilles[1] += pas
