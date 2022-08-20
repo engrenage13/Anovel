@@ -61,8 +61,8 @@ class FinPartie:
             self.dessineTitre((xtit, ytit), i)
             self.dessineStats((xstat, ystat), i)
             self.dessineBateaux((xbat, ybat), i)
-        self.accueil.dessine((int(xf*0.35), self.hauteurBt), True)
-        self.rejouer.dessine((int(xf*0.65), self.hauteurBt), True)
+        self.accueil.dessine((int(xf*0.35), self.hauteurBt))
+        self.rejouer.dessine((int(xf*0.65), self.hauteurBt))
         if self.hauteurBt > self.hBtIndice:
             self.apparition()
 

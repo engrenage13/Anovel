@@ -8,7 +8,7 @@ fen = Fenetre()
 partie = Partie(fen)
 
 # Boutons
-start = Bouton([partie.nouvelleEtape], BLUE, "Jouer")
+start = Bouton([partie.nouvelleEtape], [0, 50, 240, 255], "Jouer")
 quit = Bouton([fen.switchEtat], DARKGRAY, "Quitter")
 
 # Images
@@ -27,7 +27,7 @@ def accueil():
     draw_texture(logo, 0, 0, WHITE)
     draw_text_pro(police2, version, (int(xf*0.005), int(yf*0.975)), (0, 0), 0, 19, 0, GRAY)
     start.dessine((int(xf*0.35), int(yf*0.92)), True)
-    quit.dessine((int(xf*0.65), int(yf*0.92)), True)
+    quit.dessine((int(xf*0.65), int(yf*0.92)))
 
 while not fen.jeuDoitFermer():
     begin_drawing()

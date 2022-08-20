@@ -20,9 +20,10 @@ class GrilleBt:
         self.temps = 0
         self.t2 = 0.0
         self.tdep = None
-        self.couleurs = [[255, 119, 25, 255], [8, 223, 53, 255]]
-        self.largeurChrono = int(tlatba*0.5)
-        self.hauteurChrono = int(yf*0.1)
+        self.largeurChrono = 0
+        self.hauteurChrono = 0
+        # Décors
+        self.adresse = "images/decors/jauge1.png"
     
     def dessine(self, x: int, y: int, important: list) -> None:
         """Dessine la grille.
@@ -45,23 +46,14 @@ class GrilleBt:
                 actif = important[len(important)-1-k]
                 k = k + 1
                 telem = self.grille[idligne][0].getDims()
-                if type(self.grille[idligne][0]) == PtiBouton:
-                    self.grille[idligne][0].dessine((x+int(self.largeur/2), py-int(telem[1]/2)), actif)
-                elif type(self.grille[idligne][0]) == Bouton:
-                    self.grille[idligne][0].dessine((x+int(self.largeur/2), py-int(telem[1]/2)), True, 
-                                                    actif)
+                self.grille[idligne][0].dessine((x+int(self.largeur/2), py-int(telem[1]/2)), actif)
             else:
                 for j in range(len(self.grille[idligne])):
                     idcol = len(self.grille[idligne])-1-j
                     actif = important[len(important)-1-k]
                     k = k + 1
                     telem = self.grille[idligne][idcol].getDims()
-                    if type(self.grille[idligne][idcol]) == PtiBouton:
-                        self.grille[idligne][idcol].dessine((px-int(telem[0]/2), py-int(telem[1]/2)), 
-                                                            actif)
-                    elif type(self.grille[idligne][idcol]) == Bouton:
-                        self.grille[idligne][idcol].dessine((px-int(telem[0]/2), py-int(telem[1]/2)), True, 
-                                                            actif)
+                    self.grille[idligne][idcol].dessine((px-int(telem[0]/2), py-int(telem[1]/2)), actif)
                     px -= telem[0] + self.espaceX
             py -= telem[1] + self.espaceY
 
@@ -77,21 +69,24 @@ class GrilleBt:
             self.tdep = round(temps, 2)
             self.temps = 0
         c = int(self.largeur/2)
-        r = int(self.hauteurChrono*0.45)
-        lmax = int(self.largeur*0.33)
+        r = int(self.hauteurChrono*0.25)
+        lmax = int(self.largeur*0.29)
         prop = (self.valeurInitiale-self.temps-self.t2)/self.valeurInitiale
         l = int(lmax*prop)
-        couleur = self.setCouleur(prop)
-        draw_rectangle(int(x+c-r*0.9-lmax), int(y+self.hauteurChrono*0.48), lmax, 
-                       int(self.hauteurChrono*0.1), BLACK)
-        draw_rectangle(int(x+c+r*0.9), int(y+self.hauteurChrono*0.48), lmax, int(self.hauteurChrono*0.1), BLACK)
-        draw_rectangle(int(x+c-r*0.9-l), int(y+self.hauteurChrono*0.48), l, int(self.hauteurChrono*0.1), couleur)
-        draw_rectangle(int(x+c+r*0.9), int(y+self.hauteurChrono*0.48), l, int(self.hauteurChrono*0.1), couleur)
-        draw_circle(x+c, int(y+self.hauteurChrono/2), int(self.hauteurChrono*0.47), BLACK)
-        draw_circle(x+c, int(y+self.hauteurChrono/2), r, couleur)
-        tx = measure_text_ex(police1, str(self.decompte), int(self.hauteurChrono*0.75), 0)
-        draw_text_ex(police1, str(self.decompte), (x+c-int(tx.x/2), int(y+self.hauteurChrono/2-tx.y*0.39)), 
-                     int(self.hauteurChrono*0.75), 0, WHITE)
+        draw_rectangle(int(x+c-r*0.9-l), int(y+self.hauteurChrono*0.4), l, int(self.hauteurChrono*0.2), 
+                       [117, 200, 235, 80])
+        draw_rectangle(int(x+c+r*0.9), int(y+self.hauteurChrono*0.4), l, int(self.hauteurChrono*0.2), 
+                       [117, 200, 235, 80])
+        draw_circle_gradient(int(x+c-self.largeurChrono*0.44), int(y+self.hauteurChrono*0.52), int(r/5), 
+                             [32, 45, 226, 200], [0, 12, 72, 200])
+        draw_circle_gradient(int(x+c+self.largeurChrono*0.44), int(y+self.hauteurChrono*0.52), int(r/5), 
+                             [32, 45, 226, 200], [0, 12, 72, 200])
+        draw_circle(x+c, int(y+self.hauteurChrono/2), r, [117, 200, 235, 80])
+        draw_texture(self.decoJauge, int(x+c-self.decoJauge.width/2), 
+                     int(y+self.hauteurChrono/2-self.decoJauge.height/2), [213, 222, 226, 255])
+        tx = measure_text_ex(police1, str(self.decompte), int(self.hauteurChrono*0.3), 0)
+        draw_text_ex(police1, str(self.decompte), (int(x+c-tx.x*0.54), int(y+self.hauteurChrono/2-tx.y*0.37)), 
+                     int(self.hauteurChrono*0.3), 0, WHITE)
         if self.play:
             if self.decompte > 0:
                 t = round(get_time(), 2)
@@ -103,24 +98,6 @@ class GrilleBt:
                     self.t2 = round(t-self.tdep-self.temps, 2)
             else:
                 self.objectif()
-
-    def setCouleur(self, progression: float) -> list:
-        """Définit la couleur des éléments du compte à rebours selon la progression de celui-ci.
-
-        Args:
-            progression (float): La progression du compte à rebours.
-
-        Returns:
-            list: La couleur à appliquer.
-        """
-        couleur = []
-        for i in range(3):
-            base = self.couleurs[0][i]
-            haut = self.couleurs[1][i]
-            echelle = haut - base
-            couleur.append(int(base+echelle*progression))
-        couleur.append(255)
-        return couleur
 
     def ajouteElement(self, element: object, x: int, y: int) -> None:
         """Permet d'ajouter un nouvel élément à la grille.
@@ -160,12 +137,27 @@ class GrilleBt:
             taille = self.grille[i][0].getDims()
             h = h + taille[1]
         h = h + int(yf*0.02*2+self.espaceY*(len(self.grille)-1))
-        if self.car:
-            if l < int(self.largeurChrono + tlatba*0.05*2):
-                l = int(self.largeurChrono + tlatba*0.05*2)
-            h = h + self.hauteurChrono + self.espaceY
         self.largeur = l
         self.hauteur = h
+        if self.car:
+            self.setDimsChrono()
+
+    def setDimsChrono(self) -> None:
+        """Permet de modifier les dimensions du compte à rebours en fonction des dimensions du cadre.
+        """
+        jauge = load_image(self.adresse)
+        t = self.largeur*0.9
+        if t < tlatba*0.7:
+            t = tlatba*0.7
+        prop = t/jauge.width
+        image_resize(jauge, int(jauge.width*prop), int(jauge.height*prop))
+        self.decoJauge = load_texture_from_image(jauge)
+        unload_image(jauge)
+        self.largeurChrono = int(self.decoJauge.width)
+        self.hauteurChrono = int(self.decoJauge.height*1.05)
+        if self.largeurChrono >= self.largeur:
+            self.largeur = int(self.largeurChrono*1.1)
+        self.hauteur += int(self.hauteurChrono+self.espaceY*0.1)
 
     def setChrono(self, temps: int, fonction) -> None:
         """Permet de paramètrer un compte un rebours dans la grille de bouton.

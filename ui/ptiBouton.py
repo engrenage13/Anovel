@@ -10,7 +10,7 @@ class PtiBouton:
             fonctions (list): Fonctions qu'appel le bouton quand il est utilisé.
             couleur (list): Couleur de fond du bouton.
             texte (str, optional): Ecritaut sur le bouton.. Defaults to None.
-            icone (str, optional): Icône sur le bouton. Defaults to ['', 'e'].
+            icone (str, optional): Icône sur le bouton. Defaults to None.
         """
         self.hauteur = int(yf*0.075)
         self.largeur = int(tlatba*0.32)
@@ -19,7 +19,6 @@ class PtiBouton:
             self.texte = BlocTexte(texte, police1, int(self.hauteur*0.4), 
                                    [int(self.largeur*0.95), int(self.hauteur*0.4)])
         self.couleur = couleur
-        self.coloPreset = 'max'
         # Fonctions
         self.fonction = fonctions[0]
         if len(fonctions) > 1 and fonctions[1] != '':
