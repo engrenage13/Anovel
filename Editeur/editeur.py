@@ -35,6 +35,8 @@ class Editeur:
         self.grille1 = GrilleBt()
         self.grille1.ajouteElement(PtiBouton([self.declencheG2, self.verification], [8, 223, 53, 255], 
                                              "Valider", "images/ui/check.png"), 0, 0)
+        self.grille1.ajouteElement(PtiBouton([self.tousAuTiroir], [207, 35, 41, 255], "Effacer", 
+                                             "images/ui/croix.png"), 1, 0)
         self.grille2 = GrilleBt()
         self.grille2.setChrono(5, self.createur.nouvelleEtape)
         self.grille2.ajouteElement(PtiBouton([self.createur.nouvelleEtape, self.verif], [8, 223, 53, 255], 
@@ -58,7 +60,7 @@ class Editeur:
         self.dessineBateaux([tlatba, ory, tailleCase, 10])
         valid = self.verif()
         self.grille1.dessine(int(xf-tlatba+(tlatba-self.grille1.largeur)/2), self.yGrilles[0], 
-                             [valid])
+                             [valid, False])
         self.grille2.dessine(int(xf-tlatba+(tlatba-self.grille2.largeur)/2), self.yGrilles[1], 
                              [valid, False])
         self.bougeGrille()
@@ -194,6 +196,18 @@ class Editeur:
                     self.ordreBateaux()
             elif is_mouse_button_pressed(1):
                 self.placeur.tourne(self.lBat.index(bateau), bateau)
+
+    def tousAuTiroir(self) -> None:
+        """Permet de remettre tous les bateaux placés dans le tirroir.
+        """
+        for i in range(len(self.bateaux)):
+            bateau = self.bateaux[i]
+            bateau.pos = False
+            bateau.orient = 'h'
+            if bateau.direction != 0:
+                bateau.direction = 0
+            self.tiroir.ajValListe(bateau)
+        self.bateaux = []
 
     def getCasesCibles(self, plateau: list, bateau: Bateau) -> list:
         """Renvoie les cases survolés par le bateau.
