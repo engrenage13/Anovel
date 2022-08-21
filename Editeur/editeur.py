@@ -36,7 +36,7 @@ class Editeur:
         self.grille1.ajouteElement(PtiBouton([self.declencheG2, self.verification], [8, 223, 53, 255], 
                                              "Valider", "images/ui/check.png"), 0, 0)
         self.grille1.ajouteElement(PtiBouton([self.tousAuTiroir], [207, 35, 41, 255], "Effacer", 
-                                             "images/ui/croix.png"), 1, 0)
+                                             "images/ui/corbeille.png"), 1, 0)
         self.grille2 = GrilleBt()
         self.grille2.setChrono(5, self.createur.nouvelleEtape)
         self.grille2.ajouteElement(PtiBouton([self.createur.nouvelleEtape, self.verif], [8, 223, 53, 255], 
