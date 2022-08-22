@@ -178,4 +178,4 @@ class Bouton:
         Returns:
             list: 1. Largeur. 2. Hauteur.
         """
-        return [self.largeur, self.largeur]
+        return [self.largeur, self.hauteur]

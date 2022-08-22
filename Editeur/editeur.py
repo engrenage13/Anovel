@@ -33,8 +33,8 @@ class Editeur:
         self.affG1 = False
         self.affG2 = False
         self.grille1 = GrilleBt()
-        self.grille1.ajouteElement(PtiBouton([self.alea], [22, 127, 192, 255], "Aleatoire", 
-                                             "images/ui/hasard.png"), 0, 0)
+        self.grille1.ajouteElement(Bouton([self.alea], [22, 127, 192, 255], "Plan Aleatoire", 
+                                             ["images/ui/hasard.png", 'd']), 0, 0)
         self.grille1.ajouteElement(PtiBouton([self.declencheG2, self.verification], [8, 223, 53, 255], 
                                              "Valider", "images/ui/check.png"), 0, 1)
         self.grille1.ajouteElement(PtiBouton([self.tousAuTiroir], [207, 35, 41, 255], "Effacer", 

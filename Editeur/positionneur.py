@@ -186,41 +186,70 @@ class Positionneur:
             plateau (Plateau): Le plateau sur lequel placer les bateaux.
         """
         dims = plateau.getDimensions()
+        verif = self.verifPlacement(bateaux)
+        blacklist = verif[0]
+        liBat = verif[1]
+        for i in range(len(liBat)):
+            bateau = liBat[i]
+            valid = False
+            while not valid:
+                pos = []
+                dir = randint(0, 3)
+                if dir == 0 or dir == 2:
+                    sens = 'h'
+                else:
+                    sens = 'v'
+                if sens == 'h':
+                    x = randint(1, dims[0]-bateau.taille)
+                    y = choice(plateau.alphabet[0:dims[1]-1])
+                    for j in range(bateau.taille):
+                        case = y+str(x)
+                        pos.append(case)
+                        x = x + 1
+                else:
+                    x = randint(1, dims[0])
+                    y = choice(plateau.alphabet[0:dims[1]-bateau.taille])
+                    for j in range(bateau.taille):
+                        case = y+str(x)
+                        pos.append(case)
+                        y = plateau.alphabet[plateau.alphabet.index(y)+1]
+                k = 0
+                erreur = False
+                while k < len(pos) and not erreur:
+                    if pos[k] in blacklist:
+                        erreur = True
+                    else:
+                        k = k + 1
+                if not erreur:
+                    valid = True
+                    blacklist += pos
+            self.setPosition(pos, 2, bateau)
+            bateau.orient = sens
+            bateau.direction = dir
+
+    def verifPlacement(self, bateaux: list) -> list:
+        """Vérifie si les bateaux passés en paramètres sont placés ou non.
+
+        Args:
+            bateaux (list): Les bateaux à vérifier.
+
+        Returns:
+            list: 1. Listes des cases occupées. 2. Les bateaux qu'il reste à placer.
+        """
         blacklist = []
+        liBat = []
+        nbVerif = 0
+        troupeau = 0
         for i in range(len(bateaux)):
-            if self.verifType(bateaux[i]):
-                valid = False
-                while not valid:
-                    pos = []
-                    dir = randint(0, 3)
-                    if dir == 0 or dir == 2:
-                        sens = 'h'
-                    else:
-                        sens = 'v'
-                    if sens == 'h':
-                        x = randint(1, dims[0]-bateaux[i].taille)
-                        y = choice(plateau.alphabet[0:dims[1]-1])
-                        for j in range(bateaux[i].taille):
-                            case = y+str(x)
-                            pos.append(case)
-                            x = x + 1
-                    else:
-                        x = randint(1, dims[0])
-                        y = choice(plateau.alphabet[0:dims[1]-bateaux[i].taille])
-                        for j in range(bateaux[i].taille):
-                            case = y+str(x)
-                            pos.append(case)
-                            y = plateau.alphabet[plateau.alphabet.index(y)+1]
-                    k = 0
-                    erreur = False
-                    while k < len(pos) and not erreur:
-                        if pos[k] in blacklist:
-                            erreur = True
-                        else:
-                            k = k + 1
-                    if not erreur:
-                        valid = True
-                        blacklist += pos
-                self.setPosition(pos, 2, bateaux[i])
-                bateaux[i].orient = sens
-                bateaux[i].direction = dir
+            bateau = bateaux[i]
+            if self.verifType(bateau):
+                troupeau = troupeau + 1
+                if bateau.pos or (type(bateau.pos) == list and not (False in bateau.pos)):
+                    nbVerif += 1
+                    blacklist = blacklist + bateau.pos
+                else:
+                    liBat.append(bateau)
+        if nbVerif == troupeau:
+            blacklist = []
+            liBat = bateaux
+        return [blacklist, liBat]
