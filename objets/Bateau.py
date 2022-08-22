@@ -25,7 +25,6 @@ class Bateau:
             image_rotate_cw(originale)
             self.images.append(load_texture_from_image(originale))
         unload_image(originale)
-        self.direction = 0
         # /Images
 
     def dessine(self, x: int, y: int) -> Image:
@@ -88,3 +87,4 @@ class Bateau:
         self.pos = False
         self.coule = False
         self.etatSeg = ['o']*self.taille
+        self.direction = 0

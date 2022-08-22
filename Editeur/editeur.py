@@ -33,10 +33,12 @@ class Editeur:
         self.affG1 = False
         self.affG2 = False
         self.grille1 = GrilleBt()
+        self.grille1.ajouteElement(PtiBouton([self.alea], [22, 127, 192, 255], "Aleatoire", 
+                                             "images/ui/hasard.png"), 0, 0)
         self.grille1.ajouteElement(PtiBouton([self.declencheG2, self.verification], [8, 223, 53, 255], 
-                                             "Valider", "images/ui/check.png"), 0, 0)
+                                             "Valider", "images/ui/check.png"), 0, 1)
         self.grille1.ajouteElement(PtiBouton([self.tousAuTiroir], [207, 35, 41, 255], "Effacer", 
-                                             "images/ui/corbeille.png"), 1, 0)
+                                             "images/ui/corbeille.png"), 1, 1)
         self.grille2 = GrilleBt()
         self.grille2.setChrono(5, self.createur.nouvelleEtape)
         self.grille2.ajouteElement(PtiBouton([self.createur.nouvelleEtape, self.verif], [8, 223, 53, 255], 
@@ -133,7 +135,9 @@ class Editeur:
                 ligne = ligne + bateau.taille/2
             x = int(plateau[0]+plateau[2]*(colonne-1)-int(cooBat[2]/2))
             y = int(plateau[1]+plateau[2]*ligne-int(cooBat[3]/2))
-            bateau.dessine(x, y)
+            ima = bateau.dessine(x, y)
+            if [x, y, ima.width, ima.height] != cooBat:
+                self.placeur.setCoord(self.lBat.index(bateau), [x, y, ima.width, ima.height])
         if self.attente <= 0:
             self.ckeckSelect(bateau)
         else:
@@ -196,6 +200,14 @@ class Editeur:
                     self.ordreBateaux()
             elif is_mouse_button_pressed(1):
                 self.placeur.tourne(self.lBat.index(bateau), bateau)
+
+    def alea(self) -> None:
+        for i in range(len(self.lBat)):
+            bateau = self.lBat[i]
+            if bateau in self.tiroir.liste:
+                self.bateaux.append(bateau)
+                self.tiroir.supValListe(self.tiroir.liste.index(bateau))
+        self.placeur.placementAleatoire(self.lBat, self.plateau)
 
     def tousAuTiroir(self) -> None:
         """Permet de remettre tous les bateaux placés dans le tirroir.

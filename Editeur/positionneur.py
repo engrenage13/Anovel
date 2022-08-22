@@ -1,5 +1,7 @@
 from objets.Bateau import Bateau
+from objets.plateau import Plateau
 from systeme.FondMarin import *
+from random import randint, choice
 
 class Positionneur:
     def __init__(self, nbBateaux: int) -> None:
@@ -175,3 +177,50 @@ class Positionneur:
         """
         if bateau >= 0 and bateau < len(self.coords):
             self.coords[bateau] = coord
+
+    def placementAleatoire(self, bateaux: list, plateau: Plateau) -> None:
+        """Permet de placer tous les bateaux de manière aléatoire sur le plateau.
+
+        Args:
+            bateaux (list): Liste des bateaux à placer.
+            plateau (Plateau): Le plateau sur lequel placer les bateaux.
+        """
+        dims = plateau.getDimensions()
+        blacklist = []
+        for i in range(len(bateaux)):
+            if self.verifType(bateaux[i]):
+                valid = False
+                while not valid:
+                    pos = []
+                    dir = randint(0, 3)
+                    if dir == 0 or dir == 2:
+                        sens = 'h'
+                    else:
+                        sens = 'v'
+                    if sens == 'h':
+                        x = randint(1, dims[0]-bateaux[i].taille)
+                        y = choice(plateau.alphabet[0:dims[1]-1])
+                        for j in range(bateaux[i].taille):
+                            case = y+str(x)
+                            pos.append(case)
+                            x = x + 1
+                    else:
+                        x = randint(1, dims[0])
+                        y = choice(plateau.alphabet[0:dims[1]-bateaux[i].taille])
+                        for j in range(bateaux[i].taille):
+                            case = y+str(x)
+                            pos.append(case)
+                            y = plateau.alphabet[plateau.alphabet.index(y)+1]
+                    k = 0
+                    erreur = False
+                    while k < len(pos) and not erreur:
+                        if pos[k] in blacklist:
+                            erreur = True
+                        else:
+                            k = k + 1
+                    if not erreur:
+                        valid = True
+                        blacklist += pos
+                self.setPosition(pos, 2, bateaux[i])
+                bateaux[i].orient = sens
+                bateaux[i].direction = dir

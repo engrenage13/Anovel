@@ -167,7 +167,7 @@ class Tiroir:
         return [rep, onse]
 
     def checkSelect(self, bateau: Bateau) -> bool:
-        """Vérifie si la bateau est sélectionné par l'utilisateau.
+        """Vérifie si la bateau est sélectionné par l'utilisateur.
 
         Args:
             bateau (Bateau): Bateau à tester.
