@@ -35,9 +35,7 @@ class Attaque:
         self.tour = 0
         self.incrementTour()
         # Notification
-        self.notif = Notification("", 'd', DARKGRAY)
-        self.affinotif = False
-        # /Notification
+        self.notifs = []
 
     def dessine(self) -> None:
         """Dessine les éléments du jeu de la partie attaque à l'écran.
@@ -65,15 +63,26 @@ class Attaque:
                             self.joueurActuel.toucheCase(tire[0])
                             self.viseur = False
             else:
-                if self.affinotif:
-                    self.notif.dessine()
-                    if self.notif.getDisparition():
-                        self.affinotif = False
+                if self.joueurActuel == self.j1:
+                    self.monter()
                 else:
-                    if self.joueurActuel == self.j1:
-                        self.monter()
-                    else:
-                        self.descendre()
+                    self.descendre()
+            i = 0
+            survol = False
+            y = int(yf*0.37)
+            while i < len(self.notifs):
+                notif = self.notifs[len(self.notifs)-i-1]
+                notif.dessine(y)
+                if notif.getDisparition():
+                    del self.notifs[i]
+                else:
+                    i = i + 1
+                if survol:
+                    del self.notifs[0]
+                y = y - int(notif.hauteur)*1.05
+                if y <= hbarre:
+                    survol = True
+                    y = int(yf*0.4)
 
     def barreTitre(self) -> None:
         """Crée la barre de titre en haut de la fenêtre.
@@ -218,10 +227,8 @@ class Attaque:
         titre = "Touche"
         if bateau.estCoule():
             titre = "Coule"
-        texte = f"En {case}"
-        self.notif.modifTitre(titre)
-        self.notif.modifTexte(texte)
-        self.affinotif = True
+        texte = f"{titre} En {case}"
+        self.notifs.append(Notification(texte, 'g', [0, 50, 240, 255]))
 
     def monter(self):
         """Fait descendre les plateaux (animations)
@@ -258,3 +265,4 @@ class Attaque:
         self.yPlateau = self.plateauYCible
         self.joueurActuel = self.j1
         self.liBat = self.j2.getBateaux()
+        self.notifs = []

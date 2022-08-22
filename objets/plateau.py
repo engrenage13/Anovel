@@ -38,6 +38,7 @@ class Plateau:
                 epais = 1
                 if len(cibles) > 1 and self.cases[i][j][0] in cibles[0]:
                     couleur = cibles[1]
+                    draw_rectangle(x, y, taille, taille, [couleur[0], couleur[1], couleur[2], 50])
                     epais = 3
                 draw_rectangle_lines_ex((x, y, taille, taille), epais, couleur)
                 if self.cases[i][j][1] != '':

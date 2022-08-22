@@ -12,7 +12,7 @@ class Notification:
             couleur (list): Couleur d'accentuation de la notif.
         """
         self.lmax = int(xf*0.3)
-        self.lmin = int(tlatba*0.33)
+        self.lmin = int(tlatba*0.4)
         self.largeurAdditionnelle = int(self.lmax*0.1)
         self.hauteur = int(yf*0.09)
         tt = measure_text_ex(police2, texte, self.hauteur*0.33, 0)
