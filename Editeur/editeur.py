@@ -33,12 +33,12 @@ class Editeur:
         self.affG1 = False
         self.affG2 = False
         self.grille1 = GrilleBt()
-        self.grille1.ajouteElement(Bouton([self.alea], [22, 127, 192, 255], "Plan Aleatoire", 
-                                             ["images/ui/hasard.png", 'd']), 0, 0)
-        self.grille1.ajouteElement(PtiBouton([self.declencheG2, self.verification], [8, 223, 53, 255], 
-                                             "Valider", "images/ui/check.png"), 0, 1)
+        self.grille1.ajouteElement(PtiBouton([self.alea], [22, 127, 192, 255], "Plan Aleatoire", 
+                                             "images/ui/hasard.png"), 0, 0)
         self.grille1.ajouteElement(PtiBouton([self.tousAuTiroir], [207, 35, 41, 255], "Effacer", 
-                                             "images/ui/corbeille.png"), 1, 1)
+                                             "images/ui/corbeille.png"), 1, 0)
+        self.grille1.ajouteElement(Bouton([self.declencheG2, self.verification], [8, 223, 53, 255], 
+                                          "Valider", ["images/ui/check.png", 'd']), 0, 1)
         self.grille2 = GrilleBt()
         self.grille2.setChrono(5, self.createur.nouvelleEtape)
         self.grille2.ajouteElement(PtiBouton([self.createur.nouvelleEtape, self.verif], [8, 223, 53, 255], 
@@ -62,7 +62,7 @@ class Editeur:
         self.dessineBateaux([tlatba, ory, tailleCase, 10])
         valid = self.verif()
         self.grille1.dessine(int(xf-tlatba+(tlatba-self.grille1.largeur)/2), self.yGrilles[0], 
-                             [valid, False])
+                             [False, False, valid])
         self.grille2.dessine(int(xf-tlatba+(tlatba-self.grille2.largeur)/2), self.yGrilles[1], 
                              [valid, False])
         self.bougeGrille()
@@ -148,7 +148,7 @@ class Editeur:
         """
         draw_rectangle_gradient_h(0, 0, xf, hbarre, [112, 31, 126, 120], [150, 51, 140, 100])
         draw_text_pro(police1, f"Installation : {self.joueur.getNom()}", (int(hbarre/4), int(hbarre/4)), 
-                      (0, 0), 0, 25, 0, WHITE)
+                      (0, 0), 0, int(hbarre*0.7), 0, WHITE)
         self.createur.croix.dessine((xf-hbarre, int(hbarre*0.05)))
 
     def ordreBateaux(self) -> None:

@@ -87,11 +87,12 @@ class Attaque:
     def barreTitre(self) -> None:
         """Crée la barre de titre en haut de la fenêtre.
         """
-        ttour = measure_text_ex(police1, f"Tour {self.tour}", 25, 0)
+        ttour = measure_text_ex(police1, f"Tour {self.tour}", int(hbarre*0.7), 0)
         draw_rectangle_gradient_h(0, 0, xf, hbarre, [112, 31, 126, 120], [150, 51, 140, 100])
-        draw_text_pro(police1, self.joueurActuel.getNom(), (int(hbarre/4), int(hbarre/4)), (0, 0), 0, 25, 0, WHITE)
+        draw_text_pro(police1, self.joueurActuel.getNom(), (int(hbarre/4), int(hbarre/4)), 
+                      (0, 0), 0, int(hbarre*0.7), 0, WHITE)
         draw_text_pro(police1, f"Tour {self.tour}", (int(xf/2-ttour.x/2), int(hbarre/4)), 
-                      (0, 0), 0, 25, 0, WHITE)
+                      (0, 0), 0, int(hbarre*0.7), 0, WHITE)
         if not self.gagnant:
             self.proprio.croix.dessine((xf-hbarre, int(hbarre*0.05)))
 
