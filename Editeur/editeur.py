@@ -8,6 +8,7 @@ from objets.plateau import Plateau
 from Editeur.positionneur import Positionneur
 from Editeur.tiroir import Tiroir
 from Editeur.grilleBt import GrilleBt
+from Editeur.chronologie import Chronologie
 from museeNoyee import mer
 
 class Editeur:
@@ -33,12 +34,16 @@ class Editeur:
         self.affG1 = False
         self.affG2 = False
         self.grille1 = GrilleBt()
+        self.grille1.ajouteElement(PtiBouton([self.annuler], [100, 100, 100, 255], "Annuler", 
+                                             "images/ui/annuler.png"), 0, 0)
+        self.grille1.ajouteElement(PtiBouton([self.retablir], [100, 100, 100, 255], "Retablir", 
+                                             "images/ui/retablir.png"), 1, 0)
         self.grille1.ajouteElement(PtiBouton([self.alea], [22, 127, 192, 255], "Plan Aleatoire", 
-                                             "images/ui/hasard.png"), 0, 0)
+                                             "images/ui/hasard.png"), 0, 1)
         self.grille1.ajouteElement(PtiBouton([self.tousAuTiroir], [207, 35, 41, 255], "Effacer", 
-                                             "images/ui/corbeille.png"), 1, 0)
+                                             "images/ui/corbeille.png"), 1, 1)
         self.grille1.ajouteElement(Bouton([self.declencheG2, self.verification], [8, 223, 53, 255], 
-                                          "Valider", ["images/ui/check.png", 'd']), 0, 1)
+                                          "Valider", ["images/ui/check.png", 'd']), 0, 2)
         self.grille2 = GrilleBt()
         self.grille2.setChrono(5, self.createur.nouvelleEtape)
         self.grille2.ajouteElement(PtiBouton([self.createur.nouvelleEtape, self.verif], [8, 223, 53, 255], 
@@ -51,6 +56,8 @@ class Editeur:
         self.yGrilles = [ory+int(tailleCase*10-self.grille1.hauteur), int(yf*1.1)]
         # Notifs
         self.notifs = []
+        # Chronologie
+        self.chronologie = Chronologie(self.tiroir, self.lBat)
 
     def dessine(self) -> None:
         """Dessine l'éditeur à l'écran.
@@ -62,7 +69,7 @@ class Editeur:
         self.dessineBateaux([tlatba, ory, tailleCase, 10])
         valid = self.verif()
         self.grille1.dessine(int(xf-tlatba+(tlatba-self.grille1.largeur)/2), self.yGrilles[0], 
-                             [False, False, valid])
+                             [False, False, False, False, valid])
         self.grille2.dessine(int(xf-tlatba+(tlatba-self.grille2.largeur)/2), self.yGrilles[1], 
                              [valid, False])
         self.bougeGrille()
@@ -193,11 +200,13 @@ class Editeur:
             if is_mouse_button_pressed(0):
                 self.listeBrillante = []
                 signal = self.placeur.switchMode(self.lBat.index(bateau), bateau)
-                if not signal and not bateau.pos:
-                    if self.placeur.checkClone(bateau, self.tiroir.liste):
-                        self.tiroir.ajValListe(bateau)
-                    del self.bateaux[self.bateaux.index(bateau)]
-                    self.ordreBateaux()
+                if not signal:
+                    self.chronologie.nouvelleSauvegarde()
+                    if not bateau.pos:
+                        if self.placeur.checkClone(bateau, self.tiroir.liste):
+                            self.tiroir.ajValListe(bateau)
+                        del self.bateaux[self.bateaux.index(bateau)]
+                        self.ordreBateaux()
             elif is_mouse_button_pressed(1):
                 self.placeur.tourne(self.lBat.index(bateau), bateau)
 
@@ -208,6 +217,7 @@ class Editeur:
                 self.bateaux.append(bateau)
                 self.tiroir.supValListe(self.tiroir.liste.index(bateau))
         self.placeur.placementAleatoire(self.lBat, self.plateau)
+        self.chronologie.nouvelleSauvegarde()
 
     def tousAuTiroir(self) -> None:
         """Permet de remettre tous les bateaux placés dans le tirroir.
@@ -220,6 +230,19 @@ class Editeur:
                 bateau.direction = 0
             self.tiroir.ajValListe(bateau)
         self.bateaux = []
+        self.chronologie.nouvelleSauvegarde()
+
+    def annuler(self) -> None:
+        """Permet d'annuler la dernière action effectuée.
+        """
+        self.chronologie.annuler()
+        self.bateaux = self.chronologie.retablirSauvegarde()
+
+    def retablir(self) -> None:
+        """Permet de rétablir la dernière action annulée.
+        """
+        self.chronologie.retablir()
+        self.bateaux = self.chronologie.retablirSauvegarde()
 
     def getCasesCibles(self, plateau: list, bateau: Bateau) -> list:
         """Renvoie les cases survolés par le bateau.
@@ -304,6 +327,8 @@ class Editeur:
         self.lBat = self.joueur.getBateaux()
         self.placeur.reset(len(self.lBat))
         self.tiroir.setListe(self.lBat)
+        self.chronologie.setBateaux(self.lBat)
+        self.chronologie.reset()
         self.declencheG1()
         self.bateaux = []
 
