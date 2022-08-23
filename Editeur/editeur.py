@@ -34,9 +34,9 @@ class Editeur:
         self.affG1 = False
         self.affG2 = False
         self.grille1 = GrilleBt()
-        self.grille1.ajouteElement(PtiBouton([self.annuler], [100, 100, 100, 255], "Annuler", 
+        self.grille1.ajouteElement(PtiBouton([self.annuler], [40, 78, 111, 255], "Annuler", 
                                              "images/ui/annuler.png"), 0, 0)
-        self.grille1.ajouteElement(PtiBouton([self.retablir], [100, 100, 100, 255], "Retablir", 
+        self.grille1.ajouteElement(PtiBouton([self.retablir], [40, 78, 111, 255], "Retablir", 
                                              "images/ui/retablir.png"), 1, 0)
         self.grille1.ajouteElement(PtiBouton([self.alea], [22, 127, 192, 255], "Plan Aleatoire", 
                                              "images/ui/hasard.png"), 0, 1)
