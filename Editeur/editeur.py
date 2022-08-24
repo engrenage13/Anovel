@@ -222,6 +222,7 @@ class Editeur:
     def tousAuTiroir(self) -> None:
         """Permet de remettre tous les bateaux placés dans le tirroir.
         """
+        taille = len(self.bateaux)
         for i in range(len(self.bateaux)):
             bateau = self.bateaux[i]
             bateau.pos = False
@@ -230,7 +231,8 @@ class Editeur:
                 bateau.direction = 0
             self.tiroir.ajValListe(bateau)
         self.bateaux = []
-        self.chronologie.nouvelleSauvegarde()
+        if taille > 0:
+            self.chronologie.nouvelleSauvegarde()
 
     def annuler(self) -> None:
         """Permet d'annuler la dernière action effectuée.

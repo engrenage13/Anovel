@@ -1,19 +1,24 @@
 from systeme.FondMarin import *
+from systeme.fenetre import Fenetre
 from partie import Partie
 from ui.bouton import Bouton
-from systeme.fenetre import Fenetre
+from parametres.parametres import Parametres
 
 fen = Fenetre()
 
 partie = Partie(fen)
 
+param = Parametres()
+
 # Boutons
 start = Bouton([partie.nouvelleEtape], [0, 50, 240, 255], "Jouer")
+sett = Bouton([param.ouvre], [80, 127, 80, 255], "Parametres")
 quit = Bouton([fen.switchEtat], DARKGRAY, "Quitter")
 
 # Images
 nanav = load_image('images/logos/Navale.png')
-image_resize(nanav, int(nanav.width*0.19), int(nanav.height*0.19))
+ratio = xf/nanav.width*0.35
+image_resize(nanav, int(nanav.width*ratio), int(nanav.height*ratio))
 logo = load_texture_from_image(nanav)
 unload_image(nanav)
 tableau = load_image('images/backgrounds/epave.png')
@@ -23,11 +28,16 @@ fond = load_texture_from_image(tableau)
 unload_image(tableau)
 
 def accueil():
-    draw_texture(fond, 0, 0, WHITE)
-    draw_texture(logo, 0, 0, WHITE)
-    draw_text_pro(police2, version, (int(xf*0.005), int(yf*0.975)), (0, 0), 0, 19, 0, GRAY)
-    start.dessine((int(xf*0.35), int(yf*0.92)), True)
-    quit.dessine((int(xf*0.65), int(yf*0.92)))
+    if not param.ouvert:
+        draw_texture(fond, 0, 0, WHITE)
+        draw_texture(logo, 0, 0, WHITE)
+        tv = measure_text_ex(police2, version, 19, 0)
+        draw_text_pro(police2, version, (int(xf*0.005), int(yf-tv.y*1.05)), (0, 0), 0, 19, 0, GRAY)
+        start.dessine((int(xf*0.25), int(yf*0.92)), True)
+        sett.dessine((int(xf*0.5), int(yf*0.92)))
+        quit.dessine((int(xf*0.75), int(yf*0.92)))
+    else:
+        param.dessine()
 
 while not fen.jeuDoitFermer():
     begin_drawing()

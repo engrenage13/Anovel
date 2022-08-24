@@ -14,8 +14,6 @@ class Bateau:
         self.nom = nom
         self.proprio = proprietaire
         self.rejouer()
-        self.alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 
-                         'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
         # Images
         originale = load_image(image)
         image_resize(originale, int(originale.width*(tailleCase*0.88)*self.taille/originale.width), 
