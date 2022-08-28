@@ -14,6 +14,7 @@ class Menu:
         self.bug = False
         self.extension = '.md'
         self.contenu = []
+        self.actif = 0
         # Zone
         self.origine = (dims[0], dims[1])
         self.largeur = dims[2]
@@ -21,8 +22,8 @@ class Menu:
         self.hauteurTotale = self.hauteur
         self.largeurContenu = int(self.largeur*0.9)
         self.hauteurContenu = int(yf*0.09)
-        self.espace = int(yf*0.02)
-        self.pos = int(self.origine[1] + self.espace)
+        self.espace = int(yf*0.01)
+        self.pos = int(self.origine[1] + self.espace*2)
         self.pas = int(yf*0.05)
         self.nbPas = 0
         # Autres
@@ -42,8 +43,18 @@ class Menu:
             x = int(self.origine[0] + (self.largeur-self.largeurContenu)/2)
             y = self.pos
             for i in range(len(self.contenu)):
-                draw_rectangle_rounded([x, y, self.largeurContenu, self.hauteurContenu], 0.2, 30, 
-                                        [120, 120, 120, 70])
+                if i == self.actif:
+                    draw_rectangle_rounded([x, y, self.largeurContenu, self.hauteurContenu], 0.2, 30, 
+                                           [0, 12, 72, 255])
+                    draw_rectangle_rounded_lines([x, y, self.largeurContenu, self.hauteurContenu], 0.2, 
+                                                 30, 3, [169, 139, 31, 255])
+                else:
+                    contact = self.getContact(i)
+                    if contact[0]:
+                        draw_rectangle_rounded([x, y, self.largeurContenu, self.hauteurContenu], 0.2, 30, 
+                                               [120, 120, 120, 70])
+                    if contact[1]:
+                        self.actif = i
                 self.contenu[i][0].dessine([[int(x+self.largeurContenu*0.05), int(y+self.hauteurContenu*0.2)], 
                                            'no'], alignement='g')
                 y = y + self.hauteurContenu + self.espace
@@ -131,3 +142,26 @@ class Menu:
         """Déclenche l'affichage d'un message d'erreur concernant le fichier.
         """
         self.bug = True
+
+    def getContact(self, indice: int) -> bool:
+        """Vérifie si le curseur survol et si l'utilisateur clique sur un onglet du menu.
+
+        Args:
+            indice (int): L'indice de l'onglet testé.
+
+        Returns:
+            list: 1. True si le curseur est sur l'onglet, False dans le cas contraire. 2. True si l'utilisateur a cliqué.
+        """
+        xc = int(self.origine[0] + (self.largeur-self.largeurContenu)/2)
+        yc = self.pos + (self.hauteurContenu + self.espace)*indice
+        coord = [xc, yc, self.largeurContenu, self.hauteurContenu]
+        survol = False
+        clic = False
+        x = get_mouse_x()
+        y = get_mouse_y()
+        if y >= coord[1] and y <= coord[1]+coord[3]:
+            if x >= coord[0] and x <= coord[0]+coord[2]:
+                survol = True
+                if is_mouse_button_pressed(0):
+                    clic = True
+        return [survol, clic]
