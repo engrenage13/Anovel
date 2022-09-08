@@ -10,7 +10,6 @@ class Menu:
             dims (tuple): La position et les dimensions de la zone où doit s'afficher le menu.
         """
         self.fichier = fichier
-        self.decode = False
         self.bug = False
         self.extension = '.md'
         self.contenu = []
@@ -28,18 +27,12 @@ class Menu:
         self.nbPas = 0
         # Autres
         self.taillePolice = int(yf*0.045)
+        self.checkFichier()
 
     def dessine(self) -> None:
         """Permet de dessiner l'interpréteur à l'écran.
         """
-        if not self.decode:
-            if file_exists(self.fichier) and get_file_extension(self.fichier) == self.extension:
-                self.decodeur()
-                self.mesureTaille()
-            else:
-                self.erreur()
-            self.decode = True
-        elif not self.bug:
+        if not self.bug:
             x = int(self.origine[0] + (self.largeur-self.largeurContenu)/2)
             y = self.pos
             for i in range(len(self.contenu)):
@@ -96,6 +89,15 @@ class Menu:
             elif roulette < 0:
                 if self.pos + self.hauteurTotale > self.origine[1] + self.hauteur:
                     self.pos = self.pos - self.pas
+
+    def checkFichier(self) -> None:
+        """Vérifie si le fichier existe et lance le décodage.
+        """
+        if file_exists(self.fichier) and get_file_extension(self.fichier) == self.extension:
+            self.decodeur()
+            self.mesureTaille()
+        else:
+            self.erreur()
 
     def decodeur(self) -> None:
         """Permet de décoder le texte du fichier traiter.

@@ -114,7 +114,7 @@ class Zone:
         """Permet d'ajouter du contenu dans la fenêtre.
 
         Args:
-            contenu (Article, list): Le contenu qu'on ajoute.
+            contenu (list): Le contenu qu'on ajoute.
         """
         self.contenu.append(contenu)
         self.evaluation = False

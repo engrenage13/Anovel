@@ -2,6 +2,7 @@ from systeme.FondMarin import *
 from museeNoyee import croixLumineuse, croixSombre
 from ui.clickIma import ClickIma
 from parametres.menu import Menu
+from parametres.page import Page
 
 class Parametres:
     def __init__(self) -> None:
@@ -10,6 +11,7 @@ class Parametres:
         self.ouvert = False
         self.largeurLat = int(xf*0.25)
         self.menu = Menu("parametres/Categories.md", (0, int(yf*0.078), self.largeurLat, int(yf-yf*0.128)))
+        self.page = Page(self.menu.contenu[self.menu.actif][1], (self.largeurLat, 0, xf, yf))
         self.croix = ClickIma([self.ferme], [croixSombre, croixLumineuse])
         self.charge = False
         self.fond = None
@@ -17,12 +19,15 @@ class Parametres:
     def dessine(self) -> None:
         """Dessine la fenêtre à l'écran.
         """
+        if self.page.fichier != self.menu.contenu[self.menu.actif][1]:
+            self.page.changeFichier(self.menu.contenu[self.menu.actif][1])
         if not self.charge:
             self.chargeElement()
         if self.fond != None:
             draw_texture(self.fond, 0, 0, WHITE)
         draw_rectangle(self.largeurLat, 0, xf, yf, [0, 0, 0, 170])
         self.dessineMenu()
+        self.page.dessine()
         draw_rectangle(0, 0, self.largeurLat, int(yf*0.078), [87, 67, 237, 170])
         draw_text_pro(police1, "Parametres", (int(yf*0.02), int(yf*0.02)), (0, 0), 0, int(yf*0.05), 0, WHITE)
         self.dessineVersion()
