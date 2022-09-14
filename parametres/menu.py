@@ -1,5 +1,6 @@
 from systeme.FondMarin import *
 from ui.blocTexte import BlocTexte
+from ui.scrollBarre import ScrollBarre
 
 class Menu:
     def __init__(self, fichier: str, dims: tuple) -> None:
@@ -22,9 +23,9 @@ class Menu:
         self.largeurContenu = int(self.largeur*0.9)
         self.hauteurContenu = int(yf*0.09)
         self.espace = int(yf*0.01)
-        self.pos = int(self.origine[1] + self.espace*2)
-        self.pas = int(yf*0.05)
-        self.nbPas = 0
+        # Scroll
+        self.scrollBarre = ScrollBarre([self.origine[0], self.origine[1], self.largeur, self.hauteur], self.hauteurTotale)
+        self.pos = self.scrollBarre.getPos()
         # Autres
         self.taillePolice = int(yf*0.045)
         self.checkFichier()
@@ -52,43 +53,14 @@ class Menu:
                                            'no'], alignement='g')
                 y = y + self.hauteurContenu + self.espace
             if self.hauteurTotale > self.hauteur:
-                self.dessineBarre()
-                self.bougeChariot()
+                self.scrollBarre.dessine()
+                self.pos = self.scrollBarre.getPos()
         else:
             titre = BlocTexte("Un probleme est survenu !", police2, self.taillePolice*1.2, 
                               [self.largeurContenu, ''])
             texte = BlocTexte("Chargement interrompue.", police2, self.taillePolice, [self.largeurContenu, ''])
             titre.dessine([[int(self.origine[0]+self.largeur/2), int(self.origine[1]+self.hauteur*0.34)], 'c'])
             texte.dessine([[int(self.origine[0]+self.largeur/2), int(self.origine[1]+self.hauteur*0.4)], 'c'])
-
-    def dessineBarre(self) -> None:
-        """Dessine la barre indiquant le défilement du contenu.
-        """
-        ecart = int(xf*0.0125)
-        ymin = int(self.origine[1]+self.espace*0.5)
-        l = int(ecart*0.2)
-        ht = int(self.hauteur-self.espace)
-        h = int(ht*(self.hauteur/self.hauteurTotale))
-        x = int(self.origine[0]+self.largeur-ecart*0.3-l/2)
-        pas = int((ht-h)/self.nbPas)
-        multiplicateur = ((self.origine[1] + self.espace) - self.pos)/self.pas
-        y = int(ymin+pas*multiplicateur)
-        draw_rectangle_rounded([x, y, l, h], 2, 30, BLACK)
-
-    def bougeChariot(self) -> None:
-        """Permet de faire défiler le contenu dans la fenêtre.
-        """
-        roulette = int(get_mouse_wheel_move())
-        roro = roulette
-        if roro < 0:
-            roro = roro*-1
-        for i in range(roro):
-            if roulette > 0:
-                if self.pos < self.origine[1] + self.espace:
-                    self.pos = self.pos + self.pas
-            elif roulette < 0:
-                if self.pos + self.hauteurTotale > self.origine[1] + self.hauteur:
-                    self.pos = self.pos - self.pas
 
     def checkFichier(self) -> None:
         """Vérifie si le fichier existe et lance le décodage.
@@ -138,7 +110,7 @@ class Menu:
             h += int(self.hauteurContenu + self.espace)
         if h > self.hauteur:
             self.hauteurTotale = h
-            self.nbPas = int((self.hauteurTotale-self.hauteur)/self.pas)
+            self.scrollBarre.setHtContenu(self.hauteurTotale)
 
     def erreur(self) -> None:
         """Déclenche l'affichage d'un message d'erreur concernant le fichier.

@@ -28,7 +28,7 @@ class Parametres:
         draw_rectangle(self.largeurLat, 0, xf, yf, [0, 0, 0, 170])
         self.dessineMenu()
         self.page.dessine()
-        draw_rectangle(0, 0, self.largeurLat, int(yf*0.078), [87, 67, 237, 170])
+        draw_rectangle(0, 0, self.largeurLat, int(yf*0.078), [87, 67, 237, 255])
         draw_text_pro(police1, "Parametres", (int(yf*0.02), int(yf*0.02)), (0, 0), 0, int(yf*0.05), 0, WHITE)
         self.dessineVersion()
         self.croix.dessine((xf-hbarre, int(hbarre*0.05)))
@@ -42,7 +42,7 @@ class Parametres:
     def dessineVersion(self) -> None:
         """Dessine la partie indiquant la version du jeu.
         """
-        draw_rectangle(0, yf-int(yf*0.05), self.largeurLat, int(yf*0.05), [10, 10, 10, 170])
+        draw_rectangle(0, yf-int(yf*0.05), self.largeurLat, int(yf*0.05), [10, 10, 10, 255])
         texte = f"{etatVersion.upper()} - {version}"
         taille = int(yf*0.03)
         tv = measure_text_ex(police2, texte, taille, 0)
