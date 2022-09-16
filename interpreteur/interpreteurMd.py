@@ -1,7 +1,6 @@
 from systeme.FondMarin import *
-from interpreteur.article import Article
-from interpreteur.zone import Zone
 from ui.blocTexte import BlocTexte
+from ui.scrollBarre import ScrollBarre
 
 class InterpreteurMd:
     def __init__(self, fichier: str, dims: tuple) -> None:
@@ -11,32 +10,82 @@ class InterpreteurMd:
             fichier (str): L'url du fichier qui doit être interprété.
             dims (tuple): La position et les dimensions de la zone dans laquelle doit s'afficher le contenu du fichier.
         """
+        # Fichier
         self.fichier = fichier
         self.decode = False
-        self.position = 'gen'
         self.extensions = ['.md']
+        self.codeErreur = None
         # Zone
-        self.zone = Zone(dims)
+        self.origine = (dims[0], dims[1])
+        self.largeur = dims[2]
+        self.hauteur = dims[3]
+        self.hauteurTotale = self.hauteur
+        self.espace = int(yf*0.03)
+        self.evaluation = False
+        # Elements
+        self.position = 'gen'
         self.element = None
-        # Balises
-        self.balises = ['//', 'i/', '!/']
-        self.types = ['cad', 'ast', 'imp']
+        self.contenu = []
+        self.largeurContenu = int(self.largeur*0.95)
+        self.pasx = int(xf*0.0125)
+        self.oyc = self.origine[1] + self.espace
+        self.pasy = int(yf*0.05)
         # Autres
         self.taillePolice = int(yf*0.035)
+        # Scroll
+        self.scrollBarre = ScrollBarre([self.origine[0], self.origine[1], self.largeur, self.hauteur], self.hauteurTotale)
+        self.pos = self.scrollBarre.getPos()
 
     def dessine(self) -> None:
-        """Permet de dessiner l'interpréteur à l'écran.
+        """Dessine le contenu du fichier à l'écran.
+        """
+        if not self.decode:
+            self.startDecode()
+        if not self.evaluation:
+            self.mesureTaille()
+        if self.codeErreur == None:
+            x = self.origine[0]
+            ph = self.oyc
+            for i in range(len(self.contenu)):
+                contenu = self.contenu[i]
+                if type(contenu) == list:
+                    if contenu[0][0]:
+                        h = self.espace
+                        for j in range(len(contenu)-1):
+                            h += contenu[j+1].getDims()[1]
+                            if j < len(contenu)-1:
+                                h += self.espace
+                        couleur = contenu[0][1]
+                        draw_rectangle_rounded([x+self.pasx, ph, self.largeurContenu, int(h)], 0.2, 30, couleur)
+                        ph += int(self.espace/2)
+                        for j in range(len(contenu)-1):
+                            pt = [int(x+self.pasx*2), int(ph+self.espace/2)]
+                            contenu[j+1].dessine([pt, 'no'])
+                            ph += contenu[j+1].getDims()[1] + self.espace
+                elif type(contenu) == BlocTexte:
+                    pt = [int(x+self.pasx), int(ph+self.espace/2)]
+                    contenu.dessine([pt, 'no'])
+                    ph += contenu[j+1].getDims()[1] + self.espace
+                elif type(contenu) == str:
+                    ph += self.espace
+            if self.hauteurTotale > self.hauteur:
+                self.scrollBarre.dessine()
+                self.pos = self.scrollBarre.getPos()
+        else:
+            self.erreur(self.codeErreur)
+
+    def startDecode(self) -> None:
+        """Permet de vérifier si le fichier a été décodé.
         """
         if not self.decode:
             if file_exists(self.fichier):
                 if get_file_extension(self.fichier) in self.extensions:
                     self.decodeur()
                 else:
-                    self.erreur(2)
+                    self.codeErreur = 2
             else:
-                self.erreur(1)
+                self.codeErreur = 1
             self.decode = True
-        self.zone.dessine()
 
     def decodeur(self) -> None:
         """Permet de décoder le texte du fichier traiter.
@@ -46,42 +95,46 @@ class InterpreteurMd:
         while len(fil) > 0:
             li = fil[0].split(" ")
             if self.position == 'gen':
-                if li[0] in self.balises:
-                    balise = self.types[self.balises.index(li[0])]
+                if li[0] == "<[":
                     del li[0]
-                    self.zone.ajouteContenu([balise, BlocTexte(" ".join(li), police2, self.taillePolice, 
-                                                [int(self.zone.largeurContenu*0.95), ''])])
-                elif fil[0] == "_art//":
-                    self.element = Article()
-                    self.element.redim(self.zone.largeurContenu, self.element.hauteur)
-                    self.position = 'art'
+                    self.position = 'cad'
+                    self.element = [['cadre']]
+                    li2 = li.split(",")
+                    couleur = []
+                    for i in range(len(li2)):
+                        couleur.append(int(li2[i]))
+                    self.element[0].append(couleur)
                 elif fil[0] != "":
-                    self.zone.ajouteContenu(['t', BlocTexte(fil[0], police2, self.taillePolice, 
-                                                [self.zone.largeurContenu, ''])])
-            elif self.position == 'art':
-                rep = self.element.decodeur(fil[0])
-                if rep:
-                    self.element.getDims()
-                    self.zone.ajouteContenu(self.element)
+                    self.ajouteContenu(BlocTexte(fil[0], police2, self.taillePolice, [self.largeurContenu, '']))
+                else:
+                    self.ajouteContenu("\n")
+            elif self.position == 'cad':
+                if fil[0] == "]>":
                     self.position = 'gen'
+                    self.ajouteContenu(self.element)
+                elif fil[0] != "":
+                    self.element.append(BlocTexte(fil[0], police2, self.taillePolice, 
+                                        [int(self.largeurContenu*0.95), '']))
             del fil[0]
 
     def erreur(self, mode: int) -> None:
         """Definit ce qui s'affiche dans la fenêtre quand le fichier ne peut pas être lu.
 
         Args:
-            mode (int): Définit le type d'erreur rencontrer.
+            mode (int): Définit le type d'erreur rencontrée.
         """
-        self.zone.ajouteContenu(['', BlocTexte("Un probleme est survenu !", police2, self.taillePolice*1.2, 
-                                [self.zone.largeurContenu, ''])])
-        self.zone.ajouteContenu(['', BlocTexte("Chargement interrompue.", police2, self.taillePolice, 
-                                [self.zone.largeurContenu, ''])])
+        titre = BlocTexte("Un probleme est survenu !", police2, self.taillePolice*1.2, [self.largeurContenu, ''])
+        sousTitre = BlocTexte("Chargement interrompue.", police2, self.taillePolice, [self.largeurContenu, ''])
         if mode == 1:
-            self.zone.ajouteContenu(['', BlocTexte("Le fichier n'existe pas ou n'est pas au bon endroit.", 
-                                       police2, self.taillePolice*0.8, [self.zone.largeurContenu, ''])])
+            message = BlocTexte("Un fichier est manquant.", police2, self.taillePolice*0.8, 
+                                [self.largeurContenu, ''])
         elif mode == 2:
-            self.zone.ajouteContenu(['', BlocTexte("Ce fichier n'est pas prit en compte", 
-                                       police2, self.taillePolice*0.8, [self.zone.largeurContenu, ''])])
+            message = BlocTexte("Un fichier est incompatible.", police2, self.taillePolice*0.8, 
+                                [self.largeurContenu, ''])
+        titre.dessine([[int(self.origine[0]+self.largeur/2), int(self.origine[1]+self.hauteur*0.5)], 'c'])
+        sousTitre.dessine([[int(self.origine[0]+self.largeur/2), int(self.origine[1]+self.hauteur*0.55)], 'c'])
+        message.dessine([[int(self.origine[0]+self.largeur/2), int(self.origine[1]+self.hauteur*0.6)], 'c'], 
+                        [242, 171, 56, 255])
 
     def changeFichier(self, fichier: str) -> None:
         """Permet de changer le fichier qu'utilise l'interpréteur.
@@ -91,4 +144,36 @@ class InterpreteurMd:
         """
         self.fichier = fichier
         self.decode = False
-        self.zone.contenu.clear()
+        self.contenu.clear()
+
+    def mesureTaille(self) -> None:
+        """Mesure la taille du contenu de la fenêtre.
+        """
+        h = 0
+        for i in range(len(self.contenu)):
+            element = self.contenu[i]
+            if type(element) == list:
+                if element[0][0] == 'cadre':
+                    dims = self.espace*2
+                    for i in range(len(element)-1):
+                        if type(element[i+1]) == BlocTexte:
+                            dims += element[i+1].getDims()[1]
+                            dims += self.espace
+                h += int(dims - self.espace)
+            elif type(element) == BlocTexte:
+                h += element.getDims()[1] + self.espace
+            elif type(element) == str:
+                h += self.espace
+        if h > self.hauteur:
+            self.hauteurTotale = h
+            self.scrollBarre.setHtContenu(self.hauteurTotale)
+        self.evaluation = True
+
+    def ajouteContenu(self, contenu: list) -> None:
+        """Permet d'ajouter du contenu dans la fenêtre.
+
+        Args:
+            contenu (list): Le contenu qu'on ajoute.
+        """
+        self.contenu.append(contenu)
+        self.evaluation = False

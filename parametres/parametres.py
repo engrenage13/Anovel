@@ -2,7 +2,7 @@ from systeme.FondMarin import *
 from museeNoyee import croixLumineuse, croixSombre
 from ui.clickIma import ClickIma
 from parametres.menu import Menu
-from parametres.page import Page
+from interpreteur.interpreteurMd import InterpreteurMd
 
 class Parametres:
     def __init__(self) -> None:
@@ -11,7 +11,8 @@ class Parametres:
         self.ouvert = False
         self.largeurLat = int(xf*0.25)
         self.menu = Menu("parametres/Categories.md", (0, int(yf*0.078), self.largeurLat, int(yf-yf*0.128)))
-        self.page = Page(self.menu.contenu[self.menu.actif][1], (self.largeurLat, 0, xf, yf))
+        self.page = InterpreteurMd(self.menu.contenu[self.menu.actif][1], 
+                                   (self.largeurLat, 0, xf-self.largeurLat, yf))
         self.croix = ClickIma([self.ferme], [croixSombre, croixLumineuse])
         self.charge = False
         self.fond = None

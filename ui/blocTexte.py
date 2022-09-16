@@ -60,17 +60,16 @@ class BlocTexte:
                           (centre[0]+int(self.tCadre[0]/2-tt.x), centre[1]-int(tt.y*axeY)), 
                           (0, 0), 0, self.taille, 0, couleur)
 
-    def trouveOrigine(self, position: tuple, indication: str) -> tuple:
+    def trouveOrigine(self, position: list, indication: str) -> tuple:
         """Regarde les indications fournis pour trouver la bonne origine pour le bloc.
 
         Args:
-            position (tuple): Positions x et y fournies par l'utilisateur.
+            position (list): Positions x et y fournies par l'utilisateur.
             indication (str): Indicaton fournie par l'utilisateur.
 
         Returns:
             tuple: Coordonnées x et y de l'origine du bloc.
         """
-        rep = position
         indic = indication.lower()
         if indic == 'no':
             rep = (position[0]+self.tCadre[0]/2, position[1]+self.tCadre[1]/2)
@@ -80,6 +79,8 @@ class BlocTexte:
             rep = (position[0]-self.tCadre[0]/2, position[1]-self.tCadre[1]/2)
         elif indic == 'so':
             rep = (position[0]+self.tCadre[0]/2, position[1]-self.tCadre[1]/2)
+        else:
+            rep = (position[0], position[1])
         return rep
 
     def adapte(self) -> None:
