@@ -83,8 +83,10 @@ class InterpreteurMd:
                     self.decodeur()
                 else:
                     self.codeErreur = 2
+                    self.chargeImaErreur()
             else:
                 self.codeErreur = 1
+                self.chargeImaErreur()
             self.decode = True
 
     def decodeur(self) -> None:
@@ -117,23 +119,35 @@ class InterpreteurMd:
                                         [int(self.largeurContenu*0.95), '']))
             del fil[0]
 
+    def chargeImaErreur(self) -> None:
+        """Permet de charger l'image pour les erreurs.
+        """
+        tableau = load_image('images/ui/erreur.png')
+        ratio = yf/2/tableau.height
+        image_resize(tableau, int(tableau.width*ratio), int(tableau.height*ratio))
+        self.iErreur = load_texture_from_image(tableau)
+        unload_image(tableau)
+
     def erreur(self, mode: int) -> None:
         """Definit ce qui s'affiche dans la fenêtre quand le fichier ne peut pas être lu.
 
         Args:
             mode (int): Définit le type d'erreur rencontrée.
         """
+        draw_rectangle(self.origine[0], self.origine[1], self.largeur, self.hauteur, BLACK)
+        draw_texture(self.iErreur, int(self.origine[0]+self.largeur/2-self.iErreur.width/2), 
+                     int(yf*0.4-self.iErreur.height/2), WHITE)
         titre = BlocTexte("Un probleme est survenu !", police2, self.taillePolice*1.2, [self.largeurContenu, ''])
         sousTitre = BlocTexte("Chargement interrompue.", police2, self.taillePolice, [self.largeurContenu, ''])
         if mode == 1:
-            message = BlocTexte("Un fichier est manquant.", police2, self.taillePolice*0.8, 
-                                [self.largeurContenu, ''])
+            message = BlocTexte(f"Le fichier \"{self.fichier}\" est manquant.", police2, 
+                                self.taillePolice*0.8, [self.largeurContenu, ''])
         elif mode == 2:
-            message = BlocTexte("Un fichier est incompatible.", police2, self.taillePolice*0.8, 
-                                [self.largeurContenu, ''])
-        titre.dessine([[int(self.origine[0]+self.largeur/2), int(self.origine[1]+self.hauteur*0.5)], 'c'])
-        sousTitre.dessine([[int(self.origine[0]+self.largeur/2), int(self.origine[1]+self.hauteur*0.55)], 'c'])
-        message.dessine([[int(self.origine[0]+self.largeur/2), int(self.origine[1]+self.hauteur*0.6)], 'c'], 
+            message = BlocTexte(f"Le fichier \"{self.fichier}\" est incompatible.", police2, 
+                                self.taillePolice*0.8, [self.largeurContenu, ''])
+        titre.dessine([[int(self.origine[0]+self.largeur/2), int(self.origine[1]+self.hauteur*0.7)], 'c'])
+        sousTitre.dessine([[int(self.origine[0]+self.largeur/2), int(self.origine[1]+self.hauteur*0.75)], 'c'])
+        message.dessine([[int(self.origine[0]+self.largeur/2), int(self.origine[1]+self.hauteur*0.8)], 'c'], 
                         [242, 171, 56, 255])
 
     def changeFichier(self, fichier: str) -> None:

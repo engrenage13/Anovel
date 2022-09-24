@@ -1,3 +1,3 @@
 - [General] (General.md)
 - [Editeur] (Editeur.md)
-- [Partie] (partie.md)
+- [Partie] (Partie.md)

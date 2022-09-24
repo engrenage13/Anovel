@@ -32,16 +32,6 @@ class Bateau:
             x (int): Coordonné des absicesses de l'origine de l'image.
             y (int): Coordonné des ordonnées de l'origine de l'image.
         """
-        if self.orient == 'h':
-            if self.direction == 1:
-                self.direction = 2
-            elif self.direction == 3:
-                self.direction = 0
-        else:
-            if self.direction == 0:
-                self.direction = 1
-            elif self.direction == 2:
-                self.direction = 3
         draw_texture(self.images[self.direction], x, y, WHITE)
         return self.images[self.direction]
 
@@ -81,7 +71,6 @@ class Bateau:
     def rejouer(self) -> None:
         """Réinitialise certains paramètres du bateau pour rejouer une nouvelle partie.
         """
-        self.orient = 'h'
         self.pos = False
         self.coule = False
         self.etatSeg = ['o']*self.taille

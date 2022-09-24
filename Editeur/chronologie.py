@@ -20,7 +20,7 @@ class Chronologie:
         for i in range(len(self.bateaux)):
             bateau = self.bateaux[i]
             if bateau.pos and not False in bateau.pos:
-                sauvegarde.append([bateau.pos, bateau.orient, bateau.direction])
+                sauvegarde.append([bateau.pos, bateau.direction])
             else:
                 sauvegarde.append('t')
         if self.position > 0:
@@ -42,14 +42,12 @@ class Chronologie:
             if bateau == 't':
                 if self.bateaux[i] not in self.tiroir.liste:
                     self.bateaux[i].pos = False
-                    self.bateaux[i].orient = 'h'
                     if self.bateaux[i].direction != 0:
                         self.bateaux[i].direction = 0
                     self.tiroir.ajValListe(self.bateaux[i])
             else:
                 self.bateaux[i].pos = bateau[0]
-                self.bateaux[i].orient = bateau[1]
-                self.bateaux[i].direction = bateau[2]
+                self.bateaux[i].direction = bateau[1]
                 pos.append(self.bateaux[i])
                 if self.bateaux[i] in self.tiroir.liste:
                     self.tiroir.supValListe(self.tiroir.liste.index(self.bateaux[i]))

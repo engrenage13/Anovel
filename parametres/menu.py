@@ -11,7 +11,6 @@ class Menu:
             dims (tuple): La position et les dimensions de la zone où doit s'afficher le menu.
         """
         self.fichier = fichier
-        self.bug = False
         self.extension = '.md'
         self.contenu = []
         self.actif = 0
@@ -28,48 +27,45 @@ class Menu:
         self.pos = self.scrollBarre.getPos()
         # Autres
         self.taillePolice = int(yf*0.045)
-        self.checkFichier()
 
     def dessine(self) -> None:
         """Permet de dessiner l'interpréteur à l'écran.
         """
-        if not self.bug:
-            x = int(self.origine[0] + (self.largeur-self.largeurContenu)/2)
-            y = self.pos
-            for i in range(len(self.contenu)):
-                if i == self.actif:
-                    draw_rectangle_rounded([x, y, self.largeurContenu, self.hauteurContenu], 0.2, 30, 
-                                           [0, 12, 72, 255])
-                    draw_rectangle_rounded_lines([x, y, self.largeurContenu, self.hauteurContenu], 0.2, 
-                                                 30, 3, [169, 139, 31, 255])
-                else:
-                    contact = self.getContact(i)
-                    if contact[0]:
-                        draw_rectangle_rounded([x, y, self.largeurContenu, self.hauteurContenu], 0.2, 30, 
-                                               [120, 120, 120, 70])
-                    if contact[1]:
-                        self.actif = i
-                self.contenu[i][0].dessine([[int(x+self.largeurContenu*0.05), int(y+self.hauteurContenu*0.2)], 
-                                           'no'], alignement='g')
-                y = y + self.hauteurContenu + self.espace
-            if self.hauteurTotale > self.hauteur:
-                self.scrollBarre.dessine()
-                self.pos = self.scrollBarre.getPos()
-        else:
-            titre = BlocTexte("Un probleme est survenu !", police2, self.taillePolice*1.2, 
-                              [self.largeurContenu, ''])
-            texte = BlocTexte("Chargement interrompue.", police2, self.taillePolice, [self.largeurContenu, ''])
-            titre.dessine([[int(self.origine[0]+self.largeur/2), int(self.origine[1]+self.hauteur*0.34)], 'c'])
-            texte.dessine([[int(self.origine[0]+self.largeur/2), int(self.origine[1]+self.hauteur*0.4)], 'c'])
+        x = int(self.origine[0] + (self.largeur-self.largeurContenu)/2)
+        y = self.pos
+        for i in range(len(self.contenu)):
+            if i == self.actif:
+                draw_rectangle_rounded([x*0.3, y+self.hauteurContenu*0.1, self.largeurContenu*0.02, 
+                                        self.hauteurContenu*0.8], 1, 30, [43, 55, 234, 255])
+                couleur = BLUE
+            else:
+                couleur = WHITE
+            contact = self.getContact(i)
+            if contact[0]:
+                draw_rectangle_rounded([x, y, self.largeurContenu, self.hauteurContenu], 0.2, 30, 
+                                        [120, 120, 120, 70])
+            if contact[1]:
+                self.actif = i
+            self.contenu[i][0].dessine([[int(x+self.largeurContenu*0.05), int(y+self.hauteurContenu*0.2)], 
+                                        'no'], couleur, 'g')
+            y = y + self.hauteurContenu + self.espace
+        if self.hauteurTotale > self.hauteur:
+            self.scrollBarre.dessine()
+            self.pos = self.scrollBarre.getPos()
 
-    def checkFichier(self) -> None:
+    def checkFichier(self) -> bool:
         """Vérifie si le fichier existe et lance le décodage.
+
+        Return:
+            bool : True si le fichier a pu être trouvé, False sinon.
         """
         if file_exists(self.fichier) and get_file_extension(self.fichier) == self.extension:
             self.decodeur()
             self.mesureTaille()
+            rep = True
         else:
-            self.erreur()
+            rep = False
+        return rep
 
     def decodeur(self) -> None:
         """Permet de décoder le texte du fichier traiter.
@@ -111,11 +107,6 @@ class Menu:
         if h > self.hauteur:
             self.hauteurTotale = h
             self.scrollBarre.setHtContenu(self.hauteurTotale)
-
-    def erreur(self) -> None:
-        """Déclenche l'affichage d'un message d'erreur concernant le fichier.
-        """
-        self.bug = True
 
     def getContact(self, indice: int) -> bool:
         """Vérifie si le curseur survol et si l'utilisateur clique sur un onglet du menu.

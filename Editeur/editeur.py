@@ -134,7 +134,7 @@ class Editeur:
         elif not self.placeur.defil[self.lBat.index(bateau)] and bateau.pos:
             colonne = float(bateau.pos[0][1:len(bateau.pos[0])])
             ligne = float(self.plateau.alphabet.index(bateau.pos[0][0]))
-            if bateau.orient == 'h':
+            if bateau.direction%2 == 0:
                 colonne = colonne + bateau.taille/2
                 ligne = ligne + 0.5
             else:
@@ -226,7 +226,6 @@ class Editeur:
         for i in range(len(self.bateaux)):
             bateau = self.bateaux[i]
             bateau.pos = False
-            bateau.orient = 'h'
             if bateau.direction != 0:
                 bateau.direction = 0
             self.tiroir.ajValListe(bateau)
@@ -260,7 +259,7 @@ class Editeur:
         couleur = BLACK
         zone = 1
         cooBat = self.placeur.coords[self.lBat.index(bateau)]
-        if bateau.orient == 'h':
+        if bateau.direction%2 == 0:
             indice = int((cooBat[1]+int(cooBat[3]/2)-plateau[1])/plateau[2])
             if indice < plateau[3] and indice >= 0:
                 ligne = self.plateau.getLigne(self.plateau.alphabet[indice])

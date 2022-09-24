@@ -30,7 +30,7 @@ class ScrollBarre:
         """
         self.nbPas = int((self.htContenu-self.dimsFen[3])/self.pas)
         self.ymin = int(self.dimsFen[1]+self.ecarty*2)
-        self.ht = int(self.dimsFen[3]-self.ecarty*3)
+        self.ht = int(self.dimsFen[3]-self.ecarty*4)
         self.hauteur = int(self.ht*(self.dimsFen[3]/self.htContenu))
 
     def ChangePos(self) -> None:

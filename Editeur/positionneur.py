@@ -80,7 +80,6 @@ class Positionneur:
             self.defil[indice] = False
             if not bateau.pos or False in bateau.pos:
                 bateau.pos = False
-                bateau.orient = 'h'
                 if bateau.direction != 0:
                     bateau.direction = 0
 
@@ -124,10 +123,10 @@ class Positionneur:
         """
         if self.verifType(bateau):
             if self.defil[indice]:
-                if bateau.orient == 'h':
-                    bateau.orient = 'v'
+                if bateau.direction < 3:
+                    bateau.direction += 1
                 else:
-                    bateau.orient = 'h'
+                    bateau.direction = 0
 
     def verifType(self, bateau: Bateau) -> bool:
         """Verifie si l'objet passé en paramètre est bien un Bateau.
@@ -224,7 +223,6 @@ class Positionneur:
                     valid = True
                     blacklist += pos
             self.setPosition(pos, 2, bateau)
-            bateau.orient = sens
             bateau.direction = dir
 
     def verifPlacement(self, bateaux: list) -> list:
