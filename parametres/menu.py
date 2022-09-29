@@ -25,6 +25,8 @@ class Menu:
         # Scroll
         self.scrollBarre = ScrollBarre([self.origine[0], self.origine[1], self.largeur, self.hauteur], self.hauteurTotale)
         self.pos = self.scrollBarre.getPos()
+        self.posBarre = self.pos+self.hauteurContenu*0.1
+        self.destBarre = self.posBarre
         # Autres
         self.taillePolice = int(yf*0.045)
 
@@ -33,10 +35,10 @@ class Menu:
         """
         x = int(self.origine[0] + (self.largeur-self.largeurContenu)/2)
         y = self.pos
+        draw_rectangle_rounded([x*0.3, self.posBarre, self.largeurContenu*0.02, self.hauteurContenu*0.8], 
+                                1, 30, [43, 55, 234, 255])
         for i in range(len(self.contenu)):
             if i == self.actif:
-                draw_rectangle_rounded([x*0.3, y+self.hauteurContenu*0.1, self.largeurContenu*0.02, 
-                                        self.hauteurContenu*0.8], 1, 30, [43, 55, 234, 255])
                 couleur = BLUE
             else:
                 couleur = WHITE
@@ -46,9 +48,12 @@ class Menu:
                                         [120, 120, 120, 70])
             if contact[1]:
                 self.actif = i
+                self.destBarre = self.pos+self.hauteurContenu*0.1+(self.hauteurContenu+self.espace)*i
             self.contenu[i][0].dessine([[int(x+self.largeurContenu*0.05), int(y+self.hauteurContenu*0.2)], 
                                         'no'], couleur, 'g')
             y = y + self.hauteurContenu + self.espace
+        if self.posBarre != self.destBarre:
+            self.bougeBarre()
         if self.hauteurTotale > self.hauteur:
             self.scrollBarre.dessine()
             self.pos = self.scrollBarre.getPos()
@@ -97,6 +102,20 @@ class Menu:
                 self.contenu.append([BlocTexte(titre, police2, self.taillePolice, 
                                     [int(self.largeurContenu*0.9), '']), fichier])
             del fil[0]
+
+    def bougeBarre(self) -> None:
+        """Permet de déplacer la barre qui affiche quel onglet est sélectionné.
+        """
+        if self.posBarre < self.destBarre:
+            pas = self.hauteurContenu*0.1
+            if self.destBarre-self.posBarre < pas:
+                pas = self.destBarre-self.posBarre
+            self.posBarre += pas
+        elif self.posBarre > self.destBarre:
+            pas = self.hauteurContenu*0.1
+            if self.posBarre-self.destBarre < pas:
+                pas = self.posBarre-self.destBarre
+            self.posBarre -= pas
 
     def mesureTaille(self) -> None:
         """Mesure la taille du contenu de la fenêtre.

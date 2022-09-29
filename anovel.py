@@ -12,7 +12,7 @@ param = Parametres()
 
 # Boutons
 start = Bouton([partie.nouvelleEtape], [0, 50, 240, 255], "Jouer")
-sett = Bouton([param.ouvre], [80, 127, 80, 255], "Parametres")
+sett = Bouton([param.ouvre], [80, 137, 80, 255], "Parametres")
 quit = Bouton([fen.switchEtat], DARKGRAY, "Quitter")
 
 # Images

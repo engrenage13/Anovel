@@ -1,6 +1,7 @@
 from systeme.FondMarin import *
 from ui.blocTexte import BlocTexte
 from ui.scrollBarre import ScrollBarre
+from ui.PosiJauge import PosiJauge
 
 class InterpreteurMd:
     def __init__(self, fichier: str, dims: tuple) -> None:
@@ -63,9 +64,12 @@ class InterpreteurMd:
                             contenu[j+1].dessine([pt, 'no'])
                             ph += contenu[j+1].getDims()[1] + self.espace
                 elif type(contenu) == BlocTexte:
-                    pt = [int(x+self.pasx), int(ph+self.espace/2)]
+                    pt = [x+self.pasx*2, int(ph+self.espace/2)]
                     contenu.dessine([pt, 'no'])
-                    ph += contenu[j+1].getDims()[1] + self.espace
+                    ph += contenu.getDims()[1] + self.espace
+                elif type(contenu) == PosiJauge:
+                    contenu.dessine(int(x+self.pasx*3.4), int(ph+self.espace))
+                    ph += contenu.getDims()[1] + self.espace
                 elif type(contenu) == str:
                     ph += self.espace
             if self.hauteurTotale > self.hauteur:
@@ -95,7 +99,7 @@ class InterpreteurMd:
         fic = load_file_text(self.fichier)
         fil = fic.split("\n")
         while len(fil) > 0:
-            li = fil[0].split(" ")
+            li = fil[0].split("\ ")
             if self.position == 'gen':
                 if li[0] == "<[":
                     del li[0]
@@ -106,8 +110,27 @@ class InterpreteurMd:
                     for i in range(len(li2)):
                         couleur.append(int(li2[i]))
                     self.element[0].append(couleur)
+                elif li[0] == "posiJauge":
+                    del li[0]
+                    l = 1
+                    points = []
+                    para = li[0].split(", ")
+                    for i in range(len(para)):
+                        parametre = para[i].split("=")
+                        if parametre[0] == "l":
+                            l = float(parametre[1])
+                        elif parametre[0] == "p":
+                            print(parametre[1])
+                            lipts = parametre[1][1:len(parametre[1])]
+                            lipts = lipts[0:len(lipts)-1]
+                            print(lipts)
+                            lipts = lipts.split(",")
+                            print(lipts)
+                            for j in range(len(lipts)):
+                                points.append(lipts[j])
+                    self.ajouteContenu(PosiJauge(int(self.largeurContenu*l), points))
                 elif fil[0] != "":
-                    self.ajouteContenu(BlocTexte(fil[0], police2, self.taillePolice, [self.largeurContenu, '']))
+                    self.ajouteContenu(BlocTexte(fil[0], police2, self.taillePolice, []))
                 else:
                     self.ajouteContenu("\n")
             elif self.position == 'cad':
@@ -158,6 +181,7 @@ class InterpreteurMd:
         """
         self.fichier = fichier
         self.decode = False
+        self.codeErreur = None
         self.contenu.clear()
 
     def mesureTaille(self) -> None:
