@@ -2,17 +2,18 @@ from systeme.FondMarin import *
 from ui.blocTexte import BlocTexte
 
 class PosiJauge:
-    def __init__(self, longueur: int, points: list) -> None:
+    def __init__(self, points: list, prop: float=1) -> None:
         """Permet de créer une jauge à points.
 
         Args:
-            longueur (int): La longueur que doit mesurer la jauge à l'affichage.
             points (list): Liste des points de la jauge.
+            prop (float): multiplicateur pour la longueur passée en paramètres de 'dessine'. Default to 1.
         """
         self.origine = None
         self.hauteur = int(yf*0.01)
-        self.longueur = longueur
-        self.erreur = False
+        self.prop = prop
+        self.longueur = int(xf*prop)
+        self.erreur = []
         self.lu = False
         # Curseur
         self.posMin = self.hauteur
@@ -23,21 +24,24 @@ class PosiJauge:
         self.couleurCurseur = [(0, 24, 48), (12, 48, 47), [0, 24, 48]]
         # Points
         self.valeur = None
+        self.ptOriginaux = points
         self.points = []
+        self.set = False
         self.transparenceCurseur = [0, 135, 0, True]
         self.lMaxPSelect = int(self.hauteur*2.5)
         self.largeurPSelect = 0
         self.placePoints(points)
 
-    def dessine(self, x: int, y: int) -> None:
+    def dessine(self, x: int, y: int, longueurMax: int) -> None:
         """Permet de dessiner la jauge à l'écran.
 
         Args:
             x (int): La position des abcisses du point en haut à gauche de la jauge.
             y (int): La position des ordonnées du point en haut à gauche de la jauge.
+            longueur (int): La longueur voulue pour la barre.
         """
         h = int(self.hauteur/2)
-        self.origine = [x, y]
+        self.setPosAndTaille([x, y], int(longueurMax*self.prop))
         draw_rectangle_rounded([self.origine[0], self.origine[1], self.longueur, self.hauteur], 1, 30, 
                                GRAY)
         couleur = (self.couleurCurseur[2][0]*5, self.couleurCurseur[2][1]*5, 
@@ -58,8 +62,8 @@ class PosiJauge:
                 colPt = GRAY
                 couleurTexte = GRAY
             draw_circle(self.origine[0]+point[2], int(self.origine[1]+self.hauteur/2), rayon, colPt)
-            point[0].dessine([[self.origine[0]+point[2], 
-                                int(self.origine[1]-self.lMaxPSelect*1.5)], 'c'], couleurTexte)
+            point[0].dessine([[self.origine[0]+point[2], int(self.origine[1]-self.lMaxPSelect*1.5)], 'c'], 
+                             couleurTexte)
         draw_rectangle_rounded([self.origine[0], self.origine[1], self.posCurseur, self.hauteur], 1, 30, 
                                 BLUE)
         draw_circle(int(self.origine[0]+self.posCurseur), self.origine[1]+h, self.largeur, couleur)
@@ -68,6 +72,18 @@ class PosiJauge:
         self.changeTaillePoint()
         if self.largeurPSelect == self.lMaxPSelect:
             self.changeNiveauSurbrillance()
+
+    def setPosAndTaille(self, coords: list, longueur: int) -> None:
+        if coords != self.origine:
+            if self.points[0][0].getDims()[0]/2 > self.lMaxPSelect/2:
+                x = int(coords[0]+self.points[0][0].getDims()[0]/2-self.lMaxPSelect/2)
+            else:
+                x = int(coords[0]+self.lMaxPSelect*0.65)
+            self.origine = [x, int(coords[1]+self.lMaxPSelect*1.5)]
+        if longueur != self.longueur:
+            self.longueur = longueur
+            self.posMax = self.longueur-self.hauteur
+            self.placePoints(self.ptOriginaux)
 
     def changeNiveauSurbrillance(self) -> None:
         """Animation qui change l'opacité du cercle de surbrillance du point sélectionné.
@@ -118,6 +134,7 @@ class PosiJauge:
             points (list): Listes des points à placer.
         """
         if len(points) >= 2:
+            self.points = []
             nbPtCentre = len(points)-2
             divisions = nbPtCentre + 1
             l = int(self.longueur/divisions)
@@ -127,7 +144,7 @@ class PosiJauge:
             self.points.append([BlocTexte(points[len(points)-1], police2, 20), len(points)-1, self.posMax])
             self.valeur = self.points[0][1]
         else:
-            self.erreur = True
+            self.erreur.append("Une \"posiJauge\" est au minimum constitué de 2 points")
 
     def changePosCurseur(self) -> None:
         """Permet de déplacer le curseur sur la jauge.
@@ -215,7 +232,9 @@ class PosiJauge:
         Returns:
             list: [longueur de la jauge, hauteur de la jauge]
         """
-        return [self.longueur, self.hauteur]
+        l = int(self.longueur+self.points[0][0].getDims()[0]/2+self.points[len(self.points)-1][0].getDims()[0]/2)
+        h = int(self.lMaxPSelect+self.points[0][0].getDims()[1])
+        return [l, h]
 
     def getLu(self) -> bool:
         """Dit si l'état de la jauge a était lu ou non.

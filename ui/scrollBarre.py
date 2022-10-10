@@ -1,12 +1,13 @@
 from systeme.FondMarin import *
 
 class ScrollBarre:
-    def __init__(self, dims: list, hauteurContenu: int) -> None:
+    def __init__(self, dims: list, hauteurContenu: int, couleurs: list=[[0, 0, 0], [0, 121, 241]]) -> None:
         """Crée une barre de défilement.
 
         Args:
             dims (list): 1. x de la zone, 2. y de la zone, 3. largeur de la zone, 4. hauteur de la zone.
             hauteurContenu (int): Hauteur de la liste du contenu de la zone à équiper.
+            couleurs (list): 1. couleur du chariot immobile, 2. couleur du chariot en mouvement.
         """
         self.ecartx = int(xf*0.0125)
         self.dimsFen = dims
@@ -14,49 +15,41 @@ class ScrollBarre:
         self.ecarty = int(yf*0.01)
         self.pas = int(yf*0.05)
         self.pos = int(self.dimsFen[1] + self.ecarty*2)
-        self.x = self.dimsFen[0]
-        self.largeur = 0
+        self.largeur = int(self.ecartx*0.4)
+        self.x = int(self.dimsFen[0]+self.dimsFen[2]-self.ecartx*0.3-self.largeur/2)
         # Affichage
         self.valeursMax = [51, 14]
         self.valeursActuelles = [51, 14]
         self.visible = True
         self.delai = 50
-        # Curseur
-        self.pYCurseur = 0
+        # Chariot
+        self.defil = False
+        self.couleurs = couleurs
         self.setValeurDefaut()
 
     def setValeurDefaut(self) -> None:
         """Paramètres certaines valeurs utiles au fonctionnement correct de la barre.
         """
-        self.nbPas = int((self.htContenu-self.dimsFen[3])/self.pas)
-        self.ymin = int(self.dimsFen[1]+self.ecarty*2)
+        self.ybarre = int(self.dimsFen[1]+self.ecarty*2)
+        self.y = self.ybarre
         self.ht = int(self.dimsFen[3]-self.ecarty*4)
-        self.hauteur = int(self.ht*(self.dimsFen[3]/self.htContenu))
+        self.hChariot = int(self.ht*(self.dimsFen[3]/self.htContenu))
 
-    def ChangePos(self) -> None:
-        """Change la position de la barre.
-        """
-        if self.getContact():
-            facteur = 0.4
-        else:
-            facteur = 0.2
-        self.largeur = int(self.ecartx*facteur)
-        self.x = int(self.dimsFen[0]+self.dimsFen[2]-self.ecartx*0.3-self.largeur/2)
-        pas = int((self.ht-self.hauteur)/self.nbPas)
-        multiplicateur = ((self.dimsFen[1] + self.ecarty) - self.pos)/self.pas
-        self.y = int(self.ymin+pas*multiplicateur)
-
-    def dessine(self) -> None:
+    def dessine(self, afficheRail: bool=False) -> None:
         """Dessine la barre à l'écran.
+
+        Args:
+            afficheRail (bool): Permet de préciser si oui ou non, on veut afficher le rail.
         """
-        self.ChangePos()
-        if self.getContactChariot():
-            couleur = [0, 121, 241, self.valeursActuelles[0]*5]
+        if self.getContactChariot() or self.defil:
+            c = self.couleurs[1]
         else:
-            couleur = [0, 0, 0, self.valeursActuelles[0]*5]
-        draw_rectangle_rounded([self.x, self.ymin, self.largeur, self.ht], 2, 30, 
-                               [200, 200, 200, self.valeursActuelles[1]*5])
-        draw_rectangle_rounded([self.x, self.y, self.largeur, self.hauteur], 2, 30, couleur)
+            c = self.couleurs[0]
+        couleur = [c[0], c[1], c[2], self.valeursActuelles[0]*5]
+        if afficheRail:
+            draw_rectangle_rounded([self.x, self.ybarre, self.largeur, self.ht], 2, 30, 
+                                    [200, 200, 200, self.valeursActuelles[1]*5])
+        draw_rectangle_rounded([self.x, self.y, self.largeur, self.hChariot], 2, 30, couleur)
         self.bougeChariot()
         self.changeVisibilite()
 
@@ -67,7 +60,7 @@ class ScrollBarre:
         if contact and not self.visible:
             self.visible = True
             self.delai = 50
-        elif not contact:
+        elif not contact and not self.defil:
             if self.visible:
                 self.visible = False
             if self.delai > 0:
@@ -93,20 +86,6 @@ class ScrollBarre:
                 rep = True
         return rep
 
-    def getContact(self) -> bool:
-        """Vérifie si le curseur est sur la barre.
-
-        Returns:
-            bool: True si le curseur est sur la barre.
-        """
-        rep = False
-        x = get_mouse_x()
-        y = get_mouse_y()
-        if x >= self.x and x <= self.x+self.largeur:
-            if y >= self.ymin and y <= self.ht:
-                rep = True
-        return rep
-
     def getContactChariot(self) -> bool:
         """Vérifie si le curseur est sur le chariot.
 
@@ -117,37 +96,51 @@ class ScrollBarre:
         x = get_mouse_x()
         y = get_mouse_y()
         if x >= self.x and x <= self.x+self.largeur:
-            if y >= self.y and y <= self.y+self.hauteur:
+            if y >= self.y and y <= self.y+self.hChariot:
                 rep = True
         return rep
 
     def bougeChariot(self) -> None:
         """Permet de faire défiler le contenu dans la fenêtre.
         """
+        # Molette
         if self.getContactZone():
-            # Molette
             roulette = int(get_mouse_wheel_move())
             roro = roulette
             if roro < 0:
                 roro = roro*-1
             for i in range(roro):
                 if roulette > 0:
-                    if self.pos < self.dimsFen[1] + self.ecarty:
-                        self.pos = self.pos + self.pas
+                    if self.y > self.ybarre:
+                        if self.pas > self.y-self.ybarre:
+                            pas = self.y-self.ybarre
+                        else:
+                            pas = self.pas
+                        self.y = self.y - pas
                 elif roulette < 0:
-                    if self.pos + self.htContenu > self.dimsFen[1] + self.dimsFen[3]:
-                        self.pos = self.pos - self.pas
-            # Curseur
-            if self.getContactChariot():
-                if is_mouse_button_down(0):
-                    y = get_mouse_y()
-                    if y < self.pYCurseur:
-                        if self.pos < self.dimsFen[1] + self.ecarty:
-                            self.pos = self.pos + self.pas
-                    elif y > self.pYCurseur:
-                        if self.pos + self.htContenu > self.dimsFen[1] + self.dimsFen[3]:
-                            self.pos = self.pos - self.pas
-                    self.pYCurseur = y
+                    if self.y+self.hChariot < self.ybarre + self.ht:
+                        if self.pas > (self.ybarre + self.ht)-(self.y+self.hChariot):
+                            pas = (self.ybarre + self.ht)-(self.y+self.hChariot)
+                        else:
+                            pas = self.pas
+                        self.y = self.y + pas
+                posChariot = (self.y-self.ybarre)/self.ht
+                self.pos = int(self.ybarre-self.htContenu*posChariot)
+        # Curseur
+        if not self.defil:
+            if self.getContactChariot() and is_mouse_button_down(0):
+                self.defil = True
+        else:
+            y = get_mouse_y()
+            if y < self.ybarre:
+                y = self.ybarre
+            elif y+self.hChariot > self.ybarre+self.ht:
+                y = self.ybarre+self.ht-self.hChariot
+            self.y = y
+            posChariot = (y-self.ybarre)/self.ht
+            self.pos = int(self.ybarre-self.htContenu*posChariot)
+            if is_mouse_button_up(0):
+                self.defil = False
 
     def getPos(self) -> int:
         """Retourne la position du chariot sur la barre.

@@ -25,7 +25,7 @@ class Menu:
         # Scroll
         self.scrollBarre = ScrollBarre([self.origine[0], self.origine[1], self.largeur, self.hauteur], self.hauteurTotale)
         self.pos = self.scrollBarre.getPos()
-        self.posBarre = self.pos+self.hauteurContenu*0.1
+        self.posBarre = self.hauteurContenu*0.1
         self.destBarre = self.posBarre
         # Autres
         self.taillePolice = int(yf*0.045)
@@ -35,7 +35,7 @@ class Menu:
         """
         x = int(self.origine[0] + (self.largeur-self.largeurContenu)/2)
         y = self.pos
-        draw_rectangle_rounded([x*0.3, self.posBarre, self.largeurContenu*0.02, self.hauteurContenu*0.8], 
+        draw_rectangle_rounded([x*0.3, y+self.posBarre, self.largeurContenu*0.02, self.hauteurContenu*0.8], 
                                 1, 30, [43, 55, 234, 255])
         for i in range(len(self.contenu)):
             if i == self.actif:
@@ -48,7 +48,7 @@ class Menu:
                                         [120, 120, 120, 70])
             if contact[1]:
                 self.actif = i
-                self.destBarre = self.pos+self.hauteurContenu*0.1+(self.hauteurContenu+self.espace)*i
+                self.destBarre = self.hauteurContenu*0.1+(self.hauteurContenu+self.espace)*i
             self.contenu[i][0].dessine([[int(x+self.largeurContenu*0.05), int(y+self.hauteurContenu*0.2)], 
                                         'no'], couleur, 'g')
             y = y + self.hauteurContenu + self.espace

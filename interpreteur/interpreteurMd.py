@@ -2,6 +2,9 @@ from systeme.FondMarin import *
 from ui.blocTexte import BlocTexte
 from ui.scrollBarre import ScrollBarre
 from ui.PosiJauge import PosiJauge
+from interpreteur.decodeuses import texte, widget, cadre, checkFinCadre
+from interpreteur.dimensions import mesureTaille
+from interpreteur.dessin import dessinePosiJauge, dessineTexte, dessineCadre
 
 class InterpreteurMd:
     def __init__(self, fichier: str, dims: tuple) -> None:
@@ -24,18 +27,16 @@ class InterpreteurMd:
         self.espace = int(yf*0.03)
         self.evaluation = False
         # Elements
-        self.position = 'gen'
-        self.element = None
         self.contenu = []
-        self.largeurContenu = int(self.largeur*0.95)
+        self.lContenu = int(self.largeur*0.95)
         self.pasx = int(xf*0.0125)
-        self.oyc = self.origine[1] + self.espace
         self.pasy = int(yf*0.05)
         # Autres
         self.taillePolice = int(yf*0.035)
         # Scroll
-        self.scrollBarre = ScrollBarre([self.origine[0], self.origine[1], self.largeur, self.hauteur], self.hauteurTotale)
-        self.pos = self.scrollBarre.getPos()
+        self.scrollBarre = ScrollBarre([self.origine[0], self.origine[1], self.largeur, self.hauteur], 
+                                        self.hauteurTotale, [[1, 8, 38], [12, 37, 131]])
+        self.oyc = self.scrollBarre.getPos()
 
     def dessine(self) -> None:
         """Dessine le contenu du fichier à l'écran.
@@ -43,38 +44,23 @@ class InterpreteurMd:
         if not self.decode:
             self.startDecode()
         if not self.evaluation:
-            self.mesureTaille()
+            self.setHauteurContenu()
         if self.codeErreur == None:
-            x = self.origine[0]
+            x = self.origine[0]+self.pasx
             ph = self.oyc
             for i in range(len(self.contenu)):
-                contenu = self.contenu[i]
-                if type(contenu) == list:
-                    if contenu[0][0]:
-                        h = self.espace
-                        for j in range(len(contenu)-1):
-                            h += contenu[j+1].getDims()[1]
-                            if j < len(contenu)-1:
-                                h += self.espace
-                        couleur = contenu[0][1]
-                        draw_rectangle_rounded([x+self.pasx, ph, self.largeurContenu, int(h)], 0.2, 30, couleur)
-                        ph += int(self.espace/2)
-                        for j in range(len(contenu)-1):
-                            pt = [int(x+self.pasx*2), int(ph+self.espace/2)]
-                            contenu[j+1].dessine([pt, 'no'])
-                            ph += contenu[j+1].getDims()[1] + self.espace
-                elif type(contenu) == BlocTexte:
-                    pt = [x+self.pasx*2, int(ph+self.espace/2)]
-                    contenu.dessine([pt, 'no'])
-                    ph += contenu.getDims()[1] + self.espace
-                elif type(contenu) == PosiJauge:
-                    contenu.dessine(int(x+self.pasx*3.4), int(ph+self.espace))
-                    ph += contenu.getDims()[1] + self.espace
-                elif type(contenu) == str:
+                element = self.contenu[i]
+                if type(element) == list and type(element[0]) == list:
+                    ph += dessineCadre(element, x, ph, self.espace)[1] + self.espace
+                elif type(element) == BlocTexte:
+                    ph += dessineTexte(element, x, ph)[1] + int(self.espace/2)
+                elif type(element) == PosiJauge:
+                    ph += dessinePosiJauge(element, x, ph, self.lContenu)[1] + self.espace
+                elif type(element) == str:
                     ph += self.espace
             if self.hauteurTotale > self.hauteur:
                 self.scrollBarre.dessine()
-                self.pos = self.scrollBarre.getPos()
+                self.oyc = self.scrollBarre.getPos()
         else:
             self.erreur(self.codeErreur)
 
@@ -85,6 +71,8 @@ class InterpreteurMd:
             if file_exists(self.fichier):
                 if get_file_extension(self.fichier) in self.extensions:
                     self.decodeur()
+                    if self.codeErreur != None:
+                        self.chargeImaErreur()
                 else:
                     self.codeErreur = 2
                     self.chargeImaErreur()
@@ -98,49 +86,49 @@ class InterpreteurMd:
         """
         fic = load_file_text(self.fichier)
         fil = fic.split("\n")
+        cadres = []
         while len(fil) > 0:
-            li = fil[0].split("\ ")
-            if self.position == 'gen':
-                if li[0] == "<[":
-                    del li[0]
-                    self.position = 'cad'
-                    self.element = [['cadre']]
-                    li2 = li.split(",")
-                    couleur = []
-                    for i in range(len(li2)):
-                        couleur.append(int(li2[i]))
-                    self.element[0].append(couleur)
-                elif li[0] == "posiJauge":
-                    del li[0]
-                    l = 1
-                    points = []
-                    para = li[0].split(", ")
-                    for i in range(len(para)):
-                        parametre = para[i].split("=")
-                        if parametre[0] == "l":
-                            l = float(parametre[1])
-                        elif parametre[0] == "p":
-                            print(parametre[1])
-                            lipts = parametre[1][1:len(parametre[1])]
-                            lipts = lipts[0:len(lipts)-1]
-                            print(lipts)
-                            lipts = lipts.split(",")
-                            print(lipts)
-                            for j in range(len(lipts)):
-                                points.append(lipts[j])
-                    self.ajouteContenu(PosiJauge(int(self.largeurContenu*l), points))
-                elif fil[0] != "":
-                    self.ajouteContenu(BlocTexte(fil[0], police2, self.taillePolice, []))
+            if ">" in fil[0]:
+                rep = widget(fil[0])
+                if type(rep) == list:
+                    if len(rep[1]) > 0:
+                        self.codeErreur = rep[1][0]
+                    if len(cadres) == 0:
+                        self.ajouteContenu(rep[0])
+                    else:
+                        cadres[len(cadres)-1].append(rep[0])
+                    if checkFinCadre(fil[0]):
+                        self.finCadre(cadres)
+            elif "[" in fil[0]:
+                rep = cadre(fil[0])
+                prop = self.pasx/self.lContenu
+                largeur = int(self.lContenu*(1-prop*2*(len(cadres))))
+                cadres.append([[largeur]+rep])
+            elif fil[0] == "]":
+                self.finCadre(cadres)
+            elif fil[0] != "":
+                prop = self.pasx/self.lContenu
+                rep = texte(fil[0], self.taillePolice, int(self.lContenu*(1-prop*2*(len(cadres)))))
+                if len(cadres) == 0:
+                    self.ajouteContenu(rep)
                 else:
+                    cadres[len(cadres)-1].append(rep)
+            else:
+                if len(cadres) == 0:
                     self.ajouteContenu("\n")
-            elif self.position == 'cad':
-                if fil[0] == "]>":
-                    self.position = 'gen'
-                    self.ajouteContenu(self.element)
-                elif fil[0] != "":
-                    self.element.append(BlocTexte(fil[0], police2, self.taillePolice, 
-                                        [int(self.largeurContenu*0.95), '']))
+                else:
+                    cadres[len(cadres)-1].append("\n")
             del fil[0]
+
+    def finCadre(self, cadres: list) -> list:
+        if len(cadres) > 0:
+            cad = cadres[len(cadres)-1]
+            del cadres[len(cadres)-1]
+            if len(cadres) > 0:
+                cadres[len(cadres)-1].append(cad)
+            else:
+                self.ajouteContenu(cad)
+        return cadres
 
     def chargeImaErreur(self) -> None:
         """Permet de charger l'image pour les erreurs.
@@ -160,14 +148,16 @@ class InterpreteurMd:
         draw_rectangle(self.origine[0], self.origine[1], self.largeur, self.hauteur, BLACK)
         draw_texture(self.iErreur, int(self.origine[0]+self.largeur/2-self.iErreur.width/2), 
                      int(yf*0.4-self.iErreur.height/2), WHITE)
-        titre = BlocTexte("Un probleme est survenu !", police2, self.taillePolice*1.2, [self.largeurContenu, ''])
-        sousTitre = BlocTexte("Chargement interrompue.", police2, self.taillePolice, [self.largeurContenu, ''])
+        titre = BlocTexte("Un probleme est survenu !", police2, self.taillePolice*1.2, [self.lContenu, ''])
+        sousTitre = BlocTexte("Chargement interrompue.", police2, self.taillePolice, [self.lContenu, ''])
         if mode == 1:
             message = BlocTexte(f"Le fichier \"{self.fichier}\" est manquant.", police2, 
-                                self.taillePolice*0.8, [self.largeurContenu, ''])
+                                self.taillePolice*0.8, [self.lContenu, ''])
         elif mode == 2:
             message = BlocTexte(f"Le fichier \"{self.fichier}\" est incompatible.", police2, 
-                                self.taillePolice*0.8, [self.largeurContenu, ''])
+                                self.taillePolice*0.8, [self.lContenu, ''])
+        else:
+            message = BlocTexte(mode, police2, self.taillePolice*0.8, [self.lContenu, ''])
         titre.dessine([[int(self.origine[0]+self.largeur/2), int(self.origine[1]+self.hauteur*0.7)], 'c'])
         sousTitre.dessine([[int(self.origine[0]+self.largeur/2), int(self.origine[1]+self.hauteur*0.75)], 'c'])
         message.dessine([[int(self.origine[0]+self.largeur/2), int(self.origine[1]+self.hauteur*0.8)], 'c'], 
@@ -184,26 +174,11 @@ class InterpreteurMd:
         self.codeErreur = None
         self.contenu.clear()
 
-    def mesureTaille(self) -> None:
-        """Mesure la taille du contenu de la fenêtre.
+    def setHauteurContenu(self) -> None:
+        """Modifie la taille théorique de la totalité du contenu de la fenêtre.
         """
-        h = 0
-        for i in range(len(self.contenu)):
-            element = self.contenu[i]
-            if type(element) == list:
-                if element[0][0] == 'cadre':
-                    dims = self.espace*2
-                    for i in range(len(element)-1):
-                        if type(element[i+1]) == BlocTexte:
-                            dims += element[i+1].getDims()[1]
-                            dims += self.espace
-                h += int(dims - self.espace)
-            elif type(element) == BlocTexte:
-                h += element.getDims()[1] + self.espace
-            elif type(element) == str:
-                h += self.espace
-        if h > self.hauteur:
-            self.hauteurTotale = h
+        self.hauteurTotale = mesureTaille(self.contenu, self.espace)
+        if self.hauteurTotale > self.hauteur:
             self.scrollBarre.setHtContenu(self.hauteurTotale)
         self.evaluation = True
 

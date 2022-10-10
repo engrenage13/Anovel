@@ -33,7 +33,6 @@ class Parametres:
             self.chargeElement()
         if self.fond != None:
             draw_texture(self.fond, 0, 0, WHITE)
-        draw_rectangle(self.largeurLat, 0, xf-self.largeurLat, yf, [0, 0, 0, 160])
         if not self.bug:
             self.dessineMenu()
             self.page.dessine()
