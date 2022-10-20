@@ -1,14 +1,17 @@
 from systeme.FondMarin import *
+from systeme.erreurs import pasCouleur
+from reve.OZ import POLICE, TAILLEPOLICE
 from ui.blocTexte import BlocTexte
 from ui.scrollBarre import ScrollBarre
 from ui.PosiJauge import PosiJauge
-from interpreteur.decodeuses import texte, widget, cadre, checkFinCadre
-from interpreteur.dimensions import mesureTaille
-from interpreteur.dessin import dessinePosiJauge, dessineTexte, dessineCadre
+from reve.decodeuses import texte, widget, cadre, checkFinCadre
+from reve.dimensions import mesureTaille, getDimsErreur, mesureTailleErreurs
+from reve.dessin import dessinePosiJauge, dessineTexte, dessineCadre
+from reve.erreurs import erreursFichier, affichErreur
 
-class InterpreteurMd:
+class Reve:
     def __init__(self, fichier: str, dims: tuple) -> None:
-        """Crée un interpréteur markdown.
+        """Crée une instance de "REVE", un interpréteur markdown.
 
         Args:
             fichier (str): L'url du fichier qui doit être interprété.
@@ -17,8 +20,7 @@ class InterpreteurMd:
         # Fichier
         self.fichier = fichier
         self.decode = False
-        self.extensions = ['.md']
-        self.codeErreur = None
+        self.erreurs = []
         # Zone
         self.origine = (dims[0], dims[1])
         self.largeur = dims[2]
@@ -31,8 +33,6 @@ class InterpreteurMd:
         self.lContenu = int(self.largeur*0.95)
         self.pasx = int(xf*0.0125)
         self.pasy = int(yf*0.05)
-        # Autres
-        self.taillePolice = int(yf*0.035)
         # Scroll
         self.scrollBarre = ScrollBarre([self.origine[0], self.origine[1], self.largeur, self.hauteur], 
                                         self.hauteurTotale, [[1, 8, 38], [12, 37, 131]])
@@ -45,7 +45,7 @@ class InterpreteurMd:
             self.startDecode()
         if not self.evaluation:
             self.setHauteurContenu()
-        if self.codeErreur == None:
+        if len(self.erreurs) == 0:
             x = self.origine[0]+self.pasx
             ph = self.oyc
             for i in range(len(self.contenu)):
@@ -58,26 +58,24 @@ class InterpreteurMd:
                     ph += dessinePosiJauge(element, x, ph, self.lContenu)[1] + self.espace
                 elif type(element) == str:
                     ph += self.espace
-            if self.hauteurTotale > self.hauteur:
-                self.scrollBarre.dessine()
-                self.oyc = self.scrollBarre.getPos()
         else:
-            self.erreur(self.codeErreur)
+            self.dessinErreur()
+        if self.hauteurTotale > self.hauteur:
+            self.scrollBarre.dessine()
+            self.oyc = self.scrollBarre.getPos()
 
     def startDecode(self) -> None:
         """Permet de vérifier si le fichier a été décodé.
         """
         if not self.decode:
-            if file_exists(self.fichier):
-                if get_file_extension(self.fichier) in self.extensions:
-                    self.decodeur()
-                    if self.codeErreur != None:
-                        self.chargeImaErreur()
-                else:
-                    self.codeErreur = 2
+            erofil = erreursFichier(self.fichier, [int(self.lContenu*0.95), ''])
+            if not erofil:
+                self.decodeur()
+                if len(self.erreurs) > 0:
                     self.chargeImaErreur()
             else:
-                self.codeErreur = 1
+                for i in range(len(erofil)):
+                    self.erreurs.append(erofil[i])
                 self.chargeImaErreur()
             self.decode = True
 
@@ -92,7 +90,8 @@ class InterpreteurMd:
                 rep = widget(fil[0])
                 if type(rep) == list:
                     if len(rep[1]) > 0:
-                        self.codeErreur = rep[1][0]
+                        for i in range(len(rep[1])):
+                            self.erreurs.append(rep[1][i])
                     if len(cadres) == 0:
                         self.ajouteContenu(rep[0])
                     else:
@@ -101,6 +100,11 @@ class InterpreteurMd:
                         self.finCadre(cadres)
             elif "[" in fil[0]:
                 rep = cadre(fil[0])
+                colotest = pasCouleur(rep[0])
+                if colotest:
+                    self.erreurs.append(
+                        [BlocTexte(colotest[0], POLICE, (TAILLEPOLICE*1.2), [int(self.largeur*0.95), '']), 
+                        BlocTexte(colotest[1], POLICE, TAILLEPOLICE, [int(self.largeur*0.95), ''])])
                 prop = self.pasx/self.lContenu
                 largeur = int(self.lContenu*(1-prop*2*(len(cadres))))
                 cadres.append([[largeur]+rep])
@@ -108,7 +112,7 @@ class InterpreteurMd:
                 self.finCadre(cadres)
             elif fil[0] != "":
                 prop = self.pasx/self.lContenu
-                rep = texte(fil[0], self.taillePolice, int(self.lContenu*(1-prop*2*(len(cadres)))))
+                rep = texte(fil[0], int(self.lContenu*(1-prop*2*(len(cadres)))))
                 if len(cadres) == 0:
                     self.ajouteContenu(rep)
                 else:
@@ -139,29 +143,27 @@ class InterpreteurMd:
         self.iErreur = load_texture_from_image(tableau)
         unload_image(tableau)
 
-    def erreur(self, mode: int) -> None:
+    def dessinErreur(self) -> int:
         """Definit ce qui s'affiche dans la fenêtre quand le fichier ne peut pas être lu.
 
         Args:
             mode (int): Définit le type d'erreur rencontrée.
         """
+        y = self.oyc
         draw_rectangle(self.origine[0], self.origine[1], self.largeur, self.hauteur, BLACK)
-        draw_texture(self.iErreur, int(self.origine[0]+self.largeur/2-self.iErreur.width/2), 
-                     int(yf*0.4-self.iErreur.height/2), WHITE)
-        titre = BlocTexte("Un probleme est survenu !", police2, self.taillePolice*1.2, [self.lContenu, ''])
-        sousTitre = BlocTexte("Chargement interrompue.", police2, self.taillePolice, [self.lContenu, ''])
-        if mode == 1:
-            message = BlocTexte(f"Le fichier \"{self.fichier}\" est manquant.", police2, 
-                                self.taillePolice*0.8, [self.lContenu, ''])
-        elif mode == 2:
-            message = BlocTexte(f"Le fichier \"{self.fichier}\" est incompatible.", police2, 
-                                self.taillePolice*0.8, [self.lContenu, ''])
-        else:
-            message = BlocTexte(mode, police2, self.taillePolice*0.8, [self.lContenu, ''])
-        titre.dessine([[int(self.origine[0]+self.largeur/2), int(self.origine[1]+self.hauteur*0.7)], 'c'])
-        sousTitre.dessine([[int(self.origine[0]+self.largeur/2), int(self.origine[1]+self.hauteur*0.75)], 'c'])
-        message.dessine([[int(self.origine[0]+self.largeur/2), int(self.origine[1]+self.hauteur*0.8)], 'c'], 
-                        [242, 171, 56, 255])
+        draw_texture(self.iErreur, int(self.origine[0]+self.largeur/2-self.iErreur.width/2), y, WHITE)
+        y += int(self.iErreur.height*1.1)
+        titre = BlocTexte("Un probleme est survenu !", POLICE, TAILLEPOLICE*1.2, [self.lContenu, ''])
+        sousTitre = BlocTexte("Chargement interrompue.", POLICE, TAILLEPOLICE, [self.lContenu, ''])
+        titre.dessine([[int(self.origine[0]+self.largeur/2), y], 'c'])
+        y += int(self.hauteur*0.05)
+        sousTitre.dessine([[int(self.origine[0]+self.largeur/2), y], 'c'])
+        y += int(self.hauteur*0.05)
+        ph = y
+        for i in range(len(self.erreurs)):
+            affichErreur(self.erreurs[i], [self.origine[0], self.largeur], y, self.espace)
+            y += getDimsErreur(self.erreurs[i], self.espace)[1] + self.espace
+        return ph
 
     def changeFichier(self, fichier: str) -> None:
         """Permet de changer le fichier qu'utilise l'interpréteur.
@@ -171,13 +173,18 @@ class InterpreteurMd:
         """
         self.fichier = fichier
         self.decode = False
-        self.codeErreur = None
+        self.evaluation = False
+        self.erreurs = []
+        self.oyc = int(self.origine[1] + yf*0.02)
         self.contenu.clear()
 
     def setHauteurContenu(self) -> None:
         """Modifie la taille théorique de la totalité du contenu de la fenêtre.
         """
-        self.hauteurTotale = mesureTaille(self.contenu, self.espace)
+        if len(self.erreurs) == 0:
+            self.hauteurTotale = mesureTaille(self.contenu, self.espace)
+        else:
+            self.hauteurTotale = self.dessinErreur() + mesureTailleErreurs(self.erreurs, self.espace)
         if self.hauteurTotale > self.hauteur:
             self.scrollBarre.setHtContenu(self.hauteurTotale)
         self.evaluation = True

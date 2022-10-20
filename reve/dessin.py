@@ -1,7 +1,7 @@
 from systeme.FondMarin import *
 from ui.PosiJauge import PosiJauge
 from ui.blocTexte import BlocTexte
-from interpreteur.dimensions import getDimsCadre
+from reve.dimensions import getDimsCadre
 
 def dessinePosiJauge(jauge: PosiJauge, x: int, y: int, longueurMax: int) -> list:
     l = int(longueurMax-jauge.points[len(jauge.points)-1][0].getDims()[0]/2-jauge.points[0][0].getDims()[0]/2)

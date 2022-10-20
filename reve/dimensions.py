@@ -1,5 +1,6 @@
 from ui.blocTexte import BlocTexte
 from ui.PosiJauge import PosiJauge
+from museeNoyee import cadreCodeErreur
 
 def getDimsCadre(cadre: list, espace: int) -> list:
     largeur = cadre[0][0]
@@ -16,6 +17,15 @@ def getDimsCadre(cadre: list, espace: int) -> list:
             hauteur += element.getDims()[1] + espace
     return [largeur, hauteur]
 
+def getDimsErreur(erreur: tuple, espace: int) -> list:
+    largeur = cadreCodeErreur.width
+    hauteur = cadreCodeErreur.height
+    dims = erreur[1].getDims()
+    if largeur < dims[0]:
+        largeur = dims[0]
+    hauteur += dims[1] + espace
+    return [int(largeur), int(hauteur)]
+
 def mesureTaille(contenu: list, espace: int) -> int:
     """Mesure la taille du contenu de la fenêtre.
     """
@@ -30,4 +40,10 @@ def mesureTaille(contenu: list, espace: int) -> int:
             h += int(element.getDims()[1] + espace)
         elif type(element) == str:
             h += espace
+    return h
+
+def mesureTailleErreurs(erreurs: list, espace: int) -> int:
+    h = 0
+    for i in range(len(erreurs)):
+        h += getDimsErreur(erreurs[i], espace)[1] + espace
     return h

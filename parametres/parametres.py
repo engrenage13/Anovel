@@ -3,7 +3,7 @@ from museeNoyee import croixLumineuse, croixSombre
 from ui.clickIma import ClickIma
 from ui.blocTexte import BlocTexte
 from parametres.menu import Menu
-from interpreteur.interpreteurMd import InterpreteurMd
+from reve.Reve import Reve
 
 class Parametres:
     def __init__(self) -> None:
@@ -15,8 +15,8 @@ class Parametres:
         self.menu = Menu(self.fichierMenu, (0, int(yf*0.078), self.largeurLat, int(yf-yf*0.128)))
         repMenu = self.menu.checkFichier()
         if repMenu:
-            self.page = InterpreteurMd(self.menu.contenu[self.menu.actif][1], 
-                                       (self.largeurLat, 0, xf-self.largeurLat, yf))
+            self.page = Reve(self.menu.contenu[self.menu.actif][1], 
+                            (self.largeurLat, 0, xf-self.largeurLat, yf))
             self.bug = False
         else:
             self.bug = True

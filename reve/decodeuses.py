@@ -1,4 +1,4 @@
-from systeme.FondMarin import police2
+from reve.OZ import POLICE, TAILLEPOLICE
 from ui.PosiJauge import PosiJauge
 from ui.blocTexte import BlocTexte
 
@@ -33,8 +33,10 @@ def cadre(ligne: str) -> list:
                 sequence += car
         else:
             sequence += car
-    if len(couleur) != 4:
+    if len(couleur) == 0:
         couleur = [0, 0, 0, 255]
+    elif len(couleur) == 3:
+        couleur.append(255)
     return [couleur]
 
 def checkFinCadre(ligne: str) -> bool:
@@ -100,7 +102,7 @@ def posiJauge(ligne: str) -> PosiJauge:
             sequence += car
     return PosiJauge(points, longueur)
 
-def texte(ligne: str, taille: int, largeurMax: int) -> BlocTexte:
+def texte(ligne: str, largeurMax: int) -> BlocTexte:
     sequence = ""
     mode = 1
     for i in range(len(ligne)):
@@ -115,10 +117,10 @@ def texte(ligne: str, taille: int, largeurMax: int) -> BlocTexte:
         else:
             sequence += car
     if mode == 1:
-        t = taille
+        t = TAILLEPOLICE
     else:
-        t = int(taille*1.4)
-    return BlocTexte(sequence, police2, t, [largeurMax, ''])
+        t = int(TAILLEPOLICE*1.4)
+    return BlocTexte(sequence, POLICE, t, [largeurMax, ''])
 
 def widget(ligne: str) -> list:
     sequence = ""
@@ -138,5 +140,5 @@ def widget(ligne: str) -> list:
             sequence += car
         i = i + 1
     if rep != None:
-        rep = [rep, rep.erreur]
+        rep = [rep, rep.erreurs]
     return rep
