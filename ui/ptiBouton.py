@@ -1,4 +1,6 @@
 from systeme.FondMarin import *
+from systeme.set import trouveParam
+from systeme.erreurs import pasCouleur, e000, e100
 from ui.blocTexte import BlocTexte
 from animations.etincelles import Etincelles
 
@@ -10,24 +12,37 @@ class PtiBouton:
             fonctions (list): Fonctions qu'appel le bouton quand il est utilisé.
             couleur (list): Couleur de fond du bouton.
             texte (str, optional): Ecritaut sur le bouton.. Defaults to None.
-            icone (str, optional): Icône sur le bouton. Defaults to None.
+            icone (str, optional): Adresse de l'icône. Defaults to None.
         """
         self.hauteur = int(yf*0.075)
         self.largeur = int(tlatba*0.32)
-        self.texte = None
+        # Erreurs
+        self.erreurs = []
+        # Texte
         if type(texte) == str and texte != "":
             self.texte = BlocTexte(texte, police1, int(self.hauteur*0.4), 
                                    [int(self.largeur*0.95), int(self.hauteur*0.4)])
-        self.couleur = couleur
-        # Fonctions
-        self.fonction = fonctions[0]
-        if len(fonctions) > 1 and fonctions[1] != '':
-            self.verifFonction = fonctions[1]
         else:
-            self.verifFonction = self.verification
+            self.texte = None
+        if not pasCouleur(couleur):
+            self.couleur = couleur
+        else:
+            self.erreurs.append(pasCouleur(couleur))
+        # Fonctions
+        if type(fonctions) == list and len(fonctions) > 0:
+            self.fonction = fonctions[0]
+            if len(fonctions) > 1 and fonctions[1] != '':
+                self.verifFonction = fonctions[1]
+            else:
+                self.verifFonction = self.verification
+        else:
+            self.erreurs.append([e100[0], "Le premier parametre du bouton est une liste de fonction a appeler."])
         # Icône
         if icone != None:
-            self.iconeOriginale = load_image(icone)
+            if file_exists(icone):
+                self.iconeOriginale = load_image(icone)
+            else:
+                self.erreurs.append([e000[0], f"L'icone choisie ({icone}) n'existe pas."])
         else:
             self.iconeOriginale = None
         self.icoCharge = False
@@ -58,7 +73,7 @@ class PtiBouton:
             self.etincelles = Etincelles([self.coords[0], self.coords[1], l, h], 
                                          [self.couleur, [246, 203, 33, 255]])
         self.etincelles.setCoordSource([self.coords[0], self.coords[1], l, h])
-        if important:
+        if important and trouveParam("anims") >= 2:
             if self.getContact():
                 artifice = True
             else:
@@ -98,22 +113,26 @@ class PtiBouton:
             if val < self.couleur[i]:
                 val = self.couleur[i]
                 pos = i
-        if self.posEchelle == None:
-            self.posEchelle = int(val/5)
-        else:
-            if self.monte:
-                if self.posEchelle < self.maxEchelle:
-                    self.posEchelle += 1
-                else:
-                    self.monte = False
+        if trouveParam("anims") >= 1:
+            if self.posEchelle == None:
+                self.posEchelle = int(val/5)
             else:
-                if self.posEchelle > self.minEchelle:
-                    self.posEchelle -= 1
+                if self.monte:
+                    if self.posEchelle < self.maxEchelle:
+                        self.posEchelle += 1
+                    else:
+                        self.monte = False
                 else:
-                    self.monte = True
+                    if self.posEchelle > self.minEchelle:
+                        self.posEchelle -= 1
+                    else:
+                        self.monte = True
         for i in range(len(self.couleur)):
             if pos == i:
-                pigment = self.posEchelle*5
+                if trouveParam("anims") >= 1:
+                    pigment = self.posEchelle*5
+                else:
+                    pigment = self.minEchelle
             else:
                 pigment = self.couleur[i]
             colo.append(pigment)

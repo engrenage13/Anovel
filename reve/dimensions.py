@@ -1,5 +1,6 @@
 from ui.blocTexte import BlocTexte
 from ui.PosiJauge import PosiJauge
+from ui.bouton import Bouton
 from museeNoyee import cadreCodeErreur
 
 def getDimsCadre(cadre: list, espace: int) -> list:
@@ -11,7 +12,7 @@ def getDimsCadre(cadre: list, espace: int) -> list:
             hauteur += espace
         elif type(element) == list and type(element[0]) == list:
             hauteur += getDimsCadre(element, espace)[1] + int(espace/2)
-        elif type(element) == BlocTexte:
+        elif type(element) in (BlocTexte, Bouton):
             hauteur += element.getDims()[1] + int(espace/2)
         elif type(element) == PosiJauge:
             hauteur += element.getDims()[1] + espace
@@ -34,7 +35,7 @@ def mesureTaille(contenu: list, espace: int) -> int:
         element = contenu[i]
         if type(element) == list:
             h += int(getDimsCadre(element, espace)[1] + espace)
-        elif type(element) == BlocTexte:
+        elif type(element) in (BlocTexte, Bouton):
             h += int(element.getDims()[1] + espace/2)
         elif type(element) == PosiJauge:
             h += int(element.getDims()[1] + espace)

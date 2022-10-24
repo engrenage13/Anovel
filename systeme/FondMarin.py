@@ -4,7 +4,7 @@ from raylib.colors import *
 
 TITRE_F = 'ANOVEL'
 etatVersion = "alpha"
-version = "0.1.15"
+version = "0.2"
 
 init_window(get_monitor_width(0), get_monitor_height(0), TITRE_F)
 set_target_fps(60)

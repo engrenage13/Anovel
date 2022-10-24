@@ -1,9 +1,14 @@
 from systeme.FondMarin import *
+from systeme.set import trouveParam, sauvegarde, setParam
 from museeNoyee import croixLumineuse, croixSombre
+from ui.PosiJauge import PosiJauge
 from ui.clickIma import ClickIma
 from ui.blocTexte import BlocTexte
+from ui.scrollBarre import ScrollBarre
 from parametres.menu import Menu
 from reve.Reve import Reve
+from reve.erreurs import affichErreur
+from reve.dimensions import getDimsErreur, mesureTailleErreurs
 
 class Parametres:
     def __init__(self) -> None:
@@ -14,21 +19,30 @@ class Parametres:
         self.fichierMenu = "parametres/Categories.md"
         self.menu = Menu(self.fichierMenu, (0, int(yf*0.078), self.largeurLat, int(yf-yf*0.128)))
         repMenu = self.menu.checkFichier()
-        if repMenu:
-            self.page = Reve(self.menu.contenu[self.menu.actif][1], 
-                            (self.largeurLat, 0, xf-self.largeurLat, yf))
+        if len(repMenu) == 0:
+            self.page = Reve(self.menu.contenu[self.menu.actif][1], (self.largeurLat, 0, xf-self.largeurLat, yf))
             self.bug = False
         else:
             self.bug = True
+            self.erreurs = repMenu
+            self.scroll = ScrollBarre([0, int(yf*0.08), xf, yf], int(yf*0.9), [[1, 8, 38], [12, 37, 131]])
+            self.oyc = self.scroll.getPos()
+            self.setHt = False
         self.croix = ClickIma([self.ferme], [croixSombre, croixLumineuse])
         self.charge = False
         self.fond = None
+        # Paramètres
+        self.lset = []
+        self.copieValeur = []
 
     def dessine(self) -> None:
         """Dessine la fenêtre à l'écran.
         """
         if not self.bug and self.page.fichier != self.menu.contenu[self.menu.actif][1]:
             self.page.changeFichier(self.menu.contenu[self.menu.actif][1])
+            self.copieValeur = []
+            sauvegarde()
+            print("Sauvegarde")
         if not self.charge:
             self.chargeElement()
         if self.fond != None:
@@ -36,12 +50,21 @@ class Parametres:
         if not self.bug:
             self.dessineMenu()
             self.page.dessine()
+            self.lset = self.page.liSetWidge
+            self.InitialiseWidget()
             draw_rectangle(0, 0, self.largeurLat, int(yf*0.078), [87, 67, 237, 255])
             draw_text_pro(police1, "Parametres", (int(yf*0.02), int(yf*0.02)), (0, 0), 0, int(yf*0.05), 
                           0, WHITE)
             self.dessineVersion()
+            self.setValeurWidgets()
         else:
-            self.erreur()
+            self.dessinErreur()
+            if self.scroll.htContenu > yf:
+                self.scroll.dessine()
+                self.oyc = self.scroll.getPos()
+            if not self.setHt:
+                self.scroll.setHtContenu(self.dessinErreur()+mesureTailleErreurs(self.erreurs, int(yf*0.05)))
+                self.setHt = True
         self.croix.dessine((xf-hbarre, int(hbarre*0.05)))
 
     def dessineMenu(self) -> None:
@@ -85,15 +108,59 @@ class Parametres:
         """Permet de fermer la fenêtre (fictivement).
         """
         self.ouvert = False
+        sauvegarde()
+        print("Sauvegarde")
 
-    def erreur(self) -> None:
-        """Définit ce qui s'affiche dans la fenêtre quand le fichier ne peut pas être lu.
+    def dessinErreur(self) -> int:
+        """Definit ce qui s'affiche dans la fenêtre quand le fichier ne peut pas être lu.
         """
         taillePolice = int(yf*0.035)
-        draw_texture(self.iErreur, int(xf/2-self.iErreur.width/2), int(yf*0.4-self.iErreur.height/2), WHITE)
+        y = self.oyc-int(yf*0.08)
+        draw_texture(self.iErreur, int(xf/2-self.iErreur.width/2), y, WHITE)
+        y += int(self.iErreur.height*1.1)
         titre = BlocTexte("Un probleme est survenu !", police2, taillePolice*1.2, [xf, ''])
         sousTitre = BlocTexte("Chargement interrompue.", police2, taillePolice, [xf, ''])
-        message = BlocTexte(f"Le fichier \"{self.fichierMenu}\" est manquant.", police2, taillePolice*0.8, [xf, ''])
-        titre.dessine([[int(xf/2), int(yf*0.7)], 'c'])
-        sousTitre.dessine([[int(xf/2), int(yf*0.75)], 'c'])
-        message.dessine([[int(xf/2), int(yf*0.8)], 'c'], [242, 171, 56, 255])
+        titre.dessine([[int(xf/2), y], 'c'])
+        y += int(yf*0.05)
+        sousTitre.dessine([[int(xf/2), y], 'c'])
+        y += int(yf*0.05)
+        ph = y
+        for i in range(len(self.erreurs)):
+            affichErreur(self.erreurs[i], [0, xf], y, int(yf*0.05))
+            y += getDimsErreur(self.erreurs[i], int(yf*0.05))[1] + int(yf*0.05)
+        return ph
+
+    def InitialiseWidget(self) -> None:
+        """Permet de rétablir les valeurs actuelles des paramètres sur les widgets.
+        """
+        valeur = "?"
+        cpval = "?"
+        for i in range(len(self.lset)):
+            balise = self.lset[i]
+            valeur = trouveParam(balise[0])
+            trouve = False
+            j = 0
+            while j < len(self.copieValeur) and not trouve:
+                if self.copieValeur[j][0] == balise[0]:
+                    trouve = True
+                    cpval = self.copieValeur[j][1]
+                else:
+                    j = j + 1
+            if not trouve:
+                self.copieValeur.append([balise[0], valeur])
+                if type(balise[1]) == PosiJauge:
+                    balise[1].setPosCurseur(valeur)
+            else:
+                if valeur != cpval:
+                    self.copieValeur[j][1] = valeur
+                    if type(balise[1]) == PosiJauge:
+                        balise[1].setPosCurseur(valeur)
+
+    def setValeurWidgets(self) -> None:
+        """Permet d'enregister les valeurs des widgets dans le fichier de sauvegarde.
+        """
+        for i in range(len(self.lset)):
+            balise = self.lset[i]
+            if not balise[1].getLu():
+                setParam(balise[0], balise[1].getValeur())
+                balise[1].marqueCommeLu()

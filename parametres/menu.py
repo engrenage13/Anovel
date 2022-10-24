@@ -1,4 +1,5 @@
 from systeme.FondMarin import *
+from systeme.erreurs import e000, e001
 from ui.blocTexte import BlocTexte
 from ui.scrollBarre import ScrollBarre
 
@@ -58,18 +59,23 @@ class Menu:
             self.scrollBarre.dessine()
             self.pos = self.scrollBarre.getPos()
 
-    def checkFichier(self) -> bool:
+    def checkFichier(self) -> list:
         """Vérifie si le fichier existe et lance le décodage.
 
         Return:
-            bool : True si le fichier a pu être trouvé, False sinon.
+            list : Renvoie une liste comportant toutes les erreurs relatives au fichier, qui ont étaint trouvées.
         """
-        if file_exists(self.fichier) and get_file_extension(self.fichier) == self.extension:
-            self.decodeur()
-            self.mesureTaille()
-            rep = True
+        rep = []
+        if file_exists(self.fichier):
+            if get_file_extension(self.fichier) == self.extension:
+                self.decodeur()
+                self.mesureTaille()
+            else:
+                rep.append([BlocTexte(e001[0], police2, int(self.taillePolice*1.2)), 
+                            BlocTexte(e001[1], police2, self.taillePolice, [int(xf*0.9), ''])])
         else:
-            rep = False
+            rep.append([BlocTexte(e000[0], police2, int(self.taillePolice*1.2)), 
+                        BlocTexte(e000[1], police2, self.taillePolice, [int(xf*0.9), ''])])
         return rep
 
     def decodeur(self) -> None:

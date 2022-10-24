@@ -1,5 +1,6 @@
 from systeme.FondMarin import *
 from systeme.erreurs import e100
+from systeme.set import trouveParam
 from ui.blocTexte import BlocTexte
 
 class PosiJauge:
@@ -15,7 +16,7 @@ class PosiJauge:
         self.prop = prop
         self.longueur = int(xf*prop)
         self.erreurs = []
-        self.lu = False
+        self.lu = True
         # Curseur
         self.posMin = self.hauteur
         self.posMax = self.longueur-self.hauteur
@@ -31,6 +32,7 @@ class PosiJauge:
         self.transparenceCurseur = [0, 135, 0, True]
         self.lMaxPSelect = int(self.hauteur*2.5)
         self.largeurPSelect = 0
+        self.largeurRing = int(self.largeur/2)
         self.placePoints(points)
 
     def dessine(self, x: int, y: int, longueurMax: int) -> None:
@@ -51,6 +53,12 @@ class PosiJauge:
             point = self.points[i]
             if self.valeur == point[1] and not self.defil:
                 rayon = self.largeurPSelect
+                if self.largeurRing > 0 and trouveParam("anims") >= 2:
+                    draw_ring((self.origine[0]+point[2], int(self.origine[1]+self.hauteur/2)), 
+                                int(self.largeurPSelect*1.8+self.largeur/2-self.largeurRing), 
+                                int(self.largeurPSelect*1.8+self.largeur/2), 0, 360, 100, WHITE)
+                    if self.largeurPSelect == self.lMaxPSelect:
+                        self.changeTailleRing()
             else:
                 rayon = int(self.largeur*0.6)
             if self.posCurseur >= point[2] and (self.valeur != point[1] or self.defil):
@@ -70,9 +78,10 @@ class PosiJauge:
         draw_circle(int(self.origine[0]+self.posCurseur), self.origine[1]+h, self.largeur, couleur)
         self.changePosCurseur()
         self.changeCouleurCurseur()
-        self.changeTaillePoint()
-        if self.largeurPSelect == self.lMaxPSelect:
-            self.changeNiveauSurbrillance()
+        if trouveParam("anims") >= 1:
+            self.changeTaillePoint()
+            if self.largeurPSelect == self.lMaxPSelect:
+                self.changeNiveauSurbrillance()
 
     def setPosAndTaille(self, coords: list, longueur: int) -> None:
         if coords != self.origine:
@@ -105,10 +114,17 @@ class PosiJauge:
         """
         if self.defil and self.largeurPSelect > 0:
             self.largeurPSelect = 0
+            self.largeurRing = int(self.largeur/2)
             self.transparenceCurseur[2] = self.transparenceCurseur[1]
         else:
             if self.largeurPSelect < self.lMaxPSelect:
                 self.largeurPSelect += 1
+
+    def changeTailleRing(self) -> None:
+        """Change la taille de l'anneau.
+        """
+        if self.largeurRing > 0:
+            self.largeurRing -= 1
 
     def changeCouleurCurseur(self) -> None:
         """Change la couleur du curseur selon si l'utilisateur l'utilise ou non.
@@ -144,6 +160,7 @@ class PosiJauge:
                 self.points.append([BlocTexte(points[i+1], police2, 20), i+1, l*(i+1)])
             self.points.append([BlocTexte(points[len(points)-1], police2, 20), len(points)-1, self.posMax])
             self.valeur = self.points[0][1]
+            self.lu = False
         else:
             self.erreurs.append([BlocTexte(e100[0], police2, int(yf*0.035*1.2)), 
                 BlocTexte("Une \"PosiJauge\" doit posseder au moins 2 points.", police2, int(yf*0.035))])
@@ -158,8 +175,8 @@ class PosiJauge:
         else:
             self.AttribuerPosition()
             if is_mouse_button_up(0):
-                self.defil = False
                 self.aimantsPoints()
+                self.defil = False
         if not self.defil and self.getContact():
             if is_mouse_button_pressed(0):
                 self.AttribuerPosition()
@@ -199,6 +216,7 @@ class PosiJauge:
         else:
             self.posCurseur = self.points[max][2]
             self.valeur = self.points[max][1]
+        self.lu = False
 
     def getContactCurseur(self) -> bool:
         """Vérifie si le pointeur de la souris est sur le curseur.
@@ -258,3 +276,12 @@ class PosiJauge:
         """Permet de dire que la valeur de la jauge a était lue.
         """
         self.lu = True
+
+    def setPosCurseur(self, valeur: int) -> None:
+        """Permet de modifier la position du curseur selon la valeur qui doit être sélectionné.
+
+        Args:
+            valeur (int): La valeur voulue.
+        """
+        self.valeur = valeur
+        self.posCurseur = self.points[valeur][2]

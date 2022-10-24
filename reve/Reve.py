@@ -1,12 +1,13 @@
 from systeme.FondMarin import *
 from systeme.erreurs import pasCouleur
-from reve.OZ import POLICE, TAILLEPOLICE
 from ui.blocTexte import BlocTexte
 from ui.scrollBarre import ScrollBarre
 from ui.PosiJauge import PosiJauge
+from ui.bouton import Bouton
+from reve.OZ import POLICE, TAILLEPOLICE
 from reve.decodeuses import texte, widget, cadre, checkFinCadre
 from reve.dimensions import mesureTaille, getDimsErreur, mesureTailleErreurs
-from reve.dessin import dessinePosiJauge, dessineTexte, dessineCadre
+from reve.dessin import dessineBouton, dessinePosiJauge, dessineTexte, dessineCadre
 from reve.erreurs import erreursFichier, affichErreur
 
 class Reve:
@@ -33,6 +34,9 @@ class Reve:
         self.lContenu = int(self.largeur*0.95)
         self.pasx = int(xf*0.0125)
         self.pasy = int(yf*0.05)
+        # Widgets
+        self.liSetWidge = []
+        self.attenteParam = False
         # Scroll
         self.scrollBarre = ScrollBarre([self.origine[0], self.origine[1], self.largeur, self.hauteur], 
                                         self.hauteurTotale, [[1, 8, 38], [12, 37, 131]])
@@ -54,6 +58,8 @@ class Reve:
                     ph += dessineCadre(element, x, ph, self.espace)[1] + self.espace
                 elif type(element) == BlocTexte:
                     ph += dessineTexte(element, x, ph)[1] + int(self.espace/2)
+                elif type(element) == Bouton:
+                    ph += dessineBouton(element, x, ph)[1] + int(self.espace/2)
                 elif type(element) == PosiJauge:
                     ph += dessinePosiJauge(element, x, ph, self.lContenu)[1] + self.espace
                 elif type(element) == str:
@@ -87,17 +93,25 @@ class Reve:
         cadres = []
         while len(fil) > 0:
             if ">" in fil[0]:
-                rep = widget(fil[0])
-                if type(rep) == list:
-                    if len(rep[1]) > 0:
-                        for i in range(len(rep[1])):
-                            self.erreurs.append(rep[1][i])
-                    if len(cadres) == 0:
-                        self.ajouteContenu(rep[0])
-                    else:
-                        cadres[len(cadres)-1].append(rep[0])
-                    if checkFinCadre(fil[0]):
-                        self.finCadre(cadres)
+                eleType = fil[0].split(">")
+                if eleType[0] == "*":
+                    self.liSetWidge.append([eleType[1]])
+                    self.attenteParam = True
+                else:
+                    rep = widget(fil[0])
+                    if type(rep) == list:
+                        if len(rep[1]) > 0:
+                            for i in range(len(rep[1])):
+                                self.erreurs.append(rep[1][i])
+                        if len(cadres) == 0:
+                            self.ajouteContenu(rep[0])
+                        else:
+                            cadres[len(cadres)-1].append(rep[0])
+                        if self.attenteParam:
+                            self.liSetWidge[len(self.liSetWidge)-1].append(rep[0])
+                            self.attenteParam = False
+                        if checkFinCadre(fil[0]):
+                            self.finCadre(cadres)
             elif "[" in fil[0]:
                 rep = cadre(fil[0])
                 colotest = pasCouleur(rep[0])
@@ -145,9 +159,6 @@ class Reve:
 
     def dessinErreur(self) -> int:
         """Definit ce qui s'affiche dans la fenêtre quand le fichier ne peut pas être lu.
-
-        Args:
-            mode (int): Définit le type d'erreur rencontrée.
         """
         y = self.oyc
         draw_rectangle(self.origine[0], self.origine[1], self.largeur, self.hauteur, BLACK)
@@ -175,6 +186,7 @@ class Reve:
         self.decode = False
         self.evaluation = False
         self.erreurs = []
+        self.liSetWidge = []
         self.oyc = int(self.origine[1] + yf*0.02)
         self.contenu.clear()
 

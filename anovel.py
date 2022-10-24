@@ -1,13 +1,13 @@
 from systeme.FondMarin import *
 from systeme.fenetre import Fenetre
+from systeme.set import startSet
 from partie import Partie
 from ui.bouton import Bouton
 from parametres.parametres import Parametres
 
 fen = Fenetre()
-
+startSet()
 partie = Partie(fen)
-
 param = Parametres()
 
 # Boutons

@@ -1,6 +1,8 @@
 from reve.OZ import POLICE, TAILLEPOLICE
+from reve.fonctions import trouveFonction
 from ui.PosiJauge import PosiJauge
 from ui.blocTexte import BlocTexte
+from ui.bouton import Bouton
 
 def cadre(ligne: str) -> list:
     couleur = []
@@ -54,6 +56,73 @@ def checkFinCadre(ligne: str) -> bool:
                     rep = False
                 i = i + 1
     return rep
+
+def bouton(ligne: str) -> Bouton:
+    fonctions = []
+    couleur = []
+    texte = ""
+    icone = []
+    set = ""
+    capsule = False
+    sequence = ""
+    for i in range(len(ligne)):
+        car = ligne[i]
+        if car == " ":
+            if sequence != "":
+                sequence += car
+        elif car == "=":
+            if sequence.lower() == "f":
+                set = "f"
+                sequence = ""
+            elif sequence.lower() == "c":
+                set = "c"
+                sequence = ""
+            elif sequence.lower() == "t":
+                set = "t"
+                sequence = ""
+            elif sequence.lower() == "i":
+                set = "i"
+                sequence = ""
+            else:
+                sequence += car
+        elif car == "(":
+            capsule = True
+        elif car == ")":
+            if capsule:
+                if set == "f":
+                    fon = trouveFonction(sequence)
+                    if fon:
+                        fonctions.append(fon)
+                elif set == "c":
+                    couleur.append(int(sequence))
+                elif set == "i":
+                    icone.append(sequence)
+                sequence = ""
+            capsule = False
+        elif car == ",":
+            if sequence != "":
+                if set == "f":
+                    fon = trouveFonction(sequence)
+                    if fon:
+                        fonctions.append(fon)
+                elif set == "c":
+                    couleur.append(int(sequence))
+                elif set == "t":
+                    texte += sequence
+                elif set == "i":
+                    icone.append(sequence)
+                sequence = ""
+            if not capsule:
+                set = ""
+        else:
+            sequence += car
+    if len(couleur) == 0:
+        couleur = [0, 0, 0, 255]
+    elif len(couleur) == 3:
+        couleur.append(255)
+    if len(icone) == 0:
+        icone = None
+    return Bouton(fonctions, couleur, texte, icone)
 
 def posiJauge(ligne: str) -> PosiJauge:
     longueur = 1
@@ -134,6 +203,8 @@ def widget(ligne: str) -> list:
         elif car == ">":
             if sequence.lower() == "posijauge":
                 rep = posiJauge(ligne[i+1:len(ligne)])
+            elif sequence.lower() == "bouton":
+                rep = bouton(ligne[i+1:len(ligne)])
             else:
                 sequence = ""
         else:
