@@ -24,7 +24,7 @@ def sauvegarde(reset: bool = False) -> None:
     for i in range(len(liste)):
         l = " ".join(liste[i])
         contenu += l
-        if reset:
+        if reset and fichierExiste():
             actuel[i][1] = defaut[i][1]
         if i < len(liste)-1:
             contenu += "\n"
@@ -47,6 +47,7 @@ def setParam(param: str, valeur: int) -> None:
 def startSet() -> None:
     if not fichierExiste():
         sauvegarde(True)
+        lecture()
     else:
         lecture()
 

@@ -6,4 +6,5 @@ venv
 /.vscode
 .idea
 /.idea
-.txt
+/.txt
+parametres/set.txt
