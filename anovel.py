@@ -1,11 +1,15 @@
 from systeme.FondMarin import *
 from systeme.fenetre import Fenetre
 from systeme.set import startSet
+from systeme.verif import fichierExiste, sauvegarde, scan
 from partie import Partie
 from ui.bouton import Bouton
 from parametres.parametres import Parametres
 
 fen = Fenetre()
+if not fichierExiste():
+    sauvegarde()
+scan()
 startSet()
 partie = Partie(fen)
 param = Parametres()
