@@ -7,6 +7,3 @@ Attention ! Un nombre trop important d'animations peut ralentir certaines partie
 ]
 
 bouton> t=Reinitialisation, f=(reset), c=(70, 70, 70, 255)
-[ c=(8, 50, 200, 170)
-Remet toutes les options dans leurs valeurs d'origine. Comme au premier lancement.
-]

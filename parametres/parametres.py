@@ -42,7 +42,6 @@ class Parametres:
             self.page.changeFichier(self.menu.contenu[self.menu.actif][1])
             self.copieValeur = []
             sauvegarde()
-            print("Sauvegarde")
         if not self.charge:
             self.chargeElement()
         if self.fond != None:
@@ -109,7 +108,6 @@ class Parametres:
         """
         self.ouvert = False
         sauvegarde()
-        print("Sauvegarde")
 
     def dessinErreur(self) -> int:
         """Definit ce qui s'affiche dans la fenêtre quand le fichier ne peut pas être lu.
