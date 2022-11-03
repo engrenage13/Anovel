@@ -1,4 +1,4 @@
-from platform import python_version
+import platform
 from systeme.FondMarin import *
 from systeme.set import trouveParam, sauvegarde, setParam
 from systeme.verif import verifSauvegarde
@@ -21,17 +21,8 @@ class Parametres:
         self.ouvert = False
         self.largeurLat = int(xf*0.25)
         self.fichierMenu = "parametres/Categories.md"
-        # Bannière
-        self.images = ['boussole', 'machinerie']
-        image = choice(self.images)
-        tableau = load_image(f"images/backgrounds/{image}.png")
-        ratio = self.largeurLat/tableau.width
-        image_resize(tableau, int(tableau.width*ratio), int(tableau.height*ratio))
-        image_crop(tableau, [0, int(tableau.height/4), self.largeurLat, int(yf*0.078)])
-        self.banniere = load_texture_from_image(tableau)
-        unload_image(tableau)
-        del self.images[self.images.index(image)]
-        self.menu = Menu(self.fichierMenu, (0, self.banniere.height, self.largeurLat, int(yf*0.92)))
+        self.htBanniere = int(yf*0.078)
+        self.menu = Menu(self.fichierMenu, (0, self.htBanniere, self.largeurLat, int(yf*0.92)))
         repMenu = self.menu.checkFichier()
         if len(repMenu) == 0:
             self.page = Reve(self.menu.contenu[self.menu.actif][1], (self.largeurLat, 0, xf-self.largeurLat, yf))
@@ -66,11 +57,10 @@ class Parametres:
             self.page.dessine()
             self.lset = self.page.liSetWidge
             self.InitialiseWidget()
-            draw_texture(self.banniere, 0, 0, WHITE)
+            draw_rectangle_gradient_ex((0, 0, self.largeurLat, self.htBanniere), 
+                                    [51, 7, 144, 255], [145, 104, 235, 255], BLACK, BLACK)
             draw_text_pro(police1, "Parametres", (int(yf*0.02), int(yf*0.02)), (0, 0), 0, int(yf*0.05), 
                           0, WHITE)
-            draw_line_ex((0, self.banniere.height), (self.largeurLat, self.banniere.height), 3, BLACK)
-            draw_line_ex((self.largeurLat, 0), (self.largeurLat, self.banniere.height), 3, BLACK)
             self.dessineVersion()
             self.setValeurWidgets()
         else:
@@ -103,18 +93,19 @@ class Parametres:
         draw_text_pro(police2, etatVersion.upper(), (int(xf*0.01), int(yf*0.935)), (0, 0), 0, taille, 0, 
                       WHITE)
         draw_text_pro(police2, version, (int(xf*0.02+tt1.x), int(yf*0.935)), (0, 0), 0, taille, 0, WHITE)
-        tt2 = measure_text_ex(police2, version, taille, 0)
-        draw_text_pro(police2, f"(Python {python_version()})", (int(xf*0.025+tt1.x+tt2.x), int(yf*0.935)), 
-                      (0, 0), 0, taille, 0, LIGHTGRAY)
+        tt2 = measure_text_ex(police2, version, int(taille*1.1), 0)
+        vSys = f"Python {platform.python_version()} - {platform.system()} {platform.release()}"
+        draw_text_pro(police2, vSys, (int(xf*0.025+tt1.x+tt2.x), int(yf*0.935+tt1.y*0.1)), (0, 0), 0, 
+                      int(taille*0.8), 0, LIGHTGRAY)
         texte = f"{NOMREVE} {VERSIONREVE} - {nomAbsolen} {versionAbsolen}"
-        tv = measure_text_ex(police2, texte, int(taille/2), 0)
-        draw_text_pro(police2, texte, (int(xf*0.005), int(yf-tv.y*1.2)), (0, 0), 0, int(taille/2), 0, GRAY)
+        tv = measure_text_ex(police2, texte, int(taille*0.6), 0)
+        draw_text_pro(police2, texte, (int(xf*0.005), int(yf-tv.y*1.2)), (0, 0), 0, int(taille*0.6), 0, GRAY)
 
     def chargeElement(self) -> None:
         """Permet de charger certains éléments nécessaire au fonctionnement de la fenêtre lors de son démarrage.
         """
         if not self.bug:
-            tableau = load_image(f"images/backgrounds/{self.images[0]}.png")
+            tableau = load_image(f"images/backgrounds/{choice(['boussole', 'machinerie'])}.png")
             ratio = yf/tableau.height
         else:
             tableau = load_image('images/ui/erreur.png')
