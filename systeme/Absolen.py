@@ -1,8 +1,8 @@
 from random import randint, choice
-from verif import sauvegarde
+from verif import verifSauvegarde
 
 NOM = "ABSOLEN"
-VERSION = "1.1"
+VERSION = "1.1.1"
 
 save = False
 nbChiffre = 3
@@ -13,7 +13,7 @@ abandon = False
 tentatives = 0
 indices = []
 
-print(f">>> Bienvenue sur {NOM} v{VERSION} pour ANOVEL\n")
+print(f">>> Bienvenue sur {NOM} {VERSION} pour ANOVEL\n")
 
 def indice() -> str:
     propositions = [i for i in range(6)]
@@ -87,6 +87,6 @@ if travail.lower() in ("y", "yes", "oui", "o", ""):
 
 if not abandon and save:
     print(f"Code trouvé en {tentatives} tentatives et avec {len(indices)} indices.")
-    sauvegarde()
+    verifSauvegarde()
     print("\nSauvegarde effectuée.")
 print("\nAu revoir.")

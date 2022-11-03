@@ -1,5 +1,7 @@
+from platform import python_version
 from systeme.FondMarin import *
 from systeme.set import trouveParam, sauvegarde, setParam
+from systeme.verif import verifSauvegarde
 from museeNoyee import croixLumineuse, croixSombre
 from ui.PosiJauge import PosiJauge
 from ui.clickIma import ClickIma
@@ -9,6 +11,8 @@ from parametres.menu import Menu
 from reve.Reve import Reve
 from reve.erreurs import affichErreur
 from reve.dimensions import getDimsErreur, mesureTailleErreurs
+from reve.OZ import NOMREVE, VERSIONREVE
+from random import choice
 
 class Parametres:
     def __init__(self) -> None:
@@ -17,7 +21,17 @@ class Parametres:
         self.ouvert = False
         self.largeurLat = int(xf*0.25)
         self.fichierMenu = "parametres/Categories.md"
-        self.menu = Menu(self.fichierMenu, (0, int(yf*0.078), self.largeurLat, int(yf-yf*0.128)))
+        # Bannière
+        self.images = ['boussole', 'machinerie']
+        image = choice(self.images)
+        tableau = load_image(f"images/backgrounds/{image}.png")
+        ratio = self.largeurLat/tableau.width
+        image_resize(tableau, int(tableau.width*ratio), int(tableau.height*ratio))
+        image_crop(tableau, [0, int(tableau.height/4), self.largeurLat, int(yf*0.078)])
+        self.banniere = load_texture_from_image(tableau)
+        unload_image(tableau)
+        del self.images[self.images.index(image)]
+        self.menu = Menu(self.fichierMenu, (0, self.banniere.height, self.largeurLat, int(yf*0.92)))
         repMenu = self.menu.checkFichier()
         if len(repMenu) == 0:
             self.page = Reve(self.menu.contenu[self.menu.actif][1], (self.largeurLat, 0, xf-self.largeurLat, yf))
@@ -42,6 +56,7 @@ class Parametres:
             self.page.changeFichier(self.menu.contenu[self.menu.actif][1])
             self.copieValeur = []
             sauvegarde()
+            verifSauvegarde()
         if not self.charge:
             self.chargeElement()
         if self.fond != None:
@@ -51,9 +66,11 @@ class Parametres:
             self.page.dessine()
             self.lset = self.page.liSetWidge
             self.InitialiseWidget()
-            draw_rectangle(0, 0, self.largeurLat, int(yf*0.078), [87, 67, 237, 255])
+            draw_texture(self.banniere, 0, 0, WHITE)
             draw_text_pro(police1, "Parametres", (int(yf*0.02), int(yf*0.02)), (0, 0), 0, int(yf*0.05), 
                           0, WHITE)
+            draw_line_ex((0, self.banniere.height), (self.largeurLat, self.banniere.height), 3, BLACK)
+            draw_line_ex((self.largeurLat, 0), (self.largeurLat, self.banniere.height), 3, BLACK)
             self.dessineVersion()
             self.setValeurWidgets()
         else:
@@ -75,17 +92,29 @@ class Parametres:
     def dessineVersion(self) -> None:
         """Dessine la partie indiquant la version du jeu.
         """
-        draw_rectangle(0, yf-int(yf*0.05), self.largeurLat, int(yf*0.05), [10, 10, 10, 255])
-        texte = f"{etatVersion.upper()} - {version}"
         taille = int(yf*0.03)
-        tv = measure_text_ex(police2, texte, taille, 0)
-        draw_text_pro(police2, texte, (int(xf*0.01), int(yf-tv.y*1.2)), (0, 0), 0, taille, 0, WHITE)
+        nomAbsolen = "ABSOLEN"
+        versionAbsolen = "1.1.1"
+        draw_rectangle_gradient_ex((0, yf-int(yf*0.08), self.largeurLat, int(yf*0.08)), 
+                                    [87, 25, 243, 255], [24, 87, 197, 255], [58, 117, 219, 255], BLACK)
+        tt1 = measure_text_ex(police2, etatVersion.upper(), taille, 0)
+        draw_rectangle_rounded((int(xf*0.005), int(yf*0.93), int(xf*0.01+tt1.x), int(yf*0.01+tt1.y)), 
+                                0.3, 30, ORANGE)
+        draw_text_pro(police2, etatVersion.upper(), (int(xf*0.01), int(yf*0.935)), (0, 0), 0, taille, 0, 
+                      WHITE)
+        draw_text_pro(police2, version, (int(xf*0.02+tt1.x), int(yf*0.935)), (0, 0), 0, taille, 0, WHITE)
+        tt2 = measure_text_ex(police2, version, taille, 0)
+        draw_text_pro(police2, f"(Python {python_version()})", (int(xf*0.025+tt1.x+tt2.x), int(yf*0.935)), 
+                      (0, 0), 0, taille, 0, LIGHTGRAY)
+        texte = f"{NOMREVE} {VERSIONREVE} - {nomAbsolen} {versionAbsolen}"
+        tv = measure_text_ex(police2, texte, int(taille/2), 0)
+        draw_text_pro(police2, texte, (int(xf*0.005), int(yf-tv.y*1.2)), (0, 0), 0, int(taille/2), 0, GRAY)
 
     def chargeElement(self) -> None:
         """Permet de charger certains éléments nécessaire au fonctionnement de la fenêtre lors de son démarrage.
         """
         if not self.bug:
-            tableau = load_image('images/backgrounds/machinerie.png')
+            tableau = load_image(f"images/backgrounds/{self.images[0]}.png")
             ratio = yf/tableau.height
         else:
             tableau = load_image('images/ui/erreur.png')
@@ -108,6 +137,7 @@ class Parametres:
         """
         self.ouvert = False
         sauvegarde()
+        verifSauvegarde()
 
     def dessinErreur(self) -> int:
         """Definit ce qui s'affiche dans la fenêtre quand le fichier ne peut pas être lu.

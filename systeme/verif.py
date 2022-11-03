@@ -80,7 +80,7 @@ def identique(url: str, fichier: str) -> bool:
     ref.close()
     return rep
 
-def sauvegarde() -> None:
+def verifSauvegarde() -> None:
     contenu = lecture(genereListe("./"))
     fichier = open(f"systeme/{nomFichier}", "w")
     fichier.write(contenu)
