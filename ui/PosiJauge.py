@@ -47,8 +47,7 @@ class PosiJauge:
         self.setPosAndTaille([x, y], int(longueurMax*self.prop))
         draw_rectangle_rounded([self.origine[0], self.origine[1], self.longueur, self.hauteur], 1, 30, 
                                GRAY)
-        couleur = (self.couleurCurseur[2][0]*5, self.couleurCurseur[2][1]*5, 
-                    self.couleurCurseur[2][2]*5, 255)
+        couleur = (self.couleurCurseur[2][0]*5, self.couleurCurseur[2][1]*5, self.couleurCurseur[2][2]*5, 255)
         for i in range(len(self.points)):
             point = self.points[i]
             if self.valeur == point[1] and not self.defil:

@@ -2,7 +2,7 @@ from random import randint, choice
 from verif import verifSauvegarde
 
 NOM = "ABSOLEN"
-VERSION = "1.1.1"
+VERSION = "1.1.2"
 
 save = False
 nbChiffre = 3
@@ -16,7 +16,7 @@ indices = []
 print(f">>> Bienvenue sur {NOM} {VERSION} pour ANOVEL\n")
 
 def indice() -> str:
-    propositions = [i for i in range(6)]
+    propositions = [i for i in range(7)]
     for i in range(len(indices)):
         del propositions[propositions.index(indices[i])]
     ind = choice(propositions)
@@ -29,19 +29,17 @@ def indice() -> str:
             nbPaire += 1
     if ind == 0:
         rep = f"La somme de tous mes chiffres vaut : {liste[0]+liste[1]+liste[2]}."
-    elif ind == 1 or ind == 2:
-        lidice = [j for j in range(nbChiffre)]
-        for j in range(nbChiffre-2):
-            del lidice[lidice.index(choice(lidice))]
-        compareliste = [[0, 1], [0, 2], [1, 2]]
-        equiliste = ["mes 2 premiers", "mon premier et mon dernier", "mes 2 derniers"]
-        t = equiliste[compareliste.index(lidice)]
-        rep = f"La somme de {t} chiffres vaut : {liste[lidice[0]]+liste[lidice[1]]}."
+    elif ind == 1:
+        rep = f"La somme de mes 2 premiers chiffres vaut : {liste[0]+liste[1]}."
+    elif ind == 2:
+        rep = f"La somme de mon premier et mon dernier chiffres vaut : {liste[0]+liste[2]}."
     elif ind == 3:
-        rep = f"J'ai {nbPaire} chiffres paires."
+        rep = f"La somme de mes 2 derniers chiffres vaut : {liste[1]+liste[2]}."
     elif ind == 4:
-        rep = f"J'ai {nbChiffre-nbPaire} chiffres impaires."
+        rep = f"J'ai {nbPaire} chiffres paires."
     elif ind == 5:
+        rep = f"J'ai {nbChiffre-nbPaire} chiffres impaires."
+    elif ind == 6:
         nb = randint(0, nbChiffre-1)
         if nb == 0:
             position = "premmier"

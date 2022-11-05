@@ -1,6 +1,7 @@
 from ui.blocTexte import BlocTexte
 from ui.PosiJauge import PosiJauge
 from ui.bouton import Bouton
+from ui.interrupteur import Interrupteur
 from museeNoyee import cadreCodeErreur
 
 def getDimsCadre(cadre: list, espace: int) -> list:
@@ -12,13 +13,22 @@ def getDimsCadre(cadre: list, espace: int) -> list:
             hauteur += espace
         elif type(element) == list and type(element[0]) == list:
             hauteur += getDimsCadre(element, espace)[1] + int(espace/2)
-        elif type(element) in (BlocTexte, Bouton):
+        elif type(element) in (BlocTexte, Bouton, Interrupteur):
             hauteur += element.getDims()[1] + int(espace/2)
         elif type(element) == PosiJauge:
             hauteur += element.getDims()[1] + espace
     return [largeur, hauteur]
 
 def getDimsErreur(erreur: tuple, espace: int) -> list:
+    """Mesure la taille d'une erreur.
+
+    Args:
+        erreur (tuple): L'erreur à mesurer.
+        espace (int): La valeur de l'espace à intercallé.
+
+    Returns:
+        list: 1. longueur de l'erreur. 2. hauteur de l'erreur.
+    """
     largeur = cadreCodeErreur.width
     hauteur = cadreCodeErreur.height
     dims = erreur[1].getDims()
@@ -35,7 +45,7 @@ def mesureTaille(contenu: list, espace: int) -> int:
         element = contenu[i]
         if type(element) == list:
             h += int(getDimsCadre(element, espace)[1] + espace)
-        elif type(element) in (BlocTexte, Bouton):
+        elif type(element) in (BlocTexte, Bouton, Interrupteur):
             h += int(element.getDims()[1] + espace/2)
         elif type(element) == PosiJauge:
             h += int(element.getDims()[1] + espace)
@@ -44,6 +54,15 @@ def mesureTaille(contenu: list, espace: int) -> int:
     return h
 
 def mesureTailleErreurs(erreurs: list, espace: int) -> int:
+    """Mesure la taille d'une série d'erreurs.
+
+    Args:
+        erreurs (list): Les erreurs à mesurer.
+        espace (int): La valeur de l'espace à intercalé.
+
+    Returns:
+        int: La hauteur de toutes les erreurs de la liste.
+    """
     h = 0
     for i in range(len(erreurs)):
         h += getDimsErreur(erreurs[i], espace)[1] + espace

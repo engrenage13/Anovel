@@ -1,13 +1,9 @@
-from systeme.FondMarin import *
 from systeme.erreurs import pasCouleur
-from ui.blocTexte import BlocTexte
 from ui.scrollBarre import ScrollBarre
-from ui.PosiJauge import PosiJauge
-from ui.bouton import Bouton
 from reve.OZ import POLICE, TAILLEPOLICE
 from reve.decodeuses import texte, widget, cadre, checkFinCadre
 from reve.dimensions import mesureTaille, getDimsErreur, mesureTailleErreurs
-from reve.dessin import dessineBouton, dessinePosiJauge, dessineTexte, dessineCadre
+from reve.dessin import *
 from reve.erreurs import erreursFichier, affichErreur
 
 class Reve:
@@ -60,6 +56,8 @@ class Reve:
                     ph += dessineTexte(element, x, ph)[1] + int(self.espace/2)
                 elif type(element) == Bouton:
                     ph += dessineBouton(element, x, ph)[1] + int(self.espace/2)
+                elif type(element) == Interrupteur:
+                    ph += dessineInterrupteur(element, x, ph)[1] + int(self.espace/2)
                 elif type(element) == PosiJauge:
                     ph += dessinePosiJauge(element, x, ph, self.lContenu)[1] + self.espace
                 elif type(element) == str:

@@ -7,6 +7,7 @@ from ui.PosiJauge import PosiJauge
 from ui.clickIma import ClickIma
 from ui.blocTexte import BlocTexte
 from ui.scrollBarre import ScrollBarre
+from ui.interrupteur import Interrupteur
 from parametres.menu import Menu
 from reve.Reve import Reve
 from reve.erreurs import affichErreur
@@ -83,8 +84,6 @@ class Parametres:
         """Dessine la partie indiquant la version du jeu.
         """
         taille = int(yf*0.03)
-        nomAbsolen = "ABSOLEN"
-        versionAbsolen = "1.1.1"
         draw_rectangle_gradient_ex((0, yf-int(yf*0.08), self.largeurLat, int(yf*0.08)), 
                                     [87, 25, 243, 255], [24, 87, 197, 255], [58, 117, 219, 255], BLACK)
         tt1 = measure_text_ex(police2, etatVersion.upper(), taille, 0)
@@ -97,7 +96,7 @@ class Parametres:
         vSys = f"Python {platform.python_version()} - {platform.system()} {platform.release()}"
         draw_text_pro(police2, vSys, (int(xf*0.025+tt1.x+tt2.x), int(yf*0.935+tt1.y*0.1)), (0, 0), 0, 
                       int(taille*0.8), 0, LIGHTGRAY)
-        texte = f"{NOMREVE} {VERSIONREVE} - {nomAbsolen} {versionAbsolen}"
+        texte = f"Parametres genere par {NOMREVE} {VERSIONREVE}"
         tv = measure_text_ex(police2, texte, int(taille*0.6), 0)
         draw_text_pro(police2, texte, (int(xf*0.005), int(yf-tv.y*1.2)), (0, 0), 0, int(taille*0.6), 0, GRAY)
 
@@ -158,6 +157,7 @@ class Parametres:
             balise = self.lset[i]
             valeur = trouveParam(balise[0])
             trouve = False
+            settatitude = False
             j = 0
             while j < len(self.copieValeur) and not trouve:
                 if self.copieValeur[j][0] == balise[0]:
@@ -167,13 +167,17 @@ class Parametres:
                     j = j + 1
             if not trouve:
                 self.copieValeur.append([balise[0], valeur])
-                if type(balise[1]) == PosiJauge:
-                    balise[1].setPosCurseur(valeur)
+                settatitude = True
             else:
                 if valeur != cpval:
                     self.copieValeur[j][1] = valeur
-                    if type(balise[1]) == PosiJauge:
-                        balise[1].setPosCurseur(valeur)
+                    settatitude = True
+            if settatitude:
+                if type(balise[1]) == PosiJauge:
+                    balise[1].setPosCurseur(valeur)
+                elif type(balise[1]) == Interrupteur:
+                    if balise[1].getValeur() != int(valeur):
+                        balise[1].switch()
 
     def setValeurWidgets(self) -> None:
         """Permet d'enregister les valeurs des widgets dans le fichier de sauvegarde.

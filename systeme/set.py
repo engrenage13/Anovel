@@ -1,6 +1,6 @@
 from systeme.FondMarin import *
 
-defaut = [('anims', "2")]
+defaut = [('anims', "2"), ('hasard', "1"), ("stats", "1")]
 actuel = []
 
 def fichierExiste() -> bool:
@@ -14,6 +14,16 @@ def lecture() -> None:
     fil = texte.split("\n")
     for i in range(len(fil)):
         actuel.append(fil[i].split(" "))
+    if len(defaut) != len(actuel):
+        for i in range(len(defaut)):
+            trouve = False
+            j = 0
+            while j < len(actuel) and not trouve:
+                if defaut[i][0] == actuel[j][0]:
+                    trouve = True
+                j += 1
+            if not trouve:
+                actuel.append(list(defaut[i]))
 
 def sauvegarde(reset: bool = False) -> None:
     contenu = ""

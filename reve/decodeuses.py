@@ -3,6 +3,7 @@ from reve.fonctions import trouveFonction
 from ui.PosiJauge import PosiJauge
 from ui.blocTexte import BlocTexte
 from ui.bouton import Bouton
+from ui.interrupteur import Interrupteur
 
 def cadre(ligne: str) -> list:
     couleur = []
@@ -124,6 +125,17 @@ def bouton(ligne: str) -> Bouton:
         icone = None
     return Bouton(fonctions, couleur, texte, icone)
 
+def interrupteur(ligne: str) -> Interrupteur:
+    sequence = ""
+    for i in range(len(ligne)):
+        car = ligne[i]
+        if car == " ":
+            if sequence != "":
+                sequence += car
+        else:
+            sequence += car
+    return Interrupteur(sequence)
+
 def posiJauge(ligne: str) -> PosiJauge:
     longueur = 1
     points = []
@@ -205,6 +217,8 @@ def widget(ligne: str) -> list:
                 rep = posiJauge(ligne[i+1:len(ligne)])
             elif sequence.lower() == "bouton":
                 rep = bouton(ligne[i+1:len(ligne)])
+            elif sequence.lower() == "interrupteur":
+                rep = interrupteur(ligne[i+1:len(ligne)])
             else:
                 sequence = ""
         else:

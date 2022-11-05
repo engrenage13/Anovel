@@ -47,7 +47,10 @@ class BlocTexte:
         centre = self.trouveOrigine(position[0], position[1])
         tt = measure_text_ex(self.police, self.texte, self.taille, 0)
         decomposition = self.texte.split("\n")
-        axeY = 0.37 + 0.054*(len(decomposition)-1)
+        valDep = 0.37
+        if len(decomposition) > 1:
+            valDep = 0.41
+        axeY = valDep + 0.054*(len(decomposition)-1)
         if alignement == 'c':
             draw_text_pro(self.police, self.texte, (centre[0]-int(tt.x/2), centre[1]-int(tt.y*axeY)), 
                           (0, 0), 0, self.taille, 0, couleur)
