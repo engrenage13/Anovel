@@ -3,9 +3,10 @@ from systeme.fenetre import Fenetre
 from Editeur.editeur import Editeur
 from objets.Joueur import Joueur
 from ui.clickIma import ClickIma
-from museeNoyee import croixLumineuse, croixSombre
+from museeNoyee import croixLumineuse, croixSombre, rouageLumineux, rouageSombre
 from attaque import Attaque
 from finPartie import FinPartie
+from parametres.parametres import Parametres
 
 class Partie:
     def __init__(self, fenetre: Fenetre) -> None:
@@ -15,7 +16,9 @@ class Partie:
             fenetre (Fenetre): La fenêtre affiché à l'écran.
         """
         self.fenetre = fenetre
+        self.param = Parametres()
         self.croix = ClickIma([fenetre.switchEtat], [croixSombre, croixLumineuse])
+        self.rouage = ClickIma([self.param.ouvre], [rouageSombre, rouageLumineux])
         self.joueurs = []
         self.timeline = 0
         self.creeJoueurs()
@@ -38,19 +41,22 @@ class Partie:
     def dessine(self) -> None:
         """Dessine les éléments de la partie à l'écran.
         """
-        if self.timeline == 1 or self.timeline == 2:
-            self.editeur.dessine()
-        elif self.timeline == 3:
-            self.baston.dessine()
-        elif self.timeline == 4:
-            self.baston.dessine()
-            self.ecranFin.dessine()
-            self.croix.dessine((xf-hbarre, int(hbarre*0.05)))
-            if self.ecranFin.saturation == 255:
-                self.nouvelleEtape()
-        elif self.timeline == 5:
-            self.ecranFin.dessine()
-            self.croix.dessine((xf-hbarre, int(hbarre*0.05)))
+        if not self.param.ouvert:
+            if self.timeline == 1 or self.timeline == 2:
+                self.editeur.dessine()
+            elif self.timeline == 3:
+                self.baston.dessine()
+            elif self.timeline == 4:
+                self.baston.dessine()
+                self.ecranFin.dessine()
+                self.croix.dessine((xf-hbarre, int(hbarre*0.05)))
+                if self.ecranFin.saturation == 255:
+                    self.nouvelleEtape()
+            elif self.timeline == 5:
+                self.ecranFin.dessine()
+                self.croix.dessine((xf-hbarre, int(hbarre*0.05)))
+        else:
+            self.param.dessine()
 
     def getJoueurs(self) -> list:
         """Renvoie la liste des joueurs présents dans la partie.

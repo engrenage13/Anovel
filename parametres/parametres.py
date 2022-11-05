@@ -26,7 +26,8 @@ class Parametres:
         self.menu = Menu(self.fichierMenu, (0, self.htBanniere, self.largeurLat, int(yf*0.92)))
         repMenu = self.menu.checkFichier()
         if len(repMenu) == 0:
-            self.page = Reve(self.menu.contenu[self.menu.actif][1], (self.largeurLat, 0, xf-self.largeurLat, yf))
+            self.page = Reve(self.menu.contenu[self.menu.actif][1], 
+                             (self.largeurLat, hbarre, xf-self.largeurLat, yf-hbarre))
             self.bug = False
         else:
             self.bug = True
@@ -58,6 +59,7 @@ class Parametres:
             self.page.dessine()
             self.lset = self.page.liSetWidge
             self.InitialiseWidget()
+            draw_rectangle_gradient_h(self.largeurLat, 0, xf, hbarre, [0, 0, 0, 170], [67, 10, 10, 150])
             draw_rectangle_gradient_ex((0, 0, self.largeurLat, self.htBanniere), 
                                     [51, 7, 144, 255], [145, 104, 235, 255], BLACK, BLACK)
             draw_text_pro(police1, "Parametres", (int(yf*0.02), int(yf*0.02)), (0, 0), 0, int(yf*0.05), 

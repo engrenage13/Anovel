@@ -157,6 +157,7 @@ class Editeur:
         draw_text_pro(police1, f"Installation : {self.joueur.getNom()}", (int(hbarre/4), int(hbarre/4)), 
                       (0, 0), 0, int(hbarre*0.7), 0, WHITE)
         self.createur.croix.dessine((xf-hbarre, int(hbarre*0.05)))
+        self.createur.rouage.dessine((int(xf-hbarre*2.05), int(hbarre*0.05)))
 
     def ordreBateaux(self) -> None:
         """Determine dans quel ordre, il est préférable d'afficher les bateaux.

@@ -95,6 +95,7 @@ class Attaque:
                       (0, 0), 0, int(hbarre*0.7), 0, WHITE)
         if not self.gagnant:
             self.proprio.croix.dessine((xf-hbarre, int(hbarre*0.05)))
+            self.proprio.rouage.dessine((int(xf-hbarre*2.05), int(hbarre*0.05)))
 
     def incrementTour(self) -> None:
         """Incrémente le compteur de tour

@@ -2,7 +2,7 @@ from random import randint, choice
 from verif import verifSauvegarde
 
 NOM = "ABSOLEN"
-VERSION = "1.1.2"
+VERSION = "1.1.3"
 
 save = False
 nbChiffre = 3
@@ -36,9 +36,9 @@ def indice() -> str:
     elif ind == 3:
         rep = f"La somme de mes 2 derniers chiffres vaut : {liste[1]+liste[2]}."
     elif ind == 4:
-        rep = f"J'ai {nbPaire} chiffres paires."
+        rep = f"J'ai {nbPaire} chiffre(s) paire(s)."
     elif ind == 5:
-        rep = f"J'ai {nbChiffre-nbPaire} chiffres impaires."
+        rep = f"J'ai {nbChiffre-nbPaire} chiffre(s) impaire(s)."
     elif ind == 6:
         nb = randint(0, nbChiffre-1)
         if nb == 0:
