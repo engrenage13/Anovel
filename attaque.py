@@ -1,5 +1,6 @@
 from objets.Bateau import Bateau
 from systeme.FondMarin import *
+from systeme.set import trouveParam
 from objets.Joueur import Joueur
 from museeNoyee import viseur, mer
 from objets.plateau import Plateau
@@ -43,7 +44,8 @@ class Attaque:
         draw_texture(mer, 0, 0, WHITE)
         for i in range(len(self.plateaux)):
             self.plateaux[i].dessine((tlatba, self.yPlateau+yf*i), tailleCase)
-        self.stats(self.joueurActuel)
+        if trouveParam("stats") == 1:
+            self.stats(self.joueurActuel)
         self.barreTitre()
         if self.play:
             if self.viseur:
@@ -110,16 +112,25 @@ class Attaque:
         """
         l = ["Nb. Cases Touchees", "Touches", "Rates"]
         lv = joueur.getStats()
-        y = int(yf*0.09)
+        x = int(xf*0.005)
+        denivX = int(-xf*0.06)
+        y = int(yf*0.115)
+        taille = int(yf*0.03)
+        texte = ""
         for i in range(len(l)):
             if type(lv[i]) != list:
                 t = f"{l[i]} : {lv[i]}"
             else:
                 t = f"{l[i]} : {lv[i][0]} ({lv[i][1]}%)"
-            longueur = measure_text_ex(police2, t, 20, 0)
-            x = int(xf*0.99 - longueur.x)
-            draw_text_pro(police2, t, (x, y), (0, 0), 0, 20, 0, WHITE)
-            y = int(y + yf*0.05)
+            if i < len(l)-1:
+                t = t + "\n"
+            texte += t
+        tt = measure_text_ex(police2, texte, taille, 0)
+        draw_rectangle_rounded((denivX, y, int(tt.x*1.13+denivX*-1), int(tt.y*1.2)), 
+                                0.2, 30, [255, 255, 255, 50])
+        draw_rectangle_rounded_lines((denivX, y, int(tt.x*1.13+denivX*-1), int(tt.y*1.2)), 0.2, 30, 3, WHITE)
+        y += int(tt.y*0.1)
+        draw_text_pro(police2, texte, (x, y), (0, 0), 0, taille, 0, WHITE)
 
     def dessineViseur(self, coo: tuple, case: tuple) -> str:
         """Dessine le curseur aux coordonnées passés en paramètres.

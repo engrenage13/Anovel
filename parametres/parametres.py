@@ -59,7 +59,10 @@ class Parametres:
             self.page.dessine()
             self.lset = self.page.liSetWidge
             self.InitialiseWidget()
-            draw_rectangle_gradient_h(self.largeurLat, 0, xf, hbarre, [0, 0, 0, 170], [67, 10, 10, 150])
+            if len(self.page.erreurs) == 0:
+                draw_rectangle(self.largeurLat, 0, xf-self.largeurLat, hbarre, [0, 0, 0, 170])
+            else:
+                draw_rectangle(self.largeurLat, 0, xf-self.largeurLat, hbarre, BLACK)
             draw_rectangle_gradient_ex((0, 0, self.largeurLat, self.htBanniere), 
                                     [51, 7, 144, 255], [145, 104, 235, 255], BLACK, BLACK)
             draw_text_pro(police1, "Parametres", (int(yf*0.02), int(yf*0.02)), (0, 0), 0, int(yf*0.05), 

@@ -2,6 +2,7 @@ from objets.Bateau import Bateau
 from objets.plateau import Plateau
 from systeme.FondMarin import *
 from random import randint, choice
+from systeme.set import trouveParam
 
 class Positionneur:
     def __init__(self, nbBateaux: int) -> None:
@@ -185,7 +186,10 @@ class Positionneur:
             plateau (Plateau): Le plateau sur lequel placer les bateaux.
         """
         dims = plateau.getDimensions()
-        verif = self.verifPlacement(bateaux)
+        if trouveParam("hasard") == 1:
+            verif = self.verifPlacement(bateaux)
+        else:
+            verif = [[], bateaux]
         blacklist = verif[0]
         liBat = verif[1]
         for i in range(len(liBat)):
