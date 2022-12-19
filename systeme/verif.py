@@ -3,6 +3,7 @@ from os import listdir, remove
 
 blacklist = (".git", ".gitignore", ".vscode", "__pycache__")
 nomFichier = "sauvegarde.txt"
+fichierQuiFautPasToucher = ("py", "png", "otf", "ico")
 
 def estDossier(test: str) -> bool:
     if not "." in test:
@@ -13,7 +14,7 @@ def estDossier(test: str) -> bool:
 
 def fichierAPasScan(fichier: str) -> bool:
     fic = fichier.split(".")
-    if fic[len(fic)-1] in ("py", "png", "otf") or fichier.lower() in ("readme.md", nomFichier.lower()):
+    if fic[len(fic)-1] in fichierQuiFautPasToucher or fichier.lower() in ("readme.md", nomFichier.lower()):
         rep = True
     else:
         rep = False

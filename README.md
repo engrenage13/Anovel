@@ -1,4 +1,4 @@
-![Anovel](images/logos/Navale.png)
+![Anovel](images/logos/Anovel.png)
 
 # Qu-est que c'est ?
 C'est une application déstinée à héberger des jeux de société dématérialisés.
@@ -35,12 +35,12 @@ Aujourd'hui, septembre 2022, le projet a évolué et les enjeux ne sont plus les
 - Création d'une bataille navale.
 
 ## Alpha 0.2.x :fire:
-- Suppression de la bataille navale. :fire:
 - Création d'un nouvel éditeur. :heavy_check_mark:
 - Création des paramètres. :heavy_check_mark:
 - Création d'un nouveau jeu. :fire:
 - Création d'un installateur.
+- Création du multijoueur "semi-local".
 - Et bien d'autres améliorations.
 
 ## Alpha 0.3.x
-- Création du multijoueur "semi-local".
+- Lancement du rpg.

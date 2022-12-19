@@ -20,11 +20,11 @@ sett = Bouton([param.ouvre], [80, 137, 80, 255], "Parametres")
 quit = Bouton([fen.switchEtat], DARKGRAY, "Quitter")
 
 # Images
-nanav = load_image('images/logos/Navale.png')
-ratio = xf/nanav.width*0.35
-image_resize(nanav, int(nanav.width*ratio), int(nanav.height*ratio))
-logo = load_texture_from_image(nanav)
-unload_image(nanav)
+nonov = load_image('images/logos/Navale.png')
+ratio = xf/nonov.width*0.35
+image_resize(nonov, int(nonov.width*ratio), int(nonov.height*ratio))
+logo = load_texture_from_image(nonov)
+unload_image(nonov)
 tableau = load_image('images/backgrounds/epave.png')
 ratio = yf/tableau.height
 image_resize(tableau, int(tableau.width*ratio), int(tableau.height*ratio))
