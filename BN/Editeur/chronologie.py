@@ -1,5 +1,5 @@
-from objets.Bateau import Bateau
-from Editeur.tiroir import Tiroir
+from BN.objets.Bateau import Bateau
+from BN.Editeur.tiroir import Tiroir
 
 class Chronologie:
     def __init__(self, tiroir: Tiroir, bateaux: list) -> None:

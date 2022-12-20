@@ -1,11 +1,11 @@
 from systeme.FondMarin import *
 from systeme.fenetre import Fenetre
-from Editeur.editeur import Editeur
-from objets.Joueur import Joueur
+from BN.Editeur.editeur import Editeur
+from BN.objets.Joueur import Joueur
 from ui.clickIma import ClickIma
 from museeNoyee import croixLumineuse, croixSombre, rouageLumineux, rouageSombre
-from attaque import Attaque
-from finPartie import FinPartie
+from BN.attaque import Attaque
+from BN.finPartie import FinPartie
 from parametres.parametres import Parametres
 
 class Partie:

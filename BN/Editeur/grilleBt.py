@@ -23,7 +23,7 @@ class GrilleBt:
         self.largeurChrono = 0
         self.hauteurChrono = 0
         # Décors
-        self.adresse = "images/decors/jauge1.png"
+        self.adresse = "images/BN/ui/jauge.png"
     
     def dessine(self, x: int, y: int, important: list) -> None:
         """Dessine la grille.

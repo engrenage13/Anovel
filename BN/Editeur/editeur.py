@@ -1,15 +1,15 @@
 from systeme.FondMarin import *
-from objets.Bateau import Bateau
+from BN.objets.Bateau import Bateau
 from ui.bouton import Bouton
 from ui.ptiBouton import PtiBouton
 from ui.notif import Notification
-from objets.Joueur import Joueur
-from objets.plateau import Plateau
-from Editeur.positionneur import Positionneur
-from Editeur.tiroir import Tiroir
-from Editeur.grilleBt import GrilleBt
-from Editeur.chronologie import Chronologie
-from museeNoyee import mer
+from BN.objets.Joueur import Joueur
+from BN.objets.plateau import Plateau
+from BN.Editeur.positionneur import Positionneur
+from BN.Editeur.tiroir import Tiroir
+from BN.Editeur.grilleBt import GrilleBt
+from BN.Editeur.chronologie import Chronologie
+from BN.collectionImage import mer
 
 class Editeur:
     def __init__(self, joueur: Joueur, creator: object) -> None:

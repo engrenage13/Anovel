@@ -1,5 +1,5 @@
-from objets.Bateau import Bateau
-from objets.plateau import Plateau
+from BN.objets.Bateau import Bateau
+from BN.objets.plateau import Plateau
 from systeme.FondMarin import *
 from random import randint, choice
 from systeme.set import trouveParam
@@ -204,14 +204,14 @@ class Positionneur:
                     sens = 'v'
                 if sens == 'h':
                     x = randint(1, dims[0]-bateau.taille)
-                    y = choice(plateau.alphabet[0:dims[1]-1])
+                    y = choice(plateau.alphabet[0:dims[1]])
                     for j in range(bateau.taille):
                         case = y+str(x)
                         pos.append(case)
                         x = x + 1
                 else:
                     x = randint(1, dims[0])
-                    y = choice(plateau.alphabet[0:dims[1]-bateau.taille])
+                    y = choice(plateau.alphabet[0:dims[1]-bateau.taille+1])
                     for j in range(bateau.taille):
                         case = y+str(x)
                         pos.append(case)

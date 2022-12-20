@@ -2,7 +2,7 @@ from systeme.FondMarin import *
 from systeme.fenetre import Fenetre
 from systeme.set import startSet
 from systeme.verif import fichierExiste, verifSauvegarde, scan
-from partie import Partie
+from BN.partie import Partie
 from ui.bouton import Bouton
 from parametres.parametres import Parametres
 

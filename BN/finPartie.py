@@ -1,5 +1,5 @@
 from systeme.FondMarin import *
-from museeNoyee import viseur, croix, rond
+from BN.collectionImage import viseur, croix, rond
 from animations.Paillette import Paillette
 from ui.bouton import Bouton
 

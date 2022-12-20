@@ -1,5 +1,6 @@
 from systeme.FondMarin import *
-from objets.Bateau import Bateau
+from BN.objets.Bateau import Bateau
+from BN.collectionImage import corail1, corail2, poisson
 
 class Tiroir:
     def __init__(self, createur: object) -> None:
@@ -20,18 +21,7 @@ class Tiroir:
         self.lumCadre = [0, 5]
         self.hauteur_rect = int(tailleCase*1.2)
         # Images
-        deco1 = load_image('images/decors/coraux1.png')
-        ratio = self.largeur/deco1.width
-        image_resize(deco1, int(deco1.width*ratio), int(deco1.height*ratio))
-        self.decos = [load_texture_from_image(deco1)]
-        image_flip_vertical(deco1)
-        self.decos.append(load_texture_from_image(deco1))
-        unload_image(deco1)
-        deco2 = load_image('images/decors/poissons.png')
-        ratio = self.hauteur_rect/deco2.height
-        image_resize(deco2, int(deco2.width*ratio), int(deco2.height*ratio))
-        self.decos.append(load_texture_from_image(deco2))
-        unload_image(deco2)
+        self.decos = [corail1, corail2, poisson]
 
     def dessine(self, y: int) -> None:
         """Dessine le tiroir et les bateaux qui sont dedans.
