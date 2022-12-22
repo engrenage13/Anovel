@@ -17,9 +17,9 @@ class Notification:
         self.hauteur = int(yf*0.09)
         tt = measure_text_ex(police2, texte, self.hauteur*0.33, 0)
         if tt.x >= int(self.lmax*0.95):
-            self.texte = BlocTexte(texte[:], police2, int(self.hauteur*0.33), [int(self.lmax), ''])
+            self.texte = BlocTexte(texte[:].upper(), police2, int(self.hauteur*0.33), [int(self.lmax), ''])
         else:
-            self.texte = BlocTexte(texte[:], police2, int(self.hauteur*0.33))
+            self.texte = BlocTexte(texte[:].upper(), police2, int(self.hauteur*0.33))
         self.largeur = int(self.texte.getDims()[0]+self.lmax*0.05)
         if self.largeur < self.lmin:
             self.largeur = self.lmin+int(self.lmax*0.05)

@@ -1,6 +1,6 @@
 from systeme.FondMarin import draw_texture, file_exists, get_file_extension, WHITE
 from systeme.erreurs import *
-from reve.OZ import POLICE, TAILLEPOLICE
+from reve.OZ import TAILLEPOLICE, P1, P2
 from ui.blocTexte import BlocTexte
 from museeNoyee import cadreCodeErreur, cauchemar
 
@@ -24,12 +24,12 @@ def erreursFichier(fichier: str, limites: list) -> bool:
     rep = []
     if not file_exists(fichier):
         texte = f"Le fichier \"{fichier}\" n'existe pas, ou n'est pas au bon endroit."
-        rep.append((BlocTexte(e000[0], POLICE, int(TAILLEPOLICE*1.2)), 
-                    BlocTexte(texte, POLICE, TAILLEPOLICE, limites)))
+        rep.append((BlocTexte(e000[0], P1, int(TAILLEPOLICE*1.2)), 
+                    BlocTexte(texte, P2, TAILLEPOLICE, limites)))
     if get_file_extension(fichier) != ".md":
         texte = f"L'extension du fichier \"{fichier}\", n'est pas prise en charge."
-        rep.append((BlocTexte(e001[0], POLICE, int(TAILLEPOLICE*1.2)), 
-                    BlocTexte(texte, POLICE, TAILLEPOLICE, limites)))
+        rep.append((BlocTexte(e001[0], P1, int(TAILLEPOLICE*1.2)), 
+                    BlocTexte(texte, P2, TAILLEPOLICE, limites)))
     if len(rep) == 0:
         rep = False
     return rep

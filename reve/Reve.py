@@ -1,6 +1,6 @@
 from systeme.erreurs import pasCouleur
 from ui.scrollBarre import ScrollBarre
-from reve.OZ import POLICE, TAILLEPOLICE
+from reve.OZ import P1, P2, TAILLEPOLICE
 from reve.decodeuses import texte, widget, cadre, checkFinCadre
 from reve.dimensions import mesureTaille, getDimsErreur, mesureTailleErreurs
 from reve.dessin import *
@@ -115,8 +115,8 @@ class Reve:
                 colotest = pasCouleur(rep[0])
                 if colotest:
                     self.erreurs.append(
-                        [BlocTexte(colotest[0], POLICE, (TAILLEPOLICE*1.2), [int(self.largeur*0.95), '']), 
-                        BlocTexte(colotest[1], POLICE, TAILLEPOLICE, [int(self.largeur*0.95), ''])])
+                        [BlocTexte(colotest[0], P1, (TAILLEPOLICE*1.2), [int(self.largeur*0.95), '']), 
+                        BlocTexte(colotest[1], P2, TAILLEPOLICE, [int(self.largeur*0.95), ''])])
                 prop = self.pasx/self.lContenu
                 largeur = int(self.lContenu*(1-prop*2*(len(cadres))))
                 cadres.append([[largeur]+rep])
@@ -162,8 +162,8 @@ class Reve:
         draw_rectangle(self.origine[0], self.origine[1], self.largeur, self.hauteur, BLACK)
         draw_texture(self.iErreur, int(self.origine[0]+self.largeur/2-self.iErreur.width/2), y, WHITE)
         y += int(self.iErreur.height*1.1)
-        titre = BlocTexte("Un probleme est survenu !", POLICE, TAILLEPOLICE*1.2, [self.lContenu, ''])
-        sousTitre = BlocTexte("Chargement interrompue.", POLICE, TAILLEPOLICE, [self.lContenu, ''])
+        titre = BlocTexte("Un probleme est survenu !", P1, TAILLEPOLICE*1.2, [self.lContenu, ''])
+        sousTitre = BlocTexte("Chargement interrompue.", P2, TAILLEPOLICE, [self.lContenu, ''])
         titre.dessine([[int(self.origine[0]+self.largeur/2), y], 'c'])
         y += int(self.hauteur*0.05)
         sousTitre.dessine([[int(self.origine[0]+self.largeur/2), y], 'c'])

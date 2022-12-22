@@ -154,8 +154,8 @@ class Editeur:
         """Crée la barre de titre en haut de la fenêtre.
         """
         draw_rectangle_gradient_h(0, 0, xf, hbarre, [112, 31, 126, 120], [150, 51, 140, 100])
-        draw_text_pro(police1, f"Installation : {self.joueur.getNom()}", (int(hbarre/4), int(hbarre/4)), 
-                      (0, 0), 0, int(hbarre*0.7), 0, WHITE)
+        draw_text_pro(police1, f"INSTALLATION : {self.joueur.getNom().upper()}", (int(hbarre/5), 
+                      int(hbarre/4)), (0, 0), 0, int(hbarre*0.7), 0, WHITE)
         self.createur.croix.dessine((xf-hbarre, int(hbarre*0.05)))
         self.createur.rouage.dessine((int(xf-hbarre*2.05), int(hbarre*0.05)))
 

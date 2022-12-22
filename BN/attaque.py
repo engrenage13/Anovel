@@ -89,11 +89,11 @@ class Attaque:
     def barreTitre(self) -> None:
         """Crée la barre de titre en haut de la fenêtre.
         """
-        ttour = measure_text_ex(police1, f"Tour {self.tour}", int(hbarre*0.7), 0)
+        ttour = measure_text_ex(police1, f"TOUR {self.tour}", int(hbarre*0.7), 0)
         draw_rectangle_gradient_h(0, 0, xf, hbarre, [112, 31, 126, 120], [150, 51, 140, 100])
-        draw_text_pro(police1, self.joueurActuel.getNom(), (int(hbarre/4), int(hbarre/4)), 
+        draw_text_pro(police1, self.joueurActuel.getNom().upper(), (int(hbarre/4), int(hbarre/4)), 
                       (0, 0), 0, int(hbarre*0.7), 0, WHITE)
-        draw_text_pro(police1, f"Tour {self.tour}", (int(xf/2-ttour.x/2), int(hbarre/4)), 
+        draw_text_pro(police1, f"TOUR {self.tour}", (int(xf/2-ttour.x/2), int(hbarre/4)), 
                       (0, 0), 0, int(hbarre*0.7), 0, WHITE)
         if not self.gagnant:
             self.proprio.croix.dessine((xf-hbarre, int(hbarre*0.05)))
@@ -110,7 +110,7 @@ class Attaque:
         Args:
             joueur (Joueur): Joueur dont les stats doivent être affichés.
         """
-        l = ["Nb. Cases Touchees", "Touches", "Rates"]
+        l = ["NB. CASES TOUCHEES", "TOUCHES", "RATES"]
         lv = joueur.getStats()
         x = int(xf*0.005)
         denivX = int(-xf*0.06)
@@ -125,12 +125,12 @@ class Attaque:
             if i < len(l)-1:
                 t = t + "\n"
             texte += t
-        tt = measure_text_ex(police2, texte, taille, 0)
+        tt = measure_text_ex(police3, texte, taille, 0)
         draw_rectangle_rounded((denivX, y, int(tt.x*1.13+denivX*-1), int(tt.y*1.2)), 
                                 0.2, 30, [255, 255, 255, 50])
         draw_rectangle_rounded_lines((denivX, y, int(tt.x*1.13+denivX*-1), int(tt.y*1.2)), 0.2, 30, 3, WHITE)
         y += int(tt.y*0.1)
-        draw_text_pro(police2, texte, (x, y), (0, 0), 0, taille, 0, WHITE)
+        draw_text_pro(police3, texte, (x, y), (0, 0), 0, taille, 0, WHITE)
 
     def dessineViseur(self, coo: tuple, case: tuple) -> str:
         """Dessine le curseur aux coordonnées passés en paramètres.
@@ -148,9 +148,9 @@ class Attaque:
         else:
             texte = "X"
             couleur = ORANGE
-        longueurTexte = measure_text_ex(police2, texte, 20, 0)
-        draw_text_pro(police2, texte, (int(coo[0]+tailleCase/2-longueurTexte.x/2), 
-                      int(coo[1]+tailleCase/2-longueurTexte.y/2)), (0, 0), 0, 20, 0, couleur)
+        longueurTexte = measure_text_ex(police2, texte, int(tailleCase*0.3), 0)
+        draw_text_pro(police1, texte, (int(coo[0]+tailleCase/2-longueurTexte.x/2), 
+                      int(coo[1]+tailleCase/2-longueurTexte.y/2)), (0, 0), 0, int(tailleCase*0.3), 0, couleur)
         return texte
     
     def localiseCurseur(self, plateau: list, codeJ: int) -> tuple:

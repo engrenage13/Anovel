@@ -12,6 +12,8 @@ class FinPartie:
             tour (int): Le nombre de tour qu'à durer la partie.
             createur (object): L'entité qui crée la fenêtre et gère la partie.
         """
+        self.tt1 = hbarre
+        self.tt2 = int(hbarre*0.7)
         self.proprio = createur
         self.joueurs = joueurs
         self.duree = tour
@@ -41,12 +43,12 @@ class FinPartie:
         for i in range(len(self.paillettes)):
             self.paillettes[i].dessine()
         draw_line_ex((int(xf/2), int(yf*0.2)), (int(xf/2), int(yf*0.83)), 4, (255, 203, 0, self.saturation))
-        tLong = measure_text_ex(police2, "Longueur de la partie", 20, 0)
-        tTour = measure_text_ex(police2, f"{self.duree} Tours", 40, 0)
-        draw_text_pro(police2, "Longueur de la partie", (int(xf/2-tLong.x/2), int(yf*0.1-tLong.y/2)), 
-                      (0, 0), 0, 20, 0, (255, 255, 255, self.saturation))
-        draw_text_pro(police2, f"{self.duree} Tours", (int(xf/2-tTour.x/2), int(yf*0.14-tTour.y/2)), 
-                      (0, 0), 0, 40, 0, (255, 255, 255, self.saturation))
+        tLong = measure_text_ex(police2, "LONGUEUR DE LA PARTIE", self.tt2, 0)
+        tTour = measure_text_ex(police2, f"{self.duree} TOURS", self.tt1, 0)
+        draw_text_pro(police2, "LONGUEUR DE LA PARTIE", (int(xf/2-tLong.x/2), int(yf*0.1-tLong.y/2)), 
+                      (0, 0), 0, self.tt2, 0, (255, 255, 255, self.saturation))
+        draw_text_pro(police2, f"{self.duree} TOURS", (int(xf/2-tTour.x/2), int(yf*0.14-tTour.y/2)), 
+                      (0, 0), 0, self.tt1, 0, (255, 255, 255, self.saturation))
         ytit = int(yf*0.11)
         ystat = int(ytit+yf*0.14)
         ybat = int(ystat+yf*0.14)
@@ -87,8 +89,8 @@ class FinPartie:
         """
         x = coord[0]
         y = coord[1]
-        tTit = measure_text_ex(police1, self.joueurs[indice][0].getNom(), 40, 0)
-        tWin = measure_text_ex(police2, "VAINQUEUR", 28, 0)
+        tTit = measure_text_ex(police1, self.joueurs[indice][0].getNom().upper(), self.tt1, 0)
+        tWin = measure_text_ex(police2i, "VAINQUEUR", self.tt1, 0)
         x1 = x
         y1 = int(y + yf*0.08 - tTit.y/2)
         fagnon = (0, int(y1-yf*0.005), int(x+tWin.x+xf*0.02), int(tWin.y+yf*0.01))
@@ -100,11 +102,11 @@ class FinPartie:
             multiplicateur = 1
         if not self.pos and not (type(self.pos) == int and self.pos == 0):
             self.pos = fagnon[2]
-        draw_text_pro(police1, self.joueurs[indice][0].getNom(), (x, y), (0, 0), 0, 40, 0, 
+        draw_text_pro(police1, self.joueurs[indice][0].getNom().upper(), (x, y), (0, 0), 0, self.tt1, 0, 
                       (0, 121, 241, self.saturation))
         if self.joueurs[indice][1]:
             draw_rectangle(fagnon[0]+self.pos*multiplicateur, fagnon[1], fagnon[2], fagnon[3], GOLD)
-            draw_text_pro(police2, "VAINQUEUR", (x1+self.pos*multiplicateur, y1), (0, 0), 0, 28, 0, BLACK)
+            draw_text_pro(police2i, "VAINQUEUR", (x1+self.pos*multiplicateur, y1), (0, 0), 0, self.tt1, 0, BLACK)
 
     def dessineStats(self, coord: tuple, indice: int) -> None:
         """Dessine les stats du joueur concerné.
@@ -153,11 +155,11 @@ class FinPartie:
                     xt = xt + taille
             else:
                 draw_rectangle(x, y, t, taille, (40, 40, 40, self.saturation))
-            tNom = measure_text_ex(police2, liBat[i].nom, 25, 0)
+            tNom = measure_text_ex(police2, liBat[i].nom.upper(), self.tt2, 0)
             xText = int(x+t+taille)
             if indice == 1:
                 xText = int(x-taille-tNom.x)
-            draw_text_pro(police2, liBat[i].nom, (xText, int(y+taille/2-tNom.y/2)), (0, 0), 0, 25, 0, 
+            draw_text_pro(police2, liBat[i].nom.upper(), (xText, int(y+taille/2-tNom.y/2)), (0, 0), 0, self.tt2, 0, 
                           (255, 255, 255, self.saturation))
             y = int(y+tailleCase)
 

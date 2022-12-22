@@ -36,8 +36,9 @@ def accueil():
         draw_texture(fond, 0, 0, WHITE)
         draw_texture(logo, 0, 0, WHITE)
         taille = int(yf*0.02)
-        tv = measure_text_ex(police2, version, taille, 0)
-        draw_text_pro(police2, version, (int(xf*0.005), int(yf-tv.y*1.1)), (0, 0), 0, taille, 0, GRAY)
+        tv = measure_text_ex(police3i, version, taille, 0)
+        draw_text_pro(police3i, f"{version} - {etatVersion.lower()}", (int(xf*0.005), int(yf-tv.y*1.1)), 
+                      (0, 0), 0, taille, 0, GRAY)
         start.dessine((int(xf*0.25), int(yf*0.92)), True)
         sett.dessine((int(xf*0.5), int(yf*0.92)))
         quit.dessine((int(xf*0.75), int(yf*0.92)))

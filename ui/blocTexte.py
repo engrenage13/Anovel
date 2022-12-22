@@ -13,24 +13,9 @@ class BlocTexte:
         self.texte = texte
         self.police = police
         self.taille = taille
-        if len(limites) == 2:
-            if type(limites[0]) == int and type(limites[1]) == int:
-                self.tCadre = limites
-                self.adapte()
-            elif type(limites[0]) == int and type(limites[1]) == str:
-                self.tCadre = [limites[0], yf]
-                self.adapte()
-                tt = measure_text_ex(self.police, self.texte, self.taille, 0)
-                self.tCadre = [limites[0], tt.y]
-            elif type(limites[0]) == str and type(limites[1]) == int:
-                tt = measure_text_ex(self.police, self.texte, self.taille, 0)
-                self.tCadre = [tt.x, limites[1]]
-            else:
-                tt = measure_text_ex(self.police, self.texte, self.taille, 0)
-                self.tCadre = [tt.x, tt.y]
-        else:
-            tt = measure_text_ex(self.police, self.texte, self.taille, 0)
-            self.tCadre = [tt.x, tt.y]
+        self.calcul = False
+        self.limites = limites
+        self.construction(limites)
     
     def dessine(self, position: list, couleur:list=WHITE, alignement:str='c') -> None:
         """Dessine le texte du bloc à l'écran.
@@ -40,6 +25,8 @@ class BlocTexte:
             couleur (list, optional): Couleur du texte. Defaults to WHITE.
             alignement (str, optional): Alignement du texte dans l'encadré. Defaults to 'c'.
         """
+        if not self.calcul:
+            self.construction(self.limites)
         if type(alignement) != str or alignement.lower() not in ['c', 'g', 'd']:
             alignement = 'c'
         else:
@@ -62,6 +49,27 @@ class BlocTexte:
             draw_text_pro(self.police, self.texte, 
                           (centre[0]+int(self.tCadre[0]/2-tt.x), centre[1]-int(tt.y*axeY)), 
                           (0, 0), 0, self.taille, 0, couleur)
+
+    def construction(self, limites: list) -> None:
+        if len(limites) == 2:
+            if type(limites[0]) == int and type(limites[1]) == int:
+                self.tCadre = limites
+                self.adapte()
+            elif type(limites[0]) == int and type(limites[1]) == str:
+                self.tCadre = [limites[0], yf]
+                self.adapte()
+                tt = measure_text_ex(self.police, self.texte, self.taille, 0)
+                self.tCadre = [limites[0], tt.y]
+            elif type(limites[0]) == str and type(limites[1]) == int:
+                tt = measure_text_ex(self.police, self.texte, self.taille, 0)
+                self.tCadre = [tt.x, limites[1]]
+            else:
+                tt = measure_text_ex(self.police, self.texte, self.taille, 0)
+                self.tCadre = [tt.x, tt.y]
+        else:
+            tt = measure_text_ex(self.police, self.texte, self.taille, 0)
+            self.tCadre = [tt.x, tt.y]
+        self.calcul = True
 
     def trouveOrigine(self, position: list, indication: str) -> tuple:
         """Regarde les indications fournis pour trouver la bonne origine pour le bloc.
@@ -130,3 +138,12 @@ class BlocTexte:
         """
         texte = self.texte.split("\n")
         return len(texte)
+
+    def setPolice(self, police: Font) -> None:
+        """Modifie la police utilisée.
+
+        Args:
+            police (Font): Nouvelle police à utiliser.
+        """
+        self.police = police
+        self.calcul = False

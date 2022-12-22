@@ -41,7 +41,7 @@ class Bouton(PtiBouton):
             taille = [int(self.largeur*0.9), int(self.hauteur*0.9)]
             if self.iconeOriginale != None:
                 taille[0] -= dicone[0]
-            self.texte = BlocTexte(texte, police1, int(self.hauteur*0.45), taille)
+            self.texte = BlocTexte(texte.upper(), police1, int(self.hauteur*0.55), taille)
 
     def dessine(self, coord: tuple, important:bool=False) -> None:
         """Dessine le bouton à l'écran aux coordonnées passées en paramètre.
@@ -84,7 +84,7 @@ class Bouton(PtiBouton):
                     ci = int(self.coords[0]+image.width*0.1)
                 draw_texture(image, ci, 
                              self.coords[1]+int((self.coords[3]-self.coords[1]-image.height)/2), WHITE)
-            self.texte.dessine([[ctx, int(self.coords[1]+h/2)], 'c'], coloTex)
+            self.texte.dessine([[ctx, int(self.coords[1]+h/3*1.35)], 'c'], coloTex)
         self.execute()
 
     def redimIc(self) -> object:

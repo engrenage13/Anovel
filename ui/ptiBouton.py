@@ -20,7 +20,7 @@ class PtiBouton:
         self.erreurs = []
         # Texte
         if type(texte) == str and texte != "":
-            self.texte = BlocTexte(texte, police1, int(self.hauteur*0.4), 
+            self.texte = BlocTexte(texte.upper(), police1, int(self.hauteur*0.4), 
                                    [int(self.largeur*0.95), int(self.hauteur*0.4)])
         else:
             self.texte = None

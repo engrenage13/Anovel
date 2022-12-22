@@ -1,4 +1,4 @@
-from reve.OZ import POLICE, TAILLEPOLICE
+from reve.OZ import TAILLEPOLICE, P1I, P2
 from reve.fonctions import trouveFonction
 from ui.PosiJauge import PosiJauge
 from ui.blocTexte import BlocTexte
@@ -199,9 +199,11 @@ def texte(ligne: str, largeurMax: int) -> BlocTexte:
             sequence += car
     if mode == 1:
         t = TAILLEPOLICE
+        police = P2
     else:
         t = int(TAILLEPOLICE*1.4)
-    return BlocTexte(sequence, POLICE, t, [largeurMax, ''])
+        police = P1I
+    return BlocTexte(sequence.upper(), police, t, [largeurMax, ''])
 
 def widget(ligne: str) -> list:
     sequence = ""

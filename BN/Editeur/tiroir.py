@@ -73,8 +73,8 @@ class Tiroir:
             x (int): position cible de l'origine x voulu pour la bannière.
             y (int): position cible de l'origine y voulu pour la bannière.
         """
-        tt1 = measure_text_ex(police2, bateau.nom, int(self.hauteur_rect*0.37), 0)
-        tt2 = measure_text_ex(police2, f"{bateau.taille} cases", int(self.hauteur_rect*0.27), 0)
+        tt1 = measure_text_ex(police1, bateau.nom.upper(), int(self.hauteur_rect*0.37), 0)
+        tt2 = measure_text_ex(police2i, f"{bateau.taille} CASES", int(self.hauteur_rect*0.27), 0)
         max = tt1.x
         if tt2.x > max:
             max = tt2.x
@@ -83,9 +83,10 @@ class Tiroir:
         draw_rectangle(0, y-int(self.hauteur_rect/2), int(longueur*pourcentage), self.hauteur_rect, 
                        [0, 12, 72, 155])
         draw_texture(self.decos[2], 0, y-int(self.decos[2].height/2), [255, 255, 255, int(255*pourcentage)])
-        draw_text_pro(police2, bateau.nom, (int(x+bateau.images[0].width+self.hauteur_rect/6), y-tt1.y), 
+        draw_text_pro(police1, bateau.nom.upper(), (int(x+bateau.images[0].width+self.hauteur_rect/6), 
+                      y-tt1.y), 
                       (0, 0), 0, int(self.hauteur_rect*0.37), 0, [255, 255, 255, int(255*pourcentage)])
-        draw_text_pro(police2, f"{bateau.taille} cases", 
+        draw_text_pro(police2i, f"{bateau.taille} CASES", 
                       (int(x+bateau.images[0].width+self.hauteur_rect/6), y), (0, 0), 0, 
                       int(self.hauteur_rect*0.27), 0, [102, 191, 255, int(255*pourcentage)])
         # animations

@@ -63,12 +63,18 @@ class PosiJauge:
             if self.posCurseur >= point[2] and (self.valeur != point[1] or self.defil):
                 colPt = BLUE
                 couleurTexte = GRAY
+                if point[0].police != police2:
+                    point[0].setPolice(police2)
             elif self.valeur == point[1] and not self.defil:
                 colPt = [255, 255, 255, self.transparenceCurseur[2]]
                 couleurTexte = WHITE
+                if point[0].police != police1i:
+                    point[0].setPolice(police1i)
             else:
                 colPt = GRAY
                 couleurTexte = GRAY
+                if point[0].police != police2:
+                    point[0].setPolice(police2)
             draw_circle(self.origine[0]+point[2], int(self.origine[1]+self.hauteur/2), rayon, colPt)
             point[0].dessine([[self.origine[0]+point[2], int(self.origine[1]-self.lMaxPSelect*1.5)], 'c'], 
                              couleurTexte)
@@ -154,14 +160,14 @@ class PosiJauge:
             nbPtCentre = len(points)-2
             divisions = nbPtCentre + 1
             l = int(self.longueur/divisions)
-            self.points.append([BlocTexte(points[0], police2, 20), 0, self.posMin])
+            self.points.append([BlocTexte(points[0], police1i, 20), 0, self.posMin])
             for i in range(nbPtCentre):
                 self.points.append([BlocTexte(points[i+1], police2, 20), i+1, l*(i+1)])
             self.points.append([BlocTexte(points[len(points)-1], police2, 20), len(points)-1, self.posMax])
             self.valeur = self.points[0][1]
             self.lu = False
         else:
-            self.erreurs.append([BlocTexte(e100[0], police2, int(yf*0.035*1.2)), 
+            self.erreurs.append([BlocTexte(e100[0], police1, int(yf*0.035*1.2)), 
                 BlocTexte("Une \"PosiJauge\" doit posseder au moins 2 points.", police2, int(yf*0.035))])
 
     def changePosCurseur(self) -> None:

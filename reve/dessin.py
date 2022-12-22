@@ -31,7 +31,7 @@ def dessineCadre(cadre: list, x: int, y: int, espace: int) -> list:
     for i in range(len(cadre)-1):
         element = cadre[i+1]
         if type(element) == BlocTexte:
-            y += dessineTexte(element, x, int(y-espace*0.1))[1] + int(espace*0.6)
+            y += dessineTexte(element, x, int(y-espace*0.1))[1] + int(espace*0.5)
         elif type(element) == PosiJauge:
             y += dessinePosiJauge(element, x, int(y+espace/2), cadre[0][0]-ecart)[1] + espace
         elif type(element) == Bouton:

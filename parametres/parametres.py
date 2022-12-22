@@ -65,7 +65,7 @@ class Parametres:
                 draw_rectangle(self.largeurLat, 0, xf-self.largeurLat, hbarre, BLACK)
             draw_rectangle_gradient_ex((0, 0, self.largeurLat, self.htBanniere), 
                                     [51, 7, 144, 255], [145, 104, 235, 255], BLACK, BLACK)
-            draw_text_pro(police1, "Parametres", (int(yf*0.02), int(yf*0.02)), (0, 0), 0, int(yf*0.05), 
+            draw_text_pro(police1i, "PARAMETRES", (int(yf*0.02), int(yf*0.02)), (0, 0), 0, int(yf*0.06), 
                           0, WHITE)
             self.dessineVersion()
             self.setValeurWidgets()
@@ -91,19 +91,19 @@ class Parametres:
         taille = int(yf*0.03)
         draw_rectangle_gradient_ex((0, yf-int(yf*0.08), self.largeurLat, int(yf*0.08)), 
                                     [87, 25, 243, 255], [24, 87, 197, 255], [58, 117, 219, 255], BLACK)
-        tt1 = measure_text_ex(police2, etatVersion.upper(), taille, 0)
+        tt1 = measure_text_ex(police1, etatVersion.upper(), taille, 0)
         draw_rectangle_rounded((int(xf*0.005), int(yf*0.93), int(xf*0.01+tt1.x), int(yf*0.01+tt1.y)), 
                                 0.3, 30, ORANGE)
-        draw_text_pro(police2, etatVersion.upper(), (int(xf*0.01), int(yf*0.935)), (0, 0), 0, taille, 0, 
+        draw_text_pro(police1, etatVersion.upper(), (int(xf*0.01), int(yf*0.935)), (0, 0), 0, taille, 0, 
                       WHITE)
-        draw_text_pro(police2, version, (int(xf*0.02+tt1.x), int(yf*0.935)), (0, 0), 0, taille, 0, WHITE)
-        tt2 = measure_text_ex(police2, version, int(taille*1.1), 0)
+        draw_text_pro(police1, version, (int(xf*0.02+tt1.x), int(yf*0.935)), (0, 0), 0, taille, 0, WHITE)
+        tt2 = measure_text_ex(police1, version, int(taille*1.1), 0)
         vSys = f"Python {platform.python_version()} - {platform.system()} {platform.release()}"
-        draw_text_pro(police2, vSys, (int(xf*0.025+tt1.x+tt2.x), int(yf*0.935+tt1.y*0.1)), (0, 0), 0, 
-                      int(taille*0.8), 0, LIGHTGRAY)
-        texte = f"Parametres genere par {NOMREVE} {VERSIONREVE}"
-        tv = measure_text_ex(police2, texte, int(taille*0.6), 0)
-        draw_text_pro(police2, texte, (int(xf*0.005), int(yf-tv.y*1.2)), (0, 0), 0, int(taille*0.6), 0, GRAY)
+        draw_text_pro(police2, vSys.upper(), (int(xf*0.025+tt1.x+tt2.x), int(yf*0.935+tt1.y*0.1)), 
+                      (0, 0), 0, int(taille*0.7), 0, LIGHTGRAY)
+        texte = f"Parametres genere par {NOMREVE} {VERSIONREVE}".upper()
+        tv = measure_text_ex(police3i, texte, int(taille*0.6), 0)
+        draw_text_pro(police3i, texte, (int(xf*0.005), int(yf-tv.y*1.2)), (0, 0), 0, int(taille*0.6), 0, GRAY)
 
     def chargeElement(self) -> None:
         """Permet de charger certains éléments nécessaire au fonctionnement de la fenêtre lors de son démarrage.

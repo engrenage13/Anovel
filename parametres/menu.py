@@ -41,8 +41,12 @@ class Menu:
         for i in range(len(self.contenu)):
             if i == self.actif:
                 couleur = BLUE
+                if self.contenu[i][0].police != police1i:
+                    self.contenu[i][0].setPolice(police1i)
             else:
                 couleur = WHITE
+                if self.contenu[i][0].police != police1:
+                    self.contenu[i][0].setPolice(police1)
             contact = self.getContact(i)
             if contact[0]:
                 draw_rectangle_rounded([x, y, self.largeurContenu, self.hauteurContenu], 0.2, 30, 
@@ -50,7 +54,7 @@ class Menu:
             if contact[1]:
                 self.actif = i
                 self.destBarre = (self.hauteurContenu+self.espace)*i
-            self.contenu[i][0].dessine([[int(x+self.largeurContenu*0.05), int(y+self.hauteurContenu*0.1)], 
+            self.contenu[i][0].dessine([[int(x+self.largeurContenu*0.05), int(y+self.hauteurContenu*0.11)], 
                                         'no'], couleur, 'g')
             y = y + self.hauteurContenu + self.espace
         if self.posBarre != self.destBarre:
@@ -105,7 +109,7 @@ class Menu:
                             go = 't'
                         elif li[i] == '(':
                             go = 'f'
-                self.contenu.append([BlocTexte(titre, police2, self.taillePolice, 
+                self.contenu.append([BlocTexte(titre.upper(), police1, self.taillePolice, 
                                     [int(self.largeurContenu*0.9), '']), fichier])
             del fil[0]
 

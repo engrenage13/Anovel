@@ -21,7 +21,7 @@ class Interrupteur:
         self.pos = int(diametre/2)
         self.posMax = int(self.largeur-diametre/2-self.marge*2)
         # Texte
-        self.texte = BlocTexte(titre, police2, int(yf*0.035), [int(xf*0.5), ''])
+        self.texte = BlocTexte(titre.upper(), police2, int(yf*0.035), [int(xf*0.5), ''])
 
     def dessine(self, x: int, y: int) -> None:
         """Dessine l'interrupteur à l'écran.
