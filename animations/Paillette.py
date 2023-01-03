@@ -19,7 +19,7 @@ class Paillette:
     def setParam(self):
         """Modifie certains paramètres importants de la paillette.
         """
-        self.max = randint(15, 45)
+        self.max = randint(3, 15)
         self.position = (randint(self.zone[0]+self.max, self.zone[2]-self.max), 
                          randint(self.zone[1]+self.max, self.zone[3]-self.max))
         self.couleur = choice(self.couleurs)
@@ -40,7 +40,7 @@ class Paillette:
                 self.mode = False
                 self.horloge = self.horloge + 1
         elif self.horloge > 0:
-            if self.horloge < randint(40, 60):
+            if self.horloge < randint(7, 15):
                 self.horloge = self.horloge + 1
             else:
                 self.horloge = 0

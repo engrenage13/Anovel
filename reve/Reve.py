@@ -54,8 +54,6 @@ class Reve:
                     ph += dessineCadre(element, x, ph, self.espace)[1] + self.espace
                 elif type(element) == BlocTexte:
                     ph += dessineTexte(element, x, ph)[1] + int(self.espace/2)
-                elif type(element) == Bouton:
-                    ph += dessineBouton(element, x, ph)[1] + int(self.espace/2)
                 elif type(element) == Interrupteur:
                     ph += dessineInterrupteur(element, x, ph)[1] + int(self.espace/2)
                 elif type(element) == PosiJauge:

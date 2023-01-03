@@ -1,22 +1,6 @@
 from systeme.FondMarin import *
 
 # Interface
-cruzoff = load_image('images/ui/CroSom.png')
-image_resize(cruzoff, int(hbarre*0.9), int(hbarre*0.9))
-croixSombre = load_texture_from_image(cruzoff)
-unload_image(cruzoff)
-cruzon = load_image('images/ui/CroLum.png')
-image_resize(cruzon, int(hbarre*0.9), int(hbarre*0.9))
-croixLumineuse = load_texture_from_image(cruzon)
-unload_image(cruzon)
-paraoff = load_image('images/ui/RouSom.png')
-image_resize(paraoff, int(hbarre*0.9), int(hbarre*0.9))
-rouageSombre = load_texture_from_image(paraoff)
-unload_image(paraoff)
-paraon = load_image('images/ui/RouLum.png')
-image_resize(paraon, int(hbarre*0.9), int(hbarre*0.9))
-rouageLumineux = load_texture_from_image(paraon)
-unload_image(paraon)
 fum = load_image("images/decors/vapeur.png")
 prop = int(yf*0.06)/fum.height
 image_resize(fum, int(fum.width*prop), int(fum.height*prop))

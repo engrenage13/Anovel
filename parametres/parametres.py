@@ -2,12 +2,12 @@ import platform
 from systeme.FondMarin import *
 from systeme.set import trouveParam, sauvegarde, setParam
 from systeme.verif import verifSauvegarde
-from museeNoyee import croixLumineuse, croixSombre
 from ui.PosiJauge import PosiJauge
-from ui.clickIma import ClickIma
 from ui.blocTexte import BlocTexte
 from ui.scrollBarre import ScrollBarre
 from ui.interrupteur import Interrupteur
+from ui.bouton.bouton import Bouton
+from ui.bouton.grille import Grille
 from parametres.menu import Menu
 from reve.Reve import Reve
 from reve.erreurs import affichErreur
@@ -27,7 +27,8 @@ class Parametres:
         repMenu = self.menu.checkFichier()
         if len(repMenu) == 0:
             self.page = Reve(self.menu.contenu[self.menu.actif][1], 
-                             (self.largeurLat, hbarre, xf-self.largeurLat, yf-hbarre))
+                             (self.largeurLat, espaceBt+TB2n.hauteur, xf-self.largeurLat, 
+                              yf-espaceBt+TB2n.hauteur))
             self.bug = False
         else:
             self.bug = True
@@ -35,7 +36,9 @@ class Parametres:
             self.scroll = ScrollBarre([0, int(yf*0.08), xf, yf], int(yf*0.9), [[1, 8, 38], [12, 37, 131]])
             self.oyc = self.scroll.getPos()
             self.setHt = False
-        self.croix = ClickIma([self.ferme], [croixSombre, croixLumineuse])
+        self.grOpt = Grille(int(xf*0.15), [False])
+        self.grOpt.ajouteElement(Bouton(TB2o, BTDANGER, "REINITIALISER", '', [self.reset]), 0, 0)
+        self.grOpt.ajouteElement(Bouton(TB2n, PTIBT1, "FERMER", 'images/ui/CroSom.png', [self.ferme]), 1, 0)
         self.charge = False
         self.fond = None
         # Paramètres
@@ -60,9 +63,9 @@ class Parametres:
             self.lset = self.page.liSetWidge
             self.InitialiseWidget()
             if len(self.page.erreurs) == 0:
-                draw_rectangle(self.largeurLat, 0, xf-self.largeurLat, hbarre, [0, 0, 0, 170])
+                draw_rectangle(self.largeurLat, 0, xf-self.largeurLat, espaceBt+TB2n.hauteur, [0, 0, 0, 170])
             else:
-                draw_rectangle(self.largeurLat, 0, xf-self.largeurLat, hbarre, BLACK)
+                draw_rectangle(self.largeurLat, 0, xf-self.largeurLat, espaceBt+TB2n.hauteur, BLACK)
             draw_rectangle_gradient_ex((0, 0, self.largeurLat, self.htBanniere), 
                                     [51, 7, 144, 255], [145, 104, 235, 255], BLACK, BLACK)
             draw_text_pro(police1i, "PARAMETRES", (int(yf*0.02), int(yf*0.02)), (0, 0), 0, int(yf*0.06), 
@@ -77,7 +80,7 @@ class Parametres:
             if not self.setHt:
                 self.scroll.setHtContenu(self.dessinErreur()+mesureTailleErreurs(self.erreurs, int(yf*0.05)))
                 self.setHt = True
-        self.croix.dessine((xf-hbarre, int(hbarre*0.05)))
+        self.grOpt.dessine(int(xf-self.grOpt.largeur), espaceBt)
 
     def dessineMenu(self) -> None:
         """Permet de dessiner le menu latérale.
@@ -192,3 +195,8 @@ class Parametres:
             if not balise[1].getLu():
                 setParam(balise[0], balise[1].getValeur())
                 balise[1].marqueCommeLu()
+
+    def reset(self) -> None:
+        """Réinitialise les paramètres du jeu.
+        """
+        sauvegarde(True)

@@ -89,15 +89,14 @@ class Attaque:
     def barreTitre(self) -> None:
         """Crée la barre de titre en haut de la fenêtre.
         """
+        tx = self.joueurActuel.getNom().upper()
+        tt = measure_text_ex(police1, tx, int(yf*0.05*0.7), 0)
+        draw_rectangle_rounded([-tt.x*0.05, -tt.y*0.1, tt.x*1.2, yf*0.05*1.05], 0.15, 25, [112, 31, 126, 120])
+        draw_text_pro(police1, tx, (int(hbarre/5), int(hbarre/6)), (0, 0), 0, int(hbarre*0.7), 0, WHITE)
         ttour = measure_text_ex(police1, f"TOUR {self.tour}", int(hbarre*0.7), 0)
-        draw_rectangle_gradient_h(0, 0, xf, hbarre, [112, 31, 126, 120], [150, 51, 140, 100])
-        draw_text_pro(police1, self.joueurActuel.getNom().upper(), (int(hbarre/4), int(hbarre/4)), 
+        draw_rectangle_rounded([xf*0.45, -ttour.y*0.1, xf*0.1, yf*0.05*1.05], 0.15, 25, [112, 31, 126, 120])
+        draw_text_pro(police1, f"TOUR {self.tour}", (int(xf/2-ttour.x/2), int(hbarre/6)), 
                       (0, 0), 0, int(hbarre*0.7), 0, WHITE)
-        draw_text_pro(police1, f"TOUR {self.tour}", (int(xf/2-ttour.x/2), int(hbarre/4)), 
-                      (0, 0), 0, int(hbarre*0.7), 0, WHITE)
-        if not self.gagnant:
-            self.proprio.croix.dessine((xf-hbarre, int(hbarre*0.05)))
-            self.proprio.rouage.dessine((int(xf-hbarre*2.05), int(hbarre*0.05)))
 
     def incrementTour(self) -> None:
         """Incrémente le compteur de tour

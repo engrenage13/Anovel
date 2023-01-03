@@ -1,6 +1,6 @@
-from systeme.FondMarin import yf, police2, police1i, police1
+from systeme.FondMarin import *
 NOMREVE = "REVE"
-VERSIONREVE = "3.3"
+VERSIONREVE = "0.3.4"
 
 TAILLEPOLICE = int(yf*0.03)
 P1 = police1

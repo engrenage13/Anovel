@@ -1,13 +1,8 @@
 from systeme.FondMarin import *
 from ui.PosiJauge import PosiJauge
 from ui.blocTexte import BlocTexte
-from ui.bouton import Bouton
 from ui.interrupteur import Interrupteur
 from reve.dimensions import getDimsCadre
-
-def dessineBouton(bouton: Bouton, x: int, y: int) -> list:
-    bouton.dessine((int(x+bouton.largeur/2), int(y+bouton.hauteur/2)))
-    return bouton.getDims()
 
 def dessineInterrupteur(interrupteur: Interrupteur, x: int, y: int) -> list:
     interrupteur.dessine(x, y)
@@ -34,8 +29,6 @@ def dessineCadre(cadre: list, x: int, y: int, espace: int) -> list:
             y += dessineTexte(element, x, int(y-espace*0.1))[1] + int(espace*0.5)
         elif type(element) == PosiJauge:
             y += dessinePosiJauge(element, x, int(y+espace/2), cadre[0][0]-ecart)[1] + espace
-        elif type(element) == Bouton:
-            y += dessineBouton(element, x, y)[1] + int(espace/2)
         elif type(element) == Interrupteur:
             y += dessineInterrupteur(element, x, y)[1] + int(espace/2)
         elif type(element) == list and type(element[0]) == list:

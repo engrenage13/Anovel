@@ -2,8 +2,8 @@ from systeme.FondMarin import *
 from systeme.fenetre import Fenetre
 from BN.Editeur.editeur import Editeur
 from BN.objets.Joueur import Joueur
-from ui.clickIma import ClickIma
-from museeNoyee import croixLumineuse, croixSombre, rouageLumineux, rouageSombre
+from ui.bouton.bouton import Bouton
+from ui.bouton.grille import Grille
 from BN.attaque import Attaque
 from BN.finPartie import FinPartie
 from parametres.parametres import Parametres
@@ -17,8 +17,9 @@ class Partie:
         """
         self.fenetre = fenetre
         self.param = Parametres()
-        self.croix = ClickIma([fenetre.switchEtat], [croixSombre, croixLumineuse])
-        self.rouage = ClickIma([self.param.ouvre], [rouageSombre, rouageLumineux])
+        self.grOpt = Grille(int(TB2n.hauteur*2+3*espaceBt), [False])
+        self.grOpt.ajouteElement(Bouton(TB2n, PTIBT1, "PARAMETRES", 'images/ui/RouSom.png', [self.param.ouvre]), 0, 0)
+        self.grOpt.ajouteElement(Bouton(TB2n, PTIBT1, "QUITTER", 'images/ui/CroSom.png', [fenetre.switchEtat]), 1, 0)
         self.joueurs = []
         self.timeline = 0
         self.creeJoueurs()
@@ -49,12 +50,11 @@ class Partie:
             elif self.timeline == 4:
                 self.baston.dessine()
                 self.ecranFin.dessine()
-                self.croix.dessine((xf-hbarre, int(hbarre*0.05)))
                 if self.ecranFin.saturation == 255:
                     self.nouvelleEtape()
             elif self.timeline == 5:
                 self.ecranFin.dessine()
-                self.croix.dessine((xf-hbarre, int(hbarre*0.05)))
+            self.grOpt.dessine(xf-self.grOpt.largeur, espaceBt)
         else:
             self.param.dessine()
 

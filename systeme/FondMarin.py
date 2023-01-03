@@ -1,6 +1,8 @@
 from pyray import *
 from raylib import TEXTURE_FILTER_TRILINEAR
 from raylib.colors import *
+from ui.bouton.taille import Taille
+from ui.bouton.apparence import Apparence
 
 TITRE_F = 'ANOVEL'
 etatVersion = "alpha"
@@ -19,8 +21,9 @@ origyp = int(yf*0.105)
 pasApas = int(yf*0.05)
 tailleCase = int(yf*0.084)
 
-# barre - menu
 hbarre = int(yf*0.05)
+
+espaceBt = int(xf*0.003)
 
 # polices
 police1 = load_font('polices/Roboto-Bold.otf')
@@ -41,3 +44,18 @@ set_texture_filter(police3.texture, TEXTURE_FILTER_TRILINEAR)
 police3i = load_font('polices/Roboto-LightItalic.otf')
 gen_texture_mipmaps([police3i.texture])
 set_texture_filter(police3i.texture, TEXTURE_FILTER_TRILINEAR)
+
+# -- Boutons
+# Tailles
+TB1o = Taille(int(yf*0.07), True)
+TB1n = Taille(int(yf*0.07), False)
+TB2o = Taille(int(yf*0.05), True)
+TB2n = Taille(int(yf*0.05), False)
+
+# Apparences
+PTIBT1 = Apparence([[255, 255, 255, 70], [255, 255, 255, 130]], police2, 1, False)
+PTIBT2 = Apparence([[0, 0, 0, 70], [0, 0, 0, 150]], police2, 1, False)
+BTNOIR = Apparence([[0, 0, 0, 70], [0, 0, 0, 150]], police2, 1, True)
+BTV = Apparence([[18, 82, 219, 255]], police2, 1, True)
+BTX = Apparence([[207, 35, 41, 255]], police2, 1, True)
+BTDANGER = Apparence([[53, 10, 10, 100], [77, 19, 19, 100]], police2, 1, True)

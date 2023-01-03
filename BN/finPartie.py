@@ -1,7 +1,8 @@
 from systeme.FondMarin import *
 from BN.collectionImage import viseur, croix, rond
 from animations.Paillette import Paillette
-from ui.bouton import Bouton
+from ui.bouton.bouton import Bouton
+from ui.bouton.grille import Grille
 
 class FinPartie:
     def __init__(self, joueurs: list, tour: int, createur: object) -> None:
@@ -20,8 +21,8 @@ class FinPartie:
         self.pos = False
         self.saturation = 0
         # Boutons
-        self.accueil = Bouton([self.goToMenu], [205, 111, 0, 255], "MENU")
-        self.rejouer = Bouton([self.proprio.rejouer], BLUE, "REJOUER")
+        self.gbt = Grille(int(xf*0.15), [False])
+        self.gbt.ajouteElement(Bouton(TB1o, BTV, "CONTINUER", '', [self.goToMenu]), 0, 0)
         self.hauteurBt = int(yf*1.11)
         self.hBtIndice = int(yf*0.91)
         # /Boutons
@@ -63,8 +64,7 @@ class FinPartie:
             self.dessineTitre((xtit, ytit), i)
             self.dessineStats((xstat, ystat), i)
             self.dessineBateaux((xbat, ybat), i)
-        self.accueil.dessine((int(xf*0.35), self.hauteurBt))
-        self.rejouer.dessine((int(xf*0.65), self.hauteurBt))
+        self.gbt.dessine(int(xf*0.5-self.gbt.largeur/2), int(self.hauteurBt-self.gbt.hauteur/2))
         if self.hauteurBt > self.hBtIndice:
             self.apparition()
 

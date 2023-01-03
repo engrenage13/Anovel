@@ -1,13 +1,12 @@
 from systeme.FondMarin import *
 from BN.objets.Bateau import Bateau
-from ui.bouton import Bouton
-from ui.ptiBouton import PtiBouton
-from ui.notif import Notification
+from ui.bouton.bouton import Bouton
+from ui.bouton.boutonPression import BoutonPression
+from ui.bouton.grille import Grille
 from BN.objets.Joueur import Joueur
 from BN.objets.plateau import Plateau
 from BN.Editeur.positionneur import Positionneur
 from BN.Editeur.tiroir import Tiroir
-from BN.Editeur.grilleBt import GrilleBt
 from BN.Editeur.chronologie import Chronologie
 from BN.collectionImage import mer
 
@@ -31,31 +30,13 @@ class Editeur:
         self.attente = 0
         self.plateau = Plateau(10, 10)
         # Boutons
-        self.affG1 = False
-        self.affG2 = False
-        self.grille1 = GrilleBt()
-        self.grille1.ajouteElement(PtiBouton([self.annuler], [40, 78, 111, 255], "Annuler", 
-                                             "images/ui/annuler.png"), 0, 0)
-        self.grille1.ajouteElement(PtiBouton([self.retablir], [40, 78, 111, 255], "Retablir", 
-                                             "images/ui/retablir.png"), 1, 0)
-        self.grille1.ajouteElement(PtiBouton([self.alea], [22, 127, 192, 255], "Plan Aleatoire", 
-                                             "images/ui/hasard.png"), 0, 1)
-        self.grille1.ajouteElement(PtiBouton([self.tousAuTiroir], [207, 35, 41, 255], "Effacer", 
-                                             "images/ui/corbeille.png"), 1, 1)
-        self.grille1.ajouteElement(Bouton([self.declencheG2, self.verification], [8, 223, 53, 255], 
-                                          "Valider", ["images/ui/check.png", 'd']), 0, 2)
-        self.grille2 = GrilleBt()
-        self.grille2.setChrono(5, self.createur.nouvelleEtape)
-        self.grille2.ajouteElement(PtiBouton([self.createur.nouvelleEtape, self.verif], [8, 223, 53, 255], 
-                                             "Confirmer", "images/ui/check.png"), 0, 0)
-        self.grille2.ajouteElement(PtiBouton([self.declencheG1], [207, 35, 41, 255], "Annuler", 
-                                             "images/ui/croix.png"), 1, 0)
-        ory = int((yf-hbarre)/2-tailleCase*5)+hbarre
-        self.ymaxGrilles = [ory+int(tailleCase*10-self.grille1.hauteur), 
-                            ory+int(tailleCase*10-self.grille2.hauteur)]
-        self.yGrilles = [ory+int(tailleCase*10-self.grille1.hauteur), int(yf*1.1)]
-        # Notifs
-        self.notifs = []
+        self.grille = Grille(int(xf*0.15), [[255, 255, 255, 50], WHITE])
+        self.grille.ajouteElement(Bouton(TB1o, PTIBT2, "ANNULER", "images/ui/annuler.png", [self.annuler]), 0, 0)
+        self.grille.ajouteElement(Bouton(TB1o, PTIBT2, "RETABLIR", "images/ui/retablir.png", [self.retablir]), 1, 0)
+        self.grille.ajouteElement(Bouton(TB1o, PTIBT2, "PLACEMENT ALEATOIRE", "images/ui/hasard.png", [self.alea]), 0, 1)
+        self.grille.ajouteElement(Bouton(TB1o, PTIBT2, "EFFACER", "images/ui/corbeille.png", [self.tousAuTiroir]), 1, 1)
+        self.grille.ajouteElement(BoutonPression(TB1o, BTNOIR, "VALIDER", "images/ui/check.png", 
+                                    [self.createur.nouvelleEtape, self.verif]), 0, 2)
         # Chronologie
         self.chronologie = Chronologie(self.tiroir, self.lBat)
 
@@ -67,28 +48,7 @@ class Editeur:
         self.barreTitre()
         self.plateau.dessine((tlatba, ory), tailleCase, self.listeBrillante)
         self.dessineBateaux([tlatba, ory, tailleCase, 10])
-        valid = self.verif()
-        self.grille1.dessine(int(xf-tlatba+(tlatba-self.grille1.largeur)/2), self.yGrilles[0], 
-                             [False, False, False, False, valid])
-        self.grille2.dessine(int(xf-tlatba+(tlatba-self.grille2.largeur)/2), self.yGrilles[1], 
-                             [valid, False])
-        self.bougeGrille()
-        i = 0
-        survol = False
-        y = int(yf*0.37)
-        while i < len(self.notifs):
-            notif = self.notifs[len(self.notifs)-i-1]
-            notif.dessine(y)
-            if notif.getDisparition():
-                del self.notifs[i]
-            else:
-                i = i + 1
-            if survol:
-                del self.notifs[0]
-            y = y - int(notif.hauteur)*1.05
-            if y <= hbarre:
-                survol = True
-                y = int(yf*0.4)
+        self.grille.dessine(int(xf-self.grille.largeur-espaceBt*2), int(yf-self.grille.hauteur-espaceBt*2))
 
     def dessineBateaux(self, plateau: list) -> None:
         """Dessine tous les bateaux du joueur.
@@ -153,11 +113,10 @@ class Editeur:
     def barreTitre(self) -> None:
         """Crée la barre de titre en haut de la fenêtre.
         """
-        draw_rectangle_gradient_h(0, 0, xf, hbarre, [112, 31, 126, 120], [150, 51, 140, 100])
-        draw_text_pro(police1, f"INSTALLATION : {self.joueur.getNom().upper()}", (int(hbarre/5), 
-                      int(hbarre/4)), (0, 0), 0, int(hbarre*0.7), 0, WHITE)
-        self.createur.croix.dessine((xf-hbarre, int(hbarre*0.05)))
-        self.createur.rouage.dessine((int(xf-hbarre*2.05), int(hbarre*0.05)))
+        tx = f"INSTALLATION : {self.joueur.getNom().upper()}"
+        tt = measure_text_ex(police1, tx, int(yf*0.05*0.7), 0)
+        draw_rectangle_rounded([-tt.x*0.05, -tt.y*0.1, tt.x*1.1, yf*0.05*1.05], 0.15, 25, [112, 31, 126, 120])
+        draw_text_pro(police1, tx, (int(hbarre/5), int(hbarre/6)), (0, 0), 0, int(hbarre*0.7), 0, WHITE)
 
     def ordreBateaux(self) -> None:
         """Determine dans quel ordre, il est préférable d'afficher les bateaux.
@@ -331,56 +290,7 @@ class Editeur:
         self.tiroir.setListe(self.lBat)
         self.chronologie.setBateaux(self.lBat)
         self.chronologie.reset()
-        self.declencheG1()
         self.bateaux = []
-
-    def verification(self) -> bool:
-        """Affiche les notifications adaptées en fonction de la position des bateaux lors de la validation.
-
-        Returns:
-            bool: Si oui ou non, les bateaux sont bien placés.
-        """
-        rep = self.verif()
-        if not rep:
-            self.notifs.append(Notification("Vous devez placer tous vos bateaux.", 'd', [210, 7, 22, 255]))
-        else:
-            self.notifs.append(Notification("Sauvegarde termine", 'd', [8, 223, 53, 255]))
-        return rep
-
-    def declencheG2(self) -> None:
-        """Déclenche le passage à la deuxième grille de bouton.
-        """
-        self.affG2 = True
-        self.affG1 = False
-
-    def declencheG1(self) -> None:
-        """Déclenche le passage à la première grille de bouton.
-        """
-        self.affG1 = True
-        self.affG2 = False
-        self.grille2.stopChrono()
-
-    def bougeGrille(self) -> None:
-        """Permet de déplacer les grilles de boutons.
-        """
-        pas = int(yf*0.01)
-        if self.affG2:
-            if self.yGrilles[0] < int(yf*1.1):
-                self.yGrilles[0] += pas
-            elif self.yGrilles[1] > self.ymaxGrilles[1]:
-                if self.yGrilles[1]-self.ymaxGrilles[1] < pas:
-                    pas = self.yGrilles[1]-self.ymaxGrilles[1]
-                self.yGrilles[1] -= pas
-            else:
-                self.affG2 = False
-                self.grille2.startChrono()
-        elif self.affG1:
-            if self.yGrilles[1] < int(yf*1.1):
-                self.yGrilles[1] += pas
-            elif self.yGrilles[0] > self.ymaxGrilles[0]:
-                self.yGrilles[0] -= pas
-            else:
-                self.affG1 = False
 
     def verif(self) -> bool:
         """Vérifie si tous les bateaux du joueur ont étaient placés correctement.
