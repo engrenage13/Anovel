@@ -3,14 +3,14 @@ from ui.bouton.bouton import Bouton
 from ui.bouton.boutonPression import BoutonPression
 
 class Grille:
-    def __init__(self, largeur: int, couleurs: list) -> None:
+    def __init__(self, largeur: int, couleurs: list, sens: bool=True) -> None:
         """Crée une grille à boutons.
         """
         self.grille = [[]]
         self.largeur = largeur
         self.hauteur = 0
-        self.espaceX = int(xf*0.003)
-        self.espaceY = int(yf*0.005)
+        self.espace = espaceBt
+        self.sens = sens
         if len(couleurs) == 0:
             couleurs = [[10, 10, 10, 190]]
         if len(couleurs) >= 2:
@@ -30,16 +30,24 @@ class Grille:
             draw_rectangle_rounded([x, y, self.largeur, self.hauteur], 0.1, 20, self.couleurFond)
         if self.couleurTour:
             draw_rectangle_rounded_lines([x, y, self.largeur, self.hauteur], 0.1, 20, 1, self.couleurTour)
-        py = y
-        if len(self.grille) > 1:
-            py += self.espaceY
-        for i in range(len(self.grille)):
-            px = x+self.espaceX
-            for j in range(len(self.grille[i])):
-                bt = self.grille[i][j]
-                bt.dessine(int(px+bt.getDims()[0]/2), int(py+bt.getDims()[1]/2))
-                px += bt.getDims()[0] + self.espaceX
-            py += bt.taille.hauteur + self.espaceY
+        if self.sens:
+            py = y + self.espace
+            for i in range(len(self.grille)):
+                px = x+self.espace
+                for j in range(len(self.grille[i])):
+                    bt = self.grille[i][j]
+                    bt.dessine(int(px+bt.getDims()[0]/2), int(py+bt.getDims()[1]/2))
+                    px += bt.getDims()[0] + self.espace
+                py += bt.taille.hauteur + self.espace
+        else:
+            py = y + self.hauteur - self.espace
+            for i in range(len(self.grille)):
+                px = x + self.largeur - self.espace
+                for j in range(len(self.grille[len(self.grille)-1-i])):
+                    bt = self.grille[len(self.grille)-1-i][len(self.grille[i])-1-j]
+                    bt.dessine(int(px-bt.getDims()[0]/2), int(py-bt.getDims()[1]/2))
+                    px -= bt.getDims()[0] + self.espace
+                py -= bt.taille.hauteur + self.espace
 
     def ajouteElement(self, element: object, x: int, y: int) -> None:
         """Permet d'ajouter un nouvel élément à la grille.
@@ -67,16 +75,15 @@ class Grille:
         h = 0
         for i in range(len(self.grille)):
             h = h + self.grille[i][0].getDims()[1]
-        h = h + int(self.espaceY*(len(self.grille)-1))
-        if len(self.grille) > 1:
-            h = h + int(self.espaceY*2)
+        h = h + int(self.espace*(len(self.grille)-1))
+        h = h + int(self.espace*2)
         self.hauteur = h
         # Tailles bouton
         for i in range(len(self.grille)):
-            l = self.largeur-self.espaceX*2
+            l = self.largeur-self.espace*2
             cpt = 0
             if len(self.grille[i]) > 1:
-                l -= self.espaceX*(len(self.grille[i])-1)
+                l -= self.espace*(len(self.grille[i])-1)
             for j in range(len(self.grille[i])):
                 if not self.grille[i][j].taille.redim:
                     l -= self.grille[i][j].largeur

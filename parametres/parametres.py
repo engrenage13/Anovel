@@ -19,7 +19,6 @@ class Parametres:
     def __init__(self) -> None:
         """Crée la fenêtre des paramètres.
         """
-        self.ouvert = False
         self.largeurLat = int(xf*0.25)
         self.fichierMenu = "parametres/Categories.md"
         self.htBanniere = int(yf*0.078)
@@ -38,12 +37,16 @@ class Parametres:
             self.setHt = False
         self.grOpt = Grille(int(xf*0.15), [False])
         self.grOpt.ajouteElement(Bouton(TB2o, BTDANGER, "REINITIALISER", '', [self.reset]), 0, 0)
-        self.grOpt.ajouteElement(Bouton(TB2n, PTIBT1, "FERMER", 'images/ui/CroSom.png', [self.ferme]), 1, 0)
+        self.grOpt.ajouteElement(Bouton(TB2n, PTIBT1, "FERMER", 'images/ui/CroSom.png', [self.portailBoreal]), 1, 0)
         self.charge = False
         self.fond = None
         # Paramètres
         self.lset = []
         self.copieValeur = []
+        # Between the worlds
+        self.play = False
+        self.message = ""
+        self.lu = True
 
     def dessine(self) -> None:
         """Dessine la fenêtre à l'écran.
@@ -80,7 +83,7 @@ class Parametres:
             if not self.setHt:
                 self.scroll.setHtContenu(self.dessinErreur()+mesureTailleErreurs(self.erreurs, int(yf*0.05)))
                 self.setHt = True
-        self.grOpt.dessine(int(xf-self.grOpt.largeur), espaceBt)
+        self.grOpt.dessine(int(xf-self.grOpt.largeur), 0)
 
     def dessineMenu(self) -> None:
         """Permet de dessiner le menu latérale.
@@ -124,18 +127,6 @@ class Parametres:
             self.iErreur = load_texture_from_image(tableau)
         unload_image(tableau)
         self.charge = True
-
-    def ouvre(self) -> None:
-        """Permet d'ouvrir la fenêtre (fictivement).
-        """
-        self.ouvert = True
-    
-    def ferme(self) -> None:
-        """Permet de fermer la fenêtre (fictivement).
-        """
-        self.ouvert = False
-        sauvegarde()
-        verifSauvegarde()
 
     def dessinErreur(self) -> int:
         """Definit ce qui s'affiche dans la fenêtre quand le fichier ne peut pas être lu.
@@ -200,3 +191,10 @@ class Parametres:
         """Réinitialise les paramètres du jeu.
         """
         sauvegarde(True)
+
+    # Between the worlds
+    def portailBoreal(self) -> None:
+        self.message = 'PRECEDENT'
+        self.lu = False
+        sauvegarde()
+        verifSauvegarde()

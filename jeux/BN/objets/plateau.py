@@ -1,5 +1,5 @@
 from systeme.FondMarin import *
-from BN.collectionImage import croix, rond
+from jeux.BN.collectionImage import croix, rond
 
 class Plateau:
     def __init__(self, x: int, y: int) -> None:

@@ -1,5 +1,5 @@
-from BN.objets.Bateau import Bateau
-from BN.objets.plateau import Plateau
+from jeux.BN.objets.Bateau import Bateau
+from jeux.BN.objets.plateau import Plateau
 from systeme.FondMarin import *
 from random import randint, choice
 from systeme.set import trouveParam

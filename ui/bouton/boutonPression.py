@@ -112,7 +112,9 @@ class BoutonPression:
         """
         if self.getContact() and is_mouse_button_down(0):
             if self.pourcentage < 1.0:
-                self.pourcentage += 0.01
+                self.pourcentage += 0.015
+                if self.pourcentage > 1.0:
+                    self.pourcentage = 1.0
             else:
                 if len(self.paillettes) == 0:
                     for i in range(8):

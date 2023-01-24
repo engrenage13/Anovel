@@ -1,5 +1,5 @@
 from systeme.FondMarin import *
-from BN.collectionImage import viseur, croix, rond
+from jeux.BN.collectionImage import viseur, croix, rond
 from animations.Paillette import Paillette
 from ui.bouton.bouton import Bouton
 from ui.bouton.grille import Grille
@@ -22,7 +22,7 @@ class FinPartie:
         self.saturation = 0
         # Boutons
         self.gbt = Grille(int(xf*0.15), [False])
-        self.gbt.ajouteElement(Bouton(TB1o, BTV, "CONTINUER", '', [self.goToMenu]), 0, 0)
+        self.gbt.ajouteElement(Bouton(TB1o, BTV, "CONTINUER", '', [self.portailBoreal]), 0, 0)
         self.hauteurBt = int(yf*1.11)
         self.hBtIndice = int(yf*0.91)
         # /Boutons
@@ -163,8 +163,7 @@ class FinPartie:
                           (255, 255, 255, self.saturation))
             y = int(y+tailleCase)
 
-    def goToMenu(self) -> None:
-        """Permet de retourner au menu du démarrage du jeu.
-        """
-        self.proprio.timeline = 0
-        self.proprio.rejouer()
+    # Between the worlds
+    def portailBoreal(self) -> None:
+        self.proprio.message = 'ANOVEL_MENU'
+        self.proprio.lu = False

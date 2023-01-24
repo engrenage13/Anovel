@@ -1,9 +1,9 @@
-from BN.objets.Bateau import Bateau
+from jeux.BN.objets.Bateau import Bateau
 from systeme.FondMarin import *
 from systeme.set import trouveParam
-from BN.objets.Joueur import Joueur
-from BN.collectionImage import viseur, mer
-from BN.objets.plateau import Plateau
+from jeux.BN.objets.Joueur import Joueur
+from jeux.BN.collectionImage import viseur, mer
+from jeux.BN.objets.plateau import Plateau
 from ui.notif import Notification
 
 class Attaque:

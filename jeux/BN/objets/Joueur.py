@@ -1,6 +1,6 @@
 from random import *
 from systeme.FondMarin import *
-from BN.objets.Bateau import Bateau
+from jeux.BN.objets.Bateau import Bateau
 
 class Joueur():
     def __init__(self, code: int):
@@ -15,7 +15,7 @@ class Joueur():
         # bateaux
         nomBats = ["Porte Avion", "Croiseur", "Sous-marin 1", "Sous-marin 2", "Torpilleur"]
         tailleBats = [5, 4, 3, 3, 2]
-        urlBats = 'images/BN/bateaux/'
+        urlBats = 'jeux/BN/images/bateaux/'
         for i in range(len(nomBats)):
             bat = Bateau(nomBats[i], tailleBats[i], urlBats+str(tailleBats[i])+'.png', self)
             self.SetBateaux.append(bat)

@@ -1,14 +1,14 @@
 from systeme.FondMarin import *
-from BN.objets.Bateau import Bateau
+from jeux.BN.objets.Bateau import Bateau
 from ui.bouton.bouton import Bouton
 from ui.bouton.boutonPression import BoutonPression
 from ui.bouton.grille import Grille
-from BN.objets.Joueur import Joueur
-from BN.objets.plateau import Plateau
-from BN.Editeur.positionneur import Positionneur
-from BN.Editeur.tiroir import Tiroir
-from BN.Editeur.chronologie import Chronologie
-from BN.collectionImage import mer
+from jeux.BN.objets.Joueur import Joueur
+from jeux.BN.objets.plateau import Plateau
+from jeux.BN.Editeur.positionneur import Positionneur
+from jeux.BN.Editeur.tiroir import Tiroir
+from jeux.BN.Editeur.chronologie import Chronologie
+from jeux.BN.collectionImage import mer
 
 class Editeur:
     def __init__(self, joueur: Joueur, creator: object) -> None:
