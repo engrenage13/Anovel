@@ -11,6 +11,7 @@ version = "0.2"
 init_window(get_monitor_width(0), get_monitor_height(0), TITRE_F)
 set_target_fps(60)
 toggle_fullscreen()
+set_exit_key(0)
 
 # Dimensions
 xf = get_screen_width()

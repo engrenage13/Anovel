@@ -15,7 +15,7 @@ class Partie:
         """
         # Boutons
         self.opt = [[Bouton(TB2n, PTIBT1, "PARAMETRES", 'images/ui/rouage.png', [self.portailBoreal]), "ANOVEL_OPTIONS"], 
-                    [Bouton(TB2n, PTIBT1, "QUITTER", 'images/ui/CroSom.png', [self.portailBoreal]), "QUITTE"]]
+                    [Bouton(TB2n, PTIBT1, "MENU", 'images/ui/CroSom.png', [self.portailBoreal]), "ANOVEL_MENU"]]
         self.grOpt = Grille(int(xf*0.2), [False], False)
         self.grOpt.ajouteElement(self.opt[0][0], 0, 0)
         self.grOpt.ajouteElement(self.opt[1][0], 1, 0)
@@ -107,7 +107,6 @@ class Partie:
         self.baston.rejouer()
         if self.timeline > 0:
             self.timeline = 0
-        del self.ecranFin
 
     # Between the worlds
     def portailBoreal(self) -> None:

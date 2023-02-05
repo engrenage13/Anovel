@@ -5,6 +5,7 @@ from systeme.fenetre import Fenetre
 from menu.menu import Menu
 from parametres.parametres import Parametres
 from jeux.BN.partie import Partie
+from jeux.Jeu_1.Jeu import J1
 
 if not fichierExiste():
     verifSauvegarde()
@@ -15,6 +16,7 @@ fen = Fenetre()
 menu = Menu()
 param = Parametres()
 bataille = Partie()
+j1 = J1()
 
 menu.play = True
 precedent = menu
@@ -35,7 +37,6 @@ while not fen.jeuDoitFermer():
             actif = precedent
             precedent = a
         else:
-            message = actif.message
             actif.play = False
             precedent = actif
             if actif.message == "ANOVEL_OPTIONS":
@@ -47,6 +48,9 @@ while not fen.jeuDoitFermer():
                     bataille.rejouer()
             elif actif.message == "BN":
                 actif = bataille
+            elif actif.message == "J1":
+                j1.initialise()
+                actif = j1
             actif.play = True
     end_drawing()
 
