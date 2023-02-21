@@ -4,7 +4,7 @@ from ui.bouton.grille import Grille
 
 class Menu:
     def __init__(self) -> None:
-        self.opt = [[Bouton(TB1o, BTV, "REPRENDRE", '', [self.portailAustral]), "JEU"],
+        self.opt = [[Bouton(TB1o, BTV, "CONTINUER", '', [self.portailAustral]), "JEU"],
                     [Bouton(TB1o, BTNOIR, "PARAMETRES", '', [self.portailAustral]), "ANOVEL_OPTIONS"],
                     [Bouton(TB1o, BTNOIR, "MENU PRINCIPAL", '', [self.portailAustral]), "ANOVEL_MENU"],
                     [Bouton(TB1o, BTDANGER, "QUITTER", '', [self.portailAustral]), "QUITTE"]]
@@ -18,7 +18,7 @@ class Menu:
         # Animations
         self.playAnim = True
         self.ok = False
-        self.opac = [0, 100]
+        self.opac = [0, 170]
         ecart = int(yf*0.03)
         h = int(self.gm1.hauteur+self.gm2.hauteur+self.gm3.hauteur+ecart*4)
         self.hauteurContenu = [int(yf*1.1), int(yf/2-h/2)]
