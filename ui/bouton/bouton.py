@@ -7,6 +7,7 @@ class Bouton:
     def __init__(self, taille: Taille, apparence: Apparence, texte: str, icone: str, fonctions: list) -> None:
         self.taille = taille
         self.apparence = apparence
+        self.coords = [xf, yf, xf, yf]
         # Icône
         self.icone = self.generIc(icone)
         # texte
@@ -90,8 +91,6 @@ class Bouton:
 
     def dessineTexteInfoBulle(self) -> None:
         tt = self.texte.getDims()
-        X = get_mouse_x()
-        Y = get_mouse_y()
         if self.getContact():
             if self.chrono != self.delai:
                 self.chrono += 1
