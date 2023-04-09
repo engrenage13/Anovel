@@ -1,4 +1,3 @@
-from math import atan2, cos, sin
 from systeme.FondMarin import *
 from ui.bouton.bouton import Bouton
 from ui.bouton.grille import Grille
@@ -70,25 +69,6 @@ class Scene:
                 else:
                     passe = True
         return passe
-        
-    def checkContactBateaux(self, bateau) -> tuple:
-        passe = False
-        i = 0
-        while i < len(self.joueurs) and not passe:
-            joueur = self.joueurs[i]
-            j = 0
-            while j < len(joueur.bateaux) and not passe:
-                bat = joueur.bateaux[j]
-                if check_collision_circle_rec((int(bateau.pos[0]-bateau.image.width*0.04), bateau.pos[1]), bateau.RCD, [bat.coords[0], bat.coords[1], bat.image.width, bat.image.height]):
-                    if bat != bateau and bat.getContact():
-                        passe = True
-                    else:
-                        j += 1
-                else:
-                    j += 1
-            if not passe:
-                i += 1
-        return (i, j)
 
     # Between the worlds
     def portailAustral(self) -> None:

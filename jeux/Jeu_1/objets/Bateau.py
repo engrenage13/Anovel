@@ -77,39 +77,6 @@ class Bateau:
             self.coords[3] = int(self.pos[1]+self.image.height/2)
             self.place = True
 
-    def estTouche(self, position: str) -> bool:
-        """Dit si le bateau passé en paramètres est sur la case qui est regardée.
-
-        Args:
-            position (str): Case à vérifier.
-
-        Returns:
-            bool: True si le bateau est sur la case touché.
-        """
-        a = False
-        i = 0
-        while i < self.taille and not a:
-            if self.pos[i] == position:
-                self.etatSeg[i] = 'x'
-                a = True
-            i = i + 1
-        return a
-
-    def estCoule(self) -> bool:
-        """Dit si le bateau est coulé ou non.
-
-        Returns:
-            bool: True si le bateau est coulé.
-        """
-        a = False
-        if self.coule:
-            a = True
-        else:
-            if 'o' not in self.etatSeg:
-                self.coule = True
-                a = True
-        return a
-
     def rejouer(self) -> None:
         """Réinitialise certains paramètres du bateau pour rejouer une nouvelle partie.
         """

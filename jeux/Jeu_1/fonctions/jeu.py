@@ -1,6 +1,7 @@
 from systeme.FondMarin import *
 
 DISTANCEPOINTS = int(yf*0.01)
+TAILLECASE = int(yf*0.1)
 
 def definiRect(centre: tuple|list, dest: tuple|list) -> list:
     rect = []
