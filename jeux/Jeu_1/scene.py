@@ -4,7 +4,7 @@ from ui.bouton.bouton import Bouton
 from ui.bouton.grille import Grille
 from jeux.Jeu_1.objets.plateau import Plateau
 from jeux.Jeu_1.objets.Joueur import Joueur
-from jeux.Jeu_1.fonctions.jeu import viseur
+from jeux.Jeu_1.fonctions.jeu import modifDestination
 
 class Scene:
     def __init__(self) -> None:
@@ -15,9 +15,10 @@ class Scene:
         self.joueurs = []
         self.coordsViseur = (0, 0)
         bateaux = [[["gbb", 1], ["pbb", 4]], [["gbr", 1], ["pbr", 4]]]
+        self.actuel = 0
         for i in range(2):
             self.joueurs.append(Joueur(i+1, bateaux[i]))
-        +self.joueurs[0]
+        +self.joueurs[self.actuel]
         # Between the worlds
         self.play = False
         self.message = ''
@@ -38,49 +39,56 @@ class Scene:
                 self.plateau.bloque = True
 
     def tour(self) -> None:
-        joueur = self.joueurs[0]
+        joueur = self.joueurs[self.actuel]
         if self.play:
-            self.setPosViseur(joueur.bateaux[0])
-        joueur.jouer(self.coordsViseur)
+            passe = self.setPosViseur(joueur.bateaux[joueur.actuel])
+            if not passe:
+                joueur.jouer(self.coordsViseur)
+                self.joueurSuivant()
 
-    def setPosViseur(self, bateau) -> None:
+    def joueurSuivant(self) -> None:
+        if not self.joueurs[self.actuel].actif:
+            self.actuel += 1
+            if self.actuel >= len(self.joueurs):
+                self.actuel = 0
+            +self.joueurs[self.actuel]
+
+    def setPosViseur(self, bateau) -> bool:
+        passe = False
+        if is_mouse_button_pressed(0):
+            i = 0
+            while i < len(self.opt) and not passe:
+                if self.opt[i][0].getContact():
+                    passe = True
+                else:
+                    i += 1
+            if not passe:
+                x = get_mouse_x()
+                y = get_mouse_y()
+                if check_collision_point_circle((x, y), (int(bateau.pos[0]-bateau.image.width*0.04), bateau.pos[1]), bateau.RCD):
+                    self.coordsViseur = modifDestination([x, y], bateau, self.joueurs[0].bateaux+self.joueurs[1].bateaux)
+                else:
+                    passe = True
+        return passe
+        
+    def checkContactBateaux(self, bateau) -> tuple:
         passe = False
         i = 0
-        while i < len(self.opt) and not passe:
-            if self.opt[i][0].getContact():
-                passe = True
-            else:
-                i += 1
-        if not passe:
-            i = 0
-            while i < len(self.joueurs) and not passe:
-                joueur = self.joueurs[i]
-                j = 0
-                while j < len(joueur.bateaux) and not passe:
-                    bat = joueur.bateaux[j]
-                    if check_collision_circle_rec((bateau.pos[0], bateau.pos[1]), bateau.portee, [bat.coords[0], bat.coords[1], bat.image.width, bat.image.height]):
-                        if bat != bateau and bat.getContact():
-                            passe = True
-                        else:
-                            j += 1
+        while i < len(self.joueurs) and not passe:
+            joueur = self.joueurs[i]
+            j = 0
+            while j < len(joueur.bateaux) and not passe:
+                bat = joueur.bateaux[j]
+                if check_collision_circle_rec((int(bateau.pos[0]-bateau.image.width*0.04), bateau.pos[1]), bateau.RCD, [bat.coords[0], bat.coords[1], bat.image.width, bat.image.height]):
+                    if bat != bateau and bat.getContact():
+                        passe = True
                     else:
                         j += 1
-                i += 1
+                else:
+                    j += 1
             if not passe:
-                self.coordsViseur = self.metDansCercle(viseur(), bateau)
-
-    def metDansCercle(self, coord: tuple, bateau) -> tuple:
-        x = bateau.pos[0]
-        y = bateau.pos[1]
-        if not check_collision_point_circle(coord, (x, y), bateau.portee):
-            dx = coord[0]-x
-            dy = coord[1]-y
-            angle = atan2(dy, dx)
-            dxx = (bateau.portee-1)*cos(angle)
-            dyy = (bateau.portee-1)*sin(angle)
-            return (int(x+dxx), int(y+dyy))
-        else:
-            return coord
+                i += 1
+        return (i, j)
 
     # Between the worlds
     def portailAustral(self) -> None:

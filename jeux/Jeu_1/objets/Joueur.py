@@ -13,7 +13,6 @@ class Joueur():
         self.id = code
         self.nom = f"Joueur {self.id}"
         self.bateaux = []
-        self.viseur = BlocTexte("x", police2, int(yf*0.04))
         # bateaux
         urlBats = 'jeux/Jeu_1/images/Bateaux/'
         for i in range(len(bateaux)):
@@ -24,6 +23,7 @@ class Joueur():
                     bat.tourne()
                     bat.tourne()
                 self.bateaux.append(bat)
+        self.actuel = 0
         # /bateaux
         self.rejouer()
 
@@ -51,17 +51,25 @@ class Joueur():
             bateau.pos = [x, y]
             y += int(yf*0.15)
 
-    def jouer(self, dest: tuple) -> bool:
-        bat = self.bateaux[0]
-        x = bat.pos[0]
-        y = bat.pos[1]
-        draw_line(x, y, dest[0], dest[1], WHITE)
-        draw_circle(x, y, yf*0.005, WHITE)
-        self.viseur.dessine([[dest[0], int(dest[1]-self.viseur.getDims()[1]/4)], 'c'])
+    def jouer(self, coord: tuple) -> bool:
+        bat = self.bateaux[self.actuel]
+        if is_mouse_button_pressed(0):
+            bat.setPos(coord[0], coord[1])
+            self.bateauSuivant()
+
+    def bateauSuivant(self) -> None:
+        bat = self.bateaux[self.actuel]
+        -bat
+        self.actuel += 1
+        if self.actuel >= len(self.bateaux):
+            self.actuel = 0
+            -self
+        else:
+            +self.bateaux[self.actuel]
 
     def __pos__(self) -> None:
         self.actif = True
-        +self.bateaux[0]
+        +self.bateaux[self.actuel]
 
     def __neg__(self) -> None:
         self.actif = False
