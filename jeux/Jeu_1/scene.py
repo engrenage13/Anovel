@@ -1,74 +1,64 @@
 from systeme.FondMarin import *
 from ui.bouton.bouton import Bouton
 from ui.bouton.grille import Grille
-from jeux.Jeu_1.objets.plateau import Plateau
-from jeux.Jeu_1.objets.Joueur import Joueur
-from jeux.Jeu_1.fonctions.jeu import modifDestination
+from jeux.Jeu_1.objets.plateau.plateau import Plateau
 
 class Scene:
     def __init__(self) -> None:
         self.opt = [[Bouton(TB2n, PTIBT1, "MENU", 'images/ui/pause.png', [self.portailAustral]), "J1_MENU"]]
         self.g1 = Grille(int(xf*0.04), [False], False)
         self.g1.ajouteElement(self.opt[0][0], 0, 0)
-        self.plateau = Plateau()
-        self.joueurs = []
-        self.coordsViseur = (0, 0)
-        bateaux = [[["gbb", 1], ["pbb", 4]], [["gbr", 1], ["pbr", 4]]]
-        self.actuel = 0
-        for i in range(2):
-            self.joueurs.append(Joueur(i+1, bateaux[i]))
-        +self.joueurs[self.actuel]
+        self.plateau = Plateau(15)
+        self.posCurseur = (get_mouse_x(), get_mouse_y())
+        self.move = False
+        self.trajet = (0, 0)
         # Between the worlds
         self.play = False
         self.message = ''
         self.lu = True
 
     def dessine(self) -> None:
-        draw_rectangle(0, 0, xf, yf, BLACK)
-        self.plateau.dessine(0, 0)
-        self.joueurs[0].dessine()
-        self.joueurs[1].dessine()
-        self.tour()
+        self.plateau.dessine()
         if self.play:
             self.g1.dessine(int(xf-self.g1.largeur), 0)
             if self.plateau.bloque:
                 self.plateau.bloque = False
+            self.deplace()
         else:
             if not self.plateau.bloque:
                 self.plateau.bloque = True
 
-    def tour(self) -> None:
-        joueur = self.joueurs[self.actuel]
-        if self.play:
-            passe = self.setPosViseur(joueur.bateaux[joueur.actuel])
-            if not passe:
-                joueur.jouer(self.coordsViseur)
-                self.joueurSuivant()
+    def deplace(self) -> None:
+        x = get_mouse_x()
+        y = get_mouse_y()
+        if is_mouse_button_down(0):
+            self.move = True
+            if x != self.posCurseur[0] or y != self.posCurseur[1]:
+                l = x - self.posCurseur[0]
+                h = y - self.posCurseur[1]
+                self.plateau.deplace(l, h)
+                self.trajet = (self.trajet[0]+l, self.trajet[1]+h)
+        elif self.trajet != (0, 0):
+            self.glisse()
+        self.posCurseur = (x, y)
 
-    def joueurSuivant(self) -> None:
-        if not self.joueurs[self.actuel].actif:
-            self.actuel += 1
-            if self.actuel >= len(self.joueurs):
-                self.actuel = 0
-            +self.joueurs[self.actuel]
-
-    def setPosViseur(self, bateau) -> bool:
-        passe = False
-        if is_mouse_button_pressed(0):
-            i = 0
-            while i < len(self.opt) and not passe:
-                if self.opt[i][0].getContact():
-                    passe = True
-                else:
-                    i += 1
-            if not passe:
-                x = get_mouse_x()
-                y = get_mouse_y()
-                if check_collision_point_circle((x, y), (int(bateau.pos[0]-bateau.image.width*0.04), bateau.pos[1]), bateau.RCD):
-                    self.coordsViseur = modifDestination([x, y], bateau, self.joueurs[0].bateaux+self.joueurs[1].bateaux)
-                else:
-                    passe = True
-        return passe
+    def glisse(self) -> None:
+        if self.move:
+            self.trajet = (int(self.trajet[0]/7), int(self.trajet[1]/7))
+            self.move = False
+        elif self.trajet != (0, 0):
+            x = self.trajet[0]
+            y = self.trajet[1]
+            self.plateau.deplace(x, y)
+            if x < 0:
+                x = x + 1
+            elif x > 0:
+                x = x - 1
+            if y < 0:
+                y = y + 1
+            elif y > 0:
+                y = y - 1
+            self.trajet = (x, y)
 
     # Between the worlds
     def portailAustral(self) -> None:

@@ -1,5 +1,5 @@
 from systeme.FondMarin import Image, draw_texture, WHITE, get_mouse_x, get_mouse_y, load_texture_from_image, image_resize
-from jeux.Jeu_1.fonctions.jeu import TAILLECASE
+from jeux.Jeu_1.fonctions.bases import TAILLECASE
 
 class Element:
     """L'objet de base pour générer n'importe quel élément du jeu.
@@ -8,7 +8,7 @@ class Element:
         self.pos = (x, y)
         self.setImage(image)
 
-    def dessin(self) -> None:
+    def dessine(self) -> None:
         """Permet d'afficher l'élément
         """
         x = self.pos[0]
