@@ -1,7 +1,7 @@
 from systeme.FondMarin import *
 from ui.bouton.bouton import Bouton
 from ui.bouton.grille import Grille
-from jeux.Jeu_1.objets.plateau.plateau import Plateau
+from jeux.Jeu_1.objets.plateau.plateau import Plateau, TAILLECASE
 
 class Scene:
     def __init__(self) -> None:
@@ -12,6 +12,7 @@ class Scene:
         self.posCurseur = (get_mouse_x(), get_mouse_y())
         self.move = False
         self.trajet = (0, 0)
+        self.afficheSecteur('c')
         # Between the worlds
         self.play = False
         self.message = ''
@@ -59,6 +60,40 @@ class Scene:
             elif y > 0:
                 y = y - 1
             self.trajet = (x, y)
+
+    def afficheSecteur(self, secteur: str) -> None:
+        secteur = secteur.lower()
+        if secteur == 'c':
+            px = int(-(self.plateau.nbCases*TAILLECASE)/2+xf/2)
+            py = int(-(self.plateau.nbCases*TAILLECASE)/2+yf/2)
+        elif secteur == 'n':
+            px = int(-(self.plateau.nbCases*TAILLECASE)/2+xf/2)
+            py = int(self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2)
+        elif secteur == 'ne':
+            px = -int(self.plateau.nbCases*TAILLECASE+self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2-xf)
+            py = int(self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2)
+        elif secteur == 'e':
+            px = -int(self.plateau.nbCases*TAILLECASE+self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2-xf)
+            py = int(-(self.plateau.nbCases*TAILLECASE)/2+yf/2)
+        elif secteur == 'se':
+            px = -int(self.plateau.nbCases*TAILLECASE+self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2-xf)
+            py = -int(self.plateau.nbCases*TAILLECASE+self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2-yf)
+        elif secteur == 's':
+            px = int(-(self.plateau.nbCases*TAILLECASE)/2+xf/2)
+            py = -int(self.plateau.nbCases*TAILLECASE+self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2-yf)
+        elif secteur == 'so':
+            px = int(self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2)
+            py = -int(self.plateau.nbCases*TAILLECASE+self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2-yf)
+        elif secteur == 'o':
+            px = int(self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2)
+            py = int(-(self.plateau.nbCases*TAILLECASE)/2+yf/2)
+        elif secteur == 'no':
+            px = int(self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2)
+            py = int(self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2)
+        else:
+            px = py = 0
+        if px != 0 and py != 0:
+            self.plateau.place(px, py)
 
     # Between the worlds
     def portailAustral(self) -> None:

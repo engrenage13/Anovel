@@ -56,6 +56,16 @@ class Plateau:
             for j in range(self.nbCases):
                 self.cases[i][j].deplace(x, y)
 
+    def place(self, x: int, y: int) -> None:
+        px = x
+        py = y
+        for i in range(self.nbCases):
+            for j in range(self.nbCases):
+                self.cases[i][j].pos = (px, py)
+                px += TAILLECASE
+            py += TAILLECASE
+            px = x
+
     def passeFrontiereHorizontale(self, x: int) -> bool:
         rep = False
         if self.cases[0][0].pos[0]+x > self.largeurBordure+self.largeurEnvirronement:
