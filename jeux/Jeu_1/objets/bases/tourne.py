@@ -1,5 +1,6 @@
-from systeme.FondMarin import load_image, image_rotate_cw, unload_image
+from systeme.FondMarin import load_image, image_rotate_cw, image_resize, load_texture_from_image
 from jeux.Jeu_1.objets.bases.element import Element
+from jeux.Jeu_1.fonctions.bases import TAILLECASE
 
 class Tourne(Element):
     """Permet de créer un élément ayant la capacité de pivoter
@@ -10,12 +11,19 @@ class Tourne(Element):
     def __init__(self, image: str, x: int = 0, y: int = 0) -> None:
         self.direction = 0
         self.images = []
-        originale = load_image(image)
-        self.images.append(originale)
-        for i in range(3):
-            image_rotate_cw(originale)
-            self.images.append(originale)
-        unload_image(originale)
+        # Travail des images
+        img = load_image(image)
+        prop = TAILLECASE*0.9
+        for i in range(4):
+            if i > 0:
+                image_rotate_cw(img)
+            if img.width >= img.height:
+                diviseur = img.width
+            else:
+                diviseur = img.height
+            image_resize(img, int(img.width*prop/diviseur), int(img.height*prop/diviseur))
+            self.images.append(load_texture_from_image(img))
+        # /
         super().__init__(self.images[self.direction], x, y)
 
     def reset(self, x: int = 0, y: int = 0) -> None:

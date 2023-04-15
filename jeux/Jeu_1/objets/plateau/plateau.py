@@ -61,7 +61,7 @@ class Plateau:
         py = y
         for i in range(self.nbCases):
             for j in range(self.nbCases):
-                self.cases[i][j].pos = (px, py)
+                self.cases[i][j].setPos(px, py)
                 px += TAILLECASE
             py += TAILLECASE
             px = x

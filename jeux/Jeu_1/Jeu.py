@@ -1,43 +1,36 @@
 from systeme.FondMarin import *
-from ui.bouton.bouton import Bouton
-from ui.bouton.grille import Grille
 from jeux.Jeu_1.objets.plateau.plateau import Plateau
-from jeux.Jeu_1.objets.Joueur import Joueur
-from jeux.Jeu_1.fonctions.bases import modifDestination
+#from jeux.Jeu_1.objets.Joueur import Joueur
+#from jeux.Jeu_1.fonctions.bases import modifDestination
+from jeux.Jeu_1.objets.bases.tourne import Tourne
 
 class Jeu:
     def __init__(self) -> None:
-        self.opt = [[Bouton(TB2n, PTIBT1, "MENU", 'images/ui/pause.png', [self.portailAustral]), "J1_MENU"]]
-        self.g1 = Grille(int(xf*0.04), [False], False)
-        self.g1.ajouteElement(self.opt[0][0], 0, 0)
         self.plateau = Plateau(15)
         self.joueurs = []
-        self.coordsViseur = (0, 0)
-        bateaux = [[["gbb", 1], ["pbb", 4]], [["gbr", 1], ["pbr", 4]]]
-        self.actuel = 0
-        for i in range(2):
-            self.joueurs.append(Joueur(i+1, bateaux[i]))
-        +self.joueurs[self.actuel]
-        # Between the worlds
-        self.play = False
-        self.message = ''
-        self.lu = True
+        #bateaux = [[["gbb", 1], ["pbb", 4]], [["gbr", 1], ["pbr", 4]]]
+        image1 = "jeux/Jeu_1/images/Bateaux/gbb.png"
+        image2 = "jeux/Jeu_1/images/Bateaux/pbr.png"
+        self.bateaux = [Tourne(image1), Tourne(image1), Tourne(image1), Tourne(image1), Tourne(image2), Tourne(image2), Tourne(image2), Tourne(image2)]
+        y = 0
+        i = 0
+        while i < len(self.bateaux):
+            for j in range(i):
+                self.bateaux[i].gauche()
+            a = self.plateau.cases[y][0].ajoute(self.bateaux[i])
+            if not a:
+                y += 1
+            else:
+                i += 1
+        #self.actuel = 0
+        #for i in range(2):
+        #    self.joueurs.append(Joueur(i+1, bateaux[i]))
+        #+self.joueurs[self.actuel]
 
     def dessine(self) -> None:
-        draw_rectangle(0, 0, xf, yf, BLACK)
         self.plateau.dessine()
-        self.joueurs[0].dessine()
-        self.joueurs[1].dessine()
-        self.tour()
-        if self.play:
-            self.g1.dessine(int(xf-self.g1.largeur), 0)
-            if self.plateau.bloque:
-                self.plateau.bloque = False
-        else:
-            if not self.plateau.bloque:
-                self.plateau.bloque = True
 
-    def tour(self) -> None:
+    '''def tour(self) -> None:
         joueur = self.joueurs[self.actuel]
         if self.play:
             passe = self.setPosViseur(joueur.bateaux[joueur.actuel])
@@ -68,20 +61,4 @@ class Jeu:
                     self.coordsViseur = modifDestination([x, y], bateau, self.joueurs[0].bateaux+self.joueurs[1].bateaux)
                 else:
                     passe = True
-        return passe
-
-    # Between the worlds
-    def portailAustral(self) -> None:
-        if self.play:
-            i = 0
-            v = False
-            while i < len(self.opt) and not v:
-                if self.opt[i][0].getContact():
-                    v = True
-                    self.nouveauMessage(self.opt[i][1])
-                else:
-                    i += 1
-
-    def nouveauMessage(self, message: str) -> None:
-        self.message = message
-        self.lu = False
+        return passe'''

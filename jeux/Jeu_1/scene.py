@@ -1,25 +1,26 @@
 from systeme.FondMarin import *
 from ui.bouton.bouton import Bouton
 from ui.bouton.grille import Grille
-from jeux.Jeu_1.objets.plateau.plateau import Plateau, TAILLECASE
+from jeux.Jeu_1.objets.plateau.plateau import TAILLECASE
+from jeux.Jeu_1.jeu import Jeu
 
-class Scene:
+class Scene(Jeu):
     def __init__(self) -> None:
+        super().__init__()
         self.opt = [[Bouton(TB2n, PTIBT1, "MENU", 'images/ui/pause.png', [self.portailAustral]), "J1_MENU"]]
         self.g1 = Grille(int(xf*0.04), [False], False)
         self.g1.ajouteElement(self.opt[0][0], 0, 0)
-        self.plateau = Plateau(15)
         self.posCurseur = (get_mouse_x(), get_mouse_y())
         self.move = False
         self.trajet = (0, 0)
-        self.afficheSecteur('c')
+        self.afficheSecteur('no')
         # Between the worlds
         self.play = False
         self.message = ''
         self.lu = True
 
     def dessine(self) -> None:
-        self.plateau.dessine()
+        super().dessine()
         if self.play:
             self.g1.dessine(int(xf-self.g1.largeur), 0)
             if self.plateau.bloque:

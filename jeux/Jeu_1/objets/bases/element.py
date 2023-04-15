@@ -1,10 +1,10 @@
-from systeme.FondMarin import Image, draw_texture, WHITE, get_mouse_x, get_mouse_y, load_texture_from_image, image_resize
+from systeme.FondMarin import Texture, draw_texture, WHITE, get_mouse_x, get_mouse_y, load_texture_from_image, image_resize
 from jeux.Jeu_1.fonctions.bases import TAILLECASE
 
 class Element:
     """L'objet de base pour générer n'importe quel élément du jeu.
     """
-    def __init__(self, image: Image, x: int = 0, y: int = 0) -> None:
+    def __init__(self, image: Texture, x: int = 0, y: int = 0) -> None:
         self.pos = (x, y)
         self.setImage(image)
 
@@ -41,14 +41,13 @@ class Element:
         self.pos = (x, y)
         self.setCoords()
         
-    def setImage(self, image: Image) -> None:
+    def setImage(self, image: Texture) -> None:
         """Change l'image de l'élément
 
         Args:
-            image (Image): La nouvelle image pour l'élément
+            image (Texture): La nouvelle image pour l'élément
         """
-        image_resize(image, int(image.width*TAILLECASE/image.width), int(image.height*TAILLECASE/image.width))
-        self.image = load_texture_from_image(image)
+        self.image = image
         self.dims = (self.image.width, self.image.height)
         self.setCoords()
 
