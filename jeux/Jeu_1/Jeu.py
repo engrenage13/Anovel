@@ -17,7 +17,7 @@ class Jeu:
         while i < len(self.bateaux):
             for j in range(i):
                 self.bateaux[i].gauche()
-            a = self.plateau.cases[y][0].ajoute(self.bateaux[i])
+            a = self.plateau[y][0] + self.bateaux[i]
             if not a:
                 y += 1
             else:
