@@ -81,3 +81,9 @@ class Plateau:
         elif self.cases[self.nbCases-1][0].pos[1]+TAILLECASE+y < yf-self.largeurBordure-self.largeurEnvirronement:
             rep = True
         return rep
+    
+    def __getitem__(self, key) -> list[Case]:
+        return self.cases[key]
+    
+    def __len__(self) -> int:
+        return self.nbCases

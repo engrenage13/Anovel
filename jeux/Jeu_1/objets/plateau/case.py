@@ -32,8 +32,12 @@ class Case:
                     self.contenu[0].setPos(int(self.pos[0]+self.taille/10*3), int(self.pos[1]+self.taille/2))
                     self.contenu[1].setPos(int(self.pos[0]+self.taille/10*7), int(self.pos[1]+self.taille/2))
 
-    def vide(self) -> None:
-        self.contenu = []
+    def retire(self, element) -> bool:
+        rep = False
+        if element in self.contenu:
+            rep = True
+            del self.contenu[self.contenu.index(element)]
+        return rep
 
     def ajoute(self, contenu) -> bool:
         rep = True
@@ -55,3 +59,9 @@ class Case:
             return True
         else:
             return False
+        
+    def __add__(self, element):
+        return self.ajoute(element)
+
+    def __sub__(self, element):
+        self.retire(element)
