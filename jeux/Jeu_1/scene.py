@@ -25,7 +25,8 @@ class Scene(Jeu):
             self.g1.dessine(int(xf-self.g1.largeur), 0)
             if self.plateau.bloque:
                 self.plateau.bloque = False
-            self.deplace()
+            if self.intro.estFini():
+                self.deplace()
         else:
             if not self.plateau.bloque:
                 self.plateau.bloque = True

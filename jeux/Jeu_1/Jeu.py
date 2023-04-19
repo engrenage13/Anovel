@@ -1,8 +1,9 @@
 from systeme.FondMarin import *
 from jeux.Jeu_1.objets.plateau.plateau import Plateau
-#from jeux.Jeu_1.objets.Joueur import Joueur
+from jeux.Jeu_1.objets.Joueur import Joueur
 #from jeux.Jeu_1.fonctions.bases import modifDestination
 from jeux.Jeu_1.objets.bases.tourne import Tourne
+from jeux.Jeu_1.intro import Intro
 
 class Jeu:
     def __init__(self) -> None:
@@ -23,12 +24,17 @@ class Jeu:
             else:
                 i += 1
         #self.actuel = 0
-        #for i in range(2):
-        #    self.joueurs.append(Joueur(i+1, bateaux[i]))
+        couleurs = [BLUE, RED]
+        for i in range(len(couleurs)):
+            self.joueurs.append(Joueur(i+1, [], couleurs[i]))
         #+self.joueurs[self.actuel]
+        self.intro = Intro(self.joueurs)
 
     def dessine(self) -> None:
-        self.plateau.dessine()
+        if not self.intro.estFini():
+            self.intro.dessine()
+        else:
+            self.plateau.dessine()
 
     '''def tour(self) -> None:
         joueur = self.joueurs[self.actuel]

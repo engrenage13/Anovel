@@ -1,10 +1,10 @@
 from random import shuffle
 from systeme.FondMarin import *
-from jeux.Jeu_1.objets.Bateau import Bateau
-from ui.blocTexte import BlocTexte
+#from jeux.Jeu_1.objets.Bateau import Bateau
+#from ui.blocTexte import BlocTexte
 
 class Joueur():
-    def __init__(self, code: int, bateaux: list):
+    def __init__(self, code: int, bateaux: list, couleur: Color):
         """Crée un joueur.
 
         Args:
@@ -12,9 +12,10 @@ class Joueur():
         """
         self.id = code
         self.nom = f"Joueur {self.id}"
+        self.couleur = couleur
         self.bateaux = []
         # bateaux
-        urlBats = 'jeux/Jeu_1/images/Bateaux/'
+        '''urlBats = 'jeux/Jeu_1/images/Bateaux/'
         for i in range(len(bateaux)):
             for j in range(bateaux[i][1]):
                 bat = Bateau(urlBats+bateaux[i][0]+".png")
@@ -23,7 +24,7 @@ class Joueur():
                     bat.tourne()
                     bat.tourne()
                 self.bateaux.append(bat)
-        self.actuel = 0
+        self.actuel = 0'''
         # /bateaux
         self.rejouer()
 
