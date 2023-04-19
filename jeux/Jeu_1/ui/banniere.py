@@ -8,13 +8,9 @@ class Banniere:
         self.longueur = int(xf*0.6)
         self.hauteur = int(yf*0.12)
         self.couleur = couleur
+        self.y = hauteur
         self.titre = BlocTexte(texte, police1, int(yf*0.1), [int(xf*0.35), int(yf*0.08)])
-        if self.sens:
-            self.pos = (-int(xf*0.2), hauteur)
-            self.dest = (0, hauteur)
-        else:
-            self.pos = (int(xf*0.6), hauteur)
-            self.dest = (xf-self.longueur, hauteur)
+        self.reset()
 
     def dessine(self) -> None:
         draw_rectangle(self.pos[0], self.pos[1], self.longueur, self.hauteur, self.couleur)
@@ -32,3 +28,11 @@ class Banniere:
         elif not self.sens and self.pos[0] <= self.dest[0]:
             rep = True
         return rep
+    
+    def reset(self) -> None:
+        if self.sens:
+            self.pos = (-int(xf*0.2), self.y)
+            self.dest = (0, self.y)
+        else:
+            self.pos = (int(xf*0.6), self.y)
+            self.dest = (xf-self.longueur, self.y)

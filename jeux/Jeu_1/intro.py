@@ -36,3 +36,9 @@ class Intro:
             return True
         else:
             return False
+        
+    def rejouer(self) -> None:
+        for i in range(len(self.bannieres)):
+            self.bannieres[i].reset()
+        self.chrono.reset()
+        self.chrono.run()

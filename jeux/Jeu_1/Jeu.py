@@ -36,6 +36,9 @@ class Jeu:
         else:
             self.plateau.dessine()
 
+    def rejouer(self) -> None:
+        self.intro.rejouer()
+
     '''def tour(self) -> None:
         joueur = self.joueurs[self.actuel]
         if self.play:

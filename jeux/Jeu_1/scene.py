@@ -7,9 +7,11 @@ from jeux.Jeu_1.jeu import Jeu
 class Scene(Jeu):
     def __init__(self) -> None:
         super().__init__()
-        self.opt = [[Bouton(TB2n, PTIBT1, "MENU", 'images/ui/pause.png', [self.portailAustral]), "J1_MENU"]]
+        self.opt = [[Bouton(TB2n, PTIBT1, "MENU", 'images/ui/pause.png', [self.portailAustral]), "J1_MENU"],
+                    [Bouton(TB2n, BTDEV, "REJOUER", 'images/ui/reset.png', [self.rejouer]), ""]]
         self.g1 = Grille(int(xf*0.04), [False], False)
-        self.g1.ajouteElement(self.opt[0][0], 0, 0)
+        self.g1.ajouteElement(self.opt[0][0], 1, 0)
+        self.g1.ajouteElement(self.opt[1][0], 0, 0)
         self.posCurseur = (get_mouse_x(), get_mouse_y())
         self.move = False
         self.trajet = (0, 0)
@@ -22,7 +24,8 @@ class Scene(Jeu):
     def dessine(self) -> None:
         super().dessine()
         if self.play:
-            self.g1.dessine(int(xf-self.g1.largeur), 0)
+            if self.intro.estFini():
+                self.g1.dessine(int(xf-self.g1.largeur), 0)
             if self.plateau.bloque:
                 self.plateau.bloque = False
             if self.intro.estFini():
