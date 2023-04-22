@@ -4,6 +4,7 @@ from jeux.Jeu_1.objets.Joueur import Joueur
 #from jeux.Jeu_1.fonctions.bases import modifDestination
 from jeux.Jeu_1.objets.bases.tourne import Tourne
 from jeux.Jeu_1.intro import Intro
+from jeux.Jeu_1.pageCarte import PageCarte
 
 class Jeu:
     def __init__(self) -> None:
@@ -29,12 +30,14 @@ class Jeu:
             self.joueurs.append(Joueur(i+1, [], couleurs[i]))
         #+self.joueurs[self.actuel]
         self.intro = Intro(self.joueurs)
+        self.pCarte = PageCarte()
 
     def dessine(self) -> None:
         if not self.intro.estFini():
             self.intro.dessine()
         else:
-            self.plateau.dessine()
+            self.pCarte.dessine()
+            #self.plateau.dessine()
 
     def rejouer(self) -> None:
         self.intro.rejouer()

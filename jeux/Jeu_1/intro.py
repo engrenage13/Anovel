@@ -3,10 +3,12 @@ from jeux.Jeu_1.ui.banniere import Banniere
 from jeux.Jeu_1.objets.Joueur import Joueur
 from jeux.Jeu_1.ui.fagnon import Fagnon
 from jeux.Jeu_1.ui.cptRebours import CptRebours
+from jeux.Jeu_1.objets.bases.fenetre import Fenetre
 from ui.blocTexte import BlocTexte
 
-class Intro:
+class Intro(Fenetre):
     def __init__(self, joueurs: list[Joueur]) -> None:
+        super().__init__()
         self.bannieres = []
         y = int(yf*0.15)
         for i in range(len(joueurs)):
@@ -24,7 +26,7 @@ class Intro:
         self.chrono.run()
 
     def dessine(self) -> None:
-        clear_background(BLACK)
+        super().dessine()
         for i in range(len(self.bannieres)):
             self.bannieres[i].dessine()
         self.vs.dessine([[int(xf/2), int(yf*0.32)], 'c'])
