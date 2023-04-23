@@ -7,7 +7,7 @@ class PtiPlateau:
         self.largeurBordure = 3
         self.tCase = int(yf*0.95/nbCases)
         self.cases = []
-        x = int((xf/2)-self.tCase*self.nbCases/2)
+        x = int((xf*0.6)-self.tCase*self.nbCases/2)
         y = int((yf/2)-self.tCase*self.nbCases/2)
         for i in range(nbCases):
             cases = []
@@ -15,7 +15,7 @@ class PtiPlateau:
                 cases.append(PtiteCase(x, y, self.tCase))
                 x += self.tCase
             self.cases.append(cases)
-            x = int((xf/2)-self.tCase*self.nbCases/2)
+            x = int((xf*0.6)-self.tCase*self.nbCases/2)
             y += self.tCase
         self.bloque = False
 
