@@ -1,5 +1,6 @@
 from systeme.FondMarin import *
-from jeux.Jeu_1.objets.plateau.case import Case, TAILLECASE
+from jeux.Jeu_1.objets.plateau.case import Case
+from jeux.Jeu_1.fonctions.bases import TAILLECASE
 
 class Plateau:
     def __init__(self, nbCases: int) -> None:
