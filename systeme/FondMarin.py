@@ -1,3 +1,4 @@
+import json
 from pyray import *
 from raylib import TEXTURE_FILTER_TRILINEAR
 from raylib.colors import *
@@ -12,6 +13,11 @@ init_window(get_monitor_width(0), get_monitor_height(0), TITRE_F)
 set_target_fps(60)
 toggle_fullscreen()
 set_exit_key(0)
+
+# Configuration système
+
+fichier = open("systeme/sys.json")
+config_sys = json.loads(fichier.read())
 
 # Dimensions
 xf = get_screen_width()

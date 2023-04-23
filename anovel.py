@@ -1,4 +1,4 @@
-from systeme.FondMarin import begin_drawing, end_drawing, clear_background, BLACK
+from systeme.FondMarin import begin_drawing, end_drawing, clear_background, BLACK, config_sys
 from systeme.set import startSet
 from systeme.verif import fichierExiste, verifSauvegarde, scan
 from systeme.fenetre import Fenetre
@@ -17,10 +17,18 @@ menu = Menu()
 param = Parametres()
 bataille = Partie()
 j1 = J1()
+fenetre = {"menu": menu, "param": param, "bn": bataille, "j1": j1}
 
 menu.play = True
-precedent = menu
-actif = menu
+if config_sys['dev']:
+    precedent = fenetre[config_sys['dev'].lower()]
+    actif = fenetre[config_sys['dev'].lower()]
+else:
+    precedent = menu
+    actif = menu
+
+if type(actif) == J1:
+    actif.initialise()
 
 while not fen.jeuDoitFermer():
     begin_drawing()

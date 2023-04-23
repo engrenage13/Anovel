@@ -3,7 +3,7 @@ from os import listdir, remove
 
 blacklist = (".git", ".gitignore", ".vscode", "__pycache__")
 nomFichier = "sauvegarde.txt"
-fichierQuiFautPasToucher = ("py", "png", "otf", "ico")
+fichierQuiFautPasToucher = ("py", "png", "otf", "ico", "json")
 
 def estDossier(test: str) -> bool:
     if not "." in test:
