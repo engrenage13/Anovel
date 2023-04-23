@@ -5,6 +5,8 @@ from jeux.Jeu_1.objets.Joueur import Joueur
 from jeux.Jeu_1.objets.bases.tourne import Tourne
 from jeux.Jeu_1.intro import Intro
 from jeux.Jeu_1.pageCarte import PageCarte
+from jeux.Jeu_1.objets.bases.fenetre import Fenetre
+from jeux.Jeu_1.config import config
 
 class Jeu:
     def __init__(self) -> None:
@@ -31,16 +33,27 @@ class Jeu:
         #+self.joueurs[self.actuel]
         self.intro = Intro(self.joueurs)
         self.pCarte = PageCarte()
+        self.fen = {"intro": self.intro, "page_carte": self.pCarte, "plateau": self.plateau}
+        if config['dev']:
+            self.fenActif = config['dev'].lower()
+        else:
+            self.fenActif = 'intro'
 
     def dessine(self) -> None:
-        if not self.intro.estFini():
-            self.intro.dessine()
-        else:
-            self.pCarte.dessine()
-            #self.plateau.dessine()
+        fenetre = self.fen[self.fenActif]
+        fenetre.dessine()
+        if isinstance(fenetre, Fenetre) and fenetre.estFini():
+            self.switch()
+
+    def switch(self) -> None:
+        if self.fenActif == 'intro':
+            self.fenActif = 'page_carte'
+        elif self.fenActif == 'page_carte':
+            self.fenActif = 'plateau'
 
     def rejouer(self) -> None:
-        self.intro.rejouer()
+        self.fen['intro'].rejouer()
+        self.fenActif = 'intro'
 
     '''def tour(self) -> None:
         joueur = self.joueurs[self.actuel]

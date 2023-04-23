@@ -7,3 +7,6 @@ class Fenetre:
 
     def dessine(self) -> None:
         draw_rectangle(0, 0, xf, yf, self.fond)
+
+    def estFini(self) -> bool:
+        return False

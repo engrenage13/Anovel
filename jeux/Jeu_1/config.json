@@ -1,0 +1,7 @@
+{
+    "plateau": {"interface": true},
+    "intro": {"interface": false},
+    "page_carte": {"interface": true},
+
+    "dev": "page_carte"
+}

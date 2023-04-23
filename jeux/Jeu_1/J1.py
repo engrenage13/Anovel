@@ -1,5 +1,6 @@
 from jeux.Jeu_1.scene import Scene
 from jeux.Jeu_1.menu import Menu
+from jeux.Jeu_1.config import config
 
 class J1:
     def __init__(self) -> None:
@@ -37,7 +38,10 @@ class J1:
         self.scene = Scene()
         self.menu = Menu()
         self.scene.play = True
-        self.actif = self.scene
+        if config['dev'] == 'menu':
+            self.actif = self.menu
+        else:
+            self.actif = self.scene
 
     # Between the worlds
     def nouveauMessage(self, message: str) -> None:

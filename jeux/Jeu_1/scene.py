@@ -2,7 +2,7 @@ from systeme.FondMarin import *
 from ui.bouton.bouton import Bouton
 from ui.bouton.grille import Grille
 from jeux.Jeu_1.objets.plateau.plateau import TAILLECASE
-from jeux.Jeu_1.jeu import Jeu
+from jeux.Jeu_1.jeu import Jeu, config
 
 class Scene(Jeu):
     def __init__(self) -> None:
@@ -22,13 +22,14 @@ class Scene(Jeu):
         self.lu = True
 
     def dessine(self) -> None:
+        fenetre = self.fen[self.fenActif]
         super().dessine()
         if self.play:
-            if self.intro.estFini():
+            if config[self.fenActif]['interface']:
                 self.g1.dessine(int(xf-self.g1.largeur), 0)
             if self.plateau.bloque:
                 self.plateau.bloque = False
-            if self.intro.estFini():
+            if fenetre == self.plateau:
                 self.deplace()
         else:
             if not self.plateau.bloque:
