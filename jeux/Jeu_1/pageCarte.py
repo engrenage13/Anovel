@@ -17,7 +17,19 @@ class PageCarte(Fenetre):
         tex = "Choisis une zone de depart. Ton adversaire commencera dans la zone opposee."
         self.expli = BlocTexte(tex, police2, int(yf*0.03), [int(xf*0.18), ''])
         # Zones
-        #self.z1 = Zone((0, 0), (2, 1), self.plateau.cases)
+        z1 = Zone((0, 0), (2, 1), self.plateau)
+        z1 + Zone((0, 2), (1, 2), self.plateau)
+        z2 = Zone((5, 0), (8, 1), self.plateau)
+        z3 = Zone((11, 0), (13, 1), self.plateau)
+        z3 + Zone((12, 2), (13, 2), self.plateau)
+        z4 = Zone((12, 5), (13, 8), self.plateau)
+        z5 = Zone((12, 11), (13, 13), self.plateau)
+        z5 + Zone((11, 12), (11, 13), self.plateau)
+        z6 = Zone((5, 12), (8, 13), self.plateau)
+        z7 = Zone((0, 11), (1, 13), self.plateau)
+        z7 + Zone((2, 12), (2, 13), self.plateau)
+        z8 = Zone((0, 5), (1, 8), self.plateau)
+        self.zones = [z1, z2, z3, z4, z5, z6, z7, z8]
 
     def dessine(self) -> None:
         super().dessine()
@@ -27,4 +39,5 @@ class PageCarte(Fenetre):
         draw_rectangle(0, int(yf*0.11), int(xf*0.2), int(yf*0.06), BLUE)
         self.banniere.dessine([[int(xf*0.01), int(yf*0.115)], 'no'], alignement='g')
         self.expli.dessine([[int(xf*0.005), int(yf*0.21)], 'no'], alignement='g')
-        #self.z1.dessine()
+        for i in range(len(self.zones)):
+            self.zones[i].dessine()

@@ -104,6 +104,37 @@ class Plateau:
             rep = True
         return rep
     
+    def trouveCoordsCase(self, case: Case) -> tuple[int]|bool:
+        trouve = False
+        i = 0
+        while i < self.nbCases and not trouve:
+            j = 0
+            while j < self.nbCases and not trouve:
+                if self.cases[i][j] == case:
+                    trouve = True
+                else:
+                    j += 1
+            if not trouve:
+                i += 1
+        if trouve:
+            return (j, i)
+        else:
+            return False
+    
+    def getVoisines(self, case: Case) -> dict[Case|bool]:
+        voisines = {'n': False, 's': False, 'o': False, 'e': False}
+        pos = self.trouveCoordsCase(case)
+        if pos:
+            if pos[0] > 0:
+                voisines['o'] = self.cases[pos[1]][pos[0]-1]
+            if pos[1] > 0:
+                voisines['n'] = self.cases[pos[1]-1][pos[0]]
+            if pos[0] < self.nbCases-1:
+                voisines['e'] = self.cases[pos[1]][pos[0]+1]
+            if pos[1] < self.nbCases-1:
+                voisines['s'] = self.cases[pos[1]+1][pos[0]]
+        return voisines
+    
     def __getitem__(self, key) -> list[Case]:
         return self.cases[key]
     
