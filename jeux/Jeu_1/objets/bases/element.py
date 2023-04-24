@@ -1,11 +1,11 @@
-from systeme.FondMarin import Texture, draw_texture, WHITE, get_mouse_x, get_mouse_y, load_texture_from_image, image_resize
-from jeux.Jeu_1.fonctions.bases import TAILLECASE
+from systeme.FondMarin import Texture, draw_texture, WHITE, get_mouse_x, get_mouse_y
+from jeux.Jeu_1.objets.bases.bougeable import Bougeable
 
-class Element:
+class Element(Bougeable):
     """L'objet de base pour générer n'importe quel élément du jeu.
     """
     def __init__(self, image: Texture, x: int = 0, y: int = 0) -> None:
-        self.pos = (x, y)
+        super().__init__(x, y)
         self.setImage(image)
 
     def dessine(self) -> None:
@@ -38,7 +38,7 @@ class Element:
             x (int): Le nouvel abscisse de l'élément
             y (int): Le nouvel ordonnée de l'élément
         """
-        self.pos = (x, y)
+        super().setPos(x, y)
         self.setCoords()
         
     def setImage(self, image: Texture) -> None:

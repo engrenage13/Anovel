@@ -2,7 +2,7 @@ from systeme.FondMarin import *
 from jeux.Jeu_1.objets.plateau.plateau import Plateau
 from jeux.Jeu_1.objets.Joueur import Joueur
 #from jeux.Jeu_1.fonctions.bases import modifDestination
-from jeux.Jeu_1.objets.bases.tourne import Tourne
+from jeux.Jeu_1.objets.bases.pivote import Pivote
 from jeux.Jeu_1.intro import Intro
 from jeux.Jeu_1.pageCarte import PageCarte
 from jeux.Jeu_1.objets.bases.fenetre import Fenetre
@@ -15,7 +15,7 @@ class Jeu:
         #bateaux = [[["gbb", 1], ["pbb", 4]], [["gbr", 1], ["pbr", 4]]]
         image1 = "jeux/Jeu_1/images/Bateaux/gbb.png"
         image2 = "jeux/Jeu_1/images/Bateaux/pbr.png"
-        self.bateaux = [Tourne(image1), Tourne(image1), Tourne(image1), Tourne(image1), Tourne(image2), Tourne(image2), Tourne(image2), Tourne(image2)]
+        self.bateaux = [Pivote(image1), Pivote(image1), Pivote(image1), Pivote(image1), Pivote(image2), Pivote(image2), Pivote(image2), Pivote(image2)]
         y = 0
         i = 0
         while i < len(self.bateaux):
@@ -31,9 +31,7 @@ class Jeu:
         for i in range(len(couleurs)):
             self.joueurs.append(Joueur(i+1, [], couleurs[i]))
         #+self.joueurs[self.actuel]
-        self.intro = Intro(self.joueurs)
-        self.pCarte = PageCarte()
-        self.fen = {"intro": self.intro, "page_carte": self.pCarte, "plateau": self.plateau}
+        self.fen = {"intro": Intro(self.joueurs), "page_carte": PageCarte(), "plateau": self.plateau}
         if config['dev']:
             self.fenActif = config['dev'].lower()
         else:

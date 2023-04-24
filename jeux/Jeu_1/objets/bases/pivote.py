@@ -2,7 +2,7 @@ from systeme.FondMarin import load_image, image_rotate_cw, image_resize, load_te
 from jeux.Jeu_1.objets.bases.element import Element
 from jeux.Jeu_1.fonctions.bases import TAILLECASE
 
-class Tourne(Element):
+class Pivote(Element):
     """Permet de créer un élément ayant la capacité de pivoter
 
     Args:

@@ -1,10 +1,11 @@
 import random
 from systeme.FondMarin import *
 from jeux.Jeu_1.fonctions.bases import TAILLECASE, EAUX
+from jeux.Jeu_1.objets.bases.bougeable import Bougeable
 
-class Case:
+class Case(Bougeable):
     def __init__(self, x: int = 0, y: int = 0) -> None:
-        self.pos = (x, y)
+        super().__init__(x, y)
         self.taille = TAILLECASE
         self.couleur = random.choice(EAUX)
         self.contenu = []
@@ -16,11 +17,8 @@ class Case:
             for i in range(len(self.contenu)):
                 self.contenu[i].dessine()
 
-    def deplace(self, x: int, y: int) -> None:
-        self.setPos(self.pos[0]+x, self.pos[1]+y)
-
     def setPos(self, x: int, y: int) -> None:
-        self.pos = (x, y)
+        super().setPos(x, y)
         if len(self.contenu) > 0:
             if len(self.contenu) == 1:
                 self.contenu[0].setPos(int(self.pos[0]+self.taille/2), int(self.pos[1]+self.taille/2))

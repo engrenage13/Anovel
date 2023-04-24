@@ -7,15 +7,15 @@ from jeux.Jeu_1.jeu import Jeu, config
 class Scene(Jeu):
     def __init__(self) -> None:
         super().__init__()
-        self.opt = [[Bouton(TB2n, PTIBT1, "MENU", 'images/ui/pause.png', [self.portailAustral]), "J1_MENU"],
-                    [Bouton(TB2n, BTDEV, "REJOUER", 'images/ui/reset.png', [self.rejouer]), ""]]
+        self.opt = [[Bouton(TB2n, PTIBT1, "MENU", 'images/ui/pause.png', [self.portailAustral]), "J1_MENU"]]
+        self.optDev = [Bouton(TB2n, BTDEV, "REJOUER", 'images/ui/reset.png', [self.rejouer])]
         t = TB2n.hauteur
         self.g1 = Grille(int(t+yf*0.01), [False], False)
         self.gDev = Grille(int(t+yf*0.01), [False])
         self.g1.ajouteElement(self.opt[0][0], 0, 0)
-        self.gDev.ajouteElement(self.opt[1][0], 0, 0)
         self.g1.largeur = int((1*(t+yf*0.005))+yf*0.005)
-        self.gDev.largeur = int(((len(self.opt)-1)*(t+yf*0.005))+yf*0.005)
+        self.gDev.ajouteElement(self.optDev[0], 0, 0)
+        self.gDev.hauteur = int(((len(self.opt)-1)*(t+yf*0.005))+yf*0.005)
         self.posCurseur = (get_mouse_x(), get_mouse_y())
         self.move = False
         self.trajet = (0, 0)
