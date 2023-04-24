@@ -27,3 +27,9 @@ class PtiPlateau:
         for i in range(self.nbCases):
             for j in range(self.nbCases):
                 self.cases[i][j].dessine()
+
+    def __getitem__(self, key) -> list[PtiteCase]:
+        return self.cases[key]
+    
+    def __len__(self) -> int:
+        return self.nbCases

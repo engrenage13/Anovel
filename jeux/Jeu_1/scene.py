@@ -1,7 +1,7 @@
 from systeme.FondMarin import *
 from ui.bouton.bouton import Bouton
 from ui.bouton.grille import Grille
-from jeux.Jeu_1.objets.plateau.plateau import TAILLECASE
+from jeux.Jeu_1.fonctions.bases import TAILLECASE
 from jeux.Jeu_1.jeu import Jeu, config
 
 class Scene(Jeu):

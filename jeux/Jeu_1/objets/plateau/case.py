@@ -1,18 +1,18 @@
-import random
 from systeme.FondMarin import *
-from jeux.Jeu_1.fonctions.bases import TAILLECASE, EAUX
+from jeux.Jeu_1.fonctions.bases import TAILLECASE
 from jeux.Jeu_1.objets.bases.bougeable import Bougeable
 
 class Case(Bougeable):
-    def __init__(self, x: int = 0, y: int = 0) -> None:
+    def __init__(self, x: int = 0, y: int = 0, taille: int = TAILLECASE, couleurs: tuple[Color] = (WHITE, BLACK), bordure: float = 1.5) -> None:
         super().__init__(x, y)
-        self.taille = TAILLECASE
-        self.couleur = random.choice(EAUX)
+        self.taille = taille
+        self.couleurs = couleurs
+        self.largeurBordure = bordure
         self.contenu = []
 
     def dessine(self) -> None:
-        draw_rectangle(self.pos[0], self.pos[1], self.taille, self.taille, self.couleur)
-        draw_rectangle_lines_ex([self.pos[0], self.pos[1], self.taille, self.taille], 1.5, [80, 80, 80, 150])
+        draw_rectangle(self.pos[0], self.pos[1], self.taille, self.taille, self.couleurs[0])
+        draw_rectangle_lines_ex([self.pos[0], self.pos[1], self.taille, self.taille], self.largeurBordure, self.couleurs[1])
         if len(self.contenu) > 0:
             for i in range(len(self.contenu)):
                 self.contenu[i].dessine()
