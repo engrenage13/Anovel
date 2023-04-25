@@ -10,7 +10,7 @@ from jeux.Jeu_1.config import config
 
 class Jeu:
     def __init__(self) -> None:
-        self.plateau = Plateau(15)
+        self.plateau = Plateau(14)
         self.joueurs = []
         #bateaux = [[["gbb", 1], ["pbb", 4]], [["gbr", 1], ["pbr", 4]]]
         image1 = "jeux/Jeu_1/images/Bateaux/gbb.png"
@@ -50,7 +50,9 @@ class Jeu:
             self.fenActif = 'plateau'
 
     def rejouer(self) -> None:
-        self.fen['intro'].rejouer()
+        for fenetre in self.fen:
+            if isinstance(self.fen[fenetre], Fenetre):
+                self.fen[fenetre].rejouer()
         self.fenActif = 'intro'
 
     '''def tour(self) -> None:

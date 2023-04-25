@@ -1,4 +1,4 @@
-from systeme.FondMarin import police1, police2, police2i, BLUE
+from systeme.FondMarin import police1, police2, police2i, BLUE, is_mouse_button_pressed, ORANGE
 from jeux.Jeu_1.objets.bases.fenetre import Fenetre, xf, yf, draw_rectangle
 from jeux.Jeu_1.objets.plateau.plateau import Plateau
 from jeux.Jeu_1.objets.plateau.zone import Zone
@@ -17,19 +17,18 @@ class PageCarte(Fenetre):
         tex = "Choisis une zone de depart. Ton adversaire commencera dans la zone opposee."
         self.expli = BlocTexte(tex, police2, int(yf*0.03), [int(xf*0.18), ''])
         # Zones
-        z1 = Zone((0, 0), (2, 1), self.plateau)
-        z1 + Zone((0, 2), (1, 2), self.plateau)
+        z1 = Zone((0, 0), (2, 1), self.plateau) + Zone((0, 2), (1, 2), self.plateau)
         z2 = Zone((5, 0), (8, 1), self.plateau)
-        z3 = Zone((11, 0), (13, 1), self.plateau)
-        z3 + Zone((12, 2), (13, 2), self.plateau)
+        z3 = Zone((11, 0), (13, 1), self.plateau) + Zone((12, 2), (13, 2), self.plateau)
         z4 = Zone((12, 5), (13, 8), self.plateau)
-        z5 = Zone((12, 11), (13, 13), self.plateau)
-        z5 + Zone((11, 12), (11, 13), self.plateau)
+        z5 = Zone((12, 11), (13, 13), self.plateau) + Zone((11, 12), (11, 13), self.plateau)
         z6 = Zone((5, 12), (8, 13), self.plateau)
-        z7 = Zone((0, 11), (1, 13), self.plateau)
-        z7 + Zone((2, 12), (2, 13), self.plateau)
+        z7 = Zone((0, 11), (1, 13), self.plateau) + Zone((2, 12), (2, 13), self.plateau)
         z8 = Zone((0, 5), (1, 8), self.plateau)
         self.zones = [z1, z2, z3, z4, z5, z6, z7, z8]
+        for i in range(len(self.zones)):
+            self.zones[i].setCouleurs([255, 161, 0, 150], ORANGE, [229, 165, 56, 170], [255, 186, 66, 255])
+        self.rejouer()
 
     def dessine(self) -> None:
         super().dessine()
@@ -41,3 +40,25 @@ class PageCarte(Fenetre):
         self.expli.dessine([[int(xf*0.005), int(yf*0.21)], 'no'], alignement='g')
         for i in range(len(self.zones)):
             self.zones[i].dessine()
+        self.verifClicZone()
+
+    def verifClicZone(self) -> int:
+        if is_mouse_button_pressed(0):
+            verif = False
+            i = 0
+            while i < len(self.zones) and not verif:
+                if self.zones[i].getContact():
+                    verif = True
+                else:
+                    i += 1
+            if verif:
+                self.zoneChoisi = i
+
+    def rejouer(self) -> None:
+        self.zoneChoisi = None
+    
+    def estFini(self) -> bool:
+        if self.zoneChoisi == None:
+            return False
+        else:
+            return True

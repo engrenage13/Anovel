@@ -6,8 +6,8 @@ class Zone:
         self.cases = []
         self.plateau = plateau
         self.largeurBordure = int(xf*0.002)
-        self.couleurFond = [255, 161, 0, 150]
-        self.couleurBordure = ORANGE
+        self.couleurs = ([255, 255, 255, 150], WHITE)
+        self.couleurActives = ([255, 255, 255, 150], WHITE)
         self.mappage(debut, fin)
 
     def dessine(self) -> None:
@@ -17,15 +17,21 @@ class Zone:
             x = Case.pos[0]
             y = Case.pos[1]
             cote = Case.taille
-            draw_rectangle(x, y, cote, cote, self.couleurFond)
+            if self.getContact():
+                cf = self.couleurActives[0]
+                cb = self.couleurActives[1]
+            else:
+                cf = self.couleurs[0]
+                cb = self.couleurs[1]
+            draw_rectangle(x, y, cote, cote, cf)
             if not voisines['n'] or voisines['n'] not in self.cases:
-                draw_line_ex((x, y), (x+cote, y), self.largeurBordure, self.couleurBordure)
+                draw_line_ex((x, y), (x+cote, y), self.largeurBordure, cb)
             if not voisines['e'] or voisines['e'] not in self.cases:
-                draw_line_ex((x+cote, y), (x+cote, y+cote), self.largeurBordure, self.couleurBordure)
+                draw_line_ex((x+cote, y), (x+cote, y+cote), self.largeurBordure, cb)
             if not voisines['s'] or voisines['s'] not in self.cases:
-                draw_line_ex((x, y+cote), (x+cote, y+cote), self.largeurBordure, self.couleurBordure)
+                draw_line_ex((x, y+cote), (x+cote, y+cote), self.largeurBordure, cb)
             if not voisines['o'] or voisines['o'] not in self.cases:
-                draw_line_ex((x, y), (x, y+cote), self.largeurBordure, self.couleurBordure)
+                draw_line_ex((x, y), (x, y+cote), self.largeurBordure, cb)
 
     def mappage(self, debut: tuple, fin: tuple) -> None:
         if debut == fin:
@@ -47,5 +53,20 @@ class Zone:
                 for j in range(finx-startx+1):
                     self.cases.append(self.plateau[starty+i][startx+j])
 
+    def getContact(self) -> bool:
+        rep = False
+        i = 0
+        while i < len(self.cases) and not rep:
+            if self.cases[i].getContact():
+                rep = True
+            else:
+                i += 1
+        return rep
+    
+    def setCouleurs(self, fond: Color, bordure: Color, fondActif: Color, bordureActif: Color) -> None:
+        self.couleurs = (fond, bordure)
+        self.couleurActives = (fondActif, bordureActif)
+
     def __add__(self, zone) -> object:
         self.cases += zone.cases
+        return self

@@ -58,6 +58,15 @@ class Case(Bougeable):
         else:
             return False
         
+    def getContact(self) -> bool:
+        rep = False
+        x = get_mouse_x()
+        y = get_mouse_y()
+        if x >= self.pos[0] and x <= self.pos[0]+self.taille:
+            if y >= self.pos[1] and y <= self.pos[1]+self.taille:
+                rep = True
+        return rep
+        
     def __add__(self, element):
         return self.ajoute(element)
 

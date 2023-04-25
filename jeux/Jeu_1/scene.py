@@ -19,7 +19,7 @@ class Scene(Jeu):
         self.posCurseur = (get_mouse_x(), get_mouse_y())
         self.move = False
         self.trajet = (0, 0)
-        self.afficheSecteur('no')
+        self.afficheSecteur('c')
         # Between the worlds
         self.play = False
         self.message = ''

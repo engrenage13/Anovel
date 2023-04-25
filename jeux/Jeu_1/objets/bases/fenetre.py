@@ -10,3 +10,6 @@ class Fenetre:
 
     def estFini(self) -> bool:
         return False
+    
+    def rejouer(self) -> None:
+        pass
