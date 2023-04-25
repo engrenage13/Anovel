@@ -20,6 +20,7 @@ class Scene(Jeu):
         self.move = False
         self.trajet = (0, 0)
         self.afficheSecteur('c')
+        self.delaiDepart = 70
         # Between the worlds
         self.play = False
         self.message = ''
@@ -33,15 +34,23 @@ class Scene(Jeu):
                 self.g1.dessine(int(xf-self.g1.largeur), 0)
                 if config['dev']:
                     self.gDev.dessine(int(xf-self.gDev.largeur), self.g1.hauteur)
-            if self.plateau.bloque:
-                self.plateau.bloque = False
             if fenetre == self.plateau:
-                self.deplace()
+                if not self.plateau.bloque:
+                    if self.delaiDepart <= 0:
+                        self.deplace()
+                    else:
+                        self.delaiDepart -= 1
+                else:
+                    self.plateau.bloque = False
+            else:
+                if not self.plateau.bloque:
+                    self.plateau.bloque = True
         else:
             if not self.plateau.bloque:
                 self.plateau.bloque = True
 
     def deplace(self) -> None:
+        print("On se déplace !")
         x = get_mouse_x()
         y = get_mouse_y()
         if is_mouse_button_down(0):
@@ -106,6 +115,11 @@ class Scene(Jeu):
             px = py = 0
         if px != 0 and py != 0:
             self.plateau.place(px, py)
+
+    def rejouer(self) -> None:
+        super().rejouer()
+        self.afficheSecteur('c')
+        self.delaiDepart = 70
 
     # Between the worlds
     def portailAustral(self) -> None:
