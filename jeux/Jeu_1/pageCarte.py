@@ -1,7 +1,8 @@
-from systeme.FondMarin import police1, police2, police2i, BLUE, is_mouse_button_pressed, ORANGE
+from systeme.FondMarin import police1, police2, police2i, BLUE, ORANGE
 from jeux.Jeu_1.objets.bases.fenetre import Fenetre, xf, yf, draw_rectangle
 from jeux.Jeu_1.objets.plateau.plateau import Plateau
 from jeux.Jeu_1.objets.plateau.zone import Zone
+from jeux.Jeu_1.action.Choix import Choix
 from ui.blocTexte import BlocTexte
 
 class PageCarte(Fenetre):
@@ -40,25 +41,13 @@ class PageCarte(Fenetre):
         self.expli.dessine([[int(xf*0.005), int(yf*0.21)], 'no'], alignement='g')
         for i in range(len(self.zones)):
             self.zones[i].dessine()
-        self.verifClicZone()
-
-    def verifClicZone(self) -> int:
-        if is_mouse_button_pressed(0):
-            verif = False
-            i = 0
-            while i < len(self.zones) and not verif:
-                if self.zones[i].getContact():
-                    verif = True
-                else:
-                    i += 1
-            if verif:
-                self.zoneChoisi = i
+        self.action.verifClic()
 
     def rejouer(self) -> None:
-        self.zoneChoisi = None
+        self.action = Choix(self.zones)
     
     def estFini(self) -> bool:
-        if self.zoneChoisi == None:
-            return False
-        else:
+        if self.action.estFinie():
             return True
+        else:
+            return False

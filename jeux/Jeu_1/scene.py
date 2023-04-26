@@ -14,7 +14,8 @@ class Scene(Jeu):
         self.gDev = Grille(int(t+yf*0.01), [False])
         self.g1.ajouteElement(self.opt[0][0], 0, 0)
         self.g1.largeur = int((1*(t+yf*0.005))+yf*0.005)
-        self.gDev.ajouteElement(self.optDev[0], 0, 0)
+        for i in range(len(self.optDev)):
+            self.gDev.ajouteElement(self.optDev[i], 0, i)
         self.gDev.hauteur = int(((len(self.opt)-1)*(t+yf*0.005))+yf*0.005)
         self.posCurseur = (get_mouse_x(), get_mouse_y())
         self.move = False
@@ -50,7 +51,6 @@ class Scene(Jeu):
                 self.plateau.bloque = True
 
     def deplace(self) -> None:
-        print("On se déplace !")
         x = get_mouse_x()
         y = get_mouse_y()
         if is_mouse_button_down(0):

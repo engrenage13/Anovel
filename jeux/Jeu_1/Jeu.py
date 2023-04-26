@@ -11,6 +11,7 @@ from jeux.Jeu_1.config import config
 class Jeu:
     def __init__(self) -> None:
         self.plateau = Plateau(14)
+        self.plateau.bloque = True
         self.joueurs = []
         #bateaux = [[["gbb", 1], ["pbb", 4]], [["gbr", 1], ["pbr", 4]]]
         image1 = "jeux/Jeu_1/images/Bateaux/gbb.png"
@@ -54,6 +55,7 @@ class Jeu:
             if isinstance(self.fen[fenetre], Fenetre):
                 self.fen[fenetre].rejouer()
         self.fenActif = 'intro'
+        self.plateau.bloque = True
 
     '''def tour(self) -> None:
         joueur = self.joueurs[self.actuel]
