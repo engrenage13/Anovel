@@ -1,7 +1,7 @@
 {
     "plateau": {"interface": true},
     "intro": {"interface": false},
-    "page_carte": {"interface": true},
+    "choix_zone": {"interface": true},
 
-    "dev": "page_carte"
+    "dev": "choix_zone"
 }

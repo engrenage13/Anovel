@@ -1,3 +1,4 @@
+import random
 from systeme.FondMarin import is_mouse_button_pressed
 from jeux.Jeu_1.action.Action import Action
 
@@ -15,3 +16,6 @@ class Choix(Action):
                     self.resultat = i
                 else:
                     i += 1
+
+    def passe(self) -> None:
+        self.resultat = random.randint(0, len(self.elements))

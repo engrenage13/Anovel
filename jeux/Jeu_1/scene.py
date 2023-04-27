@@ -8,7 +8,8 @@ class Scene(Jeu):
     def __init__(self) -> None:
         super().__init__()
         self.opt = [[Bouton(TB2n, PTIBT1, "MENU", 'images/ui/pause.png', [self.portailAustral]), "J1_MENU"]]
-        self.optDev = [Bouton(TB2n, BTDEV, "REJOUER", 'images/ui/reset.png', [self.rejouer])]
+        self.optDev = [Bouton(TB2n, BTDEV, "REJOUER", 'images/ui/reset.png', [self.rejouer]), 
+                       Bouton(TB2n, BTDEV, "PASSER L'ACTION", 'images/ui/passer.png', [self.passeAction])]
         t = TB2n.hauteur
         self.g1 = Grille(int(t+yf*0.01), [False], False)
         self.gDev = Grille(int(t+yf*0.01), [False])

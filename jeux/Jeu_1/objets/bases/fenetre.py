@@ -3,6 +3,7 @@ from systeme.FondMarin import draw_rectangle, BLACK, Color, xf, yf
 class Fenetre:
     def __init__(self, fond: Color = BLACK) -> None:
         self.boutons = []
+        self.action = None
         self.fond = fond
 
     def dessine(self) -> None:
