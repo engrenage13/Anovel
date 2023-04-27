@@ -32,30 +32,50 @@ class Jeu:
         for i in range(len(couleurs)):
             self.joueurs.append(Joueur(i+1, [], couleurs[i]))
         #+self.joueurs[self.actuel]
-        self.fen = {"intro": Intro(self.joueurs), "page_carte": PageCarte(), "plateau": self.plateau}
+        # Phases
+        self.fen = {"intro": Intro(self.joueurs), "choix_zone": PageCarte(), "plateau": self.plateau}
         if config['dev']:
-            self.fenActif = config['dev'].lower()
+            self.actif = config['dev'].lower()
+            if self.actif == 'plateau':
+                self.fen['choix_zone'].action.passe()
         else:
-            self.fenActif = 'intro'
+            self.actif = 'intro'
+        self.phase = config[self.actif]["phase"]
+        # /
+        # Installation
+        self.deplaceInstall = False
+        self.pause = 100
 
     def dessine(self) -> None:
-        fenetre = self.fen[self.fenActif]
+        fenetre = self.fen[self.actif]
         fenetre.dessine()
         if isinstance(fenetre, Fenetre) and fenetre.estFini():
             self.switch()
+        if self.actif == 'plateau' and self.phase == 'installation' and not self.deplaceInstall and self.pause > 0:
+            self.pause -= 1
 
     def switch(self) -> None:
-        if self.fenActif == 'intro':
-            self.fenActif = 'page_carte'
-        elif self.fenActif == 'page_carte':
-            self.fenActif = 'plateau'
+        if self.actif == 'intro':
+            self.actif = 'choix_zone'
+            self.phase = 'installation'
+        elif self.actif == 'choix_zone':
+            self.actif = 'plateau'
 
     def rejouer(self) -> None:
         for fenetre in self.fen:
             if isinstance(self.fen[fenetre], Fenetre):
                 self.fen[fenetre].rejouer()
-        self.fenActif = 'intro'
+        self.actif = self.phase = 'intro'
         self.plateau.bloque = True
+        # Installation
+        self.deplaceInstall = False
+        self.pause = 100
+
+    def passeAction(self) -> None:
+        if isinstance(self.fen[self.actif], Fenetre):
+            fenetre = self.fen[self.actif]
+            if fenetre.action != None:
+                fenetre.action.passe()
 
     '''def tour(self) -> None:
         joueur = self.joueurs[self.actuel]

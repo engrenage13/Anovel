@@ -2,6 +2,7 @@ import random
 from systeme.FondMarin import *
 from jeux.Jeu_1.objets.plateau.case import Case
 from jeux.Jeu_1.fonctions.bases import TAILLECASE, EAUX
+from jeux.Jeu_1.fonctions.deplacement import glisse
 
 class Plateau:
     def __init__(self, nbCases: int, tailleCases: int = TAILLECASE, bordure: float = int(yf*0.05), envirronement: bool = True, plan: bool = False, accroche: tuple[int] = (0, 0)) -> None:
@@ -36,6 +37,9 @@ class Plateau:
             self.bloque = True
         else:
             self.bloque = False
+        # /
+        self.positionCible = (x, y)
+        self.glisse = False
 
     def dessine(self) -> None:
         self.dessineEnvirronement()
@@ -43,6 +47,8 @@ class Plateau:
         for i in range(self.nbCases):
             for j in range(self.nbCases):
                 self.cases[i][j].dessine()
+        if self.glisse and self.cases[0][0].pos != self.positionCible:
+            self.rePlace()
 
     def dessineBordure(self) -> None:
         p = self.cases[0][0].pos
@@ -75,16 +81,35 @@ class Plateau:
             for j in range(self.nbCases):
                 self.cases[i][j].deplace(x, y)
 
-    def place(self, x: int, y: int) -> None:
-        px = x
-        py = y
-        tCase = self.tailleCase
+    def place(self, x: int, y: int, glisse: bool = False) -> None:
+        self.positionCible = (x, y)
+        self.glisse = glisse
+        if not glisse:
+            px = x
+            py = y
+            tCase = TAILLECASE
+            for i in range(self.nbCases):
+                for j in range(self.nbCases):
+                    self.cases[i][j].setPos(px, py)
+                    px += tCase
+                py += tCase
+                px = x
+
+    def rePlace(self) -> None:
+        px = self.cases[0][0].pos[0]
+        py = self.cases[0][0].pos[1]
+        dep = glisse((px, py), self.positionCible, int(xf*0.01))
+        tCase = TAILLECASE
+        x = dep[0]
+        y = dep[1]
         for i in range(self.nbCases):
             for j in range(self.nbCases):
-                self.cases[i][j].setPos(px, py)
-                px += tCase
-            py += tCase
-            px = x
+                self.cases[i][j].setPos(x, y)
+                x += tCase
+            y += tCase
+            x = dep[0]
+        if self.cases[0][0].pos == self.positionCible:
+            self.glisse = False
 
     def passeFrontiereHorizontale(self, x: int) -> bool:
         rep = False

@@ -1,7 +1,7 @@
 {
-    "plateau": {"interface": true},
-    "intro": {"interface": false},
-    "choix_zone": {"interface": true},
+    "plateau": {"interface": true, "phase": "installation"},
+    "intro": {"interface": false, "phase": "intro"},
+    "choix_zone": {"interface": true, "phase": "installation"},
 
-    "dev": "choix_zone"
+    "dev": "plateau"
 }

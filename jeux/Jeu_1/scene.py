@@ -29,10 +29,10 @@ class Scene(Jeu):
         self.lu = True
 
     def dessine(self) -> None:
-        fenetre = self.fen[self.fenActif]
+        fenetre = self.fen[self.actif]
         super().dessine()
         if self.play:
-            if config[self.fenActif]['interface']:
+            if config[self.actif]['interface']:
                 self.g1.dessine(int(xf-self.g1.largeur), 0)
                 if config['dev']:
                     self.gDev.dessine(int(xf-self.gDev.largeur), self.g1.hauteur)
@@ -50,6 +50,11 @@ class Scene(Jeu):
         else:
             if not self.plateau.bloque:
                 self.plateau.bloque = True
+        if self.actif == 'plateau' and self.phase == 'installation' and not self.deplaceInstall and self.pause <= 0:
+            secteurs = ['no', 'n', 'ne', 'e', 'se', 's', 'so', 'o']
+            self.afficheSecteur(secteurs[self.fen['choix_zone'].action.resultat])
+            self.deplaceInstall = True
+            self.pause = 100
 
     def deplace(self) -> None:
         x = get_mouse_x()
@@ -115,7 +120,11 @@ class Scene(Jeu):
         else:
             px = py = 0
         if px != 0 and py != 0:
-            self.plateau.place(px, py)
+            if self.phase == "installation":
+                glisse = True
+            else:
+                glisse = False
+            self.plateau.place(px, py, glisse)
 
     def rejouer(self) -> None:
         super().rejouer()
