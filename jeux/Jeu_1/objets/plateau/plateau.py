@@ -37,16 +37,30 @@ class Plateau:
             self.bloque = True
         else:
             self.bloque = False
-        # /
         self.positionCible = (x, y)
         self.glisse = False
+        # /
+        # Dessin
+        self.elementsPrioritaires = []
+        self.grise = False
 
     def dessine(self) -> None:
         self.dessineEnvirronement()
         self.dessineBordure()
-        for i in range(self.nbCases):
-            for j in range(self.nbCases):
-                self.cases[i][j].dessine()
+        if len(self.elementsPrioritaires) > 0:
+            for i in range(self.nbCases):
+                for j in range(self.nbCases):
+                    self.cases[i][j].dessine(self.grise)
+            for i in range(len(self.elementsPrioritaires)):
+                self.elementsPrioritaires[i].dessine()
+            for i in range(self.nbCases):
+                for j in range(self.nbCases):
+                    self.cases[i][j].dessineContenu()
+        else:
+            for i in range(self.nbCases):
+                for j in range(self.nbCases):
+                    self.cases[i][j].dessine(self.grise)
+                    self.cases[i][j].dessineContenu()
         if self.glisse and self.cases[0][0].pos != self.positionCible:
             self.rePlace()
 
@@ -146,18 +160,18 @@ class Plateau:
         else:
             return False
     
-    def getVoisines(self, case: Case) -> dict[Case|bool]:
+    def getVoisines(self, case: Case) -> dict[tuple|bool]:
         voisines = {'n': False, 's': False, 'o': False, 'e': False}
         pos = self.trouveCoordsCase(case)
         if pos:
             if pos[0] > 0:
-                voisines['o'] = self.cases[pos[1]][pos[0]-1]
+                voisines['o'] = (pos[1], pos[0]-1)
             if pos[1] > 0:
-                voisines['n'] = self.cases[pos[1]-1][pos[0]]
+                voisines['n'] = (pos[1]-1, pos[0])
             if pos[0] < self.nbCases-1:
-                voisines['e'] = self.cases[pos[1]][pos[0]+1]
+                voisines['e'] = (pos[1], pos[0]+1)
             if pos[1] < self.nbCases-1:
-                voisines['s'] = self.cases[pos[1]+1][pos[0]]
+                voisines['s'] = (pos[1]+1, pos[0])
         return voisines
     
     def __getitem__(self, key) -> list[Case]:
@@ -165,3 +179,12 @@ class Plateau:
     
     def __len__(self) -> int:
         return self.nbCases
+    
+    def __add__(self, element) -> None:
+        if element not in self.elementsPrioritaires:
+            self.elementsPrioritaires.append(element)
+
+    def __sub__(self, element) -> None:
+        if element in self.elementsPrioritaires:
+            pos = self.elementsPrioritaires.index(element)
+            del self.elementsPrioritaires[pos]

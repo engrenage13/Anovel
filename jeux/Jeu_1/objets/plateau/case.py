@@ -10,9 +10,13 @@ class Case(Bougeable):
         self.largeurBordure = bordure
         self.contenu = []
 
-    def dessine(self) -> None:
+    def dessine(self, grise: bool = False) -> None:
         draw_rectangle(self.pos[0], self.pos[1], self.taille, self.taille, self.couleurs[0])
         draw_rectangle_lines_ex([self.pos[0], self.pos[1], self.taille, self.taille], self.largeurBordure, self.couleurs[1])
+        if grise:
+            draw_rectangle(self.pos[0], self.pos[1], self.taille, self.taille, [50, 50, 50, 160])
+        
+    def dessineContenu(self) -> None:    
         if len(self.contenu) > 0:
             for i in range(len(self.contenu)):
                 self.contenu[i].dessine()

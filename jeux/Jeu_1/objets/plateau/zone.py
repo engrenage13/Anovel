@@ -12,7 +12,7 @@ class Zone:
 
     def dessine(self) -> None:
         for i in range(len(self.cases)):
-            Case = self.cases[i]
+            Case = self.plateau[self.cases[i][0]][self.cases[i][1]]
             voisines = self.plateau.getVoisines(Case)
             x = Case.pos[0]
             y = Case.pos[1]
@@ -35,7 +35,7 @@ class Zone:
 
     def mappage(self, debut: tuple, fin: tuple) -> None:
         if debut == fin:
-            self.cases.append(self.plateau[debut[1]][debut[0]])
+            self.cases.append((debut[1], debut[0]))
         else:
             if debut[0] <= fin[0]:
                 startx = debut[0]
@@ -51,13 +51,14 @@ class Zone:
                 finy = debut[1]
             for i in range(finy-starty+1):
                 for j in range(finx-startx+1):
-                    self.cases.append(self.plateau[starty+i][startx+j])
+                    self.cases.append((starty+i, startx+j))
 
     def getContact(self) -> bool:
         rep = False
         i = 0
         while i < len(self.cases) and not rep:
-            if self.cases[i].getContact():
+            Case = self.plateau[self.cases[i][0]][self.cases[i][1]]
+            if Case.getContact():
                 rep = True
             else:
                 i += 1
@@ -68,5 +69,7 @@ class Zone:
         self.couleurActives = (fondActif, bordureActif)
 
     def __add__(self, zone) -> object:
-        self.cases += zone.cases
+        for i in range(len(zone.cases)):
+            if zone.cases[i] not in self.cases:
+                self.cases.append(zone.cases[i])
         return self

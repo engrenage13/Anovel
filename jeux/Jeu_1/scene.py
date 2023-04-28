@@ -43,7 +43,8 @@ class Scene(Jeu):
                     else:
                         self.delaiDepart -= 1
                 else:
-                    self.plateau.bloque = False
+                    if self.phase != "installation":
+                        self.plateau.bloque = False
             else:
                 if not self.plateau.bloque:
                     self.plateau.bloque = True
