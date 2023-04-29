@@ -1,37 +1,22 @@
 from systeme.FondMarin import *
 from jeux.Jeu_1.objets.plateau.plateau import Plateau
 from jeux.Jeu_1.objets.Joueur import Joueur
-#from jeux.Jeu_1.fonctions.bases import modifDestination
-from jeux.Jeu_1.objets.bases.pivote import Pivote
 from jeux.Jeu_1.intro import Intro
 from jeux.Jeu_1.pageCarte import PageCarte
 from jeux.Jeu_1.objets.bases.fenetre import Fenetre
-from jeux.Jeu_1.config import config
+from jeux.Jeu_1.objets.plateau.zone import Zone
+from jeux.Jeu_1.config import config, joueurs as lijo
 
 class Jeu:
     def __init__(self) -> None:
         self.plateau = Plateau(14)
         self.plateau.bloque = True
         self.joueurs = []
-        #bateaux = [[["gbb", 1], ["pbb", 4]], [["gbr", 1], ["pbr", 4]]]
-        image1 = "jeux/Jeu_1/images/Bateaux/gbb.png"
-        image2 = "jeux/Jeu_1/images/Bateaux/pbr.png"
-        self.bateaux = [Pivote(image1), Pivote(image1), Pivote(image1), Pivote(image1), Pivote(image2), Pivote(image2), Pivote(image2), Pivote(image2)]
-        y = 0
-        i = 0
-        while i < len(self.bateaux):
-            for j in range(i):
-                self.bateaux[i].gauche()
-            a = self.plateau[y][0] + self.bateaux[i]
-            if not a:
-                y += 1
-            else:
-                i += 1
-        #self.actuel = 0
-        couleurs = [BLUE, RED]
-        for i in range(len(couleurs)):
-            self.joueurs.append(Joueur(i+1, [], couleurs[i]))
-        #+self.joueurs[self.actuel]
+        for joueur in lijo:
+            joueur = lijo[joueur]
+            self.joueurs.append(Joueur(joueur["nom"], joueur["bateaux"], joueur["couleur"]))
+        self.actuel = 0
+        +self.joueurs[self.actuel]
         # Phases
         self.fen = {"intro": Intro(self.joueurs), "choix_zone": PageCarte(), "plateau": self.plateau}
         if config['dev']:
@@ -45,19 +30,21 @@ class Jeu:
         # Installation
         self.deplaceInstall = False
         self.pause = 100
+        self.zone = Zone((0, 0), (0, 0), self.plateau)
+        self.zone.setCouleurs([255, 161, 0, 60], ORANGE, [255, 161, 0, 60], ORANGE)
 
     def dessine(self) -> None:
         fenetre = self.fen[self.actif]
         fenetre.dessine()
         if isinstance(fenetre, Fenetre) and fenetre.estFini():
             self.switch()
-        if self.actif == 'plateau' and self.phase == 'installation' and not self.deplaceInstall and self.pause > 0:
-            self.pause -= 1
+        if self.phase == 'installation':
+            self.installation()
 
     def switch(self) -> None:
         if self.actif == 'intro':
             self.actif = 'choix_zone'
-            self.phase = 'installation'
+            self.setPhase('installation')
         elif self.actif == 'choix_zone':
             self.actif = 'plateau'
 
@@ -76,6 +63,21 @@ class Jeu:
             fenetre = self.fen[self.actif]
             if fenetre.action != None:
                 fenetre.action.passe()
+
+    def installation(self) -> None:
+        if self.actif == 'plateau' and not self.deplaceInstall:
+            if self.actuel == 0 and self.zone.cases != self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases:
+                self.zone.cases = self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases
+                self.plateau.bloque = True
+                self.plateau + self.zone
+                self.plateau.grise = True
+            if self.pause > 0:
+                self.pause -= 1
+
+    def setPhase(self, phase: str) -> None:
+        self.phase = phase
+        for i in range(len(self.joueurs)):
+            self.joueurs[i].phase = phase
 
     '''def tour(self) -> None:
         joueur = self.joueurs[self.actuel]

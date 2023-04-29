@@ -1,56 +1,45 @@
 from random import shuffle
 from systeme.FondMarin import *
-#from jeux.Jeu_1.objets.Bateau import Bateau
+from jeux.Jeu_1.objets.Bateau import Bateau
+from jeux.Jeu_1.config import bateaux as libat
 #from ui.blocTexte import BlocTexte
 
 class Joueur():
-    def __init__(self, code: int, bateaux: list, couleur: Color):
+    def __init__(self, nom: str, bateaux: list, couleur: Color):
         """Crée un joueur.
 
         Args:
-            code (int): L'identifiant numérique du joueur.
+            nom (str): Le nom du joueur.
+            bateaux (list): Ses bateaux.
+            couleur (Color): Sa couleur.
         """
-        self.id = code
-        self.nom = f"Joueur {self.id}"
+        self.nom = nom
         self.couleur = couleur
         self.bateaux = []
         # bateaux
-        '''urlBats = 'jeux/Jeu_1/images/Bateaux/'
         for i in range(len(bateaux)):
-            for j in range(bateaux[i][1]):
-                bat = Bateau(urlBats+bateaux[i][0]+".png")
-                bat.tourne()
-                if code > 1:
-                    bat.tourne()
-                    bat.tourne()
-                self.bateaux.append(bat)
-        self.actuel = 0'''
+            bateau = libat[bateaux[i]]
+            bat = Bateau(bateau["image"], bateau["vie"], bateau["marins"], bateau["pm"])
+            self.bateaux.append(bat)
+        self.actuel = 0
+        shuffle(self.bateaux)
         # /bateaux
-        self.rejouer()
+        self.actif = False
+        self.phase = "installation"
 
     def dessine(self) -> None:
-        for i in range(len(self.bateaux)):
-            self.bateaux[i].dessine()
+        if self.phase != "installation":
+            for i in range(len(self.bateaux)):
+                self.bateaux[i].dessine()
 
     def rejouer(self) -> None:
         """Réinitialise certains paramètres du joueur pour une nouvelle partie.
         """
         self.actif = False
+        self.phase = "installation"
         for i in range(len(self.bateaux)):
             self.bateaux[i].rejouer()
         shuffle(self.bateaux)
-        self.placeBateau()
-
-    def placeBateau(self) -> None:
-        if self.id == 1:
-            x = int(xf*0.08)
-        else:
-            x = int(xf*0.92)
-        y = int(yf*0.2)
-        for i in range(len(self.bateaux)):
-            bateau = self.bateaux[i]
-            bateau.pos = [x, y]
-            y += int(yf*0.15)
 
     def jouer(self, coord: tuple) -> bool:
         bat = self.bateaux[self.actuel]

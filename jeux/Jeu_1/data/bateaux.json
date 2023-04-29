@@ -1,0 +1,6 @@
+{
+    "bateauBleu": {"image": "jeux/Jeu_1/images/Bateaux/pbb.png", "vie": 4, "marins": 5, "pm": 4},
+    "amiralBleu": {"image": "jeux/Jeu_1/images/Bateaux/gbb.png", "vie": 5, "marins": 6, "pm": 3},
+    "bateauRouge": {"image": "jeux/Jeu_1/images/Bateaux/pbr.png", "vie": 4, "marins": 5, "pm": 4},
+    "amiralRouge": {"image": "jeux/Jeu_1/images/Bateaux/gbr.png", "vie": 5, "marins": 6, "pm": 3}
+}

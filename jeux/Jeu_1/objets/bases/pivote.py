@@ -49,4 +49,4 @@ class Pivote(Element):
         """Permet de pivoter de 90° vers la droite
         """
         self.direction = (self.direction+1)%4
-        self.setImage(self.images[self.direction])  
+        self.setImage(self.images[self.direction]) 

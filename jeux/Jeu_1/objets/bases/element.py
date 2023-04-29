@@ -7,6 +7,7 @@ class Element(Bougeable):
     def __init__(self, image: Texture, x: int = 0, y: int = 0) -> None:
         super().__init__(x, y)
         self.setImage(image)
+        self.actif = False
 
     def dessine(self) -> None:
         """Permet d'afficher l'élément
@@ -57,3 +58,9 @@ class Element(Bougeable):
         x = self.pos[0]
         y = self.pos[1]
         self.coords = [int(x-self.dims[0]/2), int(y-self.dims[1]/2), self.image.width, self.image.height]
+
+    def __pos__(self) -> None:
+        self.actif = True
+
+    def __neg__(self) -> None:
+        self.actif = False
