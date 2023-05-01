@@ -1,6 +1,6 @@
 from systeme.FondMarin import *
 from jeux.Jeu_1.objets.Bateau import Bateau
-from jeux.BN.collectionImage import corail1, corail2, poisson
+from museeNoyee import corail1, corail2, poisson
 
 class Tiroir:
     def __init__(self, bateaux: list[Bateau]) -> None:
@@ -10,14 +10,12 @@ class Tiroir:
             bateaux (list[Bateau]): les bateaux à afficher.
         """
         self.liste = []
-        self.positions = [(1, [50]), (2, [30, 70]), (3, [20, 50, 80]), (4, [15, 37, 63, 85]), 
-                          (5, [10, 30, 50, 70, 90])]
         self.soulevement = []
         # Graphique
         self.tCase = 1.35*bateaux[0].image.height
         self.originex = -40
         self.originey = int(yf/2)
-        self.largeur = int(xf*0.12)
+        self.largeur = int(xf*0.11)
         self.lumCadre = [0, 5]
         self.hauteur_rect = int(bateaux[0].image.height*1.1)
         # Images
@@ -33,36 +31,36 @@ class Tiroir:
             y = int(self.originey-(self.tCase/2*len(self.liste)))
             draw_rectangle_rounded((self.originex, y, self.largeur+self.originex*-1, tailley), 
                                    0.2, 30, [255, 255, 255, self.lumCadre[0]])
-            draw_texture(self.decos[0], self.largeur-self.decos[0].width, 
+            draw_texture(self.decos[0], int(self.largeur-self.decos[0].width*0.9), 
                          y+tailley-self.decos[0].height, [255, 255, 255, self.lumCadre[0]])
-            draw_texture(self.decos[1], self.largeur-self.decos[1].width, y, 
+            draw_texture(self.decos[1], int(self.largeur-self.decos[1].width*0.9), y, 
                          [255, 255, 255, self.lumCadre[0]])
             draw_rectangle_rounded_lines((self.originex, y, self.largeur+self.originex*-1, tailley), 
                                          0.2, 30, 3, [255, 255, 255, self.lumCadre[1]])
             self.apparition()
             i = 0
             while i < len(self.liste):
-                xbat = 0
+                xbat = int(self.liste[i].image.width/3)
                 if self.getContactBateau(i):
-                    xbat = int(xf*0.01)
+                    xbat = int(self.liste[i].image.width/2)
                     self.soulevement[i][0] = True
-                    self.dessineNom(self.liste[i])
+                elif self.soulevement[i][0]:
+                    self.soulevement[i][0] = False
+                self.dessineNom(self.liste[i])
                 self.liste[i].dessine()
                 # Animation des bateaux
                 self.bougeBat(i, xbat)
                 i = i + 1
 
     def dessineNom(self, bateau: Bateau) -> None:
-        """Dessine l'encadré du nom et de la taille des bateaux.
+        """Dessine l'encadré du nom des bateaux.
 
         Args:
-            bateau (Bateau): Bateau dont on doit afficher le nom et la taille.
-            x (int): position cible de l'origine x voulu pour la bannière.
-            y (int): position cible de l'origine y voulu pour la bannière.
+            bateau (Bateau): Bateau où il y a le curseur.
         """
         x = 0
         y = int(bateau.pos[1])
-        chaine = f"{bateau.vie} VIES"
+        chaine = f"{bateau.vie} VIES - {bateau.marins} MARINS - {bateau.pm} PM"
         tt1 = measure_text_ex(police1, bateau.nom.upper(), int(self.hauteur_rect*0.37), 0)
         tt2 = measure_text_ex(police2i, chaine, int(self.hauteur_rect*0.27), 0)
         max = tt1.x
@@ -94,7 +92,7 @@ class Tiroir:
         segment = 100/(len(self.liste)+1)/100
         y = int(self.originey-tailley/2+tailley*segment)
         for i in range(len(self.liste)):
-            x = int(self.liste[i].image.width/2)
+            x = self.soulevement[i][1]
             self.liste[i].setPos(x, y)
             y += int(tailley*segment)
 
@@ -107,7 +105,7 @@ class Tiroir:
         self.liste = liste[:]
         self.lumCadre = [0, 5]
         for i in range(len(self.liste)):
-            self.soulevement.append([False, -self.liste[i].image.width, 0])
+            self.soulevement.append([False, -int(self.liste[i].image.width*0.6), 0])
         self.positioneBateaux()
 
     def supValListe(self, indice: int) -> None:
@@ -130,7 +128,7 @@ class Tiroir:
             valeur (Bateau): Bateau à ajouter à la liste.
         """
         self.liste.append(valeur)
-        self.soulevement.append([False, 0-valeur.image.width, 0])
+        self.soulevement.append([False, -int(valeur.image.width*0.6), 0])
         self.positioneBateaux()
 
     def getContactBateau(self, indice: int) -> bool:
@@ -179,8 +177,10 @@ class Tiroir:
             if pas < 1:
                 pas = 1
             self.soulevement[bateau][1] += pas
+            self.liste[bateau].deplace(pas, 0)
         elif self.soulevement[bateau][1] > verif:
             pas = int((self.soulevement[bateau][1]-verif)/9)
             if pas < 1:
                 pas = 1
             self.soulevement[bateau][1] -= pas
+            self.liste[bateau].deplace(-pas, 0)

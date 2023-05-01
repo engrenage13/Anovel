@@ -1,6 +1,6 @@
 from systeme.FondMarin import *
 from jeux.BN.objets.Bateau import Bateau
-from jeux.BN.collectionImage import corail1, corail2, poisson
+from museeNoyee import corail1, corail2, poisson
 
 class Tiroir:
     def __init__(self, createur: object) -> None:
