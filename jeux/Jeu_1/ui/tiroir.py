@@ -1,6 +1,7 @@
 from systeme.FondMarin import *
 from jeux.Jeu_1.objets.Bateau import Bateau
-from museeNoyee import corail1, corail2, poisson
+from museeNoyee import corail1, corail2, poisson, coeur, fleche, marin
+from jeux.Jeu_1.ui.attribut import Attribut
 
 class Tiroir:
     def __init__(self, bateaux: list[Bateau]) -> None:
@@ -22,6 +23,10 @@ class Tiroir:
         self.decos = [corail1, corail2, poisson]
         # positionnement
         self.setListe(bateaux)
+        # étiquettes
+        self.etiCoeur = Attribut(0, coeur)
+        self.etiMarin = Attribut(0, marin)
+        self.etiFleche = Attribut(0, fleche)
 
     def dessine(self) -> None:
         """Dessine le tiroir et les bateaux qui sont dedans.
@@ -60,12 +65,15 @@ class Tiroir:
         """
         x = 0
         y = int(bateau.pos[1])
-        chaine = f"{bateau.vie} VIES - {bateau.marins} MARINS - {bateau.pm} PM"
+        self.etiCoeur.setValeur(bateau.pvi)
+        self.etiFleche.setValeur(bateau.pmi)
+        self.etiMarin.setValeur(bateau.marins)
         tt1 = measure_text_ex(police1, bateau.nom.upper(), int(self.hauteur_rect*0.37), 0)
-        tt2 = measure_text_ex(police2i, chaine, int(self.hauteur_rect*0.27), 0)
+        ttiret = measure_text_ex(police2i, " - ", int(self.hauteur_rect*0.27), 0)
+        tt2 = self.etiCoeur.getDims()[0]+self.etiFleche.getDims()[0]+self.etiMarin.getDims()[0]+ttiret.x*2
         max = tt1.x
-        if tt2.x > max:
-            max = tt2.x
+        if tt2 > max:
+            max = tt2
         longueur = int(x+bateau.image.width+max+self.hauteur_rect/3)
         pourcentage = self.soulevement[self.liste.index(bateau)][2]
         draw_rectangle(0, y-int(self.hauteur_rect/2), int(longueur*pourcentage), self.hauteur_rect, 
@@ -73,8 +81,15 @@ class Tiroir:
         draw_texture(self.decos[2], 0, y-int(self.decos[2].height/2), [255, 255, 255, int(255*pourcentage)])
         draw_text_pro(police1, bateau.nom.upper(), (int(x+bateau.image.width+self.hauteur_rect/6), y-tt1.y), 
                       (0, 0), 0, int(self.hauteur_rect*0.37), 0, [255, 255, 255, int(255*pourcentage)])
-        draw_text_pro(police2i, chaine, (int(x+bateau.image.width+self.hauteur_rect/6), y), (0, 0), 0, 
-                      int(self.hauteur_rect*0.27), 0, [102, 191, 255, int(255*pourcentage)])
+        xeti = x+bateau.image.width+self.hauteur_rect/6
+        self.etiCoeur.pos = (xeti, y)
+        self.etiCoeur.dessine(int(255*pourcentage))
+        xeti += self.etiCoeur.getDims()[0] + ttiret.x
+        self.etiMarin.pos = (xeti, y)
+        self.etiMarin.dessine(int(255*pourcentage))
+        xeti += self.etiMarin.getDims()[0] + ttiret.x
+        self.etiFleche.pos = (xeti, y)
+        self.etiFleche.dessine(int(255*pourcentage))
         # animations
         if self.soulevement[self.liste.index(bateau)][0] and pourcentage < 1:
             addit = 0.1

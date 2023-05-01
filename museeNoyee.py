@@ -34,3 +34,18 @@ ratio = int(tailleCase*1.2)/deco2.height
 image_resize(deco2, int(deco2.width*ratio), int(deco2.height*ratio))
 poisson = load_texture_from_image(deco2)
 unload_image(deco2)
+
+# icônes
+dim = int(yf*0.045)
+ico = load_image('jeux/Jeu_1/images/Icones/coeur.png')
+image_resize(ico, dim, dim)
+coeur = load_texture_from_image(ico)
+unload_image(ico)
+ico = load_image('jeux/Jeu_1/images/Icones/deplacement.png')
+image_resize(ico, dim, dim)
+fleche = load_texture_from_image(ico)
+unload_image(ico)
+ico = load_image('jeux/Jeu_1/images/Icones/marin.png')
+image_resize(ico, dim, dim)
+marin = load_texture_from_image(ico)
+unload_image(ico)
