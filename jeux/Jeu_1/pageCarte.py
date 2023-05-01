@@ -47,7 +47,4 @@ class PageCarte(Fenetre):
         self.action = Choix(self.zones)
     
     def estFini(self) -> bool:
-        if self.action.estFinie():
-            return True
-        else:
-            return False
+        return self.action.estFinie()

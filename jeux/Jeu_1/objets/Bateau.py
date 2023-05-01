@@ -3,16 +3,18 @@ from jeux.Jeu_1.objets.bases.pivote import Pivote
 from jeux.Jeu_1.fonctions.deplacement import glisse
 
 class Bateau(Pivote):
-    def __init__(self, image: str, pv: int, marins: int, pm: int):
+    def __init__(self, nom: str, image: str, pv: int, marins: int, pm: int):
         """Crée un bateau.
 
         Args:
+            nom (str): Nom du bateau.
             image (str): Chemin d'accès à l'image du bateau.
             pv (int): Points de vie du bateau.
             marins (int): Nombre de marins présents sur le bateau.
             pm (int): Portée de déplacement du bateau.
         """
         super().__init__(image)
+        self.nom = nom
         # Valeurs initiales
         self.pvi = pv
         self.marinsi = marins
@@ -27,7 +29,7 @@ class Bateau(Pivote):
     def rejouer(self) -> None:
         """Réinitialise certains paramètres du bateau pour rejouer une nouvelle partie.
         """
-        self.pos = []
+        self.reset()
         self.place = False
         self.coule = False
         self.actif = False

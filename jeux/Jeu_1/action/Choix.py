@@ -18,4 +18,4 @@ class Choix(Action):
                     i += 1
 
     def passe(self) -> None:
-        self.resultat = random.randint(0, len(self.elements))
+        self.resultat = random.randint(0, len(self.elements)-1)

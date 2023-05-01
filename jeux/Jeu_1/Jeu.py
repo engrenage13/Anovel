@@ -6,6 +6,7 @@ from jeux.Jeu_1.pageCarte import PageCarte
 from jeux.Jeu_1.objets.bases.fenetre import Fenetre
 from jeux.Jeu_1.objets.plateau.zone import Zone
 from jeux.Jeu_1.config import config, joueurs as lijo
+from jeux.Jeu_1.ui.tiroir import Tiroir
 
 class Jeu:
     def __init__(self) -> None:
@@ -17,6 +18,7 @@ class Jeu:
             self.joueurs.append(Joueur(joueur["nom"], joueur["bateaux"], joueur["couleur"]))
         self.actuel = 0
         +self.joueurs[self.actuel]
+        self.tiroir = Tiroir(self.joueurs[self.actuel].bateaux)
         # Phases
         self.fen = {"intro": Intro(self.joueurs), "choix_zone": PageCarte(), "plateau": self.plateau}
         if config['dev']:
@@ -65,14 +67,17 @@ class Jeu:
                 fenetre.action.passe()
 
     def installation(self) -> None:
-        if self.actif == 'plateau' and not self.deplaceInstall:
-            if self.actuel == 0 and self.zone.cases != self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases:
-                self.zone.cases = self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases
-                self.plateau.bloque = True
-                self.plateau + self.zone
-                self.plateau.grise = True
-            if self.pause > 0:
-                self.pause -= 1
+        if self.actif == 'plateau':
+            if not self.deplaceInstall:
+                if self.actuel == 0 and self.zone.cases != self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases:
+                    self.zone.cases = self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases
+                    self.plateau.bloque = True
+                    self.plateau + self.zone
+                    self.plateau.grise = True
+                if self.pause > 0:
+                    self.pause -= 1
+            else:
+                self.tiroir.dessine()
 
     def setPhase(self, phase: str) -> None:
         self.phase = phase

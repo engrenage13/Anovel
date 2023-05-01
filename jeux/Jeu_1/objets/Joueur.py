@@ -19,7 +19,7 @@ class Joueur():
         # bateaux
         for i in range(len(bateaux)):
             bateau = libat[bateaux[i]]
-            bat = Bateau(bateau["image"], bateau["vie"], bateau["marins"], bateau["pm"])
+            bat = Bateau(bateau["nom"], bateau["image"], bateau["vie"], bateau["marins"], bateau["pm"])
             self.bateaux.append(bat)
         self.actuel = 0
         shuffle(self.bateaux)
@@ -59,7 +59,8 @@ class Joueur():
 
     def __pos__(self) -> None:
         self.actif = True
-        +self.bateaux[self.actuel]
+        if self.phase != "installation":
+            +self.bateaux[self.actuel]
 
     def __neg__(self) -> None:
         self.actif = False
