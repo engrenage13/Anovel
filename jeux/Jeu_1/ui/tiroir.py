@@ -19,6 +19,7 @@ class Tiroir:
         self.largeur = int(xf*0.11)
         self.lumCadre = [0, 5]
         self.hauteur_rect = int(bateaux[0].image.height*1.1)
+        self.allume = True
         # Images
         self.decos = [corail1, corail2, poisson]
         # positionnement
@@ -42,15 +43,21 @@ class Tiroir:
                          [255, 255, 255, self.lumCadre[0]])
             draw_rectangle_rounded_lines((self.originex, y, self.largeur+self.originex*-1, tailley), 
                                          0.2, 30, 3, [255, 255, 255, self.lumCadre[1]])
-            self.apparition()
+            if self.allume:
+                self.apparition()
+            else:
+                self.disparition()
             i = 0
             while i < len(self.liste):
-                xbat = int(self.liste[i].image.width/3)
-                if self.getContactBateau(i):
-                    xbat = int(self.liste[i].image.width/2)
-                    self.soulevement[i][0] = True
-                elif self.soulevement[i][0]:
-                    self.soulevement[i][0] = False
+                if self.allume:
+                    xbat = int(self.liste[i].image.width/3)
+                    if self.getContactBateau(i):
+                        xbat = int(self.liste[i].image.width/2)
+                        self.soulevement[i][0] = True
+                    elif self.soulevement[i][0]:
+                        self.soulevement[i][0] = False
+                else:
+                    xbat = -int(self.liste[i].image.width*0.6)
                 self.dessineNom(self.liste[i])
                 self.liste[i].dessine()
                 # Animation des bateaux
@@ -158,27 +165,35 @@ class Tiroir:
         bateau = self.liste[indice]
         return bateau.getContact()
 
-    def checkSelect(self, bateau: Bateau) -> bool:
-        """Vérifie si la bateau est sélectionné par l'utilisateur.
-
-        Args:
-            bateau (Bateau): Bateau à tester.
+    def checkSelect(self) -> int:
+        """Vérifie si un bateau est sélectionné par l'utilisateur.
 
         Returns:
-            bool: True si le bateau est sélectionné, False sinon.
+            int: l'indice du bateau sélectionné ou -1 s'il n'y en a pas.
         """
-        rep = False
+        rep = -1
         if is_mouse_button_pressed(0):
-            self.supValListe(self.liste.index(bateau))
-            rep = True
+            i = 0
+            while i < len(self.liste) and rep < 0:
+                if self.getContactBateau(i):
+                    rep = i
+                else:
+                    i += 1
         return rep
 
     def apparition(self) -> None:
-        """Gère l'apparition du tiroir lors de l'apparation de l'éditeur.
+        """Gère l'apparition du tiroir.
         """
         if self.lumCadre[0] < 50:
             self.lumCadre[0] += 1
             self.lumCadre[1] += 5
+
+    def disparition(self) -> None:
+        """Gère la disparition du tiroir.
+        """
+        if self.lumCadre[0] > 0:
+            self.lumCadre[0] -= 1
+            self.lumCadre[1] -= 5
 
     def bougeBat(self, bateau: int, verif: int) -> None:
         """Gère le mouvement de va et viens d'un bateau dans le tiroir.
