@@ -66,3 +66,9 @@ class Joueur():
         self.actif = False
         for i in range(len(self.bateaux)):
             -self.bateaux[i]
+
+    def __getitem__(self, key) -> Bateau:
+        return self.bateaux[key]
+    
+    def __len__(self) -> int:
+        return len(self.bateaux)

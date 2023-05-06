@@ -40,6 +40,9 @@ class Case(Bougeable):
             rep = True
             del self.contenu[self.contenu.index(element)]
         return rep
+    
+    def vide(self) -> None:
+        self.contenu = []
 
     def ajoute(self, contenu) -> bool:
         rep = True

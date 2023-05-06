@@ -132,6 +132,12 @@ class Scene(Jeu):
         self.afficheSecteur('c')
         self.delaiDepart = 70
 
+    def setPlay(self, etat: bool) -> None:
+        self.play = etat
+        self.tiroir.play = etat
+        self.cible.play = etat
+        self.rectangle.play = etat
+
     # Between the worlds
     def portailAustral(self) -> None:
         if self.play:

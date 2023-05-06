@@ -20,6 +20,7 @@ class Tiroir:
         self.lumCadre = [0, 5]
         self.hauteur_rect = int(bateaux[0].image.height*1.1)
         self.allume = True
+        self.play = True
         # Images
         self.decos = [corail1, corail2, poisson]
         # positionnement
@@ -58,10 +59,12 @@ class Tiroir:
                         self.soulevement[i][0] = False
                 else:
                     xbat = -int(self.liste[i].image.width*0.6)
-                self.dessineNom(self.liste[i])
+                if self.play:
+                    self.dessineNom(self.liste[i])
                 self.liste[i].dessine()
                 # Animation des bateaux
-                self.bougeBat(i, xbat)
+                if self.play:
+                    self.bougeBat(i, xbat)
                 i = i + 1
 
     def dessineNom(self, bateau: Bateau) -> None:
@@ -172,13 +175,14 @@ class Tiroir:
             int: l'indice du bateau sélectionné ou -1 s'il n'y en a pas.
         """
         rep = -1
-        if is_mouse_button_pressed(0):
-            i = 0
-            while i < len(self.liste) and rep < 0:
-                if self.getContactBateau(i):
-                    rep = i
-                else:
-                    i += 1
+        if self.play:
+            if is_mouse_button_pressed(0):
+                i = 0
+                while i < len(self.liste) and rep < 0:
+                    if self.getContactBateau(i):
+                        rep = i
+                    else:
+                        i += 1
         return rep
 
     def apparition(self) -> None:
@@ -214,3 +218,9 @@ class Tiroir:
                 pas = 1
             self.soulevement[bateau][1] -= pas
             self.liste[bateau].deplace(-pas, 0)
+
+    def __getitem__(self, key) -> Bateau:
+        return self.liste[key]
+    
+    def __len__(self) -> int:
+        return len(self.liste)

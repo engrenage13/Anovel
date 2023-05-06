@@ -7,6 +7,8 @@ from jeux.Jeu_1.objets.bases.fenetre import Fenetre
 from jeux.Jeu_1.objets.plateau.zone import Zone
 from jeux.Jeu_1.config import config, joueurs as lijo
 from jeux.Jeu_1.ui.tiroir import Tiroir
+from jeux.Jeu_1.ui.selecBat import SelecBat
+from jeux.Jeu_1.ui.cible import Cible
 
 class Jeu:
     def __init__(self) -> None:
@@ -29,11 +31,14 @@ class Jeu:
             self.actif = 'intro'
         self.phase = config[self.actif]["phase"]
         # /
+        self.cible = Cible(self.plateau.cases[0][0], self.joueurs[self.actuel][0])
         # Installation
         self.deplaceInstall = False
         self.pause = 100
         self.zone = Zone((0, 0), (0, 0), self.plateau)
         self.zone.setCouleurs([255, 161, 0, 60], ORANGE, [255, 161, 0, 60], ORANGE)
+        self.rectangle = SelecBat()
+        self.affRec = False
 
     def dessine(self) -> None:
         fenetre = self.fen[self.actif]
@@ -56,9 +61,19 @@ class Jeu:
                 self.fen[fenetre].rejouer()
         self.actif = self.phase = 'intro'
         self.plateau.bloque = True
+        self.plateau.vide()
+        # Joueurs 
+        self.actuel = 0
+        for i in range(len(self.joueurs)):
+            self.joueurs[i].rejouer()
         # Installation
         self.deplaceInstall = False
         self.pause = 100
+        self.tiroir.setListe(self.joueurs[self.actuel].bateaux)
+        self.tiroir.allume = True
+        self.rectangle.contenu = None
+        self.affRec = False
+        self.rectangle.disparition()
 
     def passeAction(self) -> None:
         if isinstance(self.fen[self.actif], Fenetre):
@@ -77,7 +92,54 @@ class Jeu:
                 if self.pause > 0:
                     self.pause -= 1
             else:
-                self.tiroir.dessine()
+                if not self.affRec:
+                    self.tiroir.dessine()
+                    bat = self.tiroir.checkSelect()
+                    if bat > -1:
+                        self.rectangle.setContenu(self.tiroir[bat])
+                        self.cible.setBateau(self.tiroir[bat])
+                        self.tiroir.supValListe(bat)
+                        self.affRec = True
+                        self.tiroir.allume = False
+                else:
+                    if self.tiroir.lumCadre[0] > 0:
+                        self.tiroir.dessine()
+                    self.deplaceCible()
+                    if self.zone.getContact() and self.cible.play:
+                        self.cible.dessine()
+                    self.rectangle.dessine()
+                    if self.rectangle.annule or self.cible.checkBateauEstPlace():
+                        if self.rectangle.annule:
+                            self.tiroir.ajValListe(self.rectangle.contenu)
+                        self.rectangle.contenu = None
+                        self.affRec = False
+                        self.rectangle.disparition()
+                        self.tiroir.allume = True
+
+    def deplaceCible(self) -> None:
+        if self.cible.play:
+            bonnePlace = False
+            i = 0
+            if self.phase != "installation":
+                while i < self.plateau.nbCases and not bonnePlace:
+                    j = 0
+                    while j < self.plateau.nbCases and not bonnePlace:
+                        if self.plateau[i][j].getContact():
+                            bonnePlace = True
+                            if self.cible.case != self.plateau[i][j]:
+                                self.cible.setCase(self.plateau[i][j])
+                        else:
+                            j += 1
+                    i += 1
+            else:
+                while i < len(self.zone.cases) and not bonnePlace:
+                    Case = self.plateau[self.zone.cases[i][0]][self.zone.cases[i][1]]
+                    if Case.getContact():
+                        bonnePlace = True
+                        if self.cible.case != Case:
+                            self.cible.setCase(Case)
+                    else:
+                        i += 1
 
     def setPhase(self, phase: str) -> None:
         self.phase = phase

@@ -20,7 +20,7 @@ class J1:
             else:
                 if self.actif == self.scene:
                     self.actif.lu = True
-                    self.actif.play = False
+                    self.actif.setPlay(False)
                     if self.actif.message == "J1_MENU":
                         self.actif = self.menu
                     self.actif.play = True
@@ -32,12 +32,12 @@ class J1:
                         self.actif.lu = True
                         self.actif.play = False
                         self.actif = self.scene
-                        self.actif.play = True
+                        self.actif.setPlay(True)
 
     def initialise(self) -> None:
         self.scene = Scene()
         self.menu = Menu()
-        self.scene.play = True
+        self.scene.setPlay(True)
         if config['dev'] == 'menu':
             self.actif = self.menu
         else:

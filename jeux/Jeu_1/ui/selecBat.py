@@ -10,6 +10,7 @@ class SelecBat:
         self.dims = (0, 0)
         self.btstop = Bouton(TB2n, BTANNULE, "ANNULER", 'images/ui/CroSom.png', [self.annulation])
         self.annule = False
+        self.play = True
         # animation
         self.disparition()
 
@@ -18,7 +19,7 @@ class SelecBat:
                                30, [0, 12, 72, int(215*self.lum)])
         draw_texture(poisson, self.pos[0], int(self.pos[1]-(self.dims[1]-poisson.height)/2-poisson.height), [255, 255, 255, int(255*self.lum)])
         self.contenu.dessine()
-        if self.lum >= 1:
+        if self.lum >= 1 and self.play:
             self.btstop.dessine(int(self.pos[0]+self.dims[0]*0.98), int(self.pos[1]-self.dims[1]*0.97))
         self.apparition()
 
