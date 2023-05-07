@@ -62,6 +62,8 @@ TB2n = Taille(int(yf*0.05), False)
 # Apparences
 PTIBT1 = Apparence([[255, 255, 255, 70], [255, 255, 255, 130]], police2, 1, False)
 PTIBT2 = Apparence([[0, 0, 0, 70], [0, 0, 0, 150]], police2, 1, False)
+PTIBT3 = Apparence([[225, 225, 225, 255], WHITE], police2, 1, False)
+PTIBT4 = Apparence([[0, 0, 0, 225], [0, 0, 0, 255]], police2, 1, False)
 BTNOIR = Apparence([[0, 0, 0, 70], [0, 0, 0, 150]], police2, 1, True)
 BTV = Apparence([[18, 82, 219, 255]], police2, 1, True)
 BTX = Apparence([[207, 35, 41, 255]], police2, 1, True)

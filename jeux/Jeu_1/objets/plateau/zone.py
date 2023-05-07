@@ -73,3 +73,9 @@ class Zone:
             if zone.cases[i] not in self.cases:
                 self.cases.append(zone.cases[i])
         return self
+    
+    def __getitem__(self, key) -> tuple[int]:
+        return self.cases[key]
+    
+    def __len__(self) -> int:
+        return len(self.cases)

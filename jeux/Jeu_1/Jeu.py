@@ -8,7 +8,7 @@ from jeux.Jeu_1.objets.plateau.zone import Zone
 from jeux.Jeu_1.config import config, joueurs as lijo
 from jeux.Jeu_1.ui.tiroir import Tiroir
 from jeux.Jeu_1.ui.selecBat import SelecBat
-from jeux.Jeu_1.ui.cible import Cible
+from jeux.Jeu_1.ui.editTeleco import Cible, EditTeleco
 
 class Jeu:
     def __init__(self) -> None:
@@ -31,7 +31,8 @@ class Jeu:
             self.actif = 'intro'
         self.phase = config[self.actif]["phase"]
         # /
-        self.cible = Cible(self.plateau.cases[0][0], self.joueurs[self.actuel][0])
+        self.cible = Cible(self.plateau[0][0], self.joueurs[self.actuel][0])
+        self.teleco = EditTeleco(self.plateau[0][0], self.joueurs[self.actuel][0])
         # Installation
         self.deplaceInstall = False
         self.pause = 100
@@ -39,6 +40,7 @@ class Jeu:
         self.zone.setCouleurs([255, 161, 0, 60], ORANGE, [255, 161, 0, 60], ORANGE)
         self.rectangle = SelecBat()
         self.affRec = False
+        self.affTeleco = False
 
     def dessine(self) -> None:
         fenetre = self.fen[self.actif]
@@ -92,7 +94,7 @@ class Jeu:
                 if self.pause > 0:
                     self.pause -= 1
             else:
-                if not self.affRec:
+                if not self.affRec and not self.affTeleco:
                     self.tiroir.dessine()
                     bat = self.tiroir.checkSelect()
                     if bat > -1:
@@ -101,7 +103,10 @@ class Jeu:
                         self.tiroir.supValListe(bat)
                         self.affRec = True
                         self.tiroir.allume = False
-                else:
+                    else:
+                        if self.tiroir.play:
+                            self.verifEditPlacement()
+                elif self.affRec and not self.affTeleco:
                     if self.tiroir.lumCadre[0] > 0:
                         self.tiroir.dessine()
                     self.deplaceCible()
@@ -115,6 +120,20 @@ class Jeu:
                         self.affRec = False
                         self.rectangle.disparition()
                         self.tiroir.allume = True
+                elif not self.affRec and self.affTeleco:
+                    self.teleco.dessine()
+                    if self.teleco.fini:
+                        self.affTeleco = self.affRec = False
+                    if self.teleco.retire:
+                        self.tiroir.ajValListe(self.teleco.bateau)
+                        self.teleco.case.retire(self.teleco.bateau)
+                    if self.teleco.veutBouger:
+                        voisines = self.plateau.getVoisines(self.teleco.case)
+                        ncase = self.plateau[voisines[self.teleco.veutBouger][0]][voisines[self.teleco.veutBouger][1]]
+                        ncase.ajoute(self.teleco.bateau)
+                        self.teleco.case.retire(self.teleco.bateau)
+                        self.teleco.setCase(ncase)
+                        self.setFleches(ncase)
 
     def deplaceCible(self) -> None:
         if self.cible.play:
@@ -132,14 +151,52 @@ class Jeu:
                             j += 1
                     i += 1
             else:
-                while i < len(self.zone.cases) and not bonnePlace:
-                    Case = self.plateau[self.zone.cases[i][0]][self.zone.cases[i][1]]
+                while i < len(self.zone) and not bonnePlace:
+                    Case = self.plateau[self.zone[i][0]][self.zone[i][1]]
                     if Case.getContact():
                         bonnePlace = True
                         if self.cible.case != Case:
                             self.cible.setCase(Case)
                     else:
                         i += 1
+
+    def verifEditPlacement(self) -> None:
+        if is_mouse_button_pressed(0):
+            trouve = False
+            i = 0
+            while i < len(self.zone) and not trouve:
+                Case = self.plateau[self.zone[i][0]][self.zone[i][1]]
+                if Case.getContact() and not Case.estVide():
+                    trouve = True
+                    indice = 0
+                    if len(Case) > 1:
+                        j = 0
+                        bat = False
+                        while j < len(Case) and not bat:
+                            if Case[j].getContact():
+                                bat = True
+                                indice = j
+                            else:
+                                j += 1
+                    self.teleco.setCase(Case)
+                    self.teleco.setBateau(Case[indice])
+                    self.setFleches(Case)
+                    self.affTeleco = True
+                else:
+                    i += 1
+
+    def setFleches(self, case) -> None:
+        voisines = self.plateau.getVoisines(case)
+        li1 = ["n", "e", "s", "o"]
+        li2 = ["nord", "est", "sud", "ouest"]
+        for i in range(len(li1)):
+            if voisines[li1[i]] and voisines[li1[i]] in self.zone.cases:
+                if not self.plateau[voisines[li1[i]][0]][voisines[li1[i]][1]].estPleine():
+                    self.teleco.activeDep[li2[i]] = True
+                else:
+                    self.teleco.activeDep[li2[i]] = False
+            else:
+                self.teleco.activeDep[li2[i]] = False
 
     def setPhase(self, phase: str) -> None:
         self.phase = phase

@@ -1,5 +1,6 @@
 from systeme.FondMarin import *
 from jeux.Jeu_1.fonctions.bases import TAILLECASE
+from jeux.Jeu_1.objets.Bateau import Bateau
 from jeux.Jeu_1.objets.bases.bougeable import Bougeable
 
 class Case(Bougeable):
@@ -34,11 +35,12 @@ class Case(Bougeable):
                     self.contenu[0].setPos(int(self.pos[0]+self.taille/10*3), int(self.pos[1]+self.taille/2))
                     self.contenu[1].setPos(int(self.pos[0]+self.taille/10*7), int(self.pos[1]+self.taille/2))
 
-    def retire(self, element) -> bool:
+    def retire(self, element: Bateau) -> bool:
         rep = False
         if element in self.contenu:
             rep = True
             del self.contenu[self.contenu.index(element)]
+            self.setPos(self.pos[0], self.pos[1])
         return rep
     
     def vide(self) -> None:
@@ -65,6 +67,12 @@ class Case(Bougeable):
         else:
             return False
         
+    def estVide(self) -> bool:
+        if len(self.contenu) == 0:
+            return True
+        else:
+            return False
+        
     def getContact(self) -> bool:
         rep = False
         x = get_mouse_x()
@@ -79,3 +87,9 @@ class Case(Bougeable):
 
     def __sub__(self, element):
         self.retire(element)
+
+    def __getitem__(self, key) -> Bateau:
+        return self.contenu[key]
+    
+    def __len__(self) -> int:
+        return len(self.contenu)

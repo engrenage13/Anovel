@@ -2,7 +2,7 @@ from systeme.FondMarin import *
 from ui.bouton.bouton import Bouton
 from ui.bouton.grille import Grille
 from jeux.Jeu_1.fonctions.bases import TAILLECASE
-from jeux.Jeu_1.jeu import Jeu, config
+from jeux.Jeu_1.Jeu import Jeu, config
 
 class Scene(Jeu):
     def __init__(self) -> None:
@@ -137,6 +137,7 @@ class Scene(Jeu):
         self.tiroir.play = etat
         self.cible.play = etat
         self.rectangle.play = etat
+        self.teleco.play = etat
 
     # Between the worlds
     def portailAustral(self) -> None:

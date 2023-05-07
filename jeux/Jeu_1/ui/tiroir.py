@@ -117,6 +117,13 @@ class Tiroir:
         segment = 100/(len(self.liste)+1)/100
         y = int(self.originey-tailley/2+tailley*segment)
         for i in range(len(self.liste)):
+            # Réorienter correctement les bateaux
+            while self.liste[i].direction != 0:
+                if self.liste[i].direction == 1:
+                    self.liste[i].gauche()
+                else:
+                    self.liste[i].droite()
+            # /
             x = self.soulevement[i][1]
             self.liste[i].setPos(x, y)
             y += int(tailley*segment)
