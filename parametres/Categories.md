@@ -1,3 +1,3 @@
 - [General] (parametres/General.md)
-- [Editeur] (parametres/Editeur.md)
-- [Partie] (parametres/Partie.md)
+- [Bataille Navale] (parametres/BN.md)
+- [J1] (parametres/J1.md)

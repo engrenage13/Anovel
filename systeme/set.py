@@ -1,6 +1,6 @@
 from systeme.FondMarin import *
 
-defaut = [('anims', "2"), ('hasard', "1"), ("stats", "1")]
+defaut = [('anims', "2"), ('hasard', "1"), ("stats", "1"), ("pivot", "2")]
 actuel = []
 
 def fichierExiste() -> bool:
@@ -45,6 +45,7 @@ def sauvegarde(reset: bool = False) -> None:
 def setParam(param: str, valeur: int) -> None:
     trouve = False
     i = 0
+    print(param, valeur)
     while i < len(actuel) and not trouve:
         if actuel[i][0] == param:
             trouve = True
@@ -57,9 +58,7 @@ def setParam(param: str, valeur: int) -> None:
 def startSet() -> None:
     if not fichierExiste():
         sauvegarde(True)
-        lecture()
-    else:
-        lecture()
+    lecture()
 
 def trouveParam(param: str) -> int:
     trouve = False
