@@ -226,6 +226,12 @@ class Tiroir:
             self.soulevement[bateau][1] -= pas
             self.liste[bateau].deplace(-pas, 0)
 
+    def estApparu(self) -> bool:
+        if self.lumCadre[0] >= 50:
+            return True
+        else:
+            return False
+
     def __getitem__(self, key) -> Bateau:
         return self.liste[key]
     

@@ -1,9 +1,11 @@
+from random import choice
 from systeme.FondMarin import *
 from ui.bouton.bouton import Bouton
 from ui.bouton.boutonPression import BoutonPression
 from ui.bouton.grille import Grille
 from jeux.Jeu_1.fonctions.bases import TAILLECASE
 from jeux.Jeu_1.Jeu import Jeu, config
+from systeme.set import trouveParam
 
 class Scene(Jeu):
     def __init__(self) -> None:
@@ -26,6 +28,8 @@ class Scene(Jeu):
         self.delaiDepart = 70
         # Installation
         self.btValid = BoutonPression(TB1o, BTNOIR, "VALIDER", "images/ui/check.png", [self.joueurSuivant])
+        self.btAlea = Bouton(TB1n, PTIBT1, "PLACEMENT ALEATOIRE", "images/ui/hasard.png", [self.placementAleatoire])
+        self.btSup = Bouton(TB1n, PTIBT1, "EFFACER", "images/ui/corbeille.png", [self.tousAuTiroir])
         # Between the worlds
         self.play = False
         self.message = ''
@@ -63,8 +67,14 @@ class Scene(Jeu):
                     self.afficheSecteur(secteurs[(self.fen['choix_zone'].action.resultat+4)%len(secteurs)])
                 self.deplaceInstall = True
                 self.pause = 100
-            elif len(self.tiroir) == 0 and not self.affRec and not self.affTeleco:
-                self.btValid.dessine(int(xf*0.99-self.btValid.getDims()[0]/2), int(yf-xf*0.01-self.btValid.getDims()[1]/2))
+            elif not self.affRec and not self.affTeleco:
+                if self.tiroir.estApparu():
+                    self.btSup.dessine(int(xf*0.05), int(yf*0.81))
+                    self.btAlea.dessine(int(xf*0.05), int(yf*0.89))
+                if len(self.tiroir) == 0:
+                    self.btSup.dessine(int(xf*0.05), int(yf*0.81))
+                    self.btAlea.dessine(int(xf*0.05), int(yf*0.89))
+                    self.btValid.dessine(int(xf*0.99-self.btValid.getDims()[0]/2), int(yf-xf*0.01-self.btValid.getDims()[1]/2)) 
 
     def deplace(self) -> None:
         x = get_mouse_x()
@@ -147,6 +157,32 @@ class Scene(Jeu):
         self.cible.play = etat
         self.rectangle.play = etat
         self.teleco.play = etat
+
+    # Installation
+
+    def tousAuTiroir(self) -> None:
+        for i in range(len(self.zone)):
+            self.plateau[self.zone[i][0]][self.zone[i][1]].vide()
+        self.tiroir.setListe(self.joueurs[self.actuel].bateaux)
+
+    def placementAleatoire(self) -> None:
+        if len(self.tiroir) == 0:
+            self.tousAuTiroir()
+        elif trouveParam('hasard') == 0:
+            self.tousAuTiroir()
+        while len(self.tiroir) > 0:
+            bat = self.tiroir[0]
+            self.tiroir.supValListe(0)
+            lcase = self.zone.cases
+            cases = []
+            for j in range(len(lcase)):
+                if not self.plateau[lcase[j][0]][lcase[j][1]].estPleine():
+                    cases.append(self.plateau[lcase[j][0]][lcase[j][1]])
+            c1 = choice(cases)
+            c2 = choice([0, 1, 2, 3])
+            for k in range(c2):
+                bat.droite()
+            c1.ajoute(bat)
 
     # Between the worlds
     def portailAustral(self) -> None:
