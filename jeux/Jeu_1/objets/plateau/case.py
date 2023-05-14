@@ -51,10 +51,11 @@ class Case(Bougeable):
         if len(self.contenu) > 0:
             if len(self.contenu) >= 2:
                 rep = False
-            elif self.contenu[0].direction%2 == contenu.direction%2:
+            elif self.contenu[0].direction%2 != contenu.direction%2:
+                self.tourneBateaux()
                 self.contenu.append(contenu)
             else:
-                rep = False
+                self.contenu.append(contenu)
         else:
             self.contenu.append(contenu)
         if rep:
@@ -81,6 +82,14 @@ class Case(Bougeable):
             if y >= self.pos[1] and y <= self.pos[1]+self.taille:
                 rep = True
         return rep
+    
+    def tourneBateaux(self, sens: bool = True) -> None:
+        for i in range(len(self.contenu)):
+            if sens:
+                self.contenu[i].gauche()
+            else:
+                self.contenu[i].droite()
+        self.setPos(self.pos[0], self.pos[1])
         
     def __add__(self, element):
         return self.ajoute(element)

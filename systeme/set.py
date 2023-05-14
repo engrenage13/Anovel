@@ -45,7 +45,6 @@ def sauvegarde(reset: bool = False) -> None:
 def setParam(param: str, valeur: int) -> None:
     trouve = False
     i = 0
-    print(param, valeur)
     while i < len(actuel) and not trouve:
         if actuel[i][0] == param:
             trouve = True

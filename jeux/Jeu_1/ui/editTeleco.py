@@ -52,10 +52,16 @@ class EditTeleco(Cible):
         self.fini = True
 
     def tourneHoraire(self) -> None:
-        self.bateau.droite()
+        if self.case.estPleine():
+            self.case.tourneBateaux(False)
+        else:
+            self.bateau.droite()
 
     def tourneAntiHoraire(self) -> None:
-        self.bateau.gauche()
+        if self.case.estPleine():
+            self.case.tourneBateaux()
+        else:
+            self.bateau.gauche()
 
     def auNord(self) -> None:
         self.veutBouger = "n"
