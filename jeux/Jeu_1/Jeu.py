@@ -68,13 +68,17 @@ class Jeu:
         self.actuel = 0
         for i in range(len(self.joueurs)):
             self.joueurs[i].rejouer()
+        +self.joueurs[self.actuel]
         # Installation
+        self.resetInstall()
+
+    def resetInstall(self) -> None:
         self.deplaceInstall = False
         self.pause = 100
         self.tiroir.setListe(self.joueurs[self.actuel].bateaux)
         self.tiroir.allume = True
         self.rectangle.contenu = None
-        self.affRec = False
+        self.affRec = self.affTeleco = False
         self.rectangle.disparition()
 
     def passeAction(self) -> None:
@@ -88,9 +92,10 @@ class Jeu:
             if not self.deplaceInstall:
                 if self.actuel == 0 and self.zone.cases != self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases:
                     self.zone.cases = self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases
-                    self.plateau.bloque = True
-                    self.plateau + self.zone
-                    self.plateau.grise = True
+                    self.setPlateauInstall()
+                elif self.actuel == 1 and self.zone.cases != self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+4)%8].cases:
+                    self.zone.cases = self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+4)%8].cases
+                    self.setPlateauInstall()
                 if self.pause > 0:
                     self.pause -= 1
             else:
@@ -134,6 +139,11 @@ class Jeu:
                         self.teleco.case.retire(self.teleco.bateau)
                         self.teleco.setCase(ncase)
                         self.setFleches(ncase)
+
+    def setPlateauInstall(self) -> None:
+        self.plateau.bloque = True
+        self.plateau + self.zone
+        self.plateau.grise = True
 
     def deplaceCible(self) -> None:
         if self.cible.play:
@@ -203,6 +213,19 @@ class Jeu:
         for i in range(len(self.joueurs)):
             self.joueurs[i].phase = phase
 
+    def joueurSuivant(self) -> None:
+        -self.joueurs[self.actuel]
+        self.actuel += 1
+        if self.actuel >= len(self.joueurs):
+            self.actuel = 0
+            if self.phase == 'installation':
+                self.setPhase('jeu')
+        +self.joueurs[self.actuel]
+        if self.phase == 'installation':
+            self.resetInstall()
+        elif self.phase == 'jeu':
+            self.plateau - self.zone
+
     '''def tour(self) -> None:
         joueur = self.joueurs[self.actuel]
         if self.play:
@@ -210,13 +233,6 @@ class Jeu:
             if not passe:
                 joueur.jouer(self.coordsViseur)
                 self.joueurSuivant()
-
-    def joueurSuivant(self) -> None:
-        if not self.joueurs[self.actuel].actif:
-            self.actuel += 1
-            if self.actuel >= len(self.joueurs):
-                self.actuel = 0
-            +self.joueurs[self.actuel]
 
     def setPosViseur(self, bateau) -> bool:
         passe = False

@@ -1,5 +1,6 @@
 from systeme.FondMarin import *
 from ui.bouton.bouton import Bouton
+from ui.bouton.boutonPression import BoutonPression
 from ui.bouton.grille import Grille
 from jeux.Jeu_1.fonctions.bases import TAILLECASE
 from jeux.Jeu_1.Jeu import Jeu, config
@@ -23,6 +24,8 @@ class Scene(Jeu):
         self.trajet = (0, 0)
         self.afficheSecteur('c')
         self.delaiDepart = 70
+        # Installation
+        self.btValid = BoutonPression(TB1o, BTNOIR, "VALIDER", "images/ui/check.png", [self.joueurSuivant])
         # Between the worlds
         self.play = False
         self.message = ''
@@ -51,11 +54,17 @@ class Scene(Jeu):
         else:
             if not self.plateau.bloque:
                 self.plateau.bloque = True
-        if self.actif == 'plateau' and self.phase == 'installation' and not self.deplaceInstall and self.pause <= 0:
-            secteurs = ['no', 'n', 'ne', 'e', 'se', 's', 'so', 'o']
-            self.afficheSecteur(secteurs[self.fen['choix_zone'].action.resultat])
-            self.deplaceInstall = True
-            self.pause = 100
+        if self.actif == 'plateau' and self.phase == 'installation':
+            if not self.deplaceInstall and self.pause <= 0:
+                secteurs = ['no', 'n', 'ne', 'e', 'se', 's', 'so', 'o']
+                if self.actuel == 0:
+                    self.afficheSecteur(secteurs[self.fen['choix_zone'].action.resultat])
+                elif self.actuel == 1:
+                    self.afficheSecteur(secteurs[(self.fen['choix_zone'].action.resultat+4)%len(secteurs)])
+                self.deplaceInstall = True
+                self.pause = 100
+            elif len(self.tiroir) == 0 and not self.affRec and not self.affTeleco:
+                self.btValid.dessine(int(xf*0.99-self.btValid.getDims()[0]/2), int(yf-xf*0.01-self.btValid.getDims()[1]/2))
 
     def deplace(self) -> None:
         x = get_mouse_x()
