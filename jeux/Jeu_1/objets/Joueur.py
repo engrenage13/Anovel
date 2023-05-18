@@ -2,7 +2,7 @@ from random import shuffle
 from systeme.FondMarin import *
 from jeux.Jeu_1.objets.Bateau import Bateau
 from jeux.Jeu_1.config import bateaux as libat
-#from ui.blocTexte import BlocTexte
+from ui.blocTexte import BlocTexte
 
 class Joueur():
     def __init__(self, nom: str, bateaux: list, couleur: Color):
@@ -14,6 +14,7 @@ class Joueur():
             couleur (Color): Sa couleur.
         """
         self.nom = nom
+        self.titre = BlocTexte(nom, police1, int(yf*0.04), [int(xf*0.1), int(yf*0.06)])
         self.couleur = couleur
         self.bateaux = []
         # bateaux
@@ -28,9 +29,9 @@ class Joueur():
         self.phase = "installation"
 
     def dessine(self) -> None:
-        if self.phase != "installation":
-            for i in range(len(self.bateaux)):
-                self.bateaux[i].dessine()
+        # ui
+        draw_rectangle_rounded([int(yf*0.01), int(yf*0.01), int(xf*0.1), int(yf*0.06)], 0.15, 30, [255, 255, 255, 170])
+        self.titre.dessine([[int(yf*0.01+xf*0.05), int(yf*0.01+yf*0.025)], 'c'], BLACK)
 
     def rejouer(self) -> None:
         """Réinitialise certains paramètres du joueur pour une nouvelle partie.

@@ -76,7 +76,12 @@ class Scene(Jeu):
                 if len(self.tiroir) == 0:
                     self.btSup.dessine(int(xf*0.05), int(yf*0.81))
                     self.btAlea.dessine(int(xf*0.05), int(yf*0.89))
-                    self.btValid.dessine(int(xf*0.99-self.btValid.getDims()[0]/2), int(yf-xf*0.01-self.btValid.getDims()[1]/2)) 
+                    self.btValid.dessine(int(xf*0.99-self.btValid.getDims()[0]/2), int(yf-xf*0.01-self.btValid.getDims()[1]/2))
+        elif self.actif == 'jeu' and self.phase == 'jeu':
+            if not self.deplaceInstall:
+                secteurs = ['no', 'n', 'ne', 'e', 'se', 's', 'so', 'o']
+                self.afficheSecteur(secteurs[self.fen['choix_zone'].action.resultat])
+                self.deplaceInstall = True
 
     def deplace(self) -> None:
         x = get_mouse_x()
@@ -142,11 +147,7 @@ class Scene(Jeu):
         else:
             px = py = 0
         if px != 0 and py != 0:
-            if self.phase == "installation":
-                glisse = True
-            else:
-                glisse = False
-            self.plateau.place(px, py, glisse)
+            self.plateau.place(px, py, True)
 
     def rejouer(self) -> None:
         super().rejouer()

@@ -55,6 +55,8 @@ class Jeu:
             self.installation()
             if config['dev'] == 'jeu':
                 self.passePhase()
+        elif self.phase == 'jeu':
+            self.joueurs[self.actuel].dessine()
 
     def switch(self) -> None:
         if self.actif == 'intro':
@@ -276,6 +278,7 @@ class Jeu:
         elif self.phase == 'jeu':
             self.plateau - self.zone
             self.plateau.grise = False
+            self.deplaceInstall = False
 
     '''def tour(self) -> None:
         joueur = self.joueurs[self.actuel]
