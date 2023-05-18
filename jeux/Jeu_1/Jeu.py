@@ -9,6 +9,7 @@ from jeux.Jeu_1.config import config, joueurs as lijo
 from jeux.Jeu_1.ui.tiroir import Tiroir
 from jeux.Jeu_1.ui.selecBat import SelecBat
 from jeux.Jeu_1.ui.editTeleco import Cible, EditTeleco
+from jeux.Jeu_1.action.Placement import Placement
 
 class Jeu:
     def __init__(self) -> None:
@@ -73,12 +74,11 @@ class Jeu:
         self.resetInstall()
 
     def resetInstall(self) -> None:
-        self.deplaceInstall = False
+        self.deplaceInstall = self.affRec = self.affTeleco = False
         self.pause = 100
         self.tiroir.setListe(self.joueurs[self.actuel].bateaux)
         self.tiroir.allume = True
         self.rectangle.contenu = None
-        self.affRec = self.affTeleco = False
         self.rectangle.disparition()
 
     def passeAction(self) -> None:
@@ -86,6 +86,32 @@ class Jeu:
             fenetre = self.fen[self.actif]
             if fenetre.action != None:
                 fenetre.action.passe()
+        elif self.phase == "installation":
+            self.passeInstall()
+
+    def passeInstall(self) -> None:
+        cases = []
+        for i in range(len(self.zone.cases)):
+            tuile = self.plateau[self.zone[i][0]][self.zone[i][1]]
+            if not tuile.estPleine():
+                cases.append(tuile)
+        if not self.affRec:
+            placement = Placement(self.tiroir.liste, cases)
+        else:
+            placement = Placement([self.rectangle.contenu], cases)
+        placement.passe()
+        if not self.affRec:
+            bateau = self.tiroir[placement.resultat[0]]
+        else:
+            bateau = self.rectangle.contenu
+        Case = cases[placement.resultat[1]]
+        self.tiroir.supValListe(placement.resultat[0])
+        self.affTeleco = self.affRec = False
+        for i in range(placement.resultat[2]-bateau.direction):
+            bateau.droite()
+        Case.ajoute(bateau)
+        if len(self.tiroir) == 0:
+            self.joueurSuivant()
 
     def installation(self) -> None:
         if self.actif == 'plateau':
