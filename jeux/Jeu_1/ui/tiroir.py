@@ -159,6 +159,7 @@ class Tiroir:
         Args:
             valeur (Bateau): Bateau à ajouter à la liste.
         """
+        valeur.place = False
         self.liste.append(valeur)
         self.soulevement.append([False, -int(valeur.image.width*0.6), 0])
         self.positioneBateaux()

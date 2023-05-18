@@ -13,7 +13,8 @@ class Scene(Jeu):
         self.opt = [[Bouton(TB2n, PTIBT1, "MENU", 'images/ui/pause.png', [self.portailAustral]), "J1_MENU"]]
         self.optDev = [Bouton(TB2n, BTDEV, "REJOUER", 'images/ui/reset.png', [self.rejouer]), 
                        Bouton(TB2n, BTDEV, "PASSER L'ACTION", 'images/ui/passer.png', [self.passeAction]),
-                       Bouton(TB2n, BTDEV, "PASSER LE TOUR", 'images/ui/passer+.png', [self.passeTour])]
+                       Bouton(TB2n, BTDEV, "PASSER LE TOUR", 'images/ui/passer+.png', [self.passeTour]),
+                       Bouton(TB2n, BTDEV, "PASSER LA PHASE", 'images/ui/passer++.png', [self.passePhase])]
         t = TB2n.hauteur
         self.g1 = Grille(int(t+yf*0.01), [False], False)
         self.gDev = Grille(int(t+yf*0.01), [False])
@@ -59,7 +60,7 @@ class Scene(Jeu):
         else:
             if not self.plateau.bloque:
                 self.plateau.bloque = True
-        if self.actif == 'plateau' and self.phase == 'installation':
+        if self.actif == 'install' and self.phase == 'installation':
             if not self.deplaceInstall and self.pause <= 0:
                 secteurs = ['no', 'n', 'ne', 'e', 'se', 's', 'so', 'o']
                 if self.actuel == 0:

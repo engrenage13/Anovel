@@ -59,6 +59,7 @@ class Case(Bougeable):
         else:
             self.contenu.append(contenu)
         if rep:
+            contenu.place = True
             self.setPos(self.pos[0], self.pos[1])
         return rep
 

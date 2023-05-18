@@ -1,7 +1,8 @@
 {
-    "plateau": {"interface": true, "phase": "installation"},
+    "install": {"interface": true, "phase": "installation"},
+    "jeu": {"interface": true, "phase": "jeu"},
     "intro": {"interface": false, "phase": "intro"},
     "choix_zone": {"interface": true, "phase": "installation"},
 
-    "dev": "plateau"
+    "dev": "jeu"
 }

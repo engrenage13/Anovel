@@ -57,6 +57,16 @@ class Joueur():
         else:
             +self.bateaux[self.actuel]
 
+    def estEnPlace(self) -> bool:
+        place = True
+        i = 0
+        while i < len(self.bateaux) and place:
+            if not self.bateaux[i].estEnPlace():
+                place = False
+            else:
+                i += 1
+        return place
+
     def __pos__(self) -> None:
         self.actif = True
         if self.phase != "installation":

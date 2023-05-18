@@ -36,3 +36,6 @@ class Bateau(Pivote):
         self.vie = self.pvi
         self.marins = self.marinsi
         self.pm = self.pmi
+
+    def estEnPlace(self) -> bool:
+        return self.place

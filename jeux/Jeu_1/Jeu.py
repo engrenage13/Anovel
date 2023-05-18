@@ -23,10 +23,13 @@ class Jeu:
         +self.joueurs[self.actuel]
         self.tiroir = Tiroir(self.joueurs[self.actuel].bateaux)
         # Phases
-        self.fen = {"intro": Intro(self.joueurs), "choix_zone": PageCarte(), "plateau": self.plateau}
+        self.fen = {"intro": Intro(self.joueurs), "choix_zone": PageCarte(), "install": self.plateau, "jeu": self.plateau}
         if config['dev']:
-            self.actif = config['dev'].lower()
-            if self.actif == 'plateau':
+            if config['dev'].lower() == 'jeu':
+                self.actif = 'install'
+            else:
+                self.actif = config['dev'].lower()
+            if self.actif != 'intro' or self.actif != 'choix_zone':
                 self.fen['choix_zone'].action.passe()
         else:
             self.actif = 'intro'
@@ -50,13 +53,18 @@ class Jeu:
             self.switch()
         if self.phase == 'installation':
             self.installation()
+            if config['dev'] == 'jeu':
+                self.passePhase()
 
     def switch(self) -> None:
         if self.actif == 'intro':
             self.actif = 'choix_zone'
             self.setPhase('installation')
         elif self.actif == 'choix_zone':
-            self.actif = 'plateau'
+            self.actif = 'install'
+        elif self.actif == 'install':
+            self.actif = 'jeu'
+            self.setPhase('jeu')
 
     def rejouer(self) -> None:
         for fenetre in self.fen:
@@ -80,6 +88,14 @@ class Jeu:
         self.tiroir.allume = True
         self.rectangle.contenu = None
         self.rectangle.disparition()
+
+    def passePhase(self) -> None:
+        if self.phase == 'installation':
+            phase = self.phase
+            while self.phase == phase:
+                self.passeTour()
+                if self.actuel == 1 and self.phase == 'installation':
+                    self.zone.cases = self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+4)%8].cases
 
     def passeTour(self) -> None:
         j = self.actuel
@@ -123,7 +139,7 @@ class Jeu:
             self.joueurSuivant()
 
     def installation(self) -> None:
-        if self.actif == 'plateau':
+        if self.actif == 'install':
             if not self.deplaceInstall:
                 if self.actuel == 0 and self.zone.cases != self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases:
                     self.zone.cases = self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases
@@ -253,8 +269,7 @@ class Jeu:
         self.actuel += 1
         if self.actuel >= len(self.joueurs):
             self.actuel = 0
-            if self.phase == 'installation':
-                self.setPhase('jeu')
+            self.switch()
         +self.joueurs[self.actuel]
         if self.phase == 'installation':
             self.resetInstall()
