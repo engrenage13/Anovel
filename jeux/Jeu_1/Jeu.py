@@ -81,6 +81,15 @@ class Jeu:
         self.rectangle.contenu = None
         self.rectangle.disparition()
 
+    def passeTour(self) -> None:
+        j = self.actuel
+        if self.phase == 'installation':
+            while self.actuel == j:
+                self.passeAction()
+                if isinstance(self.fen[self.actif], Fenetre) and self.fen[self.actif].estFini():
+                    self.switch()
+                    self.zone.cases = self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases
+
     def passeAction(self) -> None:
         if isinstance(self.fen[self.actif], Fenetre):
             fenetre = self.fen[self.actif]
@@ -251,6 +260,7 @@ class Jeu:
             self.resetInstall()
         elif self.phase == 'jeu':
             self.plateau - self.zone
+            self.plateau.grise = False
 
     '''def tour(self) -> None:
         joueur = self.joueurs[self.actuel]

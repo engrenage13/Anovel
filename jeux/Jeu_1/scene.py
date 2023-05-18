@@ -12,7 +12,8 @@ class Scene(Jeu):
         super().__init__()
         self.opt = [[Bouton(TB2n, PTIBT1, "MENU", 'images/ui/pause.png', [self.portailAustral]), "J1_MENU"]]
         self.optDev = [Bouton(TB2n, BTDEV, "REJOUER", 'images/ui/reset.png', [self.rejouer]), 
-                       Bouton(TB2n, BTDEV, "PASSER L'ACTION", 'images/ui/passer.png', [self.passeAction])]
+                       Bouton(TB2n, BTDEV, "PASSER L'ACTION", 'images/ui/passer.png', [self.passeAction]),
+                       Bouton(TB2n, BTDEV, "PASSER LE TOUR", 'images/ui/passer+.png', [self.passeTour])]
         t = TB2n.hauteur
         self.g1 = Grille(int(t+yf*0.01), [False], False)
         self.gDev = Grille(int(t+yf*0.01), [False])
@@ -64,7 +65,7 @@ class Scene(Jeu):
                 if self.actuel == 0:
                     self.afficheSecteur(secteurs[self.fen['choix_zone'].action.resultat])
                 elif self.actuel == 1:
-                    self.afficheSecteur(secteurs[(self.fen['choix_zone'].action.resultat+4)%len(secteurs)])
+                    self.afficheSecteur(secteurs[(self.fen['choix_zone'].action.resultat+4)%8])
                 self.deplaceInstall = True
                 self.pause = 100
             elif not self.affRec and not self.affTeleco:
