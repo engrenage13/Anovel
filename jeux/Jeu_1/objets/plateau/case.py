@@ -16,11 +16,30 @@ class Case(Bougeable):
         draw_rectangle_lines_ex([self.pos[0], self.pos[1], self.taille, self.taille], self.largeurBordure, self.couleurs[1])
         if grise:
             draw_rectangle(self.pos[0], self.pos[1], self.taille, self.taille, [50, 50, 50, 160])
+
+    def dessineMarqueur(self) -> None:
+        v = 0.07
+        t = int(self.taille*v)
+        if self.contenu[0].direction%2 == 1:
+            x = 1-v*len(self.contenu)
+            y = 0.93
+        else:
+            x = 0.93
+            y = 1-v*len(self.contenu)
+        for i in range(len(self.contenu)):
+            draw_rectangle(int(self.pos[0]+x*self.taille), int(self.pos[1]+y*self.taille), t, t, WHITE)
+            draw_rectangle_lines(int(self.pos[0]+x*self.taille), int(self.pos[1]+y*self.taille), t, t, BLACK)
+            draw_text_ex(police1, str(self.contenu[i].id), (int(self.pos[0]+(x+0.016)*self.taille), int(self.pos[1]+(y+0.005)*self.taille)), t, 0, self.contenu[i].couleur)
+            if self.contenu[0].direction%2 == 1:
+                x += v
+            else:
+                y += v
         
     def dessineContenu(self) -> None:    
         if len(self.contenu) > 0:
             for i in range(len(self.contenu)):
                 self.contenu[i].dessine()
+            self.dessineMarqueur()
 
     def setPos(self, x: int, y: int) -> None:
         super().setPos(x, y)

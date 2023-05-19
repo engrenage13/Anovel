@@ -3,7 +3,7 @@ from jeux.Jeu_1.objets.bases.pivote import Pivote
 from jeux.Jeu_1.fonctions.deplacement import glisse
 
 class Bateau(Pivote):
-    def __init__(self, nom: str, image: str, pv: int, marins: int, pm: int):
+    def __init__(self, nom: str, image: str, pv: int, marins: int, pm: int, couleur: Color, ide: int):
         """Crée un bateau.
 
         Args:
@@ -12,9 +12,12 @@ class Bateau(Pivote):
             pv (int): Points de vie du bateau.
             marins (int): Nombre de marins présents sur le bateau.
             pm (int): Portée de déplacement du bateau.
+            couleur (Color): Couleur du bateau.
         """
         super().__init__(image)
         self.nom = nom
+        self.couleur = couleur
+        self.id = ide
         # Valeurs initiales
         self.pvi = pv
         self.marinsi = marins

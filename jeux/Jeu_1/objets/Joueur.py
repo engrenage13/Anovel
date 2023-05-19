@@ -20,7 +20,7 @@ class Joueur():
         # bateaux
         for i in range(len(bateaux)):
             bateau = libat[bateaux[i]]
-            bat = Bateau(bateau["nom"], bateau["image"], bateau["vie"], bateau["marins"], bateau["pm"])
+            bat = Bateau(bateau["nom"], bateau["image"], bateau["vie"], bateau["marins"], bateau["pm"], self.couleur, i+1)
             self.bateaux.append(bat)
         self.actuel = 0
         shuffle(self.bateaux)
@@ -31,7 +31,7 @@ class Joueur():
     def dessine(self) -> None:
         # ui
         draw_rectangle_rounded([int(yf*0.01), int(yf*0.01), int(xf*0.1), int(yf*0.06)], 0.15, 30, [255, 255, 255, 170])
-        self.titre.dessine([[int(yf*0.01+xf*0.05), int(yf*0.01+yf*0.025)], 'c'], BLACK)
+        self.titre.dessine([[int(yf*0.01+xf*0.05), int(yf*0.01+yf*0.025)], 'c'], self.couleur)
 
     def rejouer(self) -> None:
         """Réinitialise certains paramètres du joueur pour une nouvelle partie.
