@@ -1,4 +1,3 @@
-from random import shuffle
 from systeme.FondMarin import *
 from jeux.Jeu_1.objets.Bateau import Bateau
 from jeux.Jeu_1.config import bateaux as libat
@@ -23,7 +22,6 @@ class Joueur():
             bat = Bateau(bateau["nom"], bateau["image"], bateau["vie"], bateau["marins"], bateau["pm"], self.couleur, i+1)
             self.bateaux.append(bat)
         self.actuel = 0
-        shuffle(self.bateaux)
         # /bateaux
         self.actif = False
         self.phase = "installation"
@@ -40,7 +38,6 @@ class Joueur():
         self.phase = "installation"
         for i in range(len(self.bateaux)):
             self.bateaux[i].rejouer()
-        shuffle(self.bateaux)
 
     def jouer(self, coord: tuple) -> bool:
         bat = self.bateaux[self.actuel]
@@ -49,8 +46,7 @@ class Joueur():
             self.bateauSuivant()
 
     def bateauSuivant(self) -> None:
-        bat = self.bateaux[self.actuel]
-        -bat
+        -self.bateaux[self.actuel]
         self.actuel += 1
         if self.actuel >= len(self.bateaux):
             self.actuel = 0

@@ -125,21 +125,33 @@ class Plateau:
         if self.cases[0][0].pos == self.positionCible:
             self.glisse = False
 
-    def passeFrontiereHorizontale(self, x: int) -> bool:
+    def passeFrontiereHorizontale(self, x: int, absolue: bool = False) -> bool:
         rep = False
         tCase = self.tailleCase
-        if self.cases[0][0].pos[0]+x > self.largeurBordure+self.largeurEnvirronement:
+        if absolue:
+            xcomp1 = x
+            xcomp2 = int(x+len(self.cases)*tCase)
+        else:
+            xcomp1 = self.cases[0][0].pos[0]+x
+            xcomp2 = self.cases[0][self.nbCases-1].pos[0]+tCase+x
+        if xcomp1 > self.largeurBordure+self.largeurEnvirronement:
             rep = True
-        elif self.cases[0][self.nbCases-1].pos[0]+tCase+x < xf-self.largeurBordure-self.largeurEnvirronement:
+        elif xcomp2 < xf-self.largeurBordure-self.largeurEnvirronement:
             rep = True
         return rep
     
-    def passeFrontiereVerticale(self, y: int) -> bool:
+    def passeFrontiereVerticale(self, y: int, absolue: bool = False) -> bool:
         rep = False
         tCase = self.tailleCase
-        if self.cases[0][0].pos[1]+y > self.largeurBordure+self.largeurEnvirronement:
+        if absolue:
+            xcomp1 = y
+            xcomp2 = int(y+len(self.cases)*tCase)
+        else:
+            xcomp1 = self.cases[0][0].pos[1]+y
+            xcomp2 = self.cases[self.nbCases-1][0].pos[1]+tCase+y
+        if xcomp1 > self.largeurBordure+self.largeurEnvirronement:
             rep = True
-        elif self.cases[self.nbCases-1][0].pos[1]+tCase+y < yf-self.largeurBordure-self.largeurEnvirronement:
+        elif xcomp2 < yf-self.largeurBordure-self.largeurEnvirronement:
             rep = True
         return rep
     
@@ -173,6 +185,37 @@ class Plateau:
             if pos[1] < self.nbCases-1:
                 voisines['s'] = (pos[1]+1, pos[0])
         return voisines
+    
+    def focusCase(self, case: tuple) -> None:
+        x = self.cases[0][0].pos[0]
+        y = self.cases[0][0].pos[1]
+        cx = int(self.cases[case[0]][case[1]].pos[0]+self.tailleCase/2)
+        cy = int(self.cases[case[0]][case[1]].pos[1]+self.tailleCase/2)
+        if cx <= int(xf/2):
+            dx = int(xf/2-cx)
+            mulx = 1
+        else:
+            dx = int(cx-xf/2)
+            mulx = -1
+        if cy <= int(yf/2):
+            dy = int(yf/2-cy)
+            muly = 1
+        else:
+            dy = int(cy-yf/2)
+            muly = -1
+        nx = x+(dx*mulx)
+        ny = y+(dy*muly)
+        if self.passeFrontiereHorizontale(nx, True):
+            if mulx > 0:
+                nx = self.largeurBordure+self.largeurEnvirronement
+            else:
+                nx = xf-(len(self.cases)*self.tailleCase)-self.largeurBordure-self.largeurEnvirronement
+        if self.passeFrontiereVerticale(ny, True):
+            if muly > 0:
+                ny = self.largeurBordure+self.largeurEnvirronement
+            else:
+                ny = yf-(len(self.cases)*self.tailleCase)-self.largeurBordure-self.largeurEnvirronement
+        self.place(nx, ny, True)
     
     def vide(self) -> None:
         for i in range(self.nbCases):

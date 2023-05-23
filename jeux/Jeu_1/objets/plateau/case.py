@@ -110,6 +110,9 @@ class Case(Bougeable):
             else:
                 self.contenu[i].droite()
         self.setPos(self.pos[0], self.pos[1])
+
+    def contient(self, element: Bateau) -> bool:
+        return element in self.contenu
         
     def __add__(self, element):
         return self.ajoute(element)

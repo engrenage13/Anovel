@@ -78,10 +78,7 @@ class Scene(Jeu):
                     self.btAlea.dessine(int(xf*0.05), int(yf*0.89))
                     self.btValid.dessine(int(xf*0.99-self.btValid.getDims()[0]/2), int(yf-xf*0.01-self.btValid.getDims()[1]/2))
         elif self.actif == 'jeu' and self.phase == 'jeu':
-            if not self.deplaceInstall:
-                secteurs = ['no', 'n', 'ne', 'e', 'se', 's', 'so', 'o']
-                self.afficheSecteur(secteurs[self.fen['choix_zone'].action.resultat])
-                self.deplaceInstall = True
+            self.tour()
 
     def deplace(self) -> None:
         x = get_mouse_x()
@@ -149,6 +146,21 @@ class Scene(Jeu):
         if px != 0 and py != 0:
             self.plateau.place(px, py, True)
 
+    def focusBat(self) -> None:
+        trouve = False
+        i = 0
+        bat = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
+        while i < len(self.plateau) and not trouve:
+            j = 0
+            while j < len(self.plateau[i]) and not trouve:
+                if self.plateau[i][j].contient(bat):
+                    trouve = True
+                else:
+                    j += 1
+            if not trouve:
+                i += 1
+        self.plateau.focusCase((i, j))
+
     def rejouer(self) -> None:
         super().rejouer()
         self.afficheSecteur('c')
@@ -186,6 +198,13 @@ class Scene(Jeu):
             for k in range(c2):
                 bat.droite()
             c1.ajoute(bat)
+
+    # Jeu
+
+    def tour(self) -> None:
+        if not self.deplaceInstall:
+            self.focusBat()
+            self.deplaceInstall = True
 
     # Between the worlds
     def portailAustral(self) -> None:

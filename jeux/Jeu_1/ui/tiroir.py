@@ -1,3 +1,4 @@
+from random import shuffle
 from systeme.FondMarin import *
 from jeux.Jeu_1.objets.Bateau import Bateau
 from museeNoyee import corail1, corail2, poisson, coeur, fleche, marin
@@ -135,6 +136,7 @@ class Tiroir:
             liste (list[Bateau]): Nouvelle liste pour le tiroir.
         """
         self.liste = liste[:]
+        shuffle(self.liste)
         self.lumCadre = [0, 5]
         for i in range(len(self.liste)):
             self.soulevement.append([False, -int(self.liste[i].image.width*0.6), 0])
