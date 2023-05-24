@@ -39,6 +39,8 @@ class Case(Bougeable):
         if len(self.contenu) > 0:
             for i in range(len(self.contenu)):
                 self.contenu[i].dessine()
+                if self.contenu[i].actif:
+                    draw_rectangle_lines_ex([self.pos[0], self.pos[1], self.taille, self.taille], 3, WHITE)
             self.dessineMarqueur()
 
     def setPos(self, x: int, y: int) -> None:
