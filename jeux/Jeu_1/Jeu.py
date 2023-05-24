@@ -107,6 +107,8 @@ class Jeu:
                 if isinstance(self.fen[self.actif], Fenetre) and self.fen[self.actif].estFini():
                     self.switch()
                     self.zone.cases = self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases
+        elif self.phase == 'jeu':
+            self.joueurSuivant()
 
     def passeAction(self) -> None:
         if isinstance(self.fen[self.actif], Fenetre):
@@ -115,6 +117,11 @@ class Jeu:
                 fenetre.action.passe()
         elif self.phase == "installation":
             self.passeInstall()
+        elif self.phase == "jeu":
+            self.joueurs[self.actuel].bateauSuivant()
+            self.deplaceInstall = False
+            if not self.joueurs[self.actuel].actif:
+                self.joueurSuivant()
 
     def passeInstall(self) -> None:
         cases = []
@@ -265,9 +272,13 @@ class Jeu:
         self.phase = phase
         for i in range(len(self.joueurs)):
             self.joueurs[i].phase = phase
+        if self.phase == 'jeu':
+            self.plateau - self.zone
+            self.plateau.grise = False
 
     def joueurSuivant(self) -> None:
         -self.joueurs[self.actuel]
+        self.joueurs[self.actuel].actuel = 0
         self.actuel += 1
         if self.actuel >= len(self.joueurs):
             self.actuel = 0
@@ -276,32 +287,4 @@ class Jeu:
         if self.phase == 'installation':
             self.resetInstall()
         elif self.phase == 'jeu':
-            self.plateau - self.zone
-            self.plateau.grise = False
             self.deplaceInstall = False
-
-    '''def tour(self) -> None:
-        joueur = self.joueurs[self.actuel]
-        if self.play:
-            passe = self.setPosViseur(joueur.bateaux[joueur.actuel])
-            if not passe:
-                joueur.jouer(self.coordsViseur)
-                self.joueurSuivant()
-
-    def setPosViseur(self, bateau) -> bool:
-        passe = False
-        if is_mouse_button_pressed(0):
-            i = 0
-            while i < len(self.opt) and not passe:
-                if self.opt[i][0].getContact():
-                    passe = True
-                else:
-                    i += 1
-            if not passe:
-                x = get_mouse_x()
-                y = get_mouse_y()
-                if check_collision_point_circle((x, y), (int(bateau.pos[0]-bateau.image.width*0.04), bateau.pos[1]), bateau.RCD):
-                    self.coordsViseur = modifDestination([x, y], bateau, self.joueurs[0].bateaux+self.joueurs[1].bateaux)
-                else:
-                    passe = True
-        return passe'''
