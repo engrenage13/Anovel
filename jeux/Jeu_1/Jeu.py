@@ -118,10 +118,13 @@ class Jeu:
         elif self.phase == "installation":
             self.passeInstall()
         elif self.phase == "jeu":
-            self.joueurs[self.actuel].bateauSuivant()
-            self.deplaceInstall = False
-            if not self.joueurs[self.actuel].actif:
-                self.joueurSuivant()
+            self.passe()
+
+    def passe(self) -> None:
+        self.joueurs[self.actuel].bateauSuivant()
+        self.deplaceInstall = False
+        if not self.joueurs[self.actuel].actif:
+            self.joueurSuivant()
 
     def passeInstall(self) -> None:
         cases = []
