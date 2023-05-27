@@ -36,9 +36,17 @@ class Bateau(Pivote):
         self.place = False
         self.coule = False
         self.actif = False
+        self.finiTour = False
         self.vie = self.pvi
         self.marins = self.marinsi
         self.pm = self.pmi
 
     def estEnPlace(self) -> bool:
         return self.place
+    
+    def aFini(self) -> bool:
+        return self.finiTour
+    
+    def __neg__(self) -> None:
+        super().__neg__()
+        self.finiTour = True

@@ -47,12 +47,12 @@ class Joueur():
 
     def bateauSuivant(self) -> None:
         -self.bateaux[self.actuel]
-        self.actuel += 1
-        if self.actuel >= len(self.bateaux):
+        if not self.tourFini():
+            self.prochainBateau()
+            +self.bateaux[self.actuel]
+        else:
             self.actuel = 0
             -self
-        else:
-            +self.bateaux[self.actuel]
 
     def estEnPlace(self) -> bool:
         place = True
@@ -63,10 +63,36 @@ class Joueur():
             else:
                 i += 1
         return place
+    
+    def prochainBateau(self) -> None:
+        i = self.actuel+1
+        trouve = False
+        while i < len(self.bateaux) and not trouve:
+            if not self.bateaux[i].aFini():
+                trouve = True
+                self.actuel = i
+            else:
+                i += 1
+        if not trouve:
+            self.actuel = 0
+            if self.bateaux[0].aFini():
+                self.prochainBateau()
+
+    def tourFini(self) -> bool:
+        i = 0
+        fin = True
+        while i < len(self.bateaux) and fin:
+            if not self.bateaux[i].aFini():
+                fin = False
+            else:
+                i += 1
+        return fin
 
     def __pos__(self) -> None:
         self.actif = True
         if self.phase != "installation":
+            for i in range(len(self.bateaux)):
+                self.bateaux[i].finiTour = False
             +self.bateaux[self.actuel]
 
     def __neg__(self) -> None:
