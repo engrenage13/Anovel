@@ -210,6 +210,10 @@ class Scene(Jeu):
             self.focusBat()
             self.deplaceInstall = True
 
+    def joueurSuivant(self) -> None:
+        super().joueurSuivant()
+        self.barre.actuel = self.actuel
+
     # Between the worlds
     def portailAustral(self) -> None:
         if self.play:
