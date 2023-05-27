@@ -209,10 +209,12 @@ class Scene(Jeu):
         if not self.deplaceInstall:
             self.focusBat()
             self.deplaceInstall = True
+        if self.barre.chabat:
+            self.deplaceInstall = self.barre.chabat = False
 
     def joueurSuivant(self) -> None:
         super().joueurSuivant()
-        self.barre.actuel = self.actuel
+        self.barre.setActuel(self.actuel)
 
     # Between the worlds
     def portailAustral(self) -> None:

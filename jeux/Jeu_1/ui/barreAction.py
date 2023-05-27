@@ -5,13 +5,15 @@ from museeNoyee import minicoeur, minimarin
 class BarreAction:
     def __init__(self, joueurs: list, passe) -> None:
         self.joueurs = joueurs
-        self.actuel = 0
+        self.actuel = self.tour = 0
         # boutons
         self.passe = Bouton(TB2n, PTIBT1, "PASSE", 'images/ui/passer+.png', [passe])
         self.precedent = Bouton(TB2n, PTIBT1, "PRECEDENT", 'images/ui/precedent.png', [self.actPrecedent])
         self.suivant = Bouton(TB2n, PTIBT1, "SUIVANT", 'images/ui/suivant.png', [self.actSuivant])
         # dimensions
         self.hauteur = int(yf*0.07)
+        # Autres
+        self.chabat = False
 
     def dessine(self) -> None:
         draw_rectangle(0, yf-self.hauteur, xf, yf, [80, 80, 80, 150])
@@ -39,7 +41,9 @@ class BarreAction:
         draw_texture(minimarin, x, y, WHITE)
         x += int(xf*0.019)
         y += int(yf*0.003)
-        draw_text_ex(police1, str(bateau.marins), (x, y), int(yf*0.02), 0, WHITE)
+        draw_text_ex(police1, str(bateau.marins), (x, int(y+yf*0.001)), int(yf*0.02), 0, WHITE)
+        x += int(xf*0.025)
+        draw_text_ex(police2, "TOUR "+str(self.tour), (x, y), yf*0.02, 0, WHITE)
 
     def dessineProgression(self) -> None:
         l = int(yf*0.2)
@@ -57,7 +61,7 @@ class BarreAction:
         self.suivant.dessine(int(x+self.suivant.getDims()[0]/2), int(yf-self.hauteur/2))
 
     def rejouer(self) -> None:
-        self.actuel = 0
+        self.actuel = self.tour = 0
 
     def actSuivant(self) -> None:
         nbBat = len(self.joueurs[self.actuel])
@@ -67,7 +71,7 @@ class BarreAction:
         trouve = False
         while i < (nbBat-actuel-1) and not trouve:
             if not bateaux[actuel+i+1].aFini():
-                trouve = True
+                trouve = self.chabat = True
                 bateaux[actuel].actif = False
                 self.joueurs[self.actuel].actuel = actuel+i+1
                 +bateaux[actuel+i+1]
@@ -89,7 +93,7 @@ class BarreAction:
         while i < (actuel) and not trouve:
             indice = actuel-i-1
             if not bateaux[indice].aFini():
-                trouve = True
+                trouve = self.chabat = True
                 bateaux[actuel].actif = False
                 self.joueurs[self.actuel].actuel = indice
                 +bateaux[indice]
@@ -108,3 +112,8 @@ class BarreAction:
             if not self.joueurs[self.actuel][i].aFini():
                 nb += 1
         return nb
+    
+    def setActuel(self, actuel: int) -> None:
+        self.actuel = actuel
+        if actuel == 0:
+            self.tour += 1
