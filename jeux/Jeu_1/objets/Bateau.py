@@ -1,6 +1,8 @@
 from systeme.FondMarin import *
 from jeux.Jeu_1.objets.bases.pivote import Pivote
 from jeux.Jeu_1.fonctions.deplacement import glisse
+from jeux.Jeu_1.ui.infoBulle import InfoBulle
+from museeNoyee import coeur, marin
 
 class Bateau(Pivote):
     def __init__(self, nom: str, image: str, pv: int, marins: int, pm: int, couleur: Color, ide: int):
@@ -23,11 +25,15 @@ class Bateau(Pivote):
         self.marinsi = marins
         self.pmi = pm
         self.rejouer()
+        # InfoBulle
+        self.infoBulle = InfoBulle([[self.vie, coeur], [self.marins, marin]])
 
     def dessine(self) -> None:
         """Dessine le bateau.
         """
         super().dessine()
+        if self.getContact():
+            self.infoBulle.dessine(self.pos[0], int(self.pos[1]-self.dims[1]/2))
 
     def rejouer(self) -> None:
         """Réinitialise certains paramètres du bateau pour rejouer une nouvelle partie.
