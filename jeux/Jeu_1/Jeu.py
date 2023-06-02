@@ -1,6 +1,6 @@
 from systeme.FondMarin import *
-from jeux.Jeu_1.objets.plateau.plateau import Plateau
-from jeux.Jeu_1.objets.Joueur import Joueur
+from jeux.Jeu_1.objets.plateau.plateau import Plateau, Case
+from jeux.Jeu_1.objets.Joueur import Joueur, Bateau
 from jeux.Jeu_1.intro import Intro
 from jeux.Jeu_1.pageCarte import PageCarte
 from jeux.Jeu_1.objets.bases.fenetre import Fenetre
@@ -57,6 +57,7 @@ class Jeu:
                 self.passePhase()
         elif self.phase == 'jeu':
             self.joueurs[self.actuel].dessine()
+            self.tourJoueur()
 
     def switch(self) -> None:
         if self.actif == 'intro':
@@ -125,6 +126,8 @@ class Jeu:
         self.deplaceInstall = False
         if not self.joueurs[self.actuel].actif:
             self.joueurSuivant()
+
+    # Placement
 
     def passeInstall(self) -> None:
         cases = []
@@ -276,8 +279,8 @@ class Jeu:
         for i in range(len(self.joueurs)):
             self.joueurs[i].phase = phase
         if self.phase == 'jeu':
-            self.plateau - self.zone
             self.plateau.grise = False
+            self.zone.setCouleurs([82, 211, 164, 140], [222, 255, 243, 255], [82, 211, 164, 140], [222, 255, 243, 255])
 
     def joueurSuivant(self) -> None:
         -self.joueurs[self.actuel]
@@ -291,3 +294,61 @@ class Jeu:
             self.resetInstall()
         elif self.phase == 'jeu':
             self.deplaceInstall = False
+
+    # Partie
+
+    def tourJoueur(self) -> None:
+        if self.deplaceInstall:
+            bat = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
+            if bat.pm:
+                ncase = self.trouveCase(bat)
+                case = self.plateau[ncase[0]][ncase[1]]
+                self.zone.cases = []
+                self.setZonePortee(bat, case, 1)
+
+    def setZonePortee(self, bateau: Bateau, case: Case, progression: int) -> None:
+        voisines = self.plateau.getVoisines(case)
+        pointsCardinaux = ['e', 's', 'o', 'n']
+        if progression == 1:
+            devant = voisines[pointsCardinaux[bateau.direction]]
+            gauche = voisines[pointsCardinaux[(bateau.direction-1)%len(pointsCardinaux)]]
+            droite = voisines[pointsCardinaux[(bateau.direction+1)%len(pointsCardinaux)]]
+            if devant and not self.plateau[devant[0]][devant[1]].estPleine():
+                self.zone.cases.append(devant)
+                if progression < bateau.pm:
+                    self.setZonePortee(bateau, self.plateau[devant[0]][devant[1]], progression+1)
+            if gauche and not self.plateau[gauche[0]][gauche[1]].estPleine():
+                self.zone.cases.append(gauche)
+                if progression < bateau.pm:
+                    self.setZonePortee(bateau, self.plateau[gauche[0]][gauche[1]], progression+1)
+            if droite and not self.plateau[droite[0]][droite[1]].estPleine():
+                self.zone.cases.append(droite)
+                if progression < bateau.pm:
+                    self.setZonePortee(bateau, self.plateau[droite[0]][droite[1]], progression+1)
+        else:
+            for i in range(len(pointsCardinaux)):
+                if voisines[pointsCardinaux[i]] and not voisines[pointsCardinaux[i]] in self.zone.cases:
+                    ncase = self.plateau[voisines[pointsCardinaux[i]][0]][voisines[pointsCardinaux[i]][1]]
+                    if not ncase.estPleine():
+                        casebat = self.trouveCase(bateau)
+                        if voisines[pointsCardinaux[i]] != casebat:
+                            self.zone.cases.append(voisines[pointsCardinaux[i]])
+                            if progression < bateau.pm:
+                                self.setZonePortee(bateau, ncase, progression+1)
+
+    def trouveCase(self, bateau) -> tuple|bool:
+        trouve = False
+        i = 0
+        while i < len(self.plateau) and not trouve:
+            j = 0
+            while j < len(self.plateau[i]) and not trouve:
+                if self.plateau[i][j].contient(bateau):
+                    trouve = True
+                else:
+                    j += 1
+            if not trouve:
+                i += 1
+        if trouve:
+            return (i, j)
+        else:
+            return trouve

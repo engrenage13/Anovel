@@ -151,19 +151,9 @@ class Scene(Jeu):
             self.plateau.place(px, py, True)
 
     def focusBat(self) -> None:
-        trouve = False
-        i = 0
         bat = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
-        while i < len(self.plateau) and not trouve:
-            j = 0
-            while j < len(self.plateau[i]) and not trouve:
-                if self.plateau[i][j].contient(bat):
-                    trouve = True
-                else:
-                    j += 1
-            if not trouve:
-                i += 1
-        self.plateau.focusCase((i, j))
+        case = self.trouveCase(bat)
+        self.plateau.focusCase(case)
 
     def rejouer(self) -> None:
         super().rejouer()
