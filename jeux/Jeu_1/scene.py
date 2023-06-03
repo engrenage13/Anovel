@@ -166,6 +166,7 @@ class Scene(Jeu):
         self.cible.play = etat
         self.rectangle.play = etat
         self.teleco.play = etat
+        self.fleche.play = etat
 
     # Installation
 
@@ -200,7 +201,7 @@ class Scene(Jeu):
             self.focusBat()
             self.deplaceInstall = True
         if self.barre.chabat:
-            self.deplaceInstall = self.barre.chabat = False
+            self.deplaceInstall = self.barre.chabat = self.setDeplacement = False
 
     def joueurSuivant(self) -> None:
         super().joueurSuivant()

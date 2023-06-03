@@ -10,6 +10,7 @@ from jeux.Jeu_1.ui.tiroir import Tiroir
 from jeux.Jeu_1.ui.selecBat import SelecBat
 from jeux.Jeu_1.ui.editTeleco import Cible, EditTeleco
 from jeux.Jeu_1.action.Placement import Placement
+from jeux.Jeu_1.ui.fleche import Fleche
 
 class Jeu:
     def __init__(self) -> None:
@@ -45,6 +46,9 @@ class Jeu:
         self.rectangle = SelecBat()
         self.affRec = False
         self.affTeleco = False
+        # Partie
+        self.fleche = Fleche(self.plateau[0][0], self.joueurs[0][0], self.zone, self.plateau)
+        self.setDeplacement = False
 
     def dessine(self) -> None:
         fenetre = self.fen[self.actif]
@@ -123,7 +127,7 @@ class Jeu:
 
     def passe(self) -> None:
         self.joueurs[self.actuel].bateauSuivant()
-        self.deplaceInstall = False
+        self.deplaceInstall = self.setDeplacement = False
         if not self.joueurs[self.actuel].actif:
             self.joueurSuivant()
 
@@ -279,7 +283,7 @@ class Jeu:
         for i in range(len(self.joueurs)):
             self.joueurs[i].phase = phase
         if self.phase == 'jeu':
-            self.plateau.grise = False
+            self.plateau.grise = self.setDeplacement = False
             self.zone.setCouleurs([82, 211, 164, 140], [222, 255, 243, 255], [82, 211, 164, 140], [222, 255, 243, 255])
 
     def joueurSuivant(self) -> None:
@@ -293,18 +297,23 @@ class Jeu:
         if self.phase == 'installation':
             self.resetInstall()
         elif self.phase == 'jeu':
-            self.deplaceInstall = False
+            self.deplaceInstall = self.setDeplacement = False
 
     # Partie
 
     def tourJoueur(self) -> None:
-        if self.deplaceInstall:
+        if not self.setDeplacement:
             bat = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
-            if bat.pm:
+            if bat.pm > 0:
                 ncase = self.trouveCase(bat)
                 case = self.plateau[ncase[0]][ncase[1]]
                 self.zone.cases = []
                 self.setZonePortee(bat, case, 1)
+                self.fleche.setBateau(bat)
+                self.fleche.setCase(case)
+                self.setDeplacement = True
+        else:
+            self.fleche.dessine()
 
     def setZonePortee(self, bateau: Bateau, case: Case, progression: int) -> None:
         voisines = self.plateau.getVoisines(case)

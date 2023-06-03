@@ -81,6 +81,7 @@ class BarreAction:
             bateaux[actuel].actif = False
             self.joueurs[self.actuel].actuel = 0
             +bateaux[0]
+            self.chabat = True
             if bateaux[0].aFini():
                 self.actSuivant()
 
@@ -99,10 +100,11 @@ class BarreAction:
                 +bateaux[indice]
             else:
                 i += 1
-        if not trouve or indice == -1:
+        if not trouve or indice <= -1:
             bateaux[actuel].actif = False
             self.joueurs[self.actuel].actuel = nbBat-1
             +bateaux[nbBat-1]
+            self.chabat = True
             if bateaux[nbBat-1].aFini():
                 self.actPrecedent()
 
