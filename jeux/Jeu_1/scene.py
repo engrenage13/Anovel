@@ -6,7 +6,6 @@ from ui.bouton.grille import Grille
 from jeux.Jeu_1.fonctions.bases import TAILLECASE
 from jeux.Jeu_1.Jeu import Jeu, config
 from systeme.set import trouveParam
-from jeux.Jeu_1.ui.barreAction import BarreAction
 
 class Scene(Jeu):
     def __init__(self) -> None:
@@ -33,8 +32,6 @@ class Scene(Jeu):
         self.btValid = BoutonPression(TB1o, BTNOIR, "VALIDER", "images/ui/check.png", [self.joueurSuivant])
         self.btAlea = Bouton(TB1n, PTIBT1, "PLACEMENT ALEATOIRE", "images/ui/hasard.png", [self.placementAleatoire])
         self.btSup = Bouton(TB1n, PTIBT1, "EFFACER", "images/ui/corbeille.png", [self.tousAuTiroir])
-        # Jeu
-        self.barre = BarreAction(self.joueurs, self.passe)
         # Between the worlds
         self.play = False
         self.message = ''
@@ -200,6 +197,7 @@ class Scene(Jeu):
         if not self.deplaceInstall:
             self.focusBat()
             self.deplaceInstall = True
+            #self.barre.deplacement = True
         if self.barre.chabat:
             self.deplaceInstall = self.barre.chabat = self.setDeplacement = False
 

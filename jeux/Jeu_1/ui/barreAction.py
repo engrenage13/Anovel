@@ -10,16 +10,27 @@ class BarreAction:
         self.passe = Bouton(TB2n, PTIBT1, "PASSE", 'images/ui/passer+.png', [passe])
         self.precedent = Bouton(TB2n, PTIBT1, "PRECEDENT", 'images/ui/precedent.png', [self.actPrecedent])
         self.suivant = Bouton(TB2n, PTIBT1, "SUIVANT", 'images/ui/suivant.png', [self.actSuivant])
+        self.btDep = Bouton(TB2o, BTV, "DEPLACEMENT", '', [self.activeDeplacement])
+        self.btv = Bouton(TB2n, PTIBT1, "VALIDER", 'images/ui/check.png', [self.valideAction])
+        self.btx = Bouton(TB2n, PTIBT1, "ANNULER", 'images/ui/CroSom.png', [self.annuleAction])
         # dimensions
         self.hauteur = int(yf*0.07)
         # Autres
-        self.chabat = False
+        self.chabat = self.deplacement = self.choixAction = self.valide = self.annule = False
 
     def dessine(self) -> None:
         draw_rectangle(0, yf-self.hauteur, xf, yf, [80, 80, 80, 150])
-        self.passe.dessine(int(xf-self.passe.getDims()[0]*0.7), int(yf-self.hauteur/2))
         self.dessineInfoBat()
         self.dessineProgression()
+        if not self.deplacement:
+            x = int(xf*0.45)
+            tt = measure_text_ex(police2, "ACTIONS POSSIBLES : ", self.hauteur*0.5, 0)
+            draw_text_ex(police2, "ACTIONS POSSIBLES : ", (x, int(yf-self.hauteur*0.75)), self.hauteur*0.5, 0, WHITE)
+            self.btDep.dessine(int(x+tt.x+self.btDep.getDims()[0]/2), int(yf-self.hauteur/2))
+            self.passe.dessine(int(xf-self.passe.getDims()[0]*0.7), int(yf-self.hauteur/2))
+        else:
+            self.btv.dessine(int(xf-self.btv.getDims()[0]*0.7), int(yf-self.hauteur/2))
+            self.btx.dessine(int(xf-self.btv.getDims()[0]*2), int(yf-self.hauteur/2))
 
     def dessineInfoBat(self) -> None:
         bateau = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
@@ -49,16 +60,18 @@ class BarreAction:
         l = int(yf*0.2)
         ecart = int(xf*0.007)
         nbBat = self.getNbBatRestants()
-        x = int(xf/2-l/2-ecart-self.precedent.getDims()[0])
+        x = int(xf*0.26-l/2-ecart-self.precedent.getDims()[0])
         y = int(yf-self.hauteur+yf*0.01)
-        self.precedent.dessine(int(x+self.precedent.getDims()[0]/2), int(yf-self.hauteur/2))
+        if not self.deplacement:
+            self.precedent.dessine(int(x+self.precedent.getDims()[0]/2), int(yf-self.hauteur/2))
         x += self.precedent.getDims()[0]+ecart
         draw_rectangle_rounded([x, y, l, int(yf*0.05)], 0.15, 30, [40, 40, 40, 200])
         tt = measure_text_ex(police1, str(self.joueurs[self.actuel].actuel+1)+"/"+str(len(self.joueurs[self.actuel])), yf*0.04, 0)
         draw_text_ex(police1, str(self.joueurs[self.actuel].actuel+1)+"/"+str(len(self.joueurs[self.actuel])), (int(x+xf*0.01), int(y+yf*0.007)), yf*0.04, 0, WHITE)
         draw_text_ex(police2i, " - "+str(nbBat)+" restant(s)", (int(x+xf*0.015+tt.x), int(y+yf*0.015)), yf*0.02, 0, WHITE)
         x += l+ecart
-        self.suivant.dessine(int(x+self.suivant.getDims()[0]/2), int(yf-self.hauteur/2))
+        if not self.deplacement:
+            self.suivant.dessine(int(x+self.suivant.getDims()[0]/2), int(yf-self.hauteur/2))
 
     def rejouer(self) -> None:
         self.actuel = self.tour = 0
@@ -119,3 +132,12 @@ class BarreAction:
         self.actuel = actuel
         if actuel == 0:
             self.tour += 1
+
+    def activeDeplacement(self) -> None:
+        self.deplacement = self.choixAction = True
+
+    def valideAction(self) -> None:
+        self.valide = True
+
+    def annuleAction(self) -> None:
+        self.annule = True

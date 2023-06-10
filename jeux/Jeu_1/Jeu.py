@@ -11,6 +11,7 @@ from jeux.Jeu_1.ui.selecBat import SelecBat
 from jeux.Jeu_1.ui.editTeleco import Cible, EditTeleco
 from jeux.Jeu_1.action.Placement import Placement
 from jeux.Jeu_1.ui.fleche import Fleche
+from jeux.Jeu_1.ui.barreAction import BarreAction
 
 class Jeu:
     def __init__(self) -> None:
@@ -47,6 +48,7 @@ class Jeu:
         self.affRec = False
         self.affTeleco = False
         # Partie
+        self.barre = BarreAction(self.joueurs, self.passe)
         self.fleche = Fleche(self.plateau[0][0], self.joueurs[0][0], self.zone, self.plateau)
         self.setDeplacement = False
 
@@ -285,6 +287,13 @@ class Jeu:
         if self.phase == 'jeu':
             self.plateau.grise = self.setDeplacement = False
             self.zone.setCouleurs([82, 211, 164, 140], [222, 255, 243, 255], [82, 211, 164, 140], [222, 255, 243, 255])
+            self.plateau - self.zone
+            # important
+            bat = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
+            ncase = self.trouveCase(bat)
+            case = self.plateau[ncase[0]][ncase[1]]
+            self.fleche.setBateau(bat)
+            self.fleche.setCase(case)
 
     def joueurSuivant(self) -> None:
         -self.joueurs[self.actuel]
@@ -312,8 +321,22 @@ class Jeu:
                 self.fleche.setBateau(bat)
                 self.fleche.setCase(case)
                 self.setDeplacement = True
+        elif not self.barre.deplacement:
+            if self.barre.btDep.getContact():
+                self.plateau + self.zone
+            else:
+                self.plateau - self.zone
         else:
+            if self.barre.choixAction:
+                self.plateau + self.zone
+                self.barre.choixAction = False
             self.fleche.dessine()
+            if self.barre.valide:
+                self.barre.deplacement = self.barre.valide = False
+                self.passe()
+            elif self.barre.annule:
+                self.barre.deplacement = self.barre.annule = False
+                self.fleche.reset()
 
     def setZonePortee(self, bateau: Bateau, case: Case, progression: int) -> None:
         voisines = self.plateau.getVoisines(case)
