@@ -1,3 +1,4 @@
+from random import randint, choice
 from jeux.Jeu_1.ui.cible import Bateau, Case
 from systeme.FondMarin import *
 from jeux.Jeu_1.objets.plateau.zone import Zone
@@ -86,7 +87,7 @@ class Fleche(EditTeleco):
         bordure = int(self.case.taille*0.02)
         x = int(self.case.pos[0]+self.case.taille-bordure*2-tt.x-ecart)
         y = int(self.case.pos[1]+ecart)
-        draw_rectangle_rounded([x, y, int(tt.x+bordure*2), int(tt.y+bordure)], 0.15, 30, [255, 255, 255, 190])
+        draw_rectangle_rounded([x, y, int(tt.x+bordure*2.5), int(tt.y+bordure)], 0.15, 30, [255, 255, 255, 190])
         x += bordure
         y += int(bordure/2)
         draw_text_ex(police2, texte, (x, y), taille, 0, BLACK)
@@ -160,3 +161,17 @@ class Fleche(EditTeleco):
             self.cases = [self.depart]
             self.chemin = [[]]
             self.setBoutons()
+
+    def passe(self) -> None:
+        pas = randint(1, self.bateau.pm)
+        for i in range(pas):
+            pc = ['e', 's', 'o', 'n']
+            pos = 0
+            for j in range(len(self.pointsCardinaux)):
+                if not self.activeDep[self.pointsCardinaux[j]]:
+                    del pc[pos]
+                else:
+                    pos += 1
+            if len(pc) > 0:
+                self.deplace(choice(pc))
+        self.setBoutons()

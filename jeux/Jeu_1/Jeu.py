@@ -1,3 +1,4 @@
+from random import choice
 from systeme.FondMarin import *
 from jeux.Jeu_1.objets.plateau.plateau import Plateau, Case
 from jeux.Jeu_1.objets.Joueur import Joueur, Bateau
@@ -115,7 +116,10 @@ class Jeu:
                     self.switch()
                     self.zone.cases = self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases
         elif self.phase == 'jeu':
-            self.joueurSuivant()
+            joueur = self.joueurs[self.actuel]
+            for i in range(len(joueur)-joueur.actuel):
+                self.passeAction()
+                self.setParamFleche()
 
     def passeAction(self) -> None:
         if isinstance(self.fen[self.actif], Fenetre):
@@ -125,7 +129,11 @@ class Jeu:
         elif self.phase == "installation":
             self.passeInstall()
         elif self.phase == "jeu":
-            self.passe()
+            liChoix = [self.passe] + [self.fleche.passe]*99
+            choix = choice(liChoix)
+            choix()
+            if choix != self.passe:
+                self.passe()
 
     def passe(self) -> None:
         self.joueurs[self.actuel].bateauSuivant()
@@ -312,15 +320,7 @@ class Jeu:
 
     def tourJoueur(self) -> None:
         if not self.setDeplacement:
-            bat = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
-            if bat.pm > 0:
-                ncase = self.trouveCase(bat)
-                case = self.plateau[ncase[0]][ncase[1]]
-                self.zone.cases = []
-                self.setZonePortee(bat, case, 1)
-                self.fleche.setBateau(bat)
-                self.fleche.setCase(case)
-                self.setDeplacement = True
+            self.setParamFleche()
         elif not self.barre.deplacement:
             if self.barre.btDep.getContact():
                 self.plateau + self.zone
@@ -337,6 +337,17 @@ class Jeu:
             elif self.barre.annule:
                 self.barre.deplacement = self.barre.annule = False
                 self.fleche.reset()
+
+    def setParamFleche(self) -> None:
+        bat = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
+        if bat.pm > 0:
+            ncase = self.trouveCase(bat)
+            case = self.plateau[ncase[0]][ncase[1]]
+            self.zone.cases = []
+            self.setZonePortee(bat, case, 1)
+            self.fleche.setBateau(bat)
+            self.fleche.setCase(case)
+            self.setDeplacement = True
 
     def setZonePortee(self, bateau: Bateau, case: Case, progression: int) -> None:
         voisines = self.plateau.getVoisines(case)
