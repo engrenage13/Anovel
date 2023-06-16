@@ -345,6 +345,10 @@ class Jeu:
             case = self.plateau[ncase[0]][ncase[1]]
             self.zone.cases = []
             self.setZonePortee(bat, case, 1)
+            if len(self.zone) == 0:
+                self.barre.actionsPossibles["deplacement"] = False
+            else:
+                self.barre.actionsPossibles["deplacement"] = True
             self.fleche.setBateau(bat)
             self.fleche.setCase(case)
             self.setDeplacement = True

@@ -17,16 +17,25 @@ class BarreAction:
         self.hauteur = int(yf*0.07)
         # Autres
         self.chabat = self.deplacement = self.choixAction = self.valide = self.annule = False
+        # Capteurs
+        self.actionsPossibles = {"deplacement": True}
 
     def dessine(self) -> None:
         draw_rectangle(0, yf-self.hauteur, xf, yf, [80, 80, 80, 150])
         self.dessineInfoBat()
         self.dessineProgression()
         if not self.deplacement:
+            texte = "ACTIONS POSSIBLES : "
             x = int(xf*0.45)
-            tt = measure_text_ex(police2, "ACTIONS POSSIBLES : ", self.hauteur*0.5, 0)
-            draw_text_ex(police2, "ACTIONS POSSIBLES : ", (x, int(yf-self.hauteur*0.75)), self.hauteur*0.5, 0, WHITE)
-            self.btDep.dessine(int(x+tt.x+self.btDep.getDims()[0]/2), int(yf-self.hauteur/2))
+            tt = measure_text_ex(police2, texte, self.hauteur*0.5, 0)
+            #espace = int(xf*0.01)
+            draw_text_ex(police2, texte, (x, int(yf-self.hauteur*0.75)), self.hauteur*0.5, 0, WHITE)
+            x += tt.x
+            if self.actionsPossibles["deplacement"]:
+                self.btDep.dessine(int(x+self.btDep.getDims()[0]/2), int(yf-self.hauteur/2))
+                #x += int(self.btDep.getDims()[0]+espace)
+            else:
+                draw_text_ex(police2i, "AUCUNE", (x, int(yf-self.hauteur*0.75)), self.hauteur*0.5, 0, WHITE)
             self.passe.dessine(int(xf-self.passe.getDims()[0]*0.7), int(yf-self.hauteur/2))
         else:
             self.btv.dessine(int(xf-self.btv.getDims()[0]*0.7), int(yf-self.hauteur/2))
