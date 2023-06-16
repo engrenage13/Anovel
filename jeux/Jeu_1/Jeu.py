@@ -13,6 +13,7 @@ from jeux.Jeu_1.ui.editTeleco import Cible, EditTeleco
 from jeux.Jeu_1.action.Placement import Placement
 from jeux.Jeu_1.ui.fleche import Fleche
 from jeux.Jeu_1.ui.barreAction import BarreAction
+from museeNoyee import orga, miniorga
 
 class Jeu:
     def __init__(self) -> None:
@@ -331,12 +332,23 @@ class Jeu:
                 self.plateau + self.zone
                 self.barre.choixAction = False
             self.fleche.dessine()
+            self.dessineMarqueur()
             if self.barre.valide:
                 self.barre.deplacement = self.barre.valide = False
                 self.passe()
             elif self.barre.annule:
                 self.barre.deplacement = self.barre.annule = False
                 self.fleche.reset()
+
+    def dessineMarqueur(self) -> None:
+        bateau = self.fleche.bateau
+        for i in range(len(self.zone)):
+            c = self.zone[i]
+            case = self.plateau[c[0]][c[1]]
+            if len(case) == 1 and case[0] != bateau:
+                draw_texture(miniorga, int(case.pos[0]+case.taille*0.02), int(case.pos[1]+case.taille*0.02), WHITE)
+            elif len(case) == 2 and bateau in case:
+                draw_texture(orga, int(case.pos[0]+case.taille*0.02), int(case.pos[1]+case.taille*0.02), WHITE)
 
     def setParamFleche(self) -> None:
         bat = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
