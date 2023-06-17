@@ -2,9 +2,15 @@ from systeme.FondMarin import *
 from ui.bouton.bouton import Bouton
 from ui.bouton.grille import Grille
 from ui.blocTexte import BlocTexte
+from jeux.Jeu_1.objets.Bateau import Bateau
 
 class OrgaFen:
-    def __init__(self) -> None:
+    def __init__(self, bateau1: Bateau, bateau2: Bateau) -> None:
+        self.setbateaux(bateau1, bateau2)
+        m = load_image("jeux/Jeu_1/images/Icones/marin.png")
+        image_resize(m, int(xf*0.065), int(xf*0.065))
+        self.marin = load_texture_from_image(m)
+        unload_image(m)
         # Dimensions
         self.largeur = int(xf*0.5)
         self.hauteur = int(yf*0.8)
@@ -37,19 +43,26 @@ class OrgaFen:
         draw_rectangle(int(xf/2-self.largeur/2-2), y-2, self.largeur+4, self.hauteur+4, [192, 150, 9, 255])
         draw_rectangle(int(xf/2-self.largeur/2), y, self.largeur, self.hauteur, WHITE)
         self.titre.dessine([[int(xf/2), int(y+self.titre.getDims()[1]/2)], 'c'], BLACK)
-        y += self.titre.getDims()[1] + ecart
-        #self.gm1.dessine(int(xf/2-self.gm1.largeur/2), y)
-        y += self.gm1.hauteur + ecart
-        y += ecart
-        #self.gm2.dessine(int(xf/2-self.gm2.largeur/2), y)
-        y += self.gm2.hauteur + ecart
-        y += ecart
-        #self.gm3.dessine(int(xf/2-self.gm3.largeur/2), y)
+        y += int(self.titre.getDims()[1] + ecart)
+        y = self.dessineBateau(y, 0)
         if self.playAnim:
             if not self.ok:
                 self.anims(True)
             else:
                 self.anims(False)
+
+    def dessineBateau(self, y: int, idBat: int) -> int:
+        espace = int(yf*0.03)
+        hbarre = int(yf*0.26)
+        lbarre = int(xf*0.02)
+        bat = self.bat[idBat]
+        y += int(espace/2)
+        x = int(xf/2-self.largeur*0.46)
+        draw_texture(bat.images[0], x, int(y+hbarre*0.7-bat.images[0].height/2), WHITE)
+        x += bat.images[0].width + espace
+        draw_texture(self.marin, int(x+lbarre/2-self.marin.width/2), y, WHITE)
+        draw_rectangle(x, int(y+self.marin.height), lbarre, hbarre, MAGENTA)
+        return int(y + hbarre + self.marin.height + espace)
 
     def anims(self, mode: bool) -> None:
         if mode:
@@ -68,3 +81,6 @@ class OrgaFen:
             if self.opac[0] == 0 and self.hauteurContenu[0] >= int(yf*1.1):
                 self.playAnim = False
                 self.ok = False
+
+    def setbateaux(self, bateau1: Bateau, bateau2: Bateau) -> None:
+        self.bat = [bateau1, bateau2]

@@ -28,7 +28,7 @@ class Jeu:
         +self.joueurs[self.actuel]
         self.tiroir = Tiroir(self.joueurs[self.actuel].bateaux)
         # Phases
-        self.fen = {"intro": Intro(self.joueurs), "choix_zone": PageCarte(), "install": self.plateau, "jeu": self.plateau, "organisation": OrgaFen()}
+        self.fen = {"intro": Intro(self.joueurs), "choix_zone": PageCarte(), "install": self.plateau, "jeu": self.plateau, "organisation": OrgaFen(self.joueurs[self.actuel][0], self.joueurs[self.actuel][1])}
         if config['dev']:
             if config['dev'].lower() == 'jeu':
                 self.actif = 'install'
