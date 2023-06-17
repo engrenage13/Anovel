@@ -13,6 +13,7 @@ from jeux.Jeu_1.ui.editTeleco import Cible, EditTeleco
 from jeux.Jeu_1.action.Placement import Placement
 from jeux.Jeu_1.ui.fleche import Fleche
 from jeux.Jeu_1.ui.barreAction import BarreAction
+from jeux.Jeu_1.orgaFen import OrgaFen
 from museeNoyee import orga, miniorga
 
 class Jeu:
@@ -27,7 +28,7 @@ class Jeu:
         +self.joueurs[self.actuel]
         self.tiroir = Tiroir(self.joueurs[self.actuel].bateaux)
         # Phases
-        self.fen = {"intro": Intro(self.joueurs), "choix_zone": PageCarte(), "install": self.plateau, "jeu": self.plateau}
+        self.fen = {"intro": Intro(self.joueurs), "choix_zone": PageCarte(), "install": self.plateau, "jeu": self.plateau, "organisation": OrgaFen()}
         if config['dev']:
             if config['dev'].lower() == 'jeu':
                 self.actif = 'install'
@@ -57,15 +58,16 @@ class Jeu:
     def dessine(self) -> None:
         fenetre = self.fen[self.actif]
         fenetre.dessine()
-        if isinstance(fenetre, Fenetre) and fenetre.estFini():
-            self.switch()
-        if self.phase == 'installation':
-            self.installation()
-            if config['dev'] == 'jeu':
-                self.passePhase()
-        elif self.phase == 'jeu':
-            self.joueurs[self.actuel].dessine()
-            self.tourJoueur()
+        if self.actif != 'organisation':
+            if isinstance(fenetre, Fenetre) and fenetre.estFini():
+                self.switch()
+            if self.phase == 'installation':
+                self.installation()
+                if config['dev'] == 'jeu':
+                    self.passePhase()
+            elif self.phase == 'jeu':
+                self.joueurs[self.actuel].dessine()
+                self.tourJoueur()
 
     def switch(self) -> None:
         if self.actif == 'intro':

@@ -3,6 +3,7 @@
     "jeu": {"interface": true, "phase": "jeu"},
     "intro": {"interface": false, "phase": "intro"},
     "choix_zone": {"interface": true, "phase": "installation"},
+    "organisation": {"interface": true, "phase": "jeu"},
 
-    "dev": "jeu"
+    "dev": "organisation"
 }
