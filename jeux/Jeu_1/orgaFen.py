@@ -44,25 +44,55 @@ class OrgaFen:
         draw_rectangle(int(xf/2-self.largeur/2), y, self.largeur, self.hauteur, WHITE)
         self.titre.dessine([[int(xf/2), int(y+self.titre.getDims()[1]/2)], 'c'], BLACK)
         y += int(self.titre.getDims()[1] + ecart)
-        y = self.dessineBateau(y, 0)
+        self.dessineBateau(y, 0)
+        y = self.dessineBateau(y, 1, False)
         if self.playAnim:
             if not self.ok:
                 self.anims(True)
             else:
                 self.anims(False)
 
-    def dessineBateau(self, y: int, idBat: int) -> int:
+    def dessineBateau(self, y: int, idBat: int, gauche: bool = True) -> int:
+        total = self.bat[0].marins + self.bat[1].marins
         espace = int(yf*0.03)
         hbarre = int(yf*0.26)
         lbarre = int(xf*0.02)
         bat = self.bat[idBat]
         y += int(espace/2)
-        x = int(xf/2-self.largeur*0.46)
-        draw_texture(bat.images[0], x, int(y+hbarre*0.7-bat.images[0].height/2), WHITE)
-        x += bat.images[0].width + espace
-        draw_texture(self.marin, int(x+lbarre/2-self.marin.width/2), y, WHITE)
-        draw_rectangle(x, int(y+self.marin.height), lbarre, hbarre, MAGENTA)
-        return int(y + hbarre + self.marin.height + espace)
+        texte = f"{bat.marinsi} marins en\ndebut de partie"
+        tt = measure_text_ex(police2, texte, int(yf*0.025), 0)
+        h = int(bat.marins*hbarre/total)
+        tm = measure_text_ex(police2, str(bat.marins), int(yf*0.03), 0)
+        couleurFondRec = [182, 231, 247, 255]
+        couleurJauge = [12, 106, 156, 255]
+        couleurContenu = [80, 224, 250, 255]
+        couleurTexteRec = BLACK
+        couleurTexteJauge = WHITE
+        if gauche:
+            x = int(xf/2-self.largeur*0.46)
+            draw_texture(bat.images[0], x, int(y+hbarre*0.7-bat.images[0].height/2), WHITE)
+            draw_rectangle_rounded([x, int(y+hbarre*0.7+bat.images[0].height*0.9), int(tt.x*1.1), int(tt.y*1.1)], 0.15, 30, couleurFondRec)
+            draw_text_ex(police2, texte, (int(x+tt.x*0.05), int(y+hbarre*0.7+bat.images[0].height*0.9+tt.y*0.05)), int(yf*0.025), 0, couleurTexteRec)
+            x += bat.images[0].width + espace
+            draw_texture(self.marin, int(x+lbarre/2-self.marin.width/2), y, WHITE)
+            y += self.marin.height
+            draw_rectangle(x, y, lbarre, hbarre, couleurJauge)
+            draw_rectangle(x, int(y+hbarre-h), lbarre, h, couleurContenu)
+            draw_circle(int(x+lbarre*1.9), int(y+hbarre*0.32), int(lbarre/2), couleurJauge)
+            draw_text_ex(police2, str(bat.marins), (int(x+lbarre*1.9-tm.x/2), int(y+hbarre*0.32-tm.y/2)), int(yf*0.03), 0, couleurTexteJauge)
+        else:
+            x = int(xf/2+self.largeur*0.46)
+            draw_texture(bat.images[0], int(x-bat.images[0].width), int(y+hbarre*0.7-bat.images[0].height/2), WHITE)
+            draw_rectangle_rounded([int(x-bat.images[0].width), int(y+hbarre*0.7+bat.images[0].height*0.9), int(tt.x*1.1), int(tt.y*1.1)], 0.15, 30, couleurFondRec)
+            draw_text_ex(police2, texte, (int(x-bat.images[0].width+tt.x*0.05), int(y+hbarre*0.7+bat.images[0].height*0.9+tt.y*0.05)), int(yf*0.025), 0, couleurTexteRec)
+            x -= bat.images[0].width + espace
+            draw_texture(self.marin, int(x-lbarre/2-self.marin.width/2), y, WHITE)
+            y += self.marin.height
+            draw_rectangle(x-lbarre, y, lbarre, hbarre, couleurJauge)
+            draw_rectangle(x-lbarre, int(y+hbarre-h), lbarre, h, couleurContenu)
+            draw_circle(int(x-lbarre*1.9), int(y+hbarre*0.32), int(lbarre/2), couleurJauge)
+            draw_text_ex(police2, str(bat.marins), (int(x-lbarre*1.9-tm.x*0.55), int(y+hbarre*0.32-tm.y/2)), int(yf*0.03), 0, couleurTexteJauge)
+        return int(y + hbarre + espace)
 
     def anims(self, mode: bool) -> None:
         if mode:
