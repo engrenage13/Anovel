@@ -6,7 +6,7 @@ from jeux.Jeu_1.objets.Bateau import Bateau
 
 class OrgaFen:
     def __init__(self, bateau1: Bateau, bateau2: Bateau) -> None:
-        self.setbateaux(bateau1, bateau2)
+        self.setBateaux(bateau1, bateau2)
         m = load_image("jeux/Jeu_1/images/Icones/marin.png")
         image_resize(m, int(xf*0.065), int(xf*0.065))
         self.marin = load_texture_from_image(m)
@@ -43,8 +43,6 @@ class OrgaFen:
 
     def dessine(self) -> None:
         couleurFondRec = [243, 123, 123, 255]
-        if not self.ok and not self.playAnim:
-            self.playAnim = True
         draw_rectangle(0, 0, xf, yf, [41, 35, 45, self.opac[0]])
         ecart = int(yf*0.03)
         y = self.hauteurContenu[0]
@@ -131,7 +129,7 @@ class OrgaFen:
                 self.playAnim = False
                 self.ok = False
 
-    def setbateaux(self, bateau1: Bateau, bateau2: Bateau) -> None:
+    def setBateaux(self, bateau1: Bateau, bateau2: Bateau) -> None:
         self.bat = [bateau1, bateau2]
         self.valeursInitiales = [str(bateau1.marins), str(bateau2.marins)]
         self.valide = 1
@@ -163,6 +161,8 @@ class OrgaFen:
     def annule(self) -> None:
         self.valide = 0
         self.reset()
+        self.playAnim = True
 
     def confirme(self) -> None:
         self.valide = 2
+        self.playAnim = True

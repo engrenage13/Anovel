@@ -5,5 +5,5 @@
     "choix_zone": {"interface": true, "phase": "installation"},
     "organisation": {"interface": true, "phase": "jeu"},
 
-    "dev": "organisation"
+    "dev": "jeu"
 }

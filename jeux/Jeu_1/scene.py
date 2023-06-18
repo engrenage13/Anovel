@@ -33,7 +33,6 @@ class Scene(Jeu):
         self.btAlea = Bouton(TB1n, PTIBT1, "PLACEMENT ALEATOIRE", "images/ui/hasard.png", [self.placementAleatoire])
         self.btSup = Bouton(TB1n, PTIBT1, "EFFACER", "images/ui/corbeille.png", [self.tousAuTiroir])
         # Between the worlds
-        self.play = False
         self.message = ''
         self.lu = True
 
@@ -79,7 +78,8 @@ class Scene(Jeu):
                     self.btValid.dessine(int(xf*0.99-self.btValid.getDims()[0]/2), int(yf-xf*0.01-self.btValid.getDims()[1]/2))
         elif self.actif == 'jeu' and self.phase == 'jeu':
             self.tour()
-            self.barre.dessine()
+            if self.play:
+                self.barre.dessine()
 
     def deplace(self) -> None:
         x = get_mouse_x()

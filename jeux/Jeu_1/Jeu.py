@@ -54,6 +54,8 @@ class Jeu:
         self.barre = BarreAction(self.joueurs, self.passe)
         self.fleche = Fleche(self.plateau[0][0], self.joueurs[0][0], self.zone, self.plateau)
         self.setDeplacement = False
+        # Between the world
+        self.play = False
 
     def dessine(self) -> None:
         fenetre = self.fen[self.actif]
@@ -335,6 +337,19 @@ class Jeu:
                 self.barre.choixAction = False
             self.fleche.dessine()
             self.dessineMarqueur()
+            if self.barre.orga:
+                if self.play:
+                    self.play = False
+                orga = self.fen["organisation"]
+                orga.dessine()
+                if not orga.ok and orga.valide == 1 and not orga.playAnim:
+                    orga.playAnim = True
+                if orga.valide != 1 and not orga.playAnim:
+                    self.barre.orga = False
+                    if orga.valide == 2:
+                        self.barre.valide = True
+                    orga.valide = 1
+                    self.play = True
             if self.barre.valide:
                 self.barre.deplacement = self.barre.valide = False
                 self.passe()
@@ -344,6 +359,7 @@ class Jeu:
 
     def dessineMarqueur(self) -> None:
         bateau = self.fleche.bateau
+        ptBtOrga = 0
         for i in range(len(self.zone)):
             c = self.zone[i]
             case = self.plateau[c[0]][c[1]]
@@ -351,6 +367,13 @@ class Jeu:
                 draw_texture(miniorga, int(case.pos[0]+case.taille*0.02), int(case.pos[1]+case.taille*0.02), WHITE)
             elif len(case) == 2 and bateau in case:
                 draw_texture(orga, int(case.pos[0]+case.taille*0.02), int(case.pos[1]+case.taille*0.02), WHITE)
+                if self.fen["organisation"].bat[0] != case[0] or self.fen["organisation"].bat[1] != case[1]:
+                    self.fen["organisation"].setBateaux(case[0], case[1])
+                ptBtOrga += 1
+        if ptBtOrga > 0:
+            self.barre.actionsPossibles["organisation"] = True
+        else:
+            self.barre.actionsPossibles["organisation"] = False
 
     def setParamFleche(self) -> None:
         bat = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
