@@ -17,17 +17,17 @@ class OrgaFen:
         # Autres
         self.titre = BlocTexte("ORGANISATION", police1, int(yf*0.04), [self.largeur, ''])
         # Boutons
-        #self.opt = [[Bouton(TB1o, BTV, "CONTINUER", '', [self.portailAustral]), "JEU"],
-         #           [Bouton(TB1o, BTNOIR, "PARAMETRES", '', [self.portailAustral]), "ANOVEL_OPTIONS"],
-         #           [Bouton(TB1o, BTNOIR, "MENU PRINCIPAL", '', [self.portailAustral]), "ANOVEL_MENU"],
-         #           [Bouton(TB1o, BTDANGER, "QUITTER", '', [self.portailAustral]), "QUITTE"]]
-        self.gm1 = Grille(int(xf*0.25), [False])
-        #self.gm1.ajouteElement(self.opt[0][0], 0, 0)
-        #self.gm1.ajouteElement(self.opt[1][0], 0, 1)
-        self.gm2 = Grille(int(xf*0.25), [False])
-        #self.gm2.ajouteElement(self.opt[2][0], 0, 0)
-        self.gm3 = Grille(int(xf*0.25), [False])
-        #self.gm3.ajouteElement(self.opt[3][0], 0, 0)
+        self.opt = [Bouton(TB2n, PTIBT2, "PLUS", 'images/ui/plus.png', [self.plusGauche]),
+                    Bouton(TB2n, PTIBT2, "MOINS", 'images/ui/moins.png', [self.moinsGauche]),
+                    Bouton(TB2n, PTIBT2, "PLUS", 'images/ui/plus.png', [self.plusDroite]),
+                    Bouton(TB2n, PTIBT2, "MOINS", 'images/ui/moins.png', [self.moinsDroite]),
+                    Bouton(TB2n, PTIBT2, "REINITIALISER", 'images/ui/reset.png', [self.reset])]
+        self.gm1 = Grille(int(self.opt[0].largeur+yf*0.01), [False])
+        self.gm1.ajouteElement(self.opt[0], 0, 0)
+        self.gm1.ajouteElement(self.opt[1], 0, 1)
+        self.gm2 = Grille(int(self.opt[2].largeur+yf*0.01), [False])
+        self.gm2.ajouteElement(self.opt[2], 0, 0)
+        self.gm2.ajouteElement(self.opt[3], 0, 1)
         # Animations
         self.playAnim = True
         self.ok = False
@@ -46,6 +46,7 @@ class OrgaFen:
         y += int(self.titre.getDims()[1] + ecart)
         self.dessineBateau(y, 0)
         y = self.dessineBateau(y, 1, False)
+        self.opt[4].dessine(int(xf/2), int(y-self.gm1.hauteur/2))
         if self.playAnim:
             if not self.ok:
                 self.anims(True)
@@ -80,6 +81,8 @@ class OrgaFen:
             draw_rectangle(x, int(y+hbarre-h), lbarre, h, couleurContenu)
             draw_circle(int(x+lbarre*1.9), int(y+hbarre*0.32), int(lbarre/2), couleurJauge)
             draw_text_ex(police2, str(bat.marins), (int(x+lbarre*1.9-tm.x/2), int(y+hbarre*0.32-tm.y/2)), int(yf*0.03), 0, couleurTexteJauge)
+            y += hbarre
+            self.gm1.dessine(int(x+lbarre/2-self.gm1.largeur/2), y)
         else:
             x = int(xf/2+self.largeur*0.46)
             draw_texture(bat.images[0], int(x-bat.images[0].width), int(y+hbarre*0.7-bat.images[0].height/2), WHITE)
@@ -92,7 +95,9 @@ class OrgaFen:
             draw_rectangle(x-lbarre, int(y+hbarre-h), lbarre, h, couleurContenu)
             draw_circle(int(x-lbarre*1.9), int(y+hbarre*0.32), int(lbarre/2), couleurJauge)
             draw_text_ex(police2, str(bat.marins), (int(x-lbarre*1.9-tm.x*0.55), int(y+hbarre*0.32-tm.y/2)), int(yf*0.03), 0, couleurTexteJauge)
-        return int(y + hbarre + espace)
+            y += hbarre
+            self.gm2.dessine(int(x-lbarre/2-self.gm1.largeur/2), y)
+        return int(y + self.gm1.hauteur + espace)
 
     def anims(self, mode: bool) -> None:
         if mode:
@@ -114,3 +119,28 @@ class OrgaFen:
 
     def setbateaux(self, bateau1: Bateau, bateau2: Bateau) -> None:
         self.bat = [bateau1, bateau2]
+        self.valeursInitiales = [str(bateau1.marins), str(bateau2.marins)]
+
+    def plusGauche(self) -> None:
+        if self.bat[1].marins > 0:
+            self.bat[1] - 1
+            self.bat[0] + 1
+
+    def plusDroite(self) -> None:
+        if self.bat[0].marins > 0:
+            self.bat[0] - 1
+            self.bat[1] + 1
+
+    def moinsGauche(self) -> None:
+        if self.bat[0].marins > 0:
+            self.bat[0] - 1
+            self.bat[1] + 1
+
+    def moinsDroite(self) -> None:
+        if self.bat[1].marins > 0:
+            self.bat[1] - 1
+            self.bat[0] + 1
+
+    def reset(self) -> None:
+        self.bat[0].marins = int(self.valeursInitiales[0])
+        self.bat[1].marins = int(self.valeursInitiales[1])

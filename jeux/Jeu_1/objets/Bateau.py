@@ -1,6 +1,5 @@
 from systeme.FondMarin import *
 from jeux.Jeu_1.objets.bases.pivote import Pivote
-from jeux.Jeu_1.fonctions.deplacement import glisse
 from jeux.Jeu_1.ui.infoBulle import InfoBulle
 from museeNoyee import coeur, marin
 
@@ -56,3 +55,11 @@ class Bateau(Pivote):
     def __neg__(self) -> None:
         super().__neg__()
         self.finiTour = True
+
+    def __add__(self, valeur: int) -> int:
+        self.marins += valeur
+        return self.marins
+    
+    def __sub__(self, valeur: int) -> int:
+        self.marins -= valeur
+        return self.marins
