@@ -16,18 +16,25 @@ class OrgaFen:
         self.hauteur = int(yf*0.8)
         # Autres
         self.titre = BlocTexte("ORGANISATION", police1, int(yf*0.04), [self.largeur, ''])
+        self.avertissement = BlocTexte("ATTENTION ! Cette action va mettre fin au deplacement.", police2, int(yf*0.03), [int(xf*0.94), ''])
         # Boutons
         self.opt = [Bouton(TB2n, PTIBT2, "PLUS", 'images/ui/plus.png', [self.plusGauche]),
                     Bouton(TB2n, PTIBT2, "MOINS", 'images/ui/moins.png', [self.moinsGauche]),
                     Bouton(TB2n, PTIBT2, "PLUS", 'images/ui/plus.png', [self.plusDroite]),
                     Bouton(TB2n, PTIBT2, "MOINS", 'images/ui/moins.png', [self.moinsDroite]),
-                    Bouton(TB2n, PTIBT2, "REINITIALISER", 'images/ui/reset.png', [self.reset])]
+                    Bouton(TB2n, PTIBT2, "REINITIALISER", 'images/ui/reset.png', [self.reset]),
+                    Bouton(TB2n, PTIBT2, "ANNULER", 'images/ui/CroSom.png', [self.annule]),
+                    Bouton(TB1o, BTX, "ANNULER", '', [self.annule]),
+                    Bouton(TB1o, BTV, "CONFIRMER", '', [self.confirme])]
         self.gm1 = Grille(int(self.opt[0].largeur+yf*0.01), [False])
         self.gm1.ajouteElement(self.opt[0], 0, 0)
         self.gm1.ajouteElement(self.opt[1], 0, 1)
         self.gm2 = Grille(int(self.opt[2].largeur+yf*0.01), [False])
         self.gm2.ajouteElement(self.opt[2], 0, 0)
         self.gm2.ajouteElement(self.opt[3], 0, 1)
+        self.gm3 = Grille(int(self.largeur*0.6), [False])
+        self.gm3.ajouteElement(self.opt[-1], 0, 0)
+        self.gm3.ajouteElement(self.opt[-2], 1, 0)
         # Animations
         self.playAnim = True
         self.ok = False
@@ -35,6 +42,7 @@ class OrgaFen:
         self.hauteurContenu = [int(yf*1.1), int(yf/2-self.hauteur/2)]
 
     def dessine(self) -> None:
+        couleurFondRec = [243, 123, 123, 255]
         if not self.ok and not self.playAnim:
             self.playAnim = True
         draw_rectangle(0, 0, xf, yf, [41, 35, 45, self.opac[0]])
@@ -42,11 +50,17 @@ class OrgaFen:
         y = self.hauteurContenu[0]
         draw_rectangle(int(xf/2-self.largeur/2-2), y-2, self.largeur+4, self.hauteur+4, [192, 150, 9, 255])
         draw_rectangle(int(xf/2-self.largeur/2), y, self.largeur, self.hauteur, WHITE)
-        self.titre.dessine([[int(xf/2), int(y+self.titre.getDims()[1]/2)], 'c'], BLACK)
+        self.titre.dessine([[int(xf/2), int(y+self.opt[5].largeur/2+yf*0.005)], 'c'], BLACK)
+        self.opt[5].dessine(int(xf/2+self.largeur/2-yf*0.005-self.opt[5].largeur/2), int(y+self.opt[5].largeur/2+yf*0.005))
         y += int(self.titre.getDims()[1] + ecart)
         self.dessineBateau(y, 0)
         y = self.dessineBateau(y, 1, False)
         self.opt[4].dessine(int(xf/2), int(y-self.gm1.hauteur/2))
+        tt = measure_text_ex(police2, "ATTENTION ! Cette action va mettre fin au deplacement.", int(yf*0.03), 0)
+        draw_rectangle_rounded([int(xf/2-tt.x*0.52), y, int(tt.x*1.04), int(self.avertissement.getDims()[1]*1.3)], 0.15, 30, couleurFondRec)
+        self.avertissement.dessine([[int(xf/2), int(y+self.avertissement.getDims()[1]*0.55)], 'c'], BLACK)
+        y += int(self.avertissement.getDims()[1]*1.3+ecart)
+        self.gm3.dessine(int(xf/2-self.gm3.largeur/2), y)
         if self.playAnim:
             if not self.ok:
                 self.anims(True)
@@ -120,6 +134,7 @@ class OrgaFen:
     def setbateaux(self, bateau1: Bateau, bateau2: Bateau) -> None:
         self.bat = [bateau1, bateau2]
         self.valeursInitiales = [str(bateau1.marins), str(bateau2.marins)]
+        self.valide = 1
 
     def plusGauche(self) -> None:
         if self.bat[1].marins > 0:
@@ -144,3 +159,10 @@ class OrgaFen:
     def reset(self) -> None:
         self.bat[0].marins = int(self.valeursInitiales[0])
         self.bat[1].marins = int(self.valeursInitiales[1])
+
+    def annule(self) -> None:
+        self.valide = 0
+        self.reset()
+
+    def confirme(self) -> None:
+        self.valide = 2
