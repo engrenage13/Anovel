@@ -76,6 +76,7 @@ class OrgaFen:
         tt = measure_text_ex(police2, texte, int(yf*0.025), 0)
         h = int(bat.marins*hbarre/total)
         tm = measure_text_ex(police2, str(bat.marins), int(yf*0.03), 0)
+        ta = measure_text_ex(police1i, "ACTIF", int(yf*0.025), 0)
         couleurFondRec = [182, 231, 247, 255]
         couleurJauge = [12, 106, 156, 255]
         couleurContenu = [80, 224, 250, 255]
@@ -83,6 +84,9 @@ class OrgaFen:
         couleurTexteJauge = WHITE
         if gauche:
             x = int(xf/2-self.largeur*0.46)
+            if bat.actif:
+                draw_rectangle_rounded([x, int(y+yf*0.04-ta.y*0.55), int(ta.x*1.2), int(ta.y*1.1)], 0.15, 30, GOLD)
+                draw_text_ex(police1i, "ACTIF", (int(x+ta.x*0.1), int(y+yf*0.04-ta.y*0.5)), int(yf*0.025), 0, WHITE)
             draw_texture(bat.images[0], x, int(y+hbarre*0.7-bat.images[0].height/2), WHITE)
             draw_rectangle_rounded([x, int(y+hbarre*0.7+bat.images[0].height*0.9), int(tt.x*1.1), int(tt.y*1.1)], 0.15, 30, couleurFondRec)
             draw_text_ex(police2, texte, (int(x+tt.x*0.05), int(y+hbarre*0.7+bat.images[0].height*0.9+tt.y*0.05)), int(yf*0.025), 0, couleurTexteRec)
@@ -97,6 +101,9 @@ class OrgaFen:
             self.gm1.dessine(int(x+lbarre/2-self.gm1.largeur/2), y)
         else:
             x = int(xf/2+self.largeur*0.46)
+            if bat.actif:
+                draw_rectangle_rounded([int(x-ta.x*1.2), int(y+yf*0.04-ta.y*0.55), int(ta.x*1.2), int(ta.y*1.1)], 0.15, 30, GOLD)
+                draw_text_ex(police1i, "ACTIF", (int(x-ta.x*1.1), int(y+yf*0.04-ta.y*0.5)), int(yf*0.025), 0, WHITE)
             draw_texture(bat.images[0], int(x-bat.images[0].width), int(y+hbarre*0.7-bat.images[0].height/2), WHITE)
             draw_rectangle_rounded([int(x-bat.images[0].width), int(y+hbarre*0.7+bat.images[0].height*0.9), int(tt.x*1.1), int(tt.y*1.1)], 0.15, 30, couleurFondRec)
             draw_text_ex(police2, texte, (int(x-bat.images[0].width+tt.x*0.05), int(y+hbarre*0.7+bat.images[0].height*0.9+tt.y*0.05)), int(yf*0.025), 0, couleurTexteRec)
