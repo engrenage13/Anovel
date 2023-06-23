@@ -1,4 +1,4 @@
-from random import choice
+from random import choice, randint
 from systeme.FondMarin import *
 from jeux.Jeu_1.objets.plateau.plateau import Plateau, Case
 from jeux.Jeu_1.objets.Joueur import Joueur, Bateau
@@ -137,6 +137,19 @@ class Jeu:
             liChoix = [self.passe] + [self.fleche.passe]*99
             choix = choice(liChoix)
             choix()
+            # organisation
+            c = self.trouveCase(self.joueurs[self.actuel][self.joueurs[self.actuel].actuel])
+            case = self.plateau[c[0]][c[1]]
+            idbat = case.contenu.index(self.joueurs[self.actuel][self.joueurs[self.actuel].actuel])
+            if choix == self.fleche.passe and len(case) > 1 and case[len(case)-1-idbat] in self.joueurs[self.actuel]:
+                liCxOrga = [True] + [False]*1
+                cx = choice(liCxOrga)
+                if cx:
+                    nbMarins = case[len(case)-1-idbat].marins
+                    nbRedistrib = randint(1, nbMarins)
+                    self.joueurs[self.actuel][self.joueurs[self.actuel].actuel] + nbRedistrib
+                    case[len(case)-1-idbat] - nbRedistrib
+            # /
             if choix != self.passe:
                 self.passe()
 

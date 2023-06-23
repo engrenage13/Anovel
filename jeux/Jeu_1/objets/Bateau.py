@@ -25,7 +25,7 @@ class Bateau(Pivote):
         self.pmi = pm
         self.rejouer()
         # InfoBulle
-        self.infoBulle = InfoBulle([[self.vie, coeur], [self.marins, marin]])
+        self.infoBulle = InfoBulle([["coeur", self.vie, coeur], ["marin", self.marins, marin]])
 
     def dessine(self) -> None:
         """Dessine le bateau.
@@ -42,9 +42,9 @@ class Bateau(Pivote):
         self.coule = False
         self.actif = False
         self.finiTour = False
-        self.vie = self.pvi
-        self.marins = self.marinsi
-        self.pm = self.pmi
+        self.vie = int(str(self.pvi))
+        self.marins = int(str(self.marinsi))
+        self.pm = int(str(self.pmi))
 
     def estEnPlace(self) -> bool:
         return self.place
@@ -58,8 +58,10 @@ class Bateau(Pivote):
 
     def __add__(self, valeur: int) -> int:
         self.marins += valeur
+        self.infoBulle.setValeurElement("marin", self.marins)
         return self.marins
     
     def __sub__(self, valeur: int) -> int:
         self.marins -= valeur
+        self.infoBulle.setValeurElement("marin", self.marins)
         return self.marins
