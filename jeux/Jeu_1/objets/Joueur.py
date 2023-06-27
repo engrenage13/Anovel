@@ -3,7 +3,7 @@ from jeux.Jeu_1.objets.Bateau import Bateau
 from jeux.Jeu_1.config import bateaux as libat
 from ui.blocTexte import BlocTexte
 
-class Joueur():
+class Joueur:
     def __init__(self, nom: str, bateaux: list, couleur: Color):
         """Crée un joueur.
 
@@ -87,6 +87,14 @@ class Joueur():
             else:
                 i += 1
         return fin
+    
+    def compteBateau(self) -> int:
+        compteur = 0
+        for i in range(len(self.bateaux)):
+            bat = self.bateaux[i]
+            if bat.estEnVie():
+                compteur += 1
+        return compteur
 
     def __pos__(self) -> None:
         self.actif = True

@@ -14,6 +14,7 @@ from jeux.Jeu_1.action.Placement import Placement
 from jeux.Jeu_1.ui.fleche import Fleche
 from jeux.Jeu_1.ui.barreAction import BarreAction
 from jeux.Jeu_1.orgaFen import OrgaFen
+from jeux.Jeu_1.fin import Fin
 from museeNoyee import orga, miniorga
 
 class Jeu:
@@ -28,7 +29,7 @@ class Jeu:
         +self.joueurs[self.actuel]
         self.tiroir = Tiroir(self.joueurs[self.actuel].bateaux)
         # Phases
-        self.fen = {"intro": Intro(self.joueurs), "choix_zone": PageCarte(), "install": self.plateau, "jeu": self.plateau, "organisation": OrgaFen(self.joueurs[self.actuel][0], self.joueurs[self.actuel][1])}
+        self.fen = {"intro": Intro(self.joueurs), "choix_zone": PageCarte(), "install": self.plateau, "jeu": self.plateau, "organisation": OrgaFen(self.joueurs[self.actuel][0], self.joueurs[self.actuel][1]), "fin": Fin(self.joueurs)}
         if config['dev']:
             if config['dev'].lower() == 'jeu':
                 self.actif = 'install'
@@ -80,6 +81,9 @@ class Jeu:
         elif self.actif == 'install':
             self.actif = 'jeu'
             self.setPhase('jeu')
+        elif self.actif == 'jeu':
+            self.actif = 'fin'
+            self.setPhase('fin')
 
     def rejouer(self) -> None:
         for fenetre in self.fen:

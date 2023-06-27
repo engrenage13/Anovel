@@ -52,6 +52,12 @@ class Bateau(Pivote):
     def aFini(self) -> bool:
         return self.finiTour
     
+    def estEnVie(self) -> bool:
+        if self.vie > 0:
+            return True
+        else:
+            return False
+    
     def __neg__(self) -> None:
         super().__neg__()
         self.finiTour = True
