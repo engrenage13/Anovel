@@ -20,7 +20,15 @@ class BlocJoueur:
         px = int(str(x))
         py = int(str(y))
         draw_rectangle(px, py, self.largeur, self.hauteur, BLACK)
-        draw_rectangle(px, py, self.largeurVignette, self.largeurVignette, [30, 30, 30, 255])
+        if self.classement == 1:
+            couleurFond = GOLD
+        elif self.classement == 2:
+            couleurFond = [201, 202, 220, 255]
+        elif self.classement == 3:
+            couleurFond = [196, 130, 49, 255]
+        else:
+            couleurFond = [30, 30, 30, 255]
+        draw_rectangle(px, py, self.largeurVignette, self.largeurVignette, couleurFond)
         px += int(self.largeurVignette/2)
         py += int(self.largeurVignette*0.1)
         self.num.dessine([[int(px-self.num.getDims()[0]/2), py], 'no'], WHITE)
