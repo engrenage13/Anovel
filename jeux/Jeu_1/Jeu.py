@@ -14,7 +14,7 @@ from jeux.Jeu_1.action.Placement import Placement
 from jeux.Jeu_1.ui.fleche import Fleche
 from jeux.Jeu_1.ui.barreAction import BarreAction
 from jeux.Jeu_1.orgaFen import OrgaFen
-from jeux.Jeu_1.fin import Fin
+from jeux.Jeu_1.fenFin.fin import Fin
 from museeNoyee import orga, miniorga
 
 class Jeu:

@@ -4,6 +4,7 @@ from ui.bouton.grille import Grille
 from ui.blocTexte import BlocTexte
 from jeux.Jeu_1.objets.Bateau import Bateau
 from jeux.Jeu_1.objets.Joueur import Joueur
+from jeux.Jeu_1.fenFin.blocJoueur import BlocJoueur
 
 class Fin:
     def __init__(self, joueurs: list[Joueur]) -> None:
@@ -28,15 +29,18 @@ class Fin:
         self.playAnim = True
         self.ok = False
         self.opac = [0, 254]
-        self.hauteurContenu = [int(yf*1.1), int(yf*0.09)]
+        self.hauteurContenu = [int(yf*1.1), int(yf*0.11)]
 
     def dessine(self) -> None:
-        couleurFondRec = [243, 123, 123, 255]
         draw_rectangle(0, 0, xf, yf, [14, 27, 63, self.opac[0]])
         ecart = int(yf*0.03)
         y = self.hauteurContenu[0]
         tt = measure_text_ex(police1i, "CLASSEMENT FINAL", yf*0.06, 0)
         draw_text_ex(police1i, "CLASSEMENT FINAL", (int(xf/2-tt.x/2), int(yf*0.015)), yf*0.06, 0, [250, 248, 220, self.opac[0]])
+        for i in range(len(self.blocs)):
+            bloc = self.blocs[i]
+            bloc.dessine(int(xf/2-bloc.getDims()[0]/2), y)
+            y += bloc.getDims()[1] + ecart
         if self.playAnim:
             if not self.ok:
                 self.anims(True)
@@ -70,6 +74,13 @@ class Fin:
                 self.joueurs = [j2] + self.joueurs
             else:
                 self.joueurs.append(j2)
+        classement = 1
+        self.blocs = []
+        for j in range(len(self.joueurs)):
+            self.blocs.append(BlocJoueur(self.joueurs[j], classement))
+            if j < len(self.joueurs)-1:
+                if self.joueurs[j].compteBateau() > self.joueurs[j+1].compteBateau():
+                    classement += 1
 
     def plusGauche(self) -> None:
         if self.bat[1].marins > 0:
