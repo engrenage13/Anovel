@@ -80,6 +80,13 @@ class Scene(Jeu):
             self.tour()
             if self.play:
                 self.barre.dessine()
+        elif self.actif == 'fin' and self.phase == 'fin':
+            if not fenetre.lu:
+                message = fenetre.regarde()
+                if message == 1:
+                    self.rejouer()
+                elif message == 2:
+                    self.nouveauMessage("ANOVEL_MENU")
 
     def deplace(self) -> None:
         x = get_mouse_x()
