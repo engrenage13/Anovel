@@ -17,10 +17,7 @@ class Fin:
         self.message = 0
         self.lu = False
         # Animations
-        self.playAnim = True
-        self.ok = False
-        self.opac = [0, 254]
-        self.hauteurContenu = [int(yf*1.1), int(yf*0.11)]
+        self.resetAnim()
 
     def dessine(self) -> None:
         draw_rectangle(0, 0, xf, yf, [14, 27, 63, self.opac[0]])
@@ -76,13 +73,21 @@ class Fin:
                 if self.joueurs[j].compteBateau() > self.joueurs[j+1].compteBateau():
                     classement += 1
 
+    def resetAnim(self) -> None:
+        self.playAnim = True
+        self.ok = False
+        self.opac = [0, 254]
+        self.hauteurContenu = [int(yf*1.1), int(yf*0.11)]
+
     def reset(self) -> None:
         self.message = 1
         self.lu = False
+        self.resetAnim()
 
     def quitte(self) -> None:
         self.message = 2
         self.lu = False
+        self.resetAnim()
 
     def regarde(self) -> int:
         if not self.lu:

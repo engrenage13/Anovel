@@ -4,7 +4,7 @@
     "intro": {"interface": false, "phase": "intro"},
     "choix_zone": {"interface": true, "phase": "installation"},
     "organisation": {"interface": true, "phase": "jeu"},
-    "fin": {"interface": true, "phase": "fin"},
+    "fin": {"interface": false, "phase": "fin"},
 
-    "dev": "fin"
+    "dev": "jeu"
 }

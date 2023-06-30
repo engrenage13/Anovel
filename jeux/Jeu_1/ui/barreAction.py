@@ -5,7 +5,7 @@ from museeNoyee import minicoeur, minimarin
 class BarreAction:
     def __init__(self, joueurs: list, passe) -> None:
         self.joueurs = joueurs
-        self.actuel = self.tour = 0
+        self.actuel = 0
         # boutons
         self.passe = Bouton(TB2n, PTIBT1, "PASSE", 'images/ui/passer+.png', [passe])
         self.precedent = Bouton(TB2n, PTIBT1, "PRECEDENT", 'images/ui/precedent.png', [self.actPrecedent])
@@ -21,9 +21,9 @@ class BarreAction:
         # Capteurs
         self.actionsPossibles = {"deplacement": True, "organisation": False}
 
-    def dessine(self) -> None:
+    def dessine(self, tour: int) -> None:
         draw_rectangle(0, yf-self.hauteur, xf, yf, [80, 80, 80, 150])
-        self.dessineInfoBat()
+        self.dessineInfoBat(tour)
         self.dessineProgression()
         if not self.deplacement:
             texte = "ACTIONS POSSIBLES : "
@@ -44,7 +44,7 @@ class BarreAction:
             if self.actionsPossibles["organisation"]:
                 self.btOrga.dessine(int(xf-self.btv.getDims()[0]*2.8-self.btOrga.getDims()[0]/2), int(yf-self.hauteur/2))
 
-    def dessineInfoBat(self) -> None:
+    def dessineInfoBat(self, tour: int) -> None:
         bateau = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
         colFond = [24, 22, 22, 170]
         x = int(xf*0.005)
@@ -66,7 +66,7 @@ class BarreAction:
         y += int(yf*0.003)
         draw_text_ex(police1, str(bateau.marins), (x, int(y+yf*0.001)), int(yf*0.02), 0, WHITE)
         x += int(xf*0.025)
-        draw_text_ex(police2, "TOUR "+str(self.tour), (x, y), yf*0.02, 0, WHITE)
+        draw_text_ex(police2, "TOUR "+str(tour), (x, y), yf*0.02, 0, WHITE)
 
     def dessineProgression(self) -> None:
         l = int(yf*0.2)
@@ -86,7 +86,7 @@ class BarreAction:
             self.suivant.dessine(int(x+self.suivant.getDims()[0]/2), int(yf-self.hauteur/2))
 
     def rejouer(self) -> None:
-        self.actuel = self.tour = 0
+        self.actuel = 0
 
     def actSuivant(self) -> None:
         nbBat = len(self.joueurs[self.actuel])
@@ -142,8 +142,6 @@ class BarreAction:
     
     def setActuel(self, actuel: int) -> None:
         self.actuel = actuel
-        if actuel == 0:
-            self.tour += 1
 
     def activeDeplacement(self) -> None:
         self.deplacement = self.choixAction = True

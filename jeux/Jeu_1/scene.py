@@ -79,9 +79,9 @@ class Scene(Jeu):
         elif self.actif == 'jeu' and self.phase == 'jeu':
             self.tour()
             if self.play:
-                self.barre.dessine()
+                self.barre.dessine(self.indiqueTour)
         elif self.actif == 'fin' and self.phase == 'fin':
-            if not fenetre.lu:
+            if fenetre != self.plateau and not fenetre.lu:
                 message = fenetre.regarde()
                 if message == 1:
                     self.rejouer()

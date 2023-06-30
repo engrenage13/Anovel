@@ -17,6 +17,8 @@ from jeux.Jeu_1.orgaFen import OrgaFen
 from jeux.Jeu_1.fenFin.fin import Fin
 from museeNoyee import orga, miniorga
 
+TOURMAX = 40
+
 class Jeu:
     def __init__(self) -> None:
         self.plateau = Plateau(14)
@@ -55,6 +57,7 @@ class Jeu:
         self.barre = BarreAction(self.joueurs, self.passe)
         self.fleche = Fleche(self.plateau[0][0], self.joueurs[0][0], self.zone, self.plateau)
         self.setDeplacement = False
+        self.indiqueTour = 0
         # Between the world
         self.play = False
 
@@ -83,7 +86,7 @@ class Jeu:
             self.setPhase('jeu')
         elif self.actif == 'jeu':
             self.actif = 'fin'
-            self.setPhase('fin')
+            self.phase = 'fin'
 
     def rejouer(self) -> None:
         for fenetre in self.fen:
@@ -92,6 +95,7 @@ class Jeu:
         self.actif = self.phase = 'intro'
         self.plateau.bloque = True
         self.plateau.vide()
+        self.indiqueTour = 0
         # Joueurs 
         self.actuel = 0
         for i in range(len(self.joueurs)):
@@ -115,6 +119,8 @@ class Jeu:
                 self.passeTour()
                 if self.actuel == 1 and self.phase == 'installation':
                     self.zone.cases = self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+4)%8].cases
+        elif self.phase == 'jeu':
+            self.switch()
 
     def passeTour(self) -> None:
         j = self.actuel
@@ -331,12 +337,18 @@ class Jeu:
         self.actuel += 1
         if self.actuel >= len(self.joueurs):
             self.actuel = 0
-            self.switch()
+            if self.phase != "jeu":
+                self.switch()
         +self.joueurs[self.actuel]
         if self.phase == 'installation':
             self.resetInstall()
         elif self.phase == 'jeu':
             self.deplaceInstall = self.setDeplacement = False
+            if self.actuel == 0:
+                if self.indiqueTour < TOURMAX:
+                    self.indiqueTour += 1
+                else:
+                    self.switch()
 
     # Partie
 
