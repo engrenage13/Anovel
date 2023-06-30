@@ -15,7 +15,7 @@ from jeux.Jeu_1.ui.fleche import Fleche
 from jeux.Jeu_1.ui.barreAction import BarreAction
 from jeux.Jeu_1.orgaFen import OrgaFen
 from jeux.Jeu_1.fenFin.fin import Fin
-from museeNoyee import orga, miniorga
+from museeNoyee import orga, miniorga, abordage, miniabordage
 
 TOURMAX = 40
 
@@ -393,9 +393,15 @@ class Jeu:
             c = self.zone[i]
             case = self.plateau[c[0]][c[1]]
             if len(case) == 1 and case[0] != bateau:
-                draw_texture(miniorga, int(case.pos[0]+case.taille*0.02), int(case.pos[1]+case.taille*0.02), WHITE)
+                if case[0] in self.joueurs[self.actuel]:
+                    draw_texture(miniorga, int(case.pos[0]+case.taille*0.02), int(case.pos[1]+case.taille*0.02), WHITE)
+                else:
+                    draw_texture(miniabordage, int(case.pos[0]+case.taille*0.02), int(case.pos[1]+case.taille*0.02), WHITE)
             elif len(case) == 2 and bateau in case:
-                draw_texture(orga, int(case.pos[0]+case.taille*0.02), int(case.pos[1]+case.taille*0.02), WHITE)
+                if case[0] in self.joueurs[self.actuel]:
+                    draw_texture(orga, int(case.pos[0]+case.taille*0.02), int(case.pos[1]+case.taille*0.02), WHITE)
+                else:
+                    draw_texture(abordage, int(case.pos[0]+case.taille*0.02), int(case.pos[1]+case.taille*0.02), WHITE)
                 if self.fen["organisation"].bat[0] != case[0] or self.fen["organisation"].bat[1] != case[1]:
                     self.fen["organisation"].setBateaux(case[0], case[1])
                 ptBtOrga += 1
