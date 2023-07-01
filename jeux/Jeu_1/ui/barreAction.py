@@ -14,12 +14,13 @@ class BarreAction:
         self.btv = Bouton(TB2n, PTIBT1, "VALIDER", 'images/ui/check.png', [self.valideAction])
         self.btx = Bouton(TB2n, PTIBT1, "ANNULER", 'images/ui/CroSom.png', [self.annuleAction])
         self.btOrga = Bouton(TB2o, BTV, "ORGANISER", '', [self.activeOrga])
+        self.btAbordage = Bouton(TB2o, BTV, "ABORDAGE", '', [self.activeAbordage])
         # dimensions
         self.hauteur = int(yf*0.07)
         # Autres
-        self.chabat = self.deplacement = self.choixAction = self.valide = self.annule = self.orga = False
+        self.chabat = self.deplacement = self.choixAction = self.valide = self.annule = self.orga = self.abordage = False
         # Capteurs
-        self.actionsPossibles = {"deplacement": True, "organisation": False}
+        self.actionsPossibles = {"deplacement": True, "organisation": False, "abordage": False}
 
     def dessine(self, tour: int) -> None:
         draw_rectangle(0, yf-self.hauteur, xf, yf, [80, 80, 80, 150])
@@ -43,6 +44,8 @@ class BarreAction:
             self.btx.dessine(int(xf-self.btv.getDims()[0]*2), int(yf-self.hauteur/2))
             if self.actionsPossibles["organisation"]:
                 self.btOrga.dessine(int(xf-self.btv.getDims()[0]*2.8-self.btOrga.getDims()[0]/2), int(yf-self.hauteur/2))
+            if self.actionsPossibles["abordage"]:
+                self.btAbordage.dessine(int(xf-self.btv.getDims()[0]*2.8-self.btAbordage.getDims()[0]/2), int(yf-self.hauteur/2))
 
     def dessineInfoBat(self, tour: int) -> None:
         bateau = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
@@ -154,3 +157,6 @@ class BarreAction:
 
     def activeOrga(self) -> None:
         self.orga = True
+
+    def activeAbordage(self) -> None:
+        self.abordage = True

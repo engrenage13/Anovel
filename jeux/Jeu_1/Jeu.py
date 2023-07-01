@@ -58,6 +58,7 @@ class Jeu:
         self.fleche = Fleche(self.plateau[0][0], self.joueurs[0][0], self.zone, self.plateau)
         self.setDeplacement = False
         self.indiqueTour = 0
+        self.caseAbordage = None
         # Between the world
         self.play = False
 
@@ -87,6 +88,7 @@ class Jeu:
         elif self.actif == 'jeu':
             self.actif = 'fin'
             self.phase = 'fin'
+            self.fen[self.actif].setJoueurs(self.joueurs)
 
     def rejouer(self) -> None:
         for fenetre in self.fen:
@@ -379,6 +381,11 @@ class Jeu:
                         self.barre.valide = True
                     orga.valide = 1
                     self.play = True
+            if self.barre.abordage:
+                case = self.caseAbordage
+                self.abordage(case[0], case[1])
+                self.barre.abordage = False
+                self.barre.valide = True
             if self.barre.valide:
                 self.barre.deplacement = self.barre.valide = False
                 self.passe()
@@ -389,6 +396,7 @@ class Jeu:
     def dessineMarqueur(self) -> None:
         bateau = self.fleche.bateau
         ptBtOrga = 0
+        ptBtAbordage = 0
         for i in range(len(self.zone)):
             c = self.zone[i]
             case = self.plateau[c[0]][c[1]]
@@ -400,15 +408,30 @@ class Jeu:
             elif len(case) == 2 and bateau in case:
                 if case[0] in self.joueurs[self.actuel]:
                     draw_texture(orga, int(case.pos[0]+case.taille*0.02), int(case.pos[1]+case.taille*0.02), WHITE)
+                    ptBtOrga += 1
                 else:
                     draw_texture(abordage, int(case.pos[0]+case.taille*0.02), int(case.pos[1]+case.taille*0.02), WHITE)
+                    ptBtAbordage += 1
+                    self.caseAbordage = case
                 if self.fen["organisation"].bat[0] != case[0] or self.fen["organisation"].bat[1] != case[1]:
                     self.fen["organisation"].setBateaux(case[0], case[1])
-                ptBtOrga += 1
         if ptBtOrga > 0:
             self.barre.actionsPossibles["organisation"] = True
         else:
             self.barre.actionsPossibles["organisation"] = False
+        if ptBtAbordage > 0:
+            self.barre.actionsPossibles["abordage"] = True
+        else:
+            self.barre.actionsPossibles["abordage"] = False
+
+    def abordage(self, bat1: Bateau, bat2: Bateau) -> None:
+        if bat1.marins > bat2.marins:
+            bat2.setNbPV(bat2.vie-1)
+        elif bat2.marins > bat1.marins:
+            bat1.setNbPV(bat1.vie-1)
+        else:
+            bat1.setNbPV(bat1.vie-1)
+            bat2.setNbPV(bat2.vie-1)
 
     def setParamFleche(self) -> None:
         bat = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]

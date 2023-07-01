@@ -57,6 +57,10 @@ class Bateau(Pivote):
             return True
         else:
             return False
+        
+    def setNbPV(self, vie: int) -> None:
+        self.vie = vie
+        self.infoBulle.setValeurElement("coeur", self.vie)
     
     def __neg__(self) -> None:
         super().__neg__()
