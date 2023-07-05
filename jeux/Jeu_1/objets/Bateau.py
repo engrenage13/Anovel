@@ -50,17 +50,26 @@ class Bateau(Pivote):
         return self.place
     
     def aFini(self) -> bool:
-        return self.finiTour
+        rep = self.coule
+        if not rep:
+            rep = self.finiTour
+        return rep
     
     def estEnVie(self) -> bool:
-        if self.vie > 0:
-            return True
-        else:
+        if self.coule:
             return False
+        else:
+            return True
         
     def setNbPV(self, vie: int) -> None:
         self.vie = vie
         self.infoBulle.setValeurElement("coeur", self.vie)
+        if self.vie <= 0:
+            self.coule = True
+
+    def __pos__(self) -> None:
+        super().__pos__()
+        print(self.id, self.finiTour)
     
     def __neg__(self) -> None:
         super().__neg__()
@@ -75,3 +84,6 @@ class Bateau(Pivote):
         self.marins -= valeur
         self.infoBulle.setValeurElement("marin", self.marins)
         return self.marins
+    
+    def __bool__(self) -> bool:
+        return self.estEnVie()

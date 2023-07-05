@@ -432,6 +432,10 @@ class Jeu:
         else:
             bat1.setNbPV(bat1.vie-1)
             bat2.setNbPV(bat2.vie-1)
+        if bat1.coule:
+            self.caseAbordage - bat1
+        if bat2.coule:
+            self.caseAbordage - bat2
 
     def setParamFleche(self) -> None:
         bat = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]

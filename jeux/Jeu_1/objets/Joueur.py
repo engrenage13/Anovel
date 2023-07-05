@@ -4,7 +4,7 @@ from jeux.Jeu_1.config import bateaux as libat
 from ui.blocTexte import BlocTexte
 
 class Joueur:
-    def __init__(self, nom: str, bateaux: list, couleur: Color):
+    def __init__(self, nom: str, bateaux: list[Bateau], couleur: Color):
         """Crée un joueur.
 
         Args:
@@ -98,6 +98,7 @@ class Joueur:
 
     def __pos__(self) -> None:
         self.actif = True
+        print(self.nom)
         if self.phase != "installation":
             for i in range(len(self.bateaux)):
                 self.bateaux[i].finiTour = False

@@ -145,6 +145,10 @@ class BarreAction:
     
     def setActuel(self, actuel: int) -> None:
         self.actuel = actuel
+        texte = ""
+        for i in range(len(self.joueurs[actuel])):
+            texte += f"[{self.joueurs[actuel][i].id}, {self.joueurs[actuel][i].aFini()}] "
+        print(texte)
 
     def activeDeplacement(self) -> None:
         self.deplacement = self.choixAction = True
