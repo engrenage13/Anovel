@@ -187,35 +187,36 @@ class Plateau:
         return voisines
     
     def focusCase(self, case: tuple) -> None:
-        x = self.cases[0][0].pos[0]
-        y = self.cases[0][0].pos[1]
-        cx = int(self.cases[case[0]][case[1]].pos[0]+self.tailleCase/2)
-        cy = int(self.cases[case[0]][case[1]].pos[1]+self.tailleCase/2)
-        if cx <= int(xf/2):
-            dx = int(xf/2-cx)
-            mulx = 1
-        else:
-            dx = int(cx-xf/2)
-            mulx = -1
-        if cy <= int(yf/2):
-            dy = int(yf/2-cy)
-            muly = 1
-        else:
-            dy = int(cy-yf/2)
-            muly = -1
-        nx = x+(dx*mulx)
-        ny = y+(dy*muly)
-        if self.passeFrontiereHorizontale(nx, True):
-            if mulx > 0:
-                nx = self.largeurBordure+self.largeurEnvirronement
+        if type(case) != bool:
+            x = self.cases[0][0].pos[0]
+            y = self.cases[0][0].pos[1]
+            cx = int(self.cases[case[0]][case[1]].pos[0]+self.tailleCase/2)
+            cy = int(self.cases[case[0]][case[1]].pos[1]+self.tailleCase/2)
+            if cx <= int(xf/2):
+                dx = int(xf/2-cx)
+                mulx = 1
             else:
-                nx = xf-(len(self.cases)*self.tailleCase)-self.largeurBordure-self.largeurEnvirronement
-        if self.passeFrontiereVerticale(ny, True):
-            if muly > 0:
-                ny = self.largeurBordure+self.largeurEnvirronement
+                dx = int(cx-xf/2)
+                mulx = -1
+            if cy <= int(yf/2):
+                dy = int(yf/2-cy)
+                muly = 1
             else:
-                ny = yf-(len(self.cases)*self.tailleCase)-self.largeurBordure-self.largeurEnvirronement
-        self.place(nx, ny, True)
+                dy = int(cy-yf/2)
+                muly = -1
+            nx = x+(dx*mulx)
+            ny = y+(dy*muly)
+            if self.passeFrontiereHorizontale(nx, True):
+                if mulx > 0:
+                    nx = self.largeurBordure+self.largeurEnvirronement
+                else:
+                    nx = xf-(len(self.cases)*self.tailleCase)-self.largeurBordure-self.largeurEnvirronement
+            if self.passeFrontiereVerticale(ny, True):
+                if muly > 0:
+                    ny = self.largeurBordure+self.largeurEnvirronement
+                else:
+                    ny = yf-(len(self.cases)*self.tailleCase)-self.largeurBordure-self.largeurEnvirronement
+            self.place(nx, ny, True)
     
     def vide(self) -> None:
         for i in range(self.nbCases):

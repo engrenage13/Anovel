@@ -25,10 +25,10 @@ class BarreAction:
     def dessine(self, tour: int) -> None:
         draw_rectangle(0, yf-self.hauteur, xf, yf, [80, 80, 80, 150])
         self.dessineInfoBat(tour)
-        self.dessineProgression()
+        #self.dessineProgression()
         if not self.deplacement:
             texte = "ACTIONS POSSIBLES : "
-            x = int(xf*0.45)
+            x = int(xf*0.3)
             tt = measure_text_ex(police2, texte, self.hauteur*0.5, 0)
             #espace = int(xf*0.01)
             draw_text_ex(police2, texte, (x, int(yf-self.hauteur*0.75)), self.hauteur*0.5, 0, WHITE)
@@ -71,6 +71,7 @@ class BarreAction:
         x += int(xf*0.025)
         draw_text_ex(police2, "TOUR "+str(tour), (x, y), yf*0.02, 0, WHITE)
 
+    # Choix bateau - Désactivé
     def dessineProgression(self) -> None:
         l = int(yf*0.2)
         ecart = int(xf*0.007)
@@ -87,9 +88,6 @@ class BarreAction:
         x += l+ecart
         if not self.deplacement:
             self.suivant.dessine(int(x+self.suivant.getDims()[0]/2), int(yf-self.hauteur/2))
-
-    def rejouer(self) -> None:
-        self.actuel = 0
 
     def actSuivant(self) -> None:
         nbBat = len(self.joueurs[self.actuel])
@@ -142,13 +140,13 @@ class BarreAction:
             if not self.joueurs[self.actuel][i].aFini():
                 nb += 1
         return nb
+    # /Choix bateau - désactivé
+    
+    def rejouer(self) -> None:
+        self.actuel = 0
     
     def setActuel(self, actuel: int) -> None:
         self.actuel = actuel
-        texte = ""
-        for i in range(len(self.joueurs[actuel])):
-            texte += f"[{self.joueurs[actuel][i].id}, {self.joueurs[actuel][i].aFini()}] "
-        print(texte)
 
     def activeDeplacement(self) -> None:
         self.deplacement = self.choixAction = True

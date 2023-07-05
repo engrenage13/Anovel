@@ -98,7 +98,6 @@ class Joueur:
 
     def __pos__(self) -> None:
         self.actif = True
-        print(self.nom)
         if self.phase != "installation":
             for i in range(len(self.bateaux)):
                 self.bateaux[i].finiTour = False

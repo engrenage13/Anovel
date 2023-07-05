@@ -334,23 +334,26 @@ class Jeu:
             self.fleche.setCase(case)
 
     def joueurSuivant(self) -> None:
-        -self.joueurs[self.actuel]
-        self.joueurs[self.actuel].actuel = 0
-        self.actuel += 1
-        if self.actuel >= len(self.joueurs):
-            self.actuel = 0
-            if self.phase != "jeu":
-                self.switch()
-        +self.joueurs[self.actuel]
-        if self.phase == 'installation':
-            self.resetInstall()
-        elif self.phase == 'jeu':
-            self.deplaceInstall = self.setDeplacement = False
-            if self.actuel == 0:
-                if self.indiqueTour < TOURMAX:
-                    self.indiqueTour += 1
-                else:
+        if self.joueurs[self.actuel].compteBateau() == 0:
+            self.switch()
+        else:
+            -self.joueurs[self.actuel]
+            self.joueurs[self.actuel].actuel = 0
+            self.actuel += 1
+            if self.actuel >= len(self.joueurs):
+                self.actuel = 0
+                if self.phase != "jeu":
                     self.switch()
+            +self.joueurs[self.actuel]
+            if self.phase == 'installation':
+                self.resetInstall()
+            elif self.phase == 'jeu':
+                self.deplaceInstall = self.setDeplacement = False
+                if self.actuel == 0:
+                    if self.indiqueTour < TOURMAX:
+                        self.indiqueTour += 1
+                    else:
+                        self.switch()
 
     # Partie
 

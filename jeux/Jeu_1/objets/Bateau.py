@@ -69,7 +69,6 @@ class Bateau(Pivote):
 
     def __pos__(self) -> None:
         super().__pos__()
-        print(self.id, self.finiTour)
     
     def __neg__(self) -> None:
         super().__neg__()
