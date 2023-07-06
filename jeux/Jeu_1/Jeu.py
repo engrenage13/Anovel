@@ -149,18 +149,19 @@ class Jeu:
             liChoix = [self.passe] + [self.fleche.passe]*99
             choix = choice(liChoix)
             choix()
-            # organisation
+            # organisation et abordage
             c = self.trouveCase(self.joueurs[self.actuel][self.joueurs[self.actuel].actuel])
             case = self.plateau[c[0]][c[1]]
             idbat = case.contenu.index(self.joueurs[self.actuel][self.joueurs[self.actuel].actuel])
+            # Organisation
             if choix == self.fleche.passe and len(case) > 1 and case[len(case)-1-idbat] in self.joueurs[self.actuel]:
-                liCxOrga = [True] + [False]*1
-                cx = choice(liCxOrga)
-                if cx:
-                    nbMarins = case[len(case)-1-idbat].marins
-                    nbRedistrib = randint(1, nbMarins)
-                    self.joueurs[self.actuel][self.joueurs[self.actuel].actuel] + nbRedistrib
-                    case[len(case)-1-idbat] - nbRedistrib
+                nbMarins = case[len(case)-1-idbat].marins
+                nbRedistrib = randint(1, nbMarins)
+                self.joueurs[self.actuel][self.joueurs[self.actuel].actuel] + nbRedistrib
+                case[len(case)-1-idbat] - nbRedistrib
+            # Abordage
+            elif choix == self.fleche.passe and len(case) > 1 and case[len(case)-1-idbat] not in self.joueurs[self.actuel]:
+                self.abordage(case[0], case[1])
             # /
             if choix != self.passe:
                 self.passe()

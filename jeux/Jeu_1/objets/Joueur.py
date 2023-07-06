@@ -39,12 +39,6 @@ class Joueur:
         for i in range(len(self.bateaux)):
             self.bateaux[i].rejouer()
 
-    def jouer(self, coord: tuple) -> bool:
-        bat = self.bateaux[self.actuel]
-        if is_mouse_button_pressed(0):
-            bat.setPos(coord[0], coord[1])
-            self.bateauSuivant()
-
     def bateauSuivant(self) -> None:
         -self.bateaux[self.actuel]
         if not self.tourFini():
@@ -66,17 +60,10 @@ class Joueur:
     
     def prochainBateau(self) -> None:
         i = self.actuel+1
-        trouve = False
-        while i < len(self.bateaux) and not trouve:
-            if not self.bateaux[i].aFini():
-                trouve = True
-                self.actuel = i
-            else:
-                i += 1
-        if not trouve:
+        if i < len(self.bateaux):
+            self.actuel = i
+        else:
             self.actuel = 0
-            if self.bateaux[0].aFini():
-                self.prochainBateau()
 
     def tourFini(self) -> bool:
         i = 0
