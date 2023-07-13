@@ -2,11 +2,11 @@ from systeme.FondMarin import *
 from ui.bouton.bouton import Bouton
 from ui.blocTexte import BlocTexte
 from jeux.Jeu_1.objets.Bateau import Bateau
+from jeux.Jeu_1.recompense.vignette import Vignette
 
 class RecompFen:
     def __init__(self, allie: Bateau = Bateau("", "jeux/Jeu_1/images/Bateaux/gbb.png", 0, 1, 0, [0, 0, 0, 0], 0), ennemi: Bateau = Bateau("", "jeux/Jeu_1/images/Bateaux/gbb.png", 0, 1, 0, [0, 0, 0, 0], 0)) -> None:
         self.setBateaux(allie, ennemi)
-        #m = load_image("jeux/Jeu_1/images/Icones/marin.png")
         # Dimensions
         self.largeur = int(xf*0.7)
         self.hauteur = int(yf*0.8)
@@ -16,6 +16,12 @@ class RecompFen:
         # Boutons
         self.opt = [Bouton(TB2n, PTIBT2, "PASSER", 'images/ui/CroSom.png', [self.passe]),
                     Bouton(TB1o, BTX, "PASSER", '', [self.passe])]
+        # Vignettes
+        self.vivm = Vignette("VOLER 1 MARIN", "jeux/Jeu_1/images/Icones/marin.png")
+        self.vivbm = Vignette("VOLER LE BATEAU ET SON EQUIPAGE", "jeux/Jeu_1/images/Icones/cle.png")
+        self.viex = Vignette("INFLIGER DES DEGATS SUPPLEMENTAIRES", "jeux/Jeu_1/images/Icones/explosif.png")
+        self.vivb = Vignette("VOLER LE BATEAU", "jeux/Jeu_1/images/Icones/cle.png")
+        self.actions = (self.vivm, self.vivbm, self.viex, self.vivb)
         # Animations
         self.playAnim = True
         self.ok = False
@@ -33,11 +39,36 @@ class RecompFen:
         self.opt[0].dessine(int(xf/2+self.largeur/2-yf*0.005-self.opt[0].largeur/2), int(y+self.opt[0].largeur/2+yf*0.005))
         y += int(self.titre1.getDims()[1] + ecart/4)
         self.titre2.dessine([[int(xf/2-self.largeur/2+ecart/2), int(y)], 'no'], BLACK)
+        y += int(self.titre2.getDims()[1] + ecart)
+        self.dessineVignettes(y)
         if self.playAnim:
             if not self.ok:
                 self.anims(True)
             else:
                 self.anims(False)
+
+    def dessineVignettes(self, y: int) -> None:
+        actions = self.verifActionsPossibles()
+        x = int(xf/2)
+        espace = int(xf*0.02)
+        if len(actions)%2 == 1:
+            x -= int(self.vivm.getDims()[0]/2)
+            if len(actions)-1 > 0:
+                for i in range(int((len(actions)-1)/2)):
+                    x -= int(espace+actions[i].getDims()[0])
+        else:
+            for i in range(int(len(actions)/2)):
+                x -= int(actions[i].getDims()[0])
+                if i == 0:
+                    x -= int(espace/2)
+                else:
+                    x -= espace
+        for j in range(len(actions)):
+            actions[j].dessine(x, y)
+            x += int(actions[j].getDims()[0] + espace)
+
+    def verifActionsPossibles(self) -> list[Vignette]:
+        return self.actions[0:3]
 
     def anims(self, mode: bool) -> None:
         if mode:
