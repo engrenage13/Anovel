@@ -6,8 +6,7 @@ from jeux.Jeu_1.recompense.vignette import Vignette
 from museeNoyee import coeur, marin, fleche
 
 class RecompFen:
-    def __init__(self, allie: Bateau = Bateau("", "jeux/Jeu_1/images/Bateaux/gbb.png", 0, 1, 0, [0, 0, 0, 0], 0), ennemi: Bateau = Bateau("", "jeux/Jeu_1/images/Bateaux/gbb.png", 0, 1, 0, [0, 0, 0, 0], 0)) -> None:
-        self.setBateaux(allie, ennemi)
+    def __init__(self, allie: Bateau = Bateau("", "jeux/Jeu_1/images/Bateaux/gbb.png", 5, 10, 0, [0, 0, 0, 0], 0), ennemi: Bateau = Bateau("", "jeux/Jeu_1/images/Bateaux/gbb.png", 4, 1, 0, [0, 0, 0, 0], 0)) -> None:
         # Dimensions
         self.largeur = int(xf*0.7)
         self.hauteur = int(yf*0.8)
@@ -28,6 +27,8 @@ class RecompFen:
         self.viex = Vignette("INFLIGER DES DEGATS SUPPLEMENTAIRES", "jeux/Jeu_1/images/Icones/explosif.png")
         self.vivb = Vignette("VOLER LE BATEAU", "jeux/Jeu_1/images/Icones/cle.png")
         self.actions = (self.vivm, self.vivbm, self.viex, self.vivb)
+        # Bateaux
+        self.setBateaux(allie, ennemi)
         # Animations
         self.playAnim = True
         self.ok = False
@@ -58,7 +59,7 @@ class RecompFen:
                 self.anims(False)
 
     def dessineVignettes(self, y: int) -> None:
-        actions = self.verifActionsPossibles()
+        actions = self.act
         x = int(xf/2)
         espace = int(xf*0.02)
         if len(actions)%2 == 1:
@@ -76,6 +77,8 @@ class RecompFen:
         for j in range(len(actions)):
             actions[j].dessine(x, y)
             x += int(actions[j].getDims()[0] + espace)
+            if actions[j].check:
+                self.clicSurVignette(j)
 
     def dessinePasse(self, x: int, y: int) -> None:
         couleurFondRec = [255, 180, 196, 235]
@@ -110,7 +113,17 @@ class RecompFen:
             py += hsta + ecarty
 
     def verifActionsPossibles(self) -> list[Vignette]:
-        return self.actions[0:3]
+        actions = []
+        if self.bat[1].marins > 0:
+            actions.append(self.actions[0])
+            if self.bat[0].marins != self.bat[1].marins:
+                if (self.bat[0].marins > self.bat[1].marins and self.bat[0].marins-self.bat[1].marins >= 5) or (self.bat[0].marins < self.bat[1].marins and self.bat[1].marins-self.bat[0].marins >= 5):
+                    actions.append(self.actions[1])
+        else:
+            actions.append(self.actions[3])
+        if (self.bat[0].marins > self.bat[1].marins and self.bat[0].marins-self.bat[1].marins-1 > 0) or (self.bat[0].marins < self.bat[1].marins and self.bat[1].marins-self.bat[0].marins-1 > 0):
+            actions.append(self.actions[2])
+        return actions
 
     def anims(self, mode: bool) -> None:
         if mode:
@@ -132,9 +145,19 @@ class RecompFen:
 
     def setBateaux(self, allie: Bateau, ennemi: Bateau) -> None:
         self.bat = [allie, ennemi]
-        self.valeursInitiales = [str(allie.marins), str(ennemi.marins)]
-        self.valide = 1
+        self.valide = -1
+        self.act = self.verifActionsPossibles()
 
     def passe(self) -> None:
         self.valide = 0
+        self.playAnim = True
+
+    def clicSurVignette(self, vignette: int) -> None:
+        actions = ["V1M", "VB", "BOUM"]
+        indice = self.actions.index(self.act[vignette])
+        if indice <= 2:
+            self.valide = actions[indice]
+        else:
+            self.valide = actions[1]
+        self.actions[indice].check = False
         self.playAnim = True
