@@ -3,6 +3,7 @@ from ui.bouton.bouton import Bouton
 from ui.blocTexte import BlocTexte
 from jeux.Jeu_1.objets.Bateau import Bateau
 from jeux.Jeu_1.recompense.vignette import Vignette
+from museeNoyee import coeur, marin, fleche
 
 class RecompFen:
     def __init__(self, allie: Bateau = Bateau("", "jeux/Jeu_1/images/Bateaux/gbb.png", 0, 1, 0, [0, 0, 0, 0], 0), ennemi: Bateau = Bateau("", "jeux/Jeu_1/images/Bateaux/gbb.png", 0, 1, 0, [0, 0, 0, 0], 0)) -> None:
@@ -10,9 +11,14 @@ class RecompFen:
         # Dimensions
         self.largeur = int(xf*0.7)
         self.hauteur = int(yf*0.8)
+        self.largeurPasse = int(self.largeur*0.2)
+        self.hauteurPasse = int(self.hauteur*0.35)
+        self.largeurCadBat = int(self.largeur*0.738)
         # Titres
         self.titre1 = BlocTexte("VOUS GAGNEZ L'ABORDAGE !", police1, int(yf*0.04))
         self.titre2 = BlocTexte("CHOISISSEZ UNE RECOMPENSE", police1, int(yf*0.04))
+        self.titre3 = BlocTexte("JE NE VEUX PAS DE RECOMPENSES", police1, int(yf*0.03), [self.largeurPasse, ''])
+        self.titre4 = BlocTexte("NAVIRE ADVERSE", police1, int(yf*0.03))
         # Boutons
         self.opt = [Bouton(TB2n, PTIBT2, "PASSER", 'images/ui/CroSom.png', [self.passe]),
                     Bouton(TB1o, BTX, "PASSER", '', [self.passe])]
@@ -29,7 +35,6 @@ class RecompFen:
         self.hauteurContenu = [int(yf*1.1), int(yf/2-self.hauteur/2)]
 
     def dessine(self) -> None:
-        couleurFondRec = [243, 123, 123, 255]
         draw_rectangle(0, 0, xf, yf, [41, 35, 45, self.opac[0]])
         ecart = int(yf*0.03)
         y = self.hauteurContenu[0]
@@ -41,6 +46,11 @@ class RecompFen:
         self.titre2.dessine([[int(xf/2-self.largeur/2+ecart/2), int(y)], 'no'], BLACK)
         y += int(self.titre2.getDims()[1] + ecart)
         self.dessineVignettes(y)
+        y += int(self.vivm.getDims()[1] + ecart)
+        x = int(xf/2-self.largeur*0.48)
+        self.dessinePasse(x, y)
+        x += self.largeurPasse + ecart
+        self.dessineBateauAdverse(x, y)
         if self.playAnim:
             if not self.ok:
                 self.anims(True)
@@ -66,6 +76,38 @@ class RecompFen:
         for j in range(len(actions)):
             actions[j].dessine(x, y)
             x += int(actions[j].getDims()[0] + espace)
+
+    def dessinePasse(self, x: int, y: int) -> None:
+        couleurFondRec = [255, 180, 196, 235]
+        draw_rectangle_rounded([x, y, self.largeurPasse, self.hauteurPasse], 0.15, 300, couleurFondRec)
+        px = int(int(str(x))+self.largeurPasse*0.03)
+        py = int(int(str(y))+self.hauteurPasse*0.01)
+        self.titre3.dessine([[px, py], 'no'], BLACK, 'g')
+        #py += int(yf*0.2)
+        self.opt[1].dessine(int(x+self.largeurPasse/2), int(y+self.hauteurPasse*0.6))
+
+    def dessineBateauAdverse(self, x: int, y: int) -> None:
+        couleurFondRec = [180, 215, 255, 235]
+        draw_rectangle_rounded([x, y, self.largeurCadBat, self.hauteurPasse], 0.15, 300, couleurFondRec)
+        px = int(int(str(x))+self.largeurPasse*0.03)
+        py = int(int(str(y))+self.hauteurPasse*0.01)
+        ecarty = int(yf*0.01)
+        self.titre4.dessine([[px, py], 'no'], BLACK, 'g')
+        py += int(self.titre4.getDims()[1]+ecarty)
+        img = self.bat[1].image
+        ecartx = int(self.largeurCadBat*0.09)
+        draw_texture(img, int(x+self.largeurCadBat-ecartx-img.width), int(y+self.hauteurPasse/2-img.height/2), WHITE)
+        # stats
+        stats = [[coeur, self.bat[1].vie], [marin, self.bat[1].marins], [fleche, self.bat[1].pm]]
+        lsta = int(self.largeurCadBat*0.2)
+        hsta = int(coeur.height*1.2)
+        px += int(self.largeurCadBat*0.03)
+        for i in range(len(stats)):
+            draw_rectangle_gradient_h(px, py, lsta, hsta, [114, 125, 138, 200], [114, 125, 138, 0])
+            draw_texture(stats[i][0], int(px+lsta*0.01), int(py+coeur.height*0.1), WHITE)
+            tt = measure_text_ex(police1, str(stats[i][1]), yf*0.035, 0)
+            draw_text_ex(police1, str(stats[i][1]), (int(px+lsta*0.01+coeur.width*1.1), int(py+coeur.height*0.63-tt.y/2)), yf*0.035, 0, BLACK)
+            py += hsta + ecarty
 
     def verifActionsPossibles(self) -> list[Vignette]:
         return self.actions[0:3]
