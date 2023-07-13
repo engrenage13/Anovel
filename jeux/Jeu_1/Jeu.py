@@ -14,6 +14,7 @@ from jeux.Jeu_1.action.Placement import Placement
 from jeux.Jeu_1.ui.fleche import Fleche
 from jeux.Jeu_1.ui.barreAction import BarreAction
 from jeux.Jeu_1.orgaFen import OrgaFen
+from jeux.Jeu_1.recompFen import RecompFen
 from jeux.Jeu_1.fenFin.fin import Fin
 from museeNoyee import orga, miniorga, abordage, miniabordage
 
@@ -31,7 +32,13 @@ class Jeu:
         +self.joueurs[self.actuel]
         self.tiroir = Tiroir(self.joueurs[self.actuel].bateaux)
         # Phases
-        self.fen = {"intro": Intro(self.joueurs), "choix_zone": PageCarte(), "install": self.plateau, "jeu": self.plateau, "organisation": OrgaFen(self.joueurs[self.actuel][0], self.joueurs[self.actuel][1]), "fin": Fin(self.joueurs)}
+        self.fen = {"intro": Intro(self.joueurs), 
+                    "choix_zone": PageCarte(), 
+                    "install": self.plateau, 
+                    "jeu": self.plateau, 
+                    "organisation": OrgaFen(self.joueurs[self.actuel][0], self.joueurs[self.actuel][1]), 
+                    "fin": Fin(self.joueurs), 
+                    "recomp_abo": RecompFen()}
         if config['dev']:
             if config['dev'].lower() == 'jeu':
                 self.actif = 'install'
@@ -445,16 +452,17 @@ class Jeu:
         bat = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
         if bat.pm > 0:
             ncase = self.trouveCase(bat)
-            case = self.plateau[ncase[0]][ncase[1]]
-            self.zone.cases = []
-            self.setZonePortee(bat, case, 1)
-            if len(self.zone) == 0:
-                self.barre.actionsPossibles["deplacement"] = False
-            else:
-                self.barre.actionsPossibles["deplacement"] = True
-            self.fleche.setBateau(bat)
-            self.fleche.setCase(case)
-            self.setDeplacement = True
+            if not isinstance(ncase, bool):
+                case = self.plateau[ncase[0]][ncase[1]]
+                self.zone.cases = []
+                self.setZonePortee(bat, case, 1)
+                if len(self.zone) == 0:
+                    self.barre.actionsPossibles["deplacement"] = False
+                else:
+                    self.barre.actionsPossibles["deplacement"] = True
+                self.fleche.setBateau(bat)
+                self.fleche.setCase(case)
+                self.setDeplacement = True
 
     def setZonePortee(self, bateau: Bateau, case: Case, progression: int) -> None:
         voisines = self.plateau.getVoisines(case)

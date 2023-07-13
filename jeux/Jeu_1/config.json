@@ -5,6 +5,7 @@
     "choix_zone": {"interface": true, "phase": "installation"},
     "organisation": {"interface": true, "phase": "jeu"},
     "fin": {"interface": false, "phase": "fin"},
+    "recomp_abo": {"interface": true, "phase": "jeu"},
 
-    "dev": "jeu"
+    "dev": "recomp_abo"
 }
