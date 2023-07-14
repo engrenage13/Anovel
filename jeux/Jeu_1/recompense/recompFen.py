@@ -57,6 +57,9 @@ class RecompFen:
                 self.anims(True)
             else:
                 self.anims(False)
+        else:
+            if not self.ok and self.valide == -1:
+                self.playAnim = True
 
     def dessineVignettes(self, y: int) -> None:
         actions = self.act
@@ -147,6 +150,7 @@ class RecompFen:
         self.bat = [allie, ennemi]
         self.valide = -1
         self.act = self.verifActionsPossibles()
+        self.playAnim = True
 
     def passe(self) -> None:
         self.valide = 0

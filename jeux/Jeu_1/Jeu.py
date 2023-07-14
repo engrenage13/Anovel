@@ -403,14 +403,17 @@ class Jeu:
                     self.vainqueur = self.abordage(case[0], case[1])
                     if self.vainqueur > -1:
                         self.recompAbordage = True
-                        recomp.setBateaux(case[0], case[1])
+                        if self.vainqueur == 0:
+                            recomp.setBateaux(case[0], case[1])
+                        else:
+                            recomp.setBateaux(case[1], case[0])
                     else:
                         self.barre.abordage = False
                         self.barre.valide = True
                 else:
                     if self.play:
                         self.play = False
-                    if case[0] in self.joueurs[self.vainqueur]:
+                    if self.vainqueur == 0:
                         bat = case[0]
                         op = case[1]
                     else:
@@ -437,10 +440,12 @@ class Jeu:
                                 dif = op.marins-bat.marins
                             if dif-1 > 0:
                                 op.setNbPV(op.vie-(dif-1))
+                                if op.coule:
+                                    self.caseAbordage - op
                         self.barre.abordage = False
                         self.barre.valide = True
+                        self.recompAbordage = False
                         recomp.valide = -1
-                        recomp.playAnim = True
                         self.play = True
             if self.barre.valide:
                 self.barre.deplacement = self.barre.valide = False
@@ -468,7 +473,8 @@ class Jeu:
                 else:
                     draw_texture(abordage, int(case.pos[0]+case.taille*0.02), int(case.pos[1]+case.taille*0.02), WHITE)
                     ptBtAbordage += 1
-                    self.caseAbordage = case
+                    if len(case) == 2:
+                        self.caseAbordage = case
                 if self.fen["organisation"].bat[0] != case[0] or self.fen["organisation"].bat[1] != case[1]:
                     self.fen["organisation"].setBateaux(case[0], case[1])
         if ptBtOrga > 0:

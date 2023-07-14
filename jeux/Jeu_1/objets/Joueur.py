@@ -99,6 +99,9 @@ class Joueur:
     
     def __add__(self, bateau: Bateau) -> int:
         self.bateaux.append(bateau)
+        bateau.finiTour = False
+        bateau.couleur = self.couleur
+        bateau.id = len(self.bateaux)
         return len(self.bateaux)
     
     def __sub__(self, bateau: Bateau) -> int:
