@@ -65,7 +65,10 @@ class Jeu:
         self.fleche = Fleche(self.plateau[0][0], self.joueurs[0][0], self.zone, self.plateau)
         self.setDeplacement = False
         self.indiqueTour = 0
+        # Abordage
         self.caseAbordage = None
+        self.recompAbordage = False
+        self.vainqueur = None
         # Between the world
         self.play = False
 
@@ -392,11 +395,53 @@ class Jeu:
                         self.barre.valide = True
                     orga.valide = 1
                     self.play = True
+            # Abordage
             if self.barre.abordage:
                 case = self.caseAbordage
-                self.abordage(case[0], case[1])
-                self.barre.abordage = False
-                self.barre.valide = True
+                recomp = self.fen["recomp_abo"]
+                if not self.recompAbordage:
+                    self.vainqueur = self.abordage(case[0], case[1])
+                    if self.vainqueur > -1:
+                        self.recompAbordage = True
+                        recomp.setBateaux(case[0], case[1])
+                    else:
+                        self.barre.abordage = False
+                        self.barre.valide = True
+                else:
+                    if self.play:
+                        self.play = False
+                    if case[0] in self.joueurs[self.vainqueur]:
+                        bat = case[0]
+                        op = case[1]
+                    else:
+                        bat = case[1]
+                        op = case[0]
+                    if bat in self.joueurs[0]:
+                        j1 = self.joueurs[0]
+                        j2 = self.joueurs[1]
+                    else:
+                        j1 = self.joueurs[1]
+                        j2 = self.joueurs[0]
+                    recomp.dessine()
+                    if recomp.valide != -1 and not recomp.playAnim:
+                        if recomp.valide == 1:
+                            op - 1
+                            bat + 1
+                        elif recomp.valide == 2:
+                            j1 + op
+                            j2 - op
+                        elif recomp.valide == 3:
+                            if bat.marins > op.marins:
+                                dif = bat.marins-op.marins
+                            else:
+                                dif = op.marins-bat.marins
+                            if dif-1 > 0:
+                                op.setNbPV(op.vie-(dif-1))
+                        self.barre.abordage = False
+                        self.barre.valide = True
+                        recomp.valide = -1
+                        recomp.playAnim = True
+                        self.play = True
             if self.barre.valide:
                 self.barre.deplacement = self.barre.valide = False
                 self.passe()
@@ -435,11 +480,14 @@ class Jeu:
         else:
             self.barre.actionsPossibles["abordage"] = False
 
-    def abordage(self, bat1: Bateau, bat2: Bateau) -> None:
+    def abordage(self, bat1: Bateau, bat2: Bateau) -> int:
+        vainqueur = -1
         if bat1.marins > bat2.marins:
             bat2.setNbPV(bat2.vie-1)
+            vainqueur = 0
         elif bat2.marins > bat1.marins:
             bat1.setNbPV(bat1.vie-1)
+            vainqueur = 1
         else:
             bat1.setNbPV(bat1.vie-1)
             bat2.setNbPV(bat2.vie-1)
@@ -447,6 +495,7 @@ class Jeu:
             self.caseAbordage - bat1
         if bat2.coule:
             self.caseAbordage - bat2
+        return vainqueur
 
     def setParamFleche(self) -> None:
         bat = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]

@@ -15,16 +15,8 @@ class Joueur:
         self.nom = nom
         self.titre = BlocTexte(nom, police1, int(yf*0.04), [int(xf*0.1), int(yf*0.06)])
         self.couleur = couleur
-        self.bateaux = []
-        # bateaux
-        for i in range(len(bateaux)):
-            bateau = libat[bateaux[i]]
-            bat = Bateau(bateau["nom"], bateau["image"], bateau["vie"], bateau["marins"], bateau["pm"], self.couleur, i+1)
-            self.bateaux.append(bat)
-        self.actuel = 0
-        # /bateaux
-        self.actif = False
-        self.phase = "installation"
+        self.btx = bateaux
+        self.rejouer()
 
     def dessine(self) -> None:
         # ui
@@ -36,8 +28,12 @@ class Joueur:
         """
         self.actif = False
         self.phase = "installation"
-        for i in range(len(self.bateaux)):
-            self.bateaux[i].rejouer()
+        self.bateaux = []
+        # bateaux
+        for i in range(len(self.btx)):
+            bateau = libat[self.btx[i]]
+            bat = Bateau(bateau["nom"], bateau["image"], bateau["vie"], bateau["marins"], bateau["pm"], self.couleur, i+1)
+            self.bateaux.append(bat)
 
     def bateauSuivant(self) -> None:
         -self.bateaux[self.actuel]
@@ -99,4 +95,13 @@ class Joueur:
         return self.bateaux[key]
     
     def __len__(self) -> int:
+        return len(self.bateaux)
+    
+    def __add__(self, bateau: Bateau) -> int:
+        self.bateaux.append(bateau)
+        return len(self.bateaux)
+    
+    def __sub__(self, bateau: Bateau) -> int:
+        if bateau in self.bateaux:
+            del self.bateaux[self.bateaux.index(bateau)]
         return len(self.bateaux)

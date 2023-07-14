@@ -153,11 +153,10 @@ class RecompFen:
         self.playAnim = True
 
     def clicSurVignette(self, vignette: int) -> None:
-        actions = ["V1M", "VB", "BOUM"]
         indice = self.actions.index(self.act[vignette])
         if indice <= 2:
-            self.valide = actions[indice]
+            self.valide = indice+1
         else:
-            self.valide = actions[1]
+            self.valide = 2
         self.actions[indice].check = False
         self.playAnim = True
