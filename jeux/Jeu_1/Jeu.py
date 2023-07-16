@@ -130,7 +130,7 @@ class Jeu:
             while self.phase == phase:
                 self.passeTour()
                 if self.actuel == 1 and self.phase == 'installation':
-                    self.zone.cases = self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+4)%8].cases
+                    self.zone.cases = self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+int(len(self.fen['choix_zone'].zones)))%len(self.fen['choix_zone'].zones)].cases
         elif self.phase == 'jeu':
             self.switch()
 
@@ -382,6 +382,7 @@ class Jeu:
                 self.barre.choixAction = False
             self.fleche.dessine()
             self.dessineMarqueur()
+            # Organisation
             if self.barre.orga:
                 if self.play:
                     self.play = False
@@ -403,50 +404,55 @@ class Jeu:
                     self.vainqueur = self.abordage(case[0], case[1])
                     if self.vainqueur > -1:
                         self.recompAbordage = True
-                        if self.vainqueur == 0:
-                            recomp.setBateaux(case[0], case[1])
-                        else:
-                            recomp.setBateaux(case[1], case[0])
+                        if len(case) > 1:
+                            if self.vainqueur == 0:
+                                recomp.setBateaux(case[0], case[1])
+                            else:
+                                recomp.setBateaux(case[1], case[0])
                     else:
                         self.barre.abordage = False
                         self.barre.valide = True
                 else:
                     if self.play:
                         self.play = False
-                    if self.vainqueur == 0:
-                        bat = case[0]
-                        op = case[1]
-                    else:
-                        bat = case[1]
-                        op = case[0]
-                    if bat in self.joueurs[0]:
-                        j1 = self.joueurs[0]
-                        j2 = self.joueurs[1]
-                    else:
-                        j1 = self.joueurs[1]
-                        j2 = self.joueurs[0]
-                    recomp.dessine()
-                    if recomp.valide != -1 and not recomp.playAnim:
-                        if recomp.valide == 1:
-                            op - 1
-                            bat + 1
-                        elif recomp.valide == 2:
-                            j1 + op
-                            j2 - op
-                        elif recomp.valide == 3:
-                            if bat.marins > op.marins:
-                                dif = bat.marins-op.marins
-                            else:
-                                dif = op.marins-bat.marins
-                            if dif-1 > 0:
-                                op.setNbPV(op.vie-(dif-1))
-                                if op.coule:
-                                    self.caseAbordage - op
-                        self.barre.abordage = False
-                        self.barre.valide = True
-                        self.recompAbordage = False
-                        recomp.valide = -1
-                        self.play = True
+                    if len(case) > 1:
+                        if self.vainqueur == 0:
+                            bat = case[0]
+                            op = case[1]
+                        else:
+                            bat = case[1]
+                            op = case[0]
+                        if bat in self.joueurs[0].bateaux:
+                            j1 = self.joueurs[0]
+                            j2 = self.joueurs[1]
+                        else:
+                            j1 = self.joueurs[1]
+                            j2 = self.joueurs[0]
+                        recomp.dessine()
+                        if recomp.valide != -1 and not recomp.playAnim:
+                            if recomp.valide == 1:
+                                op - 1
+                                bat + 1
+                            elif recomp.valide == 2:
+                                j1 + op
+                                j2 - op
+                            elif recomp.valide == 3:
+                                if bat.marins > op.marins:
+                                    dif = bat.marins-op.marins
+                                else:
+                                    dif = op.marins-bat.marins
+                                if dif-1 > 0:
+                                    op.setNbPV(op.vie-(dif-1))
+                                    if op.coule:
+                                        self.caseAbordage - op
+                                        j1.nbelimination += 1
+                            self.barre.abordage = False
+                            self.barre.valide = True
+                            self.recompAbordage = False
+                            recomp.valide = -1
+                            self.play = True
+                            if j2.compteBateau() == 0:
+                                self.switch()
             if self.barre.valide:
                 self.barre.deplacement = self.barre.valide = False
                 self.passe()
@@ -462,12 +468,12 @@ class Jeu:
             c = self.zone[i]
             case = self.plateau[c[0]][c[1]]
             if len(case) == 1 and case[0] != bateau:
-                if case[0] in self.joueurs[self.actuel]:
+                if case[0] in self.joueurs[self.actuel].bateaux:
                     draw_texture(miniorga, int(case.pos[0]+case.taille*0.02), int(case.pos[1]+case.taille*0.02), WHITE)
                 else:
                     draw_texture(miniabordage, int(case.pos[0]+case.taille*0.02), int(case.pos[1]+case.taille*0.02), WHITE)
             elif len(case) == 2 and bateau in case:
-                if case[0] in self.joueurs[self.actuel]:
+                if case[0] in self.joueurs[self.actuel].bateaux:
                     draw_texture(orga, int(case.pos[0]+case.taille*0.02), int(case.pos[1]+case.taille*0.02), WHITE)
                     ptBtOrga += 1
                 else:
@@ -498,9 +504,31 @@ class Jeu:
             bat1.setNbPV(bat1.vie-1)
             bat2.setNbPV(bat2.vie-1)
         if bat1.coule:
+            vainqueur = -1
             self.caseAbordage - bat1
+            if bat1 in self.joueurs[0].bateaux:
+                self.joueurs[1].nbelimination += 1
+                self.joueurs[0] - bat1
+                if self.joueurs[0].compteBateau() == 0:
+                    self.switch()
+            else:
+                self.joueurs[0].nbelimination += 1
+                self.joueurs[1] - bat1
+                if self.joueurs[1].compteBateau() == 0:
+                    self.switch()
         if bat2.coule:
+            vainqueur = -1
             self.caseAbordage - bat2
+            if bat2 in self.joueurs[0].bateaux:
+                self.joueurs[1].nbelimination += 1
+                self.joueurs[0] - bat2
+                if self.joueurs[0].compteBateau() == 0:
+                    self.switch()
+            else:
+                self.joueurs[0].nbelimination += 1
+                self.joueurs[1] - bat2
+                if self.joueurs[1].compteBateau() == 0:
+                    self.switch()
         return vainqueur
 
     def setParamFleche(self) -> None:

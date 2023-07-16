@@ -1,5 +1,6 @@
 from systeme.FondMarin import *
 from ui.bouton.bouton import Bouton
+from jeux.Jeu_1.objets.Bateau import Bateau
 from museeNoyee import minicoeur, minimarin
 
 class BarreAction:
@@ -49,27 +50,28 @@ class BarreAction:
 
     def dessineInfoBat(self, tour: int) -> None:
         bateau = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
-        colFond = [24, 22, 22, 170]
-        x = int(xf*0.005)
-        y = int(yf-self.hauteur+yf*0.007)
-        draw_rectangle(x, y, int(xf*0.136), int(yf*0.025), colFond)
-        draw_texture(minicoeur, x, y, WHITE)
-        x += int(xf*0.015)
-        y += int(yf*0.0028)
-        draw_rectangle(x, y, int(xf*0.12), int(yf*0.02), [230, 183, 183, 255])
-        draw_rectangle(x, y, int((xf*0.12)*(bateau.vie/bateau.pvi)), int(yf*0.02), RED)
-        x += int(xf*0.004)
-        y -= int(yf*0.0008)
-        draw_text_ex(police1, str(bateau.vie)+"/"+str(bateau.pvi), (x, y), int(yf*0.02), 0, WHITE)
-        x = int(xf*0.005)
-        y += int(yf*0.03)
-        draw_rectangle(x, y, int(xf*0.04), int(yf*0.025), colFond)
-        draw_texture(minimarin, x, y, WHITE)
-        x += int(xf*0.019)
-        y += int(yf*0.003)
-        draw_text_ex(police1, str(bateau.marins), (x, int(y+yf*0.001)), int(yf*0.02), 0, WHITE)
-        x += int(xf*0.025)
-        draw_text_ex(police2, "TOUR "+str(tour), (x, y), yf*0.02, 0, WHITE)
+        if isinstance(bateau, Bateau):
+            colFond = [24, 22, 22, 170]
+            x = int(xf*0.005)
+            y = int(yf-self.hauteur+yf*0.007)
+            draw_rectangle(x, y, int(xf*0.136), int(yf*0.025), colFond)
+            draw_texture(minicoeur, x, y, WHITE)
+            x += int(xf*0.015)
+            y += int(yf*0.0028)
+            draw_rectangle(x, y, int(xf*0.12), int(yf*0.02), [230, 183, 183, 255])
+            draw_rectangle(x, y, int((xf*0.12)*(bateau.vie/bateau.pvi)), int(yf*0.02), RED)
+            x += int(xf*0.004)
+            y -= int(yf*0.0008)
+            draw_text_ex(police1, str(bateau.vie)+"/"+str(bateau.pvi), (x, y), int(yf*0.02), 0, WHITE)
+            x = int(xf*0.005)
+            y += int(yf*0.03)
+            draw_rectangle(x, y, int(xf*0.04), int(yf*0.025), colFond)
+            draw_texture(minimarin, x, y, WHITE)
+            x += int(xf*0.019)
+            y += int(yf*0.003)
+            draw_text_ex(police1, str(bateau.marins), (x, int(y+yf*0.001)), int(yf*0.02), 0, WHITE)
+            x += int(xf*0.025)
+            draw_text_ex(police2, "TOUR "+str(tour), (x, y), yf*0.02, 0, WHITE)
 
     # Choix bateau - Désactivé
     def dessineProgression(self) -> None:

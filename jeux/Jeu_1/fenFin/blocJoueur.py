@@ -39,8 +39,8 @@ class BlocJoueur:
         px = int(str(x))+self.largeur-self.espace
         py = int(str(y))+self.espace
         draw_rectangle(px-self.tailleIcone, py, self.tailleIcone, self.tailleIcone, [90, 18, 18, 120])
-        tm = measure_text_ex(police2i, f"x{len(self.joueur.bateaux)-self.joueur.compteBateau()}", int(yf*0.028), 0)
-        draw_text_ex(police2i, f"x{len(self.joueur.bateaux)-self.joueur.compteBateau()}", (int(px-tm.x*0.9), int(py+self.tailleIcone-tm.y*0.8)), int(yf*0.028), 0, WHITE)
+        tm = measure_text_ex(police2i, f"x{self.joueur.nbelimination}", int(yf*0.028), 0)
+        draw_text_ex(police2i, f"x{self.joueur.nbelimination}", (int(px-tm.x*0.9), int(py+self.tailleIcone-tm.y*0.8)), int(yf*0.028), 0, WHITE)
         px -= self.tailleIcone+self.espace
         draw_rectangle(px-self.tailleIcone, py, self.tailleIcone, self.tailleIcone, [21, 20, 20, 155])
         tv = measure_text_ex(police2i, f"x{self.joueur.compteBateau()}", int(yf*0.028), 0)

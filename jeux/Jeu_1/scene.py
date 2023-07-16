@@ -206,7 +206,9 @@ class Scene(Jeu):
             self.deplaceInstall = True
             #self.barre.deplacement = True
         if self.barre.chabat:
-            self.deplaceInstall = self.barre.chabat = self.setDeplacement = False
+            self.deplaceInstall = False
+            self.barre.chabat = False
+            self.setDeplacement = False
 
     def joueurSuivant(self) -> None:
         super().joueurSuivant()

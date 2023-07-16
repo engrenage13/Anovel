@@ -36,6 +36,8 @@ class RecompFen:
         self.hauteurContenu = [int(yf*1.1), int(yf/2-self.hauteur/2)]
 
     def dessine(self) -> None:
+        if self.ok and self.valide == -1 and self.playAnim:
+            self.playAnim = False
         draw_rectangle(0, 0, xf, yf, [41, 35, 45, self.opac[0]])
         ecart = int(yf*0.03)
         y = self.hauteurContenu[0]
@@ -57,9 +59,6 @@ class RecompFen:
                 self.anims(True)
             else:
                 self.anims(False)
-        else:
-            if not self.ok and self.valide == -1:
-                self.playAnim = True
 
     def dessineVignettes(self, y: int) -> None:
         actions = self.act

@@ -29,6 +29,7 @@ class Joueur:
         self.actif = False
         self.phase = "installation"
         self.bateaux = []
+        self.nbelimination = 0
         # bateaux
         for i in range(len(self.btx)):
             bateau = libat[self.btx[i]]
@@ -36,7 +37,8 @@ class Joueur:
             self.bateaux.append(bat)
 
     def bateauSuivant(self) -> None:
-        -self.bateaux[self.actuel]
+        if self.actuel < len(self.bateaux):
+            -self.bateaux[self.actuel]
         if not self.tourFini():
             self.prochainBateau()
             +self.bateaux[self.actuel]
@@ -78,21 +80,34 @@ class Joueur:
             if bat.estEnVie():
                 compteur += 1
         return compteur
+    
+    def setIds(self) -> None:
+        for i in range(len(self.bateaux)):
+            self.bateaux[i].id = i+1
 
     def __pos__(self) -> None:
         self.actif = True
         if self.phase != "installation":
-            for i in range(len(self.bateaux)):
-                self.bateaux[i].finiTour = False
-            +self.bateaux[self.actuel]
+            i = 0
+            while i < len(self.bateaux):
+                if self.bateaux[i].coule:
+                    del self.bateaux[i]
+                else:
+                    self.bateaux[i].finiTour = False
+                    i += 1
+            if len(self.bateaux) > 0:
+                +self.bateaux[self.actuel]
 
     def __neg__(self) -> None:
         self.actif = False
         for i in range(len(self.bateaux)):
             -self.bateaux[i]
 
-    def __getitem__(self, key) -> Bateau:
-        return self.bateaux[key]
+    def __getitem__(self, key) -> Bateau|bool:
+        if key < len(self.bateaux):
+            return self.bateaux[key]
+        else:
+            return False
     
     def __len__(self) -> int:
         return len(self.bateaux)
@@ -101,10 +116,11 @@ class Joueur:
         self.bateaux.append(bateau)
         bateau.finiTour = False
         bateau.couleur = self.couleur
-        bateau.id = len(self.bateaux)
+        self.setIds()
         return len(self.bateaux)
     
     def __sub__(self, bateau: Bateau) -> int:
         if bateau in self.bateaux:
             del self.bateaux[self.bateaux.index(bateau)]
+        self.setIds()
         return len(self.bateaux)
