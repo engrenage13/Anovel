@@ -12,6 +12,7 @@ class BarreAction:
         self.precedent = Bouton(TB2n, PTIBT1, "PRECEDENT", 'images/ui/precedent.png', [self.actPrecedent])
         self.suivant = Bouton(TB2n, PTIBT1, "SUIVANT", 'images/ui/suivant.png', [self.actSuivant])
         self.btDep = Bouton(TB2o, BTV, "DEPLACEMENT", '', [self.activeDeplacement])
+        self.btAt = Bouton(TB2o, BTX, "ATTAQUE", '', [self.activeAttaque])
         self.btv = Bouton(TB2n, PTIBT1, "VALIDER", 'images/ui/check.png', [self.valideAction])
         self.btx = Bouton(TB2n, PTIBT1, "ANNULER", 'images/ui/CroSom.png', [self.annuleAction])
         self.btOrga = Bouton(TB2o, BTV, "ORGANISER", '', [self.activeOrga])
@@ -19,34 +20,39 @@ class BarreAction:
         # dimensions
         self.hauteur = int(yf*0.07)
         # Autres
-        self.chabat = self.deplacement = self.choixAction = self.valide = self.annule = self.orga = self.abordage = False
+        self.chabat = self.deplacement = self.choixAction = self.valide = self.annule = self.orga = self.abordage = self.attaque = False
         # Capteurs
-        self.actionsPossibles = {"deplacement": True, "organisation": False, "abordage": False}
+        self.actionsPossibles = {"deplacement": True, "organisation": False, "abordage": False, "attaque": True}
 
     def dessine(self, tour: int) -> None:
         draw_rectangle(0, yf-self.hauteur, xf, yf, [80, 80, 80, 150])
         self.dessineInfoBat(tour)
         #self.dessineProgression()
-        if not self.deplacement:
+        if not self.deplacement and not self.attaque:
             texte = "ACTIONS POSSIBLES : "
-            x = int(xf*0.3)
+            x = int(xf*0.31)
             tt = measure_text_ex(police2, texte, self.hauteur*0.5, 0)
-            #espace = int(xf*0.01)
+            espace = int(xf*0.005)
             draw_text_ex(police2, texte, (x, int(yf-self.hauteur*0.75)), self.hauteur*0.5, 0, WHITE)
             x += tt.x
-            if self.actionsPossibles["deplacement"]:
-                self.btDep.dessine(int(x+self.btDep.getDims()[0]/2), int(yf-self.hauteur/2))
-                #x += int(self.btDep.getDims()[0]+espace)
-            else:
+            if not self.actionsPossibles["deplacement"] and not self.actionsPossibles["attaque"]:
                 draw_text_ex(police2i, "AUCUNE", (x, int(yf-self.hauteur*0.75)), self.hauteur*0.5, 0, WHITE)
+            elif self.actionsPossibles["deplacement"]:
+                self.btDep.dessine(int(x+self.btDep.getDims()[0]/2), int(yf-self.hauteur/2))
+                if self.actionsPossibles["attaque"]:
+                    x += int(self.btDep.getDims()[0]+espace)
+                    self.btAt.dessine(int(x+self.btAt.getDims()[0]/2), int(yf-self.hauteur/2))
+            elif self.actionsPossibles["attaque"]:
+                self.btAt.dessine(int(x+self.btAt.getDims()[0]/2), int(yf-self.hauteur/2))
             self.passe.dessine(int(xf-self.passe.getDims()[0]*0.7), int(yf-self.hauteur/2))
         else:
             self.btv.dessine(int(xf-self.btv.getDims()[0]*0.7), int(yf-self.hauteur/2))
             self.btx.dessine(int(xf-self.btv.getDims()[0]*2), int(yf-self.hauteur/2))
-            if self.actionsPossibles["organisation"]:
-                self.btOrga.dessine(int(xf-self.btv.getDims()[0]*2.8-self.btOrga.getDims()[0]/2), int(yf-self.hauteur/2))
-            if self.actionsPossibles["abordage"]:
-                self.btAbordage.dessine(int(xf-self.btv.getDims()[0]*2.8-self.btAbordage.getDims()[0]/2), int(yf-self.hauteur/2))
+            if self.deplacement:
+                if self.actionsPossibles["organisation"]:
+                    self.btOrga.dessine(int(xf-self.btv.getDims()[0]*2.8-self.btOrga.getDims()[0]/2), int(yf-self.hauteur/2))
+                if self.actionsPossibles["abordage"]:
+                    self.btAbordage.dessine(int(xf-self.btv.getDims()[0]*2.8-self.btAbordage.getDims()[0]/2), int(yf-self.hauteur/2))
 
     def dessineInfoBat(self, tour: int) -> None:
         bateau = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
@@ -152,6 +158,9 @@ class BarreAction:
 
     def activeDeplacement(self) -> None:
         self.deplacement = self.choixAction = True
+
+    def activeAttaque(self) -> None:
+        self.attaque = self.choixAction = True
 
     def valideAction(self) -> None:
         self.valide = True

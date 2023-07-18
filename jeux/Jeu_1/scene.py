@@ -175,8 +175,8 @@ class Scene(Jeu):
     # Installation
 
     def tousAuTiroir(self) -> None:
-        for i in range(len(self.zone)):
-            self.plateau[self.zone[i][0]][self.zone[i][1]].vide()
+        for i in range(len(self.zoneDep)):
+            self.plateau[self.zoneDep[i][0]][self.zoneDep[i][1]].vide()
         self.tiroir.setListe(self.joueurs[self.actuel].bateaux)
 
     def placementAleatoire(self) -> None:
@@ -187,7 +187,7 @@ class Scene(Jeu):
         while len(self.tiroir) > 0:
             bat = self.tiroir[0]
             self.tiroir.supValListe(0)
-            lcase = self.zone.cases
+            lcase = self.zoneDep.cases
             cases = []
             for j in range(len(lcase)):
                 if not self.plateau[lcase[j][0]][lcase[j][1]].estPleine():

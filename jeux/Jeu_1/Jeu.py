@@ -55,14 +55,16 @@ class Jeu:
         # Installation
         self.deplaceInstall = False
         self.pause = 100
-        self.zone = Zone((0, 0), (0, 0), self.plateau)
-        self.zone.setCouleurs([255, 161, 0, 60], ORANGE, [255, 161, 0, 60], ORANGE)
+        self.zoneDep = Zone((0, 0), (0, 0), self.plateau)
+        self.zoneDep.setCouleurs([255, 161, 0, 60], ORANGE, [255, 161, 0, 60], ORANGE)
+        self.zoneAt = Zone((0, 0), (0, 0), self.plateau)
+        self.zoneAt.setCouleurs([255, 161, 0, 60], ORANGE, [255, 161, 0, 60], ORANGE)
         self.rectangle = SelecBat()
         self.affRec = False
         self.affTeleco = False
         # Partie
         self.barre = BarreAction(self.joueurs, self.passe)
-        self.fleche = Fleche(self.plateau[0][0], self.joueurs[0][0], self.zone, self.plateau)
+        self.fleche = Fleche(self.plateau[0][0], self.joueurs[0][0], self.zoneDep, self.plateau)
         self.setDeplacement = False
         self.indiqueTour = 0
         # Abordage
@@ -130,7 +132,7 @@ class Jeu:
             while self.phase == phase:
                 self.passeTour()
                 if self.actuel == 1 and self.phase == 'installation':
-                    self.zone.cases = self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+int(len(self.fen['choix_zone'].zones)))%len(self.fen['choix_zone'].zones)].cases
+                    self.zoneDep.cases = self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+int(len(self.fen['choix_zone'].zones)))%len(self.fen['choix_zone'].zones)].cases
         elif self.phase == 'jeu':
             self.switch()
 
@@ -141,7 +143,7 @@ class Jeu:
                 self.passeAction()
                 if isinstance(self.fen[self.actif], Fenetre) and self.fen[self.actif].estFini():
                     self.switch()
-                    self.zone.cases = self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases
+                    self.zoneDep.cases = self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases
         elif self.phase == 'jeu':
             joueur = self.joueurs[self.actuel]
             for i in range(len(joueur)-joueur.actuel):
@@ -227,8 +229,8 @@ class Jeu:
 
     def passeInstall(self) -> None:
         cases = []
-        for i in range(len(self.zone.cases)):
-            tuile = self.plateau[self.zone[i][0]][self.zone[i][1]]
+        for i in range(len(self.zoneDep.cases)):
+            tuile = self.plateau[self.zoneDep[i][0]][self.zoneDep[i][1]]
             if not tuile.estPleine():
                 cases.append(tuile)
         if not self.affRec:
@@ -252,11 +254,11 @@ class Jeu:
     def installation(self) -> None:
         if self.actif == 'install':
             if not self.deplaceInstall:
-                if self.actuel == 0 and self.zone.cases != self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases:
-                    self.zone.cases = self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases
+                if self.actuel == 0 and self.zoneDep.cases != self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases:
+                    self.zoneDep.cases = self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases
                     self.setPlateauInstall()
-                elif self.actuel == 1 and self.zone.cases != self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+4)%8].cases:
-                    self.zone.cases = self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+4)%8].cases
+                elif self.actuel == 1 and self.zoneDep.cases != self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+4)%8].cases:
+                    self.zoneDep.cases = self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+4)%8].cases
                     self.setPlateauInstall()
                 if self.pause > 0:
                     self.pause -= 1
@@ -277,7 +279,7 @@ class Jeu:
                     if self.tiroir.lumCadre[0] > 0:
                         self.tiroir.dessine()
                     self.deplaceCible()
-                    if self.zone.getContact() and self.cible.play:
+                    if self.zoneDep.getContact() and self.cible.play:
                         self.cible.dessine()
                     self.rectangle.dessine()
                     if self.rectangle.annule or self.cible.checkBateauEstPlace():
@@ -304,7 +306,7 @@ class Jeu:
 
     def setPlateauInstall(self) -> None:
         self.plateau.bloque = True
-        self.plateau + self.zone
+        self.plateau + self.zoneDep
         self.plateau.grise = True
 
     def deplaceCible(self) -> None:
@@ -323,8 +325,8 @@ class Jeu:
                             j += 1
                     i += 1
             else:
-                while i < len(self.zone) and not bonnePlace:
-                    Case = self.plateau[self.zone[i][0]][self.zone[i][1]]
+                while i < len(self.zoneDep) and not bonnePlace:
+                    Case = self.plateau[self.zoneDep[i][0]][self.zoneDep[i][1]]
                     if Case.getContact():
                         bonnePlace = True
                         if self.cible.case != Case:
@@ -336,8 +338,8 @@ class Jeu:
         if is_mouse_button_pressed(0):
             trouve = False
             i = 0
-            while i < len(self.zone) and not trouve:
-                Case = self.plateau[self.zone[i][0]][self.zone[i][1]]
+            while i < len(self.zoneDep) and not trouve:
+                Case = self.plateau[self.zoneDep[i][0]][self.zoneDep[i][1]]
                 if Case.getContact() and not Case.estVide():
                     trouve = True
                     indice = 0
@@ -362,7 +364,7 @@ class Jeu:
         li1 = ["n", "e", "s", "o"]
         li2 = ["nord", "est", "sud", "ouest"]
         for i in range(len(li1)):
-            if voisines[li1[i]] and voisines[li1[i]] in self.zone.cases:
+            if voisines[li1[i]] and voisines[li1[i]] in self.zoneDep.cases:
                 if not self.plateau[voisines[li1[i]][0]][voisines[li1[i]][1]].estPleine():
                     self.teleco.activeDep[li2[i]] = True
                 else:
@@ -376,8 +378,8 @@ class Jeu:
             self.joueurs[i].phase = phase
         if self.phase == 'jeu':
             self.plateau.grise = self.setDeplacement = False
-            self.zone.setCouleurs([82, 211, 164, 140], [222, 255, 243, 255], [82, 211, 164, 140], [222, 255, 243, 255])
-            self.plateau - self.zone
+            self.zoneDep.setCouleurs([82, 211, 164, 140], [222, 255, 243, 255], [82, 211, 164, 140], [222, 255, 243, 255])
+            self.plateau - self.zoneDep
             # important
             bat = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
             ncase = self.trouveCase(bat)
@@ -412,17 +414,25 @@ class Jeu:
     def tourJoueur(self) -> None:
         if not self.setDeplacement:
             self.setParamFleche()
-        elif not self.barre.deplacement:
+        elif not self.barre.deplacement and not self.barre.attaque:
             if self.barre.btDep.getContact():
-                self.plateau + self.zone
+                self.plateau + self.zoneDep
             else:
-                self.plateau - self.zone
+                self.plateau - self.zoneDep
+            if self.barre.btAt.getContact():
+                self.plateau + self.zoneAt
+            else:
+                self.plateau - self.zoneAt
         else:
             if self.barre.choixAction:
-                self.plateau + self.zone
+                if self.barre.deplacement:
+                    self.plateau + self.zoneDep
+                elif self.barre.attaque:
+                    self.plateau + self.zoneAt
                 self.barre.choixAction = False
-            self.fleche.dessine()
-            self.dessineMarqueur()
+            if self.barre.deplacement:
+                self.fleche.dessine()
+                self.dessineMarqueur()
             # Organisation
             if self.barre.orga:
                 if self.play:
@@ -495,18 +505,18 @@ class Jeu:
                             if j2.compteBateau() == 0:
                                 self.switch()
             if self.barre.valide:
-                self.barre.deplacement = self.barre.valide = False
+                self.barre.deplacement = self.barre.attaque = self.barre.valide = False
                 self.passe()
             elif self.barre.annule:
-                self.barre.deplacement = self.barre.annule = False
+                self.barre.deplacement = self.barre.attaque = self.barre.annule = False
                 self.fleche.reset()
 
     def dessineMarqueur(self) -> None:
         bateau = self.fleche.bateau
         ptBtOrga = 0
         ptBtAbordage = 0
-        for i in range(len(self.zone)):
-            c = self.zone[i]
+        for i in range(len(self.zoneDep)):
+            c = self.zoneDep[i]
             case = self.plateau[c[0]][c[1]]
             if len(case) == 1 and case[0] != bateau:
                 if case[0] in self.joueurs[self.actuel].bateaux:
@@ -578,9 +588,10 @@ class Jeu:
             ncase = self.trouveCase(bat)
             if not isinstance(ncase, bool):
                 case = self.plateau[ncase[0]][ncase[1]]
-                self.zone.cases = []
+                self.zoneDep.cases = []
                 self.setZonePortee(bat, case, 1)
-                if len(self.zone) == 0:
+                self.setZoneAttaque(case, ncase)
+                if len(self.zoneDep) == 0:
                     self.barre.actionsPossibles["deplacement"] = False
                 else:
                     self.barre.actionsPossibles["deplacement"] = True
@@ -596,27 +607,50 @@ class Jeu:
             gauche = voisines[pointsCardinaux[(bateau.direction-1)%len(pointsCardinaux)]]
             droite = voisines[pointsCardinaux[(bateau.direction+1)%len(pointsCardinaux)]]
             if devant and not self.plateau[devant[0]][devant[1]].estPleine():
-                self.zone.cases.append(devant)
+                self.zoneDep.cases.append(devant)
                 if progression < bateau.pm:
                     self.setZonePortee(bateau, self.plateau[devant[0]][devant[1]], progression+1)
             if gauche and not self.plateau[gauche[0]][gauche[1]].estPleine():
-                self.zone.cases.append(gauche)
+                self.zoneDep.cases.append(gauche)
                 if progression < bateau.pm:
                     self.setZonePortee(bateau, self.plateau[gauche[0]][gauche[1]], progression+1)
             if droite and not self.plateau[droite[0]][droite[1]].estPleine():
-                self.zone.cases.append(droite)
+                self.zoneDep.cases.append(droite)
                 if progression < bateau.pm:
                     self.setZonePortee(bateau, self.plateau[droite[0]][droite[1]], progression+1)
         else:
             for i in range(len(pointsCardinaux)):
-                if voisines[pointsCardinaux[i]] and not voisines[pointsCardinaux[i]] in self.zone.cases:
+                if voisines[pointsCardinaux[i]] and not voisines[pointsCardinaux[i]] in self.zoneDep.cases:
                     ncase = self.plateau[voisines[pointsCardinaux[i]][0]][voisines[pointsCardinaux[i]][1]]
                     if not ncase.estPleine():
                         casebat = self.trouveCase(bateau)
                         if voisines[pointsCardinaux[i]] != casebat:
-                            self.zone.cases.append(voisines[pointsCardinaux[i]])
+                            self.zoneDep.cases.append(voisines[pointsCardinaux[i]])
                             if progression < bateau.pm:
                                 self.setZonePortee(bateau, ncase, progression+1)
+
+    def setZoneAttaque(self, centre: Case, equiv: tuple) -> None:
+        self.zoneAt.cases = []
+        self.zoneAt.cases.append(equiv)
+        voisines = self.plateau.getVoisines(centre)
+        if not isinstance(voisines['n'], bool):
+            haut = self.plateau[voisines['n'][0]][voisines['n'][1]]
+            self.zoneAt.cases.append(voisines['n'])
+            vois = self.plateau.getVoisines(haut)
+            if not isinstance(voisines['o'], bool):
+                self.zoneAt.cases.append(vois['o'])
+                self.zoneAt.cases.append(voisines['o'])
+            if not isinstance(voisines['e'], bool):
+                self.zoneAt.cases.append(vois['e'])
+                self.zoneAt.cases.append(voisines['e'])
+        if not isinstance(voisines['s'], bool):
+            bas = self.plateau[voisines['s'][0]][voisines['s'][1]]
+            self.zoneAt.cases.append(voisines['s'])
+            vois = self.plateau.getVoisines(bas)
+            if not isinstance(voisines['o'], bool):
+                self.zoneAt.cases.append(vois['o'])
+            if not isinstance(voisines['e'], bool):
+                self.zoneAt.cases.append(vois['e'])
 
     def trouveCase(self, bateau) -> tuple|bool:
         trouve = False
