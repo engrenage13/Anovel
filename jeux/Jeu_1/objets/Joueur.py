@@ -33,7 +33,7 @@ class Joueur:
         # bateaux
         for i in range(len(self.btx)):
             bateau = libat[self.btx[i]]
-            bat = Bateau(bateau["nom"], bateau["image"], bateau["vie"], bateau["marins"], bateau["pm"], self.couleur, i+1)
+            bat = Bateau(bateau["nom"], bateau["image"], bateau["vie"], bateau["marins"], bateau["pm"], bateau["degats"], self.couleur, i+1)
             self.bateaux.append(bat)
 
     def bateauSuivant(self) -> None:

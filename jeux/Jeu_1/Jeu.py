@@ -58,7 +58,7 @@ class Jeu:
         self.zoneDep = Zone((0, 0), (0, 0), self.plateau)
         self.zoneDep.setCouleurs([255, 161, 0, 60], ORANGE, [255, 161, 0, 60], ORANGE)
         self.zoneAt = Zone((0, 0), (0, 0), self.plateau)
-        self.zoneAt.setCouleurs([255, 161, 0, 60], ORANGE, [255, 161, 0, 60], ORANGE)
+        self.zoneAt.setCouleurs([255, 0, 0, 60], RED, [255, 0, 0, 60], RED)
         self.rectangle = SelecBat()
         self.affRec = False
         self.affTeleco = False
@@ -504,6 +504,9 @@ class Jeu:
                             self.play = True
                             if j2.compteBateau() == 0:
                                 self.switch()
+            if self.barre.attaque:
+                if self.zoneAt.getContact() and is_mouse_button_pressed(0):
+                    self.attaque()
             if self.barre.valide:
                 self.barre.deplacement = self.barre.attaque = self.barre.valide = False
                 self.passe()
@@ -581,6 +584,49 @@ class Jeu:
                 if self.joueurs[1].compteBateau() == 0:
                     self.switch()
         return vainqueur
+    
+    def attaque(self) -> None:
+        origine = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
+        victime = None
+        i = 0
+        fini = False
+        while i < len(self.zoneAt) and not fini:
+            Case = self.plateau[self.zoneAt[i][0]][self.zoneAt[i][1]]
+            if Case.getContact():
+                if len(Case) == 1 and Case[0] != origine:
+                    Case[0].setNbPV(Case[0].vie-origine.degats)
+                    victime = Case[0]
+                elif len(Case) > 1:
+                    if origine not in Case:
+                        j = 0
+                        trouve = False
+                        while j < len(Case) and not trouve:
+                            if Case[j].getContact():
+                                Case[j].setNbPV(Case[j].vie-origine.degats)
+                                victime = Case[j]
+                                trouve = True
+                            else:
+                                j += 1
+                    else:
+                        place = Case.contenu.index(origine)
+                        Case[len(Case)-1-place].setNbPV(Case[len(Case)-1-place].vie-origine.degats)
+                        victime = Case[len(Case)-1-place]
+                fini = True
+            else:
+                i += 1
+        if victime != None:
+            self.barre.valide = True
+            if victime.coule:
+                Case - victime
+                self.joueurs[self.actuel].nbelimination += 1
+                if victime.couleur == self.joueurs[0].couleur:
+                    self.joueurs[0] - victime
+                    if self.joueurs[0].compteBateau() == 0:
+                        self.switch()
+                else:
+                    self.joueurs[1] - victime
+                    if self.joueurs[1].compteBateau() == 0:
+                        self.switch()
 
     def setParamFleche(self) -> None:
         bat = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
@@ -649,8 +695,12 @@ class Jeu:
             vois = self.plateau.getVoisines(bas)
             if not isinstance(voisines['o'], bool):
                 self.zoneAt.cases.append(vois['o'])
+                if voisines['o'] not in self.zoneAt.cases:
+                    self.zoneAt.cases.append(voisines['o'])
             if not isinstance(voisines['e'], bool):
                 self.zoneAt.cases.append(vois['e'])
+                if voisines['e'] not in self.zoneAt.cases:
+                    self.zoneAt.cases.append(voisines['e'])
 
     def trouveCase(self, bateau) -> tuple|bool:
         trouve = False

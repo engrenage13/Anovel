@@ -4,7 +4,7 @@ from jeux.Jeu_1.ui.infoBulle import InfoBulle
 from museeNoyee import coeur, marin
 
 class Bateau(Pivote):
-    def __init__(self, nom: str, image: str, pv: int, marins: int, pm: int, couleur: Color, ide: int):
+    def __init__(self, nom: str, image: str, pv: int, marins: int, pm: int, degats: int, couleur: Color, ide: int):
         """Crée un bateau.
 
         Args:
@@ -23,6 +23,7 @@ class Bateau(Pivote):
         self.pvi = pv
         self.marinsi = marins
         self.pmi = pm
+        self.degi = degats
         self.rejouer()
         # InfoBulle
         self.infoBulle = InfoBulle([["coeur", self.vie, coeur], ["marin", self.marins, marin]])
@@ -45,6 +46,7 @@ class Bateau(Pivote):
         self.vie = int(str(self.pvi))
         self.marins = int(str(self.marinsi))
         self.pm = int(str(self.pmi))
+        self.degats = int(str(self.degi))
 
     def estEnPlace(self) -> bool:
         return self.place

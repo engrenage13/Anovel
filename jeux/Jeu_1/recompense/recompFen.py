@@ -6,7 +6,7 @@ from jeux.Jeu_1.recompense.vignette import Vignette
 from museeNoyee import coeur, marin, fleche
 
 class RecompFen:
-    def __init__(self, allie: Bateau = Bateau("", "jeux/Jeu_1/images/Bateaux/gbb.png", 5, 10, 0, [0, 0, 0, 0], 0), ennemi: Bateau = Bateau("", "jeux/Jeu_1/images/Bateaux/gbb.png", 4, 1, 0, [0, 0, 0, 0], 0)) -> None:
+    def __init__(self, allie: Bateau = Bateau("", "jeux/Jeu_1/images/Bateaux/gbb.png", 5, 10, 0, 1, [0, 0, 0, 0], 0), ennemi: Bateau = Bateau("", "jeux/Jeu_1/images/Bateaux/gbb.png", 4, 1, 0, 0, [0, 0, 0, 0], 0)) -> None:
         # Dimensions
         self.largeur = int(xf*0.7)
         self.hauteur = int(yf*0.8)

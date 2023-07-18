@@ -53,6 +53,20 @@ class BarreAction:
                     self.btOrga.dessine(int(xf-self.btv.getDims()[0]*2.8-self.btOrga.getDims()[0]/2), int(yf-self.hauteur/2))
                 if self.actionsPossibles["abordage"]:
                     self.btAbordage.dessine(int(xf-self.btv.getDims()[0]*2.8-self.btAbordage.getDims()[0]/2), int(yf-self.hauteur/2))
+            if self.attaque:
+                bateau = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
+                tda1 = "INFLIGER "
+                tda2 = f"{bateau.degats}"
+                tda3 = f" DEGATS A UN AUTRE BATEAU DANS LA ZONE"
+                taille = self.hauteur*0.5
+                tt1 = measure_text_ex(police2, tda1, taille, 0)
+                tt2 = measure_text_ex(police1, tda2, taille, 0)
+                x = int(xf*0.28)
+                draw_text_ex(police2, tda1, (x, int(yf-self.hauteur*0.75)), taille, 0, WHITE)
+                x += int(tt1.x)
+                draw_text_ex(police1, tda2, (x, int(yf-self.hauteur*0.75)), taille, 0, [0, 255, 0, 255])
+                x += int(tt2.x)
+                draw_text_ex(police2, tda3, (x, int(yf-self.hauteur*0.75)), taille, 0, WHITE)
 
     def dessineInfoBat(self, tour: int) -> None:
         bateau = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
