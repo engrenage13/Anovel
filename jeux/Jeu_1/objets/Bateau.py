@@ -1,7 +1,7 @@
 from systeme.FondMarin import *
 from jeux.Jeu_1.objets.bases.pivote import Pivote
 from jeux.Jeu_1.ui.infoBulle import InfoBulle
-from museeNoyee import coeur, marin
+from museeNoyee import coeur, marin, degats as explosion
 
 class Bateau(Pivote):
     def __init__(self, nom: str, image: str, pv: int, marins: int, pm: int, degats: int, couleur: Color, ide: int):
@@ -26,7 +26,7 @@ class Bateau(Pivote):
         self.degi = degats
         self.rejouer()
         # InfoBulle
-        self.infoBulle = InfoBulle([["coeur", self.vie, coeur], ["marin", self.marins, marin]])
+        self.infoBulle = InfoBulle([["coeur", self.vie, coeur], ["marin", self.marins, marin], ["flamme", self.degats, explosion]])
 
     def dessine(self) -> None:
         """Dessine le bateau.

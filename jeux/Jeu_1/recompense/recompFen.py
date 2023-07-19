@@ -3,7 +3,7 @@ from ui.bouton.bouton import Bouton
 from ui.blocTexte import BlocTexte
 from jeux.Jeu_1.objets.Bateau import Bateau
 from jeux.Jeu_1.recompense.vignette import Vignette
-from museeNoyee import coeur, marin, fleche
+from museeNoyee import coeur, marin, fleche, degats
 
 class RecompFen:
     def __init__(self, allie: Bateau = Bateau("", "jeux/Jeu_1/images/Bateaux/gbb.png", 5, 10, 0, 1, [0, 0, 0, 0], 0), ennemi: Bateau = Bateau("", "jeux/Jeu_1/images/Bateaux/gbb.png", 4, 1, 0, 0, [0, 0, 0, 0], 0)) -> None:
@@ -103,7 +103,7 @@ class RecompFen:
         ecartx = int(self.largeurCadBat*0.09)
         draw_texture(img, int(x+self.largeurCadBat-ecartx-img.width), int(y+self.hauteurPasse/2-img.height/2), WHITE)
         # stats
-        stats = [[coeur, self.bat[1].vie], [marin, self.bat[1].marins], [fleche, self.bat[1].pm]]
+        stats = [[coeur, self.bat[1].vie], [marin, self.bat[1].marins], [fleche, self.bat[1].pm], [degats, self.bat[1].degats]]
         lsta = int(self.largeurCadBat*0.2)
         hsta = int(coeur.height*1.2)
         px += int(self.largeurCadBat*0.03)
@@ -112,7 +112,11 @@ class RecompFen:
             draw_texture(stats[i][0], int(px+lsta*0.01), int(py+coeur.height*0.1), WHITE)
             tt = measure_text_ex(police1, str(stats[i][1]), yf*0.035, 0)
             draw_text_ex(police1, str(stats[i][1]), (int(px+lsta*0.01+coeur.width*1.1), int(py+coeur.height*0.63-tt.y/2)), yf*0.035, 0, BLACK)
-            py += hsta + ecarty
+            if i != 0 and i%2 == 0:
+                px += int(lsta+ecartx/4)
+                py = int(y+self.hauteurPasse*0.01+self.titre4.getDims()[1]+ecarty)
+            else:
+                py += hsta + ecarty
 
     def verifActionsPossibles(self) -> list[Vignette]:
         actions = []
