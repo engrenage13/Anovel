@@ -28,7 +28,7 @@ class Scene(Jeu):
         self.trajet = (0, 0)
         self.afficheSecteur('c')
         self.delaiDepart = 70
-        # Installation
+        # Placement
         self.btValid = BoutonPression(TB1o, BTNOIR, "VALIDER", "images/ui/check.png", [self.joueurSuivant])
         self.btAlea = Bouton(TB1n, PTIBT1, "PLACEMENT ALEATOIRE", "images/ui/hasard.png", [self.placementAleatoire])
         self.btSup = Bouton(TB1n, PTIBT1, "EFFACER", "images/ui/corbeille.png", [self.tousAuTiroir])
@@ -51,7 +51,7 @@ class Scene(Jeu):
                     else:
                         self.delaiDepart -= 1
                 else:
-                    if self.phase != "installation":
+                    if self.phase != "placement":
                         self.plateau.bloque = False
             else:
                 if not self.plateau.bloque:
@@ -59,14 +59,14 @@ class Scene(Jeu):
         else:
             if not self.plateau.bloque:
                 self.plateau.bloque = True
-        if self.actif == 'install' and self.phase == 'installation':
-            if not self.deplaceInstall and self.pause <= 0:
+        if self.actif == 'placement' and self.phase == 'placement':
+            if not self.deplaPlacement and self.pause <= 0:
                 secteurs = ['no', 'n', 'ne', 'e', 'se', 's', 'so', 'o']
                 if self.actuel == 0:
                     self.afficheSecteur(secteurs[self.fen['choix_zone'].action.resultat])
                 elif self.actuel == 1:
                     self.afficheSecteur(secteurs[(self.fen['choix_zone'].action.resultat+4)%8])
-                self.deplaceInstall = True
+                self.deplaPlacement = True
                 self.pause = 100
             elif not self.affRec and not self.affTeleco:
                 if self.tiroir.estApparu():
@@ -172,7 +172,7 @@ class Scene(Jeu):
         self.teleco.play = etat
         self.fleche.play = etat
 
-    # Installation
+    # Placement
 
     def tousAuTiroir(self) -> None:
         for i in range(len(self.zoneDep)):
@@ -201,12 +201,12 @@ class Scene(Jeu):
     # Jeu
 
     def tour(self) -> None:
-        if not self.deplaceInstall:
+        if not self.deplaPlacement:
             self.focusBat()
-            self.deplaceInstall = True
+            self.deplaPlacement = True
             #self.barre.deplacement = True
         if self.barre.chabat:
-            self.deplaceInstall = False
+            self.deplaPlacement = False
             self.barre.chabat = False
             self.setDeplacement = False
 

@@ -34,14 +34,14 @@ class Jeu:
         # Phases
         self.fen = {"intro": Intro(self.joueurs), 
                     "choix_zone": PageCarte(), 
-                    "install": self.plateau, 
+                    "placement": self.plateau, 
                     "jeu": self.plateau, 
                     "organisation": OrgaFen(self.joueurs[self.actuel][0], self.joueurs[self.actuel][1]), 
                     "fin": Fin(self.joueurs), 
                     "recomp_abo": RecompFen()}
         if config['dev']:
             if config['dev'].lower() == 'jeu':
-                self.actif = 'install'
+                self.actif = 'placement'
             else:
                 self.actif = config['dev'].lower()
             if self.actif != 'intro' or self.actif != 'choix_zone':
@@ -52,8 +52,8 @@ class Jeu:
         # /
         self.cible = Cible(self.plateau[0][0], self.joueurs[self.actuel][0])
         self.teleco = EditTeleco(self.plateau[0][0], self.joueurs[self.actuel][0])
-        # Installation
-        self.deplaceInstall = False
+        # Placement
+        self.deplaPlacement = False
         self.pause = 100
         self.zoneDep = Zone((0, 0), (0, 0), self.plateau)
         self.zoneDep.setCouleurs([255, 161, 0, 60], ORANGE, [255, 161, 0, 60], ORANGE)
@@ -80,8 +80,8 @@ class Jeu:
         if self.actif != 'organisation':
             if isinstance(fenetre, Fenetre) and fenetre.estFini():
                 self.switch()
-            if self.phase == 'installation':
-                self.installation()
+            if self.phase == 'placement':
+                self.placement()
                 if config['dev'] == 'jeu':
                     self.passePhase()
             elif self.phase == 'jeu':
@@ -91,10 +91,10 @@ class Jeu:
     def switch(self) -> None:
         if self.actif == 'intro':
             self.actif = 'choix_zone'
-            self.setPhase('installation')
+            self.setPhase('placement')
         elif self.actif == 'choix_zone':
-            self.actif = 'install'
-        elif self.actif == 'install':
+            self.actif = 'placement'
+        elif self.actif == 'placement':
             self.actif = 'jeu'
             self.setPhase('jeu')
         elif self.actif == 'jeu':
@@ -115,11 +115,11 @@ class Jeu:
         for i in range(len(self.joueurs)):
             self.joueurs[i].rejouer()
         +self.joueurs[self.actuel]
-        # Installation
-        self.resetInstall()
+        # Placement
+        self.resetPlacement()
 
-    def resetInstall(self) -> None:
-        self.deplaceInstall = self.affRec = self.affTeleco = False
+    def resetPlacement(self) -> None:
+        self.deplaPlacement = self.affRec = self.affTeleco = False
         self.pause = 100
         self.tiroir.setListe(self.joueurs[self.actuel].bateaux)
         self.tiroir.allume = True
@@ -127,18 +127,18 @@ class Jeu:
         self.rectangle.disparition()
 
     def passePhase(self) -> None:
-        if self.phase == 'installation':
+        if self.phase == 'placement':
             phase = self.phase
             while self.phase == phase:
                 self.passeTour()
-                if self.actuel == 1 and self.phase == 'installation':
+                if self.actuel == 1 and self.phase == 'placement':
                     self.zoneDep.cases = self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+int(len(self.fen['choix_zone'].zones)))%len(self.fen['choix_zone'].zones)].cases
         elif self.phase == 'jeu':
             self.switch()
 
     def passeTour(self) -> None:
         j = self.actuel
-        if self.phase == 'installation':
+        if self.phase == 'placement':
             while self.actuel == j:
                 self.passeAction()
                 if isinstance(self.fen[self.actif], Fenetre) and self.fen[self.actif].estFini():
@@ -155,8 +155,8 @@ class Jeu:
             fenetre = self.fen[self.actif]
             if fenetre.action != None:
                 fenetre.action.passe()
-        elif self.phase == "installation":
-            self.passeInstall()
+        elif self.phase == "placement":
+            self.passePlacement()
         elif self.phase == "jeu":
             liChoix = [self.passe] + [self.fleche.passe]*80 + [self.attaPasse]*19
             choix = choice(liChoix)
@@ -256,13 +256,13 @@ class Jeu:
 
     def passe(self) -> None:
         self.joueurs[self.actuel].bateauSuivant()
-        self.deplaceInstall = self.setDeplacement = False
+        self.deplaPlacement = self.setDeplacement = False
         if not self.joueurs[self.actuel].actif:
             self.joueurSuivant()
 
     # Placement
 
-    def passeInstall(self) -> None:
+    def passePlacement(self) -> None:
         cases = []
         for i in range(len(self.zoneDep.cases)):
             tuile = self.plateau[self.zoneDep[i][0]][self.zoneDep[i][1]]
@@ -286,15 +286,15 @@ class Jeu:
         if len(self.tiroir) == 0:
             self.joueurSuivant()
 
-    def installation(self) -> None:
-        if self.actif == 'install':
-            if not self.deplaceInstall:
+    def placement(self) -> None:
+        if self.actif == 'placement':
+            if not self.deplaPlacement:
                 if self.actuel == 0 and self.zoneDep.cases != self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases:
                     self.zoneDep.cases = self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases
-                    self.setPlateauInstall()
+                    self.setPlateauPlacer()
                 elif self.actuel == 1 and self.zoneDep.cases != self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+4)%8].cases:
                     self.zoneDep.cases = self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+4)%8].cases
-                    self.setPlateauInstall()
+                    self.setPlateauPlacer()
                 if self.pause > 0:
                     self.pause -= 1
             else:
@@ -339,7 +339,7 @@ class Jeu:
                         self.teleco.setCase(ncase)
                         self.setFleches(ncase)
 
-    def setPlateauInstall(self) -> None:
+    def setPlateauPlacer(self) -> None:
         self.plateau.bloque = True
         self.plateau + self.zoneDep
         self.plateau.grise = True
@@ -348,7 +348,7 @@ class Jeu:
         if self.cible.play:
             bonnePlace = False
             i = 0
-            if self.phase != "installation":
+            if self.phase != "placement":
                 while i < self.plateau.nbCases and not bonnePlace:
                     j = 0
                     while j < self.plateau.nbCases and not bonnePlace:
@@ -434,10 +434,10 @@ class Jeu:
                 if self.phase != "jeu":
                     self.switch()
             +self.joueurs[self.actuel]
-            if self.phase == 'installation':
-                self.resetInstall()
+            if self.phase == 'placement':
+                self.resetPlacement()
             elif self.phase == 'jeu':
-                self.deplaceInstall = self.setDeplacement = False
+                self.deplaPlacement = self.setDeplacement = False
                 if self.actuel == 0:
                     if self.indiqueTour < TOURMAX:
                         self.indiqueTour += 1

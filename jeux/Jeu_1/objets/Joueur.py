@@ -27,7 +27,7 @@ class Joueur:
         """Réinitialise certains paramètres du joueur pour une nouvelle partie.
         """
         self.actif = False
-        self.phase = "installation"
+        self.phase = "placement"
         self.bateaux = []
         self.nbelimination = 0
         # bateaux
@@ -87,7 +87,7 @@ class Joueur:
 
     def __pos__(self) -> None:
         self.actif = True
-        if self.phase != "installation":
+        if self.phase != "placement":
             i = 0
             while i < len(self.bateaux):
                 if self.bateaux[i].coule:
