@@ -27,7 +27,6 @@ class Joueur:
         """Réinitialise certains paramètres du joueur pour une nouvelle partie.
         """
         self.actif = False
-        self.phase = "placement"
         self.bateaux = []
         self.nbelimination = 0
         # bateaux
@@ -35,6 +34,8 @@ class Joueur:
             bateau = libat[self.btx[i]]
             bat = Bateau(bateau["nom"], bateau["image"], bateau["vie"], bateau["marins"], bateau["pm"], bateau["degats"], self.couleur, i+1)
             self.bateaux.append(bat)
+        # Phase
+        self.setPhase("placement")
 
     def bateauSuivant(self) -> None:
         if self.actuel < len(self.bateaux):
@@ -84,6 +85,15 @@ class Joueur:
     def setIds(self) -> None:
         for i in range(len(self.bateaux)):
             self.bateaux[i].id = i+1
+
+    def setPhase(self, phase: str) -> None:
+        self.phase = phase
+        if self.phase == "placement":
+            for i in range(len(self.bateaux)):
+                self.bateaux[i].bloqueInfoBulle = True
+        else:
+            for i in range(len(self.bateaux)):
+                self.bateaux[i].bloqueInfoBulle = False
 
     def __pos__(self) -> None:
         self.actif = True

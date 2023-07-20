@@ -33,7 +33,8 @@ class Bateau(Pivote):
         """
         super().dessine()
         if self.getContact():
-            self.infoBulle.dessine(self.pos[0], int(self.pos[1]-self.dims[1]/2))
+            if not self.bloqueInfoBulle:
+                self.infoBulle.dessine(self.pos[0], int(self.pos[1]-self.dims[1]/2))
 
     def rejouer(self) -> None:
         """Réinitialise certains paramètres du bateau pour rejouer une nouvelle partie.
@@ -43,6 +44,7 @@ class Bateau(Pivote):
         self.coule = False
         self.actif = False
         self.finiTour = False
+        self.bloqueInfoBulle = False
         self.vie = int(str(self.pvi))
         self.marins = int(str(self.marinsi))
         self.pm = int(str(self.pmi))

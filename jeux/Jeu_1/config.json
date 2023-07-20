@@ -7,5 +7,5 @@
     "fin": {"interface": false, "phase": "fin"},
     "recomp_abo": {"interface": true, "phase": "jeu"},
 
-    "dev": "jeu"
+    "dev": "placement"
 }

@@ -132,7 +132,7 @@ class Jeu:
             while self.phase == phase:
                 self.passeTour()
                 if self.actuel == 1 and self.phase == 'placement':
-                    self.zoneDep.cases = self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+int(len(self.fen['choix_zone'].zones)))%len(self.fen['choix_zone'].zones)].cases
+                    self.zoneDep.cases = self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+int(len(self.fen['choix_zone'].zones)/1))%len(self.fen['choix_zone'].zones)].cases
         elif self.phase == 'jeu':
             self.switch()
 
@@ -292,8 +292,8 @@ class Jeu:
                 if self.actuel == 0 and self.zoneDep.cases != self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases:
                     self.zoneDep.cases = self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases
                     self.setPlateauPlacer()
-                elif self.actuel == 1 and self.zoneDep.cases != self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+4)%8].cases:
-                    self.zoneDep.cases = self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+4)%8].cases
+                elif self.actuel == 1 and self.zoneDep.cases != self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+int(len(self.fen['choix_zone'].zones)/1))%len(self.fen['choix_zone'].zones)].cases:
+                    self.zoneDep.cases = self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+int(len(self.fen['choix_zone'].zones)/1))%len(self.fen['choix_zone'].zones)].cases
                     self.setPlateauPlacer()
                 if self.pause > 0:
                     self.pause -= 1
@@ -410,7 +410,7 @@ class Jeu:
     def setPhase(self, phase: str) -> None:
         self.phase = phase
         for i in range(len(self.joueurs)):
-            self.joueurs[i].phase = phase
+            self.joueurs[i].setPhase(phase)
         if self.phase == 'jeu':
             self.plateau.grise = self.setDeplacement = False
             self.zoneDep.setCouleurs([82, 211, 164, 140], [222, 255, 243, 255], [82, 211, 164, 140], [222, 255, 243, 255])

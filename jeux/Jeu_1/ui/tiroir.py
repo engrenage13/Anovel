@@ -1,7 +1,7 @@
 from random import shuffle
 from systeme.FondMarin import *
 from jeux.Jeu_1.objets.Bateau import Bateau
-from museeNoyee import corail1, corail2, poisson, coeur, fleche, marin
+from museeNoyee import corail1, corail2, poisson, coeur, fleche, marin, degats
 from jeux.Jeu_1.ui.attribut import Attribut
 
 class Tiroir:
@@ -30,6 +30,7 @@ class Tiroir:
         self.etiCoeur = Attribut(0, coeur)
         self.etiMarin = Attribut(0, marin)
         self.etiFleche = Attribut(0, fleche)
+        self.etiDeg = Attribut(0, degats)
 
     def dessine(self) -> None:
         """Dessine le tiroir et les bateaux qui sont dedans.
@@ -79,9 +80,10 @@ class Tiroir:
         self.etiCoeur.setValeur(bateau.pvi)
         self.etiFleche.setValeur(bateau.pmi)
         self.etiMarin.setValeur(bateau.marins)
+        self.etiDeg.setValeur(bateau.degats)
         tt1 = measure_text_ex(police1, bateau.nom.upper(), int(self.hauteur_rect*0.37), 0)
         ttiret = measure_text_ex(police2i, " - ", int(self.hauteur_rect*0.27), 0)
-        tt2 = self.etiCoeur.getDims()[0]+self.etiFleche.getDims()[0]+self.etiMarin.getDims()[0]+ttiret.x*2
+        tt2 = self.etiCoeur.getDims()[0]+self.etiFleche.getDims()[0]+self.etiMarin.getDims()[0]+ttiret.x*3+self.etiDeg.getDims()[0]
         max = tt1.x
         if tt2 > max:
             max = tt2
@@ -101,6 +103,9 @@ class Tiroir:
         xeti += self.etiMarin.getDims()[0] + ttiret.x
         self.etiFleche.pos = (xeti, y)
         self.etiFleche.dessine(int(255*pourcentage))
+        xeti += self.etiFleche.getDims()[0] + ttiret.x
+        self.etiDeg.pos = (xeti, y)
+        self.etiDeg.dessine(int(255*pourcentage))
         # animations
         if self.soulevement[self.liste.index(bateau)][0] and pourcentage < 1:
             addit = 0.1
