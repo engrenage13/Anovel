@@ -37,11 +37,33 @@ class Case(Bougeable):
         
     def dessineContenu(self) -> None:    
         if len(self.contenu) > 0:
-            for i in range(len(self.contenu)):
+            ecart = int(self.taille*0.035)
+            if len(self.contenu) == 2:
+                if self.contenu[0].direction%2 == 0:
+                    largeur = int(self.taille-ecart*2)
+                    hauteur = int(self.taille/2-ecart*2)
+                    draw_rectangle_rounded_lines([int(self.pos[0]+ecart), int(self.pos[1]+ecart), largeur, hauteur], 0.15, 330, 5, self.contenu[0].couleur)
+                    self.contenu[0].dessine()
+                    draw_rectangle_rounded_lines([int(self.pos[0]+ecart), int(self.pos[1]+self.taille/2+ecart), largeur, hauteur], 0.15, 330, 5, self.contenu[1].couleur)
+                    self.contenu[1].dessine()
+                else:
+                    largeur = int(self.taille/2-ecart*2)
+                    hauteur = int(self.taille-ecart*2)
+                    draw_rectangle_rounded_lines([int(self.pos[0]+ecart), int(self.pos[1]+ecart), largeur, hauteur], 0.15, 330, 5, self.contenu[0].couleur)
+                    self.contenu[0].dessine()
+                    draw_rectangle_rounded_lines([int(self.pos[0]+self.taille/2+ecart), int(self.pos[1]+ecart), largeur, hauteur], 0.15, 330, 5, self.contenu[1].couleur)
+                    self.contenu[1].dessine()
+            else:
+                largeur = int(self.taille-ecart*2)
+                hauteur = int(self.taille-ecart*2)
+                draw_rectangle_rounded_lines([int(self.pos[0]+ecart), int(self.pos[1]+ecart), largeur, hauteur], 0.15, 330, 5, self.contenu[0].couleur)
+                self.contenu[0].dessine()
+            """for i in range(len(self.contenu)):
+                draw_rectangle_rounded_lines([int(self.pos[0]+ecart), int(self.pos[1]+ecart), largeur, hauteur], 0.15, 330, 5, self.contenu[i].couleur)
                 self.contenu[i].dessine()
                 if self.contenu[i].actif:
-                    draw_rectangle_lines_ex([self.pos[0], self.pos[1], self.taille, self.taille], 3, WHITE)
-            self.dessineMarqueur()
+                    draw_rectangle_lines_ex([self.pos[0], self.pos[1], self.taille, self.taille], 3, WHITE)"""
+            #self.dessineMarqueur()
 
     def setPos(self, x: int, y: int) -> None:
         super().setPos(x, y)
@@ -50,11 +72,11 @@ class Case(Bougeable):
                 self.contenu[0].setPos(int(self.pos[0]+self.taille/2), int(self.pos[1]+self.taille/2))
             else:
                 if self.contenu[0].direction%2 == 0:
-                    self.contenu[0].setPos(int(self.pos[0]+self.taille/2), int(self.pos[1]+self.taille/10*3))
-                    self.contenu[1].setPos(int(self.pos[0]+self.taille/2), int(self.pos[1]+self.taille/10*7))
+                    self.contenu[0].setPos(int(self.pos[0]+self.taille/2), int(self.pos[1]+self.taille/4))
+                    self.contenu[1].setPos(int(self.pos[0]+self.taille/2), int(self.pos[1]+self.taille/4*3))
                 else:
-                    self.contenu[0].setPos(int(self.pos[0]+self.taille/10*3), int(self.pos[1]+self.taille/2))
-                    self.contenu[1].setPos(int(self.pos[0]+self.taille/10*7), int(self.pos[1]+self.taille/2))
+                    self.contenu[0].setPos(int(self.pos[0]+self.taille/4), int(self.pos[1]+self.taille/2))
+                    self.contenu[1].setPos(int(self.pos[0]+self.taille/4*3), int(self.pos[1]+self.taille/2))
 
     def retire(self, element: Bateau) -> bool:
         rep = False
