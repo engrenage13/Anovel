@@ -63,8 +63,13 @@ class Fin:
             j2 = joueurs[i+1]
             if j2.compteBateau() > j1.compteBateau():
                 self.joueurs = [j2] + self.joueurs
-            else:
+            elif j1.compteBateau() > j2.compteBateau():
                 self.joueurs.append(j2)
+            else:
+                if j2.nbelimination > j1.nbelimination:
+                    self.joueurs = [j2] + self.joueurs
+                else:
+                    self.joueurs.append(j2)
         classement = 1
         self.blocs = []
         for j in range(len(self.joueurs)):

@@ -158,66 +158,101 @@ class Jeu:
         elif self.phase == "installation":
             self.passeInstall()
         elif self.phase == "jeu":
-            liChoix = [self.passe] + [self.fleche.passe]*99
+            liChoix = [self.passe] + [self.fleche.passe]*80 + [self.attaPasse]*19
             choix = choice(liChoix)
             choix()
             # organisation et abordage
             c = self.trouveCase(self.joueurs[self.actuel][self.joueurs[self.actuel].actuel])
-            case = self.plateau[c[0]][c[1]]
-            idbat = case.contenu.index(self.joueurs[self.actuel][self.joueurs[self.actuel].actuel])
-            # Organisation
-            if choix == self.fleche.passe and len(case) > 1 and case[len(case)-1-idbat] in self.joueurs[self.actuel].bateaux:
-                nbMarins = case[len(case)-1-idbat].marins
-                nbRedistrib = randint(1, nbMarins)
-                self.joueurs[self.actuel][self.joueurs[self.actuel].actuel] + nbRedistrib
-                case[len(case)-1-idbat] - nbRedistrib
-            # Abordage
-            elif choix == self.fleche.passe and len(case) > 1 and case[len(case)-1-idbat] not in self.joueurs[self.actuel].bateaux:
-                vainqueur = self.abordage(case[0], case[1])
-                if vainqueur > -1:
-                    actions = []
-                    if vainqueur == 0:
-                        bat = case[0]
-                        op = case[1]
-                    else:
-                        bat = case[1]
-                        op = case[0]
-                    if bat in self.joueurs[0].bateaux:
-                        j1 = self.joueurs[0]
-                        j2 = self.joueurs[1]
-                    else:
-                        j1 = self.joueurs[1]
-                        j2 = self.joueurs[0]
-                    if op.marins > 0:
-                        actions.append(1)
-                        if bat.marins-op.marins >= 5:
-                            actions.append(2)
-                    else:
-                        actions.append(2)
-                    if bat.marins > op.marins and bat.marins-op.marins-1 > 0:
-                        actions.append(3)
-                    elif op.marins > bat.marins and op.marins-bat.marins-1 > 0:
-                        actions.append(3)
-                    cx = choice(actions)
-                    if cx == 1:
-                        op - 1
-                        bat + 1
-                    elif cx == 2:
-                        j1 + op
-                        j2 - op
-                    elif cx == 3:
-                        if bat.marins > op.marins:
-                            dif = bat.marins-op.marins
+            if not isinstance(c, bool):
+                case = self.plateau[c[0]][c[1]]
+                self.caseAbordage = case
+                idbat = case.contenu.index(self.joueurs[self.actuel][self.joueurs[self.actuel].actuel])
+                # Organisation
+                if choix == self.fleche.passe and len(case) > 1 and case[len(case)-1-idbat] in self.joueurs[self.actuel].bateaux:
+                    nbMarins = case[len(case)-1-idbat].marins
+                    nbRedistrib = randint(1, nbMarins)
+                    self.joueurs[self.actuel][self.joueurs[self.actuel].actuel] + nbRedistrib
+                    case[len(case)-1-idbat] - nbRedistrib
+                # Abordage
+                elif choix == self.fleche.passe and len(case) > 1 and case[len(case)-1-idbat] not in self.joueurs[self.actuel].bateaux:
+                    vainqueur = self.abordage(case[0], case[1])
+                    if vainqueur > -1:
+                        actions = []
+                        if vainqueur == 0:
+                            bat = case[0]
+                            op = case[1]
                         else:
-                            dif = op.marins-bat.marins
-                        if dif-1 > 0:
-                            op.setNbPV(op.vie-(dif-1))
-                            if op.coule:
-                                case - op
-                                j1.nbelimination += 1
+                            bat = case[1]
+                            op = case[0]
+                        if bat in self.joueurs[0].bateaux:
+                            j1 = self.joueurs[0]
+                            j2 = self.joueurs[1]
+                        else:
+                            j1 = self.joueurs[1]
+                            j2 = self.joueurs[0]
+                        if op.marins > 0:
+                            actions.append(1)
+                            if bat.marins-op.marins >= 5:
+                                actions.append(2)
+                        else:
+                            actions.append(2)
+                        if bat.marins > op.marins and bat.marins-op.marins-1 > 0:
+                            actions.append(3)
+                        elif op.marins > bat.marins and op.marins-bat.marins-1 > 0:
+                            actions.append(3)
+                        cx = choice(actions)
+                        if cx == 1:
+                            op - 1
+                            bat + 1
+                        elif cx == 2:
+                            j1 + op
+                            j2 - op
+                        elif cx == 3:
+                            if bat.marins > op.marins:
+                                dif = bat.marins-op.marins
+                            else:
+                                dif = op.marins-bat.marins
+                            if dif-1 > 0:
+                                op.setNbPV(op.vie-(dif-1))
+                                if op.coule:
+                                    case - op
+                                    j1.nbelimination += 1
             # /
             if choix != self.passe:
                 self.passe()
+
+    def attaPasse(self) -> None:
+        attaquant = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
+        if self.verifAttaquePossible():
+            stop = False
+            cases = [j for j in range(len(self.zoneAt))]
+            while not stop and len(cases) > 0:
+                i = choice(cases)
+                del cases[cases.index(i)]
+                c = self.zoneAt[i]
+                Case = self.plateau[c[0]][c[1]]
+                if len(Case) > 0:
+                    if len(Case) == 1 and Case[0] != attaquant:
+                        cible = Case[0]
+                    elif len(Case) == 2:
+                        if attaquant not in Case.contenu:
+                            aleat = randint(0, 1)
+                            cible = Case[aleat]
+                        else:
+                            pos = Case.contenu.index(attaquant)
+                            cible = Case[len(Case)-1-pos]
+                    else:
+                        cible = None
+                    if isinstance(cible, Bateau):
+                        cible.setNbPV(cible.vie-attaquant.degats)
+                        stop = True
+                        if cible.coule:
+                            Case - cible
+                            self.joueurs[self.actuel].nbelimination += 1
+                            if cible in self.joueurs[0].bateaux:
+                                self.joueurs[0] - cible
+                            else:
+                                self.joueurs[1] - cible
 
     def passe(self) -> None:
         self.joueurs[self.actuel].bateauSuivant()
