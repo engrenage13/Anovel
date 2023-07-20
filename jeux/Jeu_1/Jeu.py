@@ -30,7 +30,7 @@ class Jeu:
             self.joueurs.append(Joueur(joueur["nom"], joueur["bateaux"], joueur["couleur"]))
         self.actuel = 0
         +self.joueurs[self.actuel]
-        self.tiroir = Tiroir(self.joueurs[self.actuel].bateaux)
+        self.tiroir = Tiroir(self.joueurs[self.actuel].bateaux, self.joueurs[self.actuel].couleur)
         # Phases
         self.fen = {"intro": Intro(self.joueurs), 
                     "choix_zone": PageCarte(), 
@@ -122,6 +122,7 @@ class Jeu:
         self.deplaPlacement = self.affRec = self.affTeleco = False
         self.pause = 100
         self.tiroir.setListe(self.joueurs[self.actuel].bateaux)
+        self.tiroir.couleur = self.joueurs[self.actuel].couleur
         self.tiroir.allume = True
         self.rectangle.contenu = None
         self.rectangle.disparition()

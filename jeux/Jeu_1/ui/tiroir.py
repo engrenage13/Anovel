@@ -5,7 +5,7 @@ from museeNoyee import corail1, corail2, poisson, coeur, fleche, marin, degats
 from jeux.Jeu_1.ui.attribut import Attribut
 
 class Tiroir:
-    def __init__(self, bateaux: list[Bateau]) -> None:
+    def __init__(self, bateaux: list[Bateau], couleur: Color = WHITE) -> None:
         """Crée le tiroir à bateaux.
 
         Args:
@@ -22,6 +22,8 @@ class Tiroir:
         self.hauteur_rect = int(bateaux[0].image.height*1.1)
         self.allume = True
         self.play = True
+        # Couleur
+        self.couleur = couleur
         # Images
         self.decos = [corail1, corail2, poisson]
         # positionnement
@@ -36,16 +38,17 @@ class Tiroir:
         """Dessine le tiroir et les bateaux qui sont dedans.
         """
         if len(self.liste) > 0:
+            couleur = [self.couleur[0], self.couleur[1], self.couleur[2]]
             tailley = int(self.tCase*len(self.liste))
             y = int(self.originey-(self.tCase/2*len(self.liste)))
             draw_rectangle_rounded((self.originex, y, self.largeur+self.originex*-1, tailley), 
-                                   0.2, 30, [255, 255, 255, self.lumCadre[0]])
+                                   0.2, 30, couleur+[self.lumCadre[0]])
             draw_texture(self.decos[0], int(self.largeur-self.decos[0].width*0.9), 
                          y+tailley-self.decos[0].height, [255, 255, 255, self.lumCadre[0]])
             draw_texture(self.decos[1], int(self.largeur-self.decos[1].width*0.9), y, 
                          [255, 255, 255, self.lumCadre[0]])
             draw_rectangle_rounded_lines((self.originex, y, self.largeur+self.originex*-1, tailley), 
-                                         0.2, 30, 3, [255, 255, 255, self.lumCadre[1]])
+                                         0.2, 30, 3, couleur+[self.lumCadre[1]])
             if self.allume:
                 self.apparition()
             else:
