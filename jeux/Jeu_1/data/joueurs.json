@@ -1,4 +1,4 @@
 {
-    "j1": {"nom": "Joueur 1", "bateaux": ["amiralBleu", "bateauBleu", "bateauBleu", "bateauBleu"], "couleur": [0, 121, 241, 255]},
-    "j2": {"nom": "Joueur 2", "bateaux": ["amiralRouge", "bateauRouge", "bateauRouge", "bateauRouge"], "couleur": [230, 41, 55, 255]}
+    "j1": {"nom": "Joueur 1", "bateaux": ["canardier", "voilier", "voilier", "voilier"], "couleur": [0, 121, 241, 255]},
+    "j2": {"nom": "Joueur 2", "bateaux": ["canardier", "voilier", "voilier", "voilier"], "couleur": [230, 41, 55, 255]}
 }

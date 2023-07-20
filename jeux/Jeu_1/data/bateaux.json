@@ -1,6 +1,4 @@
 {
-    "bateauBleu": {"nom": "bateau", "image": "jeux/Jeu_1/images/Bateaux/pbb.png", "vie": 4, "marins": 5, "pm": 3, "degats": 2},
-    "amiralBleu": {"nom": "amiral", "image": "jeux/Jeu_1/images/Bateaux/gbb.png", "vie": 5, "marins": 6, "pm": 2, "degats": 3},
-    "bateauRouge": {"nom": "bateau", "image": "jeux/Jeu_1/images/Bateaux/pbr.png", "vie": 4, "marins": 5, "pm": 3, "degats": 2},
-    "amiralRouge": {"nom": "amiral", "image": "jeux/Jeu_1/images/Bateaux/gbr.png", "vie": 5, "marins": 6, "pm": 2, "degats": 3}
+    "voilier": {"nom": "voilier", "image": "jeux/Jeu_1/images/Bateaux/pbb.png", "vie": 4, "marins": 5, "pm": 3, "degats": 2},
+    "canardier": {"nom": "canardier", "image": "jeux/Jeu_1/images/Bateaux/gbb.png", "vie": 5, "marins": 6, "pm": 2, "degats": 3}
 }
