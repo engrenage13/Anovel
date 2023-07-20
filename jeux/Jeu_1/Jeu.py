@@ -641,6 +641,7 @@ class Jeu:
                     self.barre.actionsPossibles["deplacement"] = False
                 else:
                     self.barre.actionsPossibles["deplacement"] = True
+                self.barre.actionsPossibles["attaque"] = self.verifAttaquePossible()
                 self.fleche.setBateau(bat)
                 self.fleche.setCase(case)
                 self.setDeplacement = True
@@ -701,6 +702,20 @@ class Jeu:
                 self.zoneAt.cases.append(vois['e'])
                 if voisines['e'] not in self.zoneAt.cases:
                     self.zoneAt.cases.append(voisines['e'])
+
+    def verifAttaquePossible(self) -> bool:
+        stop = False
+        i = 0
+        while i < len(self.zoneAt) and not stop:
+            c = self.zoneAt.cases[i]
+            Case = self.plateau[c[0]][c[1]]
+            if len(Case) == 1 and Case[0] != self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]:
+                stop = True
+            elif len(Case) == 2 and self.joueurs[self.actuel][self.joueurs[self.actuel].actuel] not in Case.contenu:
+                stop = True
+            else:
+                i += 1
+        return stop
 
     def trouveCase(self, bateau) -> tuple|bool:
         trouve = False
