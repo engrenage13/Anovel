@@ -284,6 +284,7 @@ class Jeu:
         for i in range(placement.resultat[2]-bateau.direction):
             bateau.droite()
         Case.ajoute(bateau)
+        self.joueurs[self.actuel].setIds()
         if len(self.tiroir) == 0:
             self.joueurSuivant()
 
@@ -292,10 +293,10 @@ class Jeu:
             if not self.deplaPlacement:
                 if self.actuel == 0 and self.zoneDep.cases != self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases:
                     self.zoneDep.cases = self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases
-                    self.setPlateauPlacer()
+                    self.setPlateauEnPLace()
                 elif self.actuel == 1 and self.zoneDep.cases != self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+int(len(self.fen['choix_zone'].zones)/1))%len(self.fen['choix_zone'].zones)].cases:
                     self.zoneDep.cases = self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+int(len(self.fen['choix_zone'].zones)/1))%len(self.fen['choix_zone'].zones)].cases
-                    self.setPlateauPlacer()
+                    self.setPlateauEnPLace()
                 if self.pause > 0:
                     self.pause -= 1
             else:
@@ -321,10 +322,13 @@ class Jeu:
                     if self.rectangle.annule or self.cible.checkBateauEstPlace():
                         if self.rectangle.annule:
                             self.tiroir.ajValListe(self.rectangle.contenu)
+                            self.joueurs[self.actuel].setIds()
                         self.rectangle.contenu = None
                         self.affRec = False
                         self.rectangle.disparition()
                         self.tiroir.allume = True
+                        if self.cible.checkBateauEstPlace():
+                            self.joueurs[self.actuel].setIds()
                 elif not self.affRec and self.affTeleco:
                     self.teleco.dessine()
                     if self.teleco.fini:
@@ -332,6 +336,7 @@ class Jeu:
                     if self.teleco.retire:
                         self.tiroir.ajValListe(self.teleco.bateau)
                         self.teleco.case.retire(self.teleco.bateau)
+                        self.joueurs[self.actuel].setIds()
                     if self.teleco.veutBouger:
                         voisines = self.plateau.getVoisines(self.teleco.case)
                         ncase = self.plateau[voisines[self.teleco.veutBouger][0]][voisines[self.teleco.veutBouger][1]]
@@ -340,7 +345,7 @@ class Jeu:
                         self.teleco.setCase(ncase)
                         self.setFleches(ncase)
 
-    def setPlateauPlacer(self) -> None:
+    def setPlateauEnPLace(self) -> None:
         self.plateau.bloque = True
         self.plateau + self.zoneDep
         self.plateau.grise = True

@@ -32,10 +32,11 @@ class Joueur:
         # bateaux
         for i in range(len(self.btx)):
             bateau = libat[self.btx[i]]
-            bat = Bateau(bateau["nom"], bateau["image"], bateau["vie"], bateau["marins"], bateau["pm"], bateau["degats"], self.couleur, i+1)
+            bat = Bateau(bateau["nom"], bateau["image"], bateau["vie"], bateau["marins"], bateau["pm"], bateau["degats"], self.couleur)
             self.bateaux.append(bat)
         # Phase
         self.setPhase("placement")
+        self.setIds()
 
     def bateauSuivant(self) -> None:
         if self.actuel < len(self.bateaux):
@@ -83,6 +84,15 @@ class Joueur:
         return compteur
     
     def setIds(self) -> None:
+        if self.phase == 'placement':
+            places = []
+            autres = []
+            for i in range(len(self.bateaux)):
+                if self.bateaux[i].place:
+                    places.append(self.bateaux[i])
+                else:
+                    autres.append(self.bateaux[i])
+            self.bateaux = places+autres
         for i in range(len(self.bateaux)):
             self.bateaux[i].id = i+1
 

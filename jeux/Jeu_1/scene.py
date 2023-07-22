@@ -1,4 +1,4 @@
-from random import choice
+from random import choice, shuffle
 from systeme.FondMarin import *
 from ui.bouton.bouton import Bouton
 from ui.bouton.boutonPression import BoutonPression
@@ -184,8 +184,10 @@ class Scene(Jeu):
     def placementAleatoire(self) -> None:
         if len(self.tiroir) == 0:
             self.tousAuTiroir()
+            shuffle(self.joueurs[self.actuel].bateaux)
         elif trouveParam('hasard') == 0:
             self.tousAuTiroir()
+            shuffle(self.joueurs[self.actuel].bateaux)
         while len(self.tiroir) > 0:
             bat = self.tiroir[0]
             self.tiroir.supValListe(0)
@@ -199,6 +201,7 @@ class Scene(Jeu):
             for k in range(c2):
                 bat.droite()
             c1.ajoute(bat)
+        self.joueurs[self.actuel].setIds()
 
     # Jeu
 

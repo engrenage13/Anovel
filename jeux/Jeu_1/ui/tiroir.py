@@ -148,6 +148,7 @@ class Tiroir:
         self.lumCadre = [0, 5]
         for i in range(len(self.liste)):
             self.soulevement.append([False, -int(self.liste[i].image.width*0.6), 0])
+            self.liste[i].place = False
         self.positioneBateaux()
 
     def supValListe(self, indice: int) -> None:

@@ -4,7 +4,7 @@ from jeux.Jeu_1.ui.infoBulle import InfoBulle
 from museeNoyee import coeur, marin, degats as explosion
 
 class Bateau(Pivote):
-    def __init__(self, nom: str, image: str, pv: int, marins: int, pm: int, degats: int, couleur: Color, ide: int):
+    def __init__(self, nom: str, image: str, pv: int, marins: int, pm: int, degats: int, couleur: Color):
         """Crée un bateau.
 
         Args:
@@ -18,7 +18,6 @@ class Bateau(Pivote):
         super().__init__(image)
         self.nom = nom
         self.couleur = couleur
-        self.id = ide
         # Valeurs initiales
         self.pvi = pv
         self.marinsi = marins
@@ -40,6 +39,7 @@ class Bateau(Pivote):
         """Réinitialise certains paramètres du bateau pour rejouer une nouvelle partie.
         """
         self.reset()
+        self.id = 0
         self.place = False
         self.coule = False
         self.actif = False
