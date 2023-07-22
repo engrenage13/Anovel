@@ -17,53 +17,55 @@ class Case(Bougeable):
         if grise:
             draw_rectangle(self.pos[0], self.pos[1], self.taille, self.taille, [50, 50, 50, 160])
 
-    def dessineMarqueur(self) -> None:
-        v = 0.07
-        t = int(self.taille*v)
-        if self.contenu[0].direction%2 == 1:
-            x = 1-v*len(self.contenu)
-            y = 0.93
-        else:
-            x = 0.93
-            y = 1-v*len(self.contenu)
-        for i in range(len(self.contenu)):
-            draw_rectangle(int(self.pos[0]+x*self.taille), int(self.pos[1]+y*self.taille), t, t, WHITE)
-            draw_rectangle_lines(int(self.pos[0]+x*self.taille), int(self.pos[1]+y*self.taille), t, t, BLACK)
-            draw_text_ex(police1, str(self.contenu[i].id), (int(self.pos[0]+(x+0.016)*self.taille), int(self.pos[1]+(y+0.005)*self.taille)), t, 0, self.contenu[i].couleur)
-            if self.contenu[0].direction%2 == 1:
-                x += v
-            else:
-                y += v
+    def dessineMarqueur(self, x: int, y: int, id: int|str, couleur: Color) -> None:
+        t = int(self.taille*0.1)
+        draw_rectangle_rounded([x, y, t, t], 0.3, 360, couleur)
+        draw_text_ex(police1, str(id), (int(x+0.028*self.taille), int(y+0.005*self.taille)), 23, 0, WHITE)
         
-    def dessineContenu(self) -> None:    
+    def dessineContenu(self) -> None:
         if len(self.contenu) > 0:
             ecart = int(self.taille*0.035)
+            tMarqueur = int(self.taille*0.1)
             if len(self.contenu) == 2:
                 if self.contenu[0].direction%2 == 0:
                     largeur = int(self.taille-ecart*2)
                     hauteur = int(self.taille/2-ecart*2)
-                    draw_rectangle_rounded_lines([int(self.pos[0]+ecart), int(self.pos[1]+ecart), largeur, hauteur], 0.15, 330, 5, self.contenu[0].couleur)
+                    if self.contenu[0].actif or self.contenu[0].getContact():
+                        draw_rectangle_rounded_lines([int(self.pos[0]+ecart), int(self.pos[1]+ecart), largeur, hauteur], 0.15, 330, 5, self.contenu[0].couleur)
+                        self.dessineMarqueur(int(self.pos[0]+ecart+largeur-tMarqueur), int(self.pos[1]+ecart+hauteur-tMarqueur), self.contenu[0].id, self.contenu[0].couleur)
+                    else:
+                        self.dessineMarqueur(int(self.pos[0]+self.taille-tMarqueur), int(self.pos[1]+self.taille/2-tMarqueur), self.contenu[0].id, self.contenu[0].couleur)
                     self.contenu[0].dessine()
-                    draw_rectangle_rounded_lines([int(self.pos[0]+ecart), int(self.pos[1]+self.taille/2+ecart), largeur, hauteur], 0.15, 330, 5, self.contenu[1].couleur)
+                    if self.contenu[1].actif or self.contenu[1].getContact():
+                        draw_rectangle_rounded_lines([int(self.pos[0]+ecart), int(self.pos[1]+self.taille/2+ecart), largeur, hauteur], 0.15, 330, 5, self.contenu[1].couleur)
+                        self.dessineMarqueur(int(self.pos[0]+ecart+largeur-tMarqueur), int(self.pos[1]+self.taille/2+ecart+hauteur-tMarqueur), self.contenu[1].id, self.contenu[1].couleur)
+                    else:
+                        self.dessineMarqueur(int(self.pos[0]+self.taille-tMarqueur), int(self.pos[1]+self.taille-tMarqueur), self.contenu[1].id, self.contenu[1].couleur)
                     self.contenu[1].dessine()
                 else:
                     largeur = int(self.taille/2-ecart*2)
                     hauteur = int(self.taille-ecart*2)
-                    draw_rectangle_rounded_lines([int(self.pos[0]+ecart), int(self.pos[1]+ecart), largeur, hauteur], 0.15, 330, 5, self.contenu[0].couleur)
+                    if self.contenu[0].actif or self.contenu[0].getContact():
+                        draw_rectangle_rounded_lines([int(self.pos[0]+ecart), int(self.pos[1]+ecart), largeur, hauteur], 0.15, 330, 5, self.contenu[0].couleur)
+                        self.dessineMarqueur(int(self.pos[0]+ecart+largeur-tMarqueur), int(self.pos[1]+ecart+hauteur-tMarqueur), self.contenu[0].id, self.contenu[0].couleur)
+                    else:
+                        self.dessineMarqueur(int(self.pos[0]+self.taille/2-tMarqueur), int(self.pos[1]+self.taille-tMarqueur), self.contenu[0].id, self.contenu[0].couleur)
                     self.contenu[0].dessine()
-                    draw_rectangle_rounded_lines([int(self.pos[0]+self.taille/2+ecart), int(self.pos[1]+ecart), largeur, hauteur], 0.15, 330, 5, self.contenu[1].couleur)
+                    if self.contenu[1].actif or self.contenu[1].getContact():
+                        draw_rectangle_rounded_lines([int(self.pos[0]+self.taille/2+ecart), int(self.pos[1]+ecart), largeur, hauteur], 0.15, 330, 5, self.contenu[1].couleur)
+                        self.dessineMarqueur(int(self.pos[0]+ecart+self.taille/2+largeur-tMarqueur), int(self.pos[1]+ecart+hauteur-tMarqueur), self.contenu[1].id, self.contenu[1].couleur)
+                    else:
+                        self.dessineMarqueur(int(self.pos[0]+self.taille-tMarqueur), int(self.pos[1]+self.taille-tMarqueur), self.contenu[1].id, self.contenu[1].couleur)
                     self.contenu[1].dessine()
             else:
                 largeur = int(self.taille-ecart*2)
                 hauteur = int(self.taille-ecart*2)
-                draw_rectangle_rounded_lines([int(self.pos[0]+ecart), int(self.pos[1]+ecart), largeur, hauteur], 0.15, 330, 5, self.contenu[0].couleur)
+                if self.contenu[0].actif or self.contenu[0].getContact():
+                    draw_rectangle_rounded_lines([int(self.pos[0]+ecart), int(self.pos[1]+ecart), largeur, hauteur], 0.15, 330, 5, self.contenu[0].couleur)
+                    self.dessineMarqueur(int(self.pos[0]+ecart+largeur-tMarqueur), int(self.pos[1]+ecart+hauteur-tMarqueur), self.contenu[0].id, self.contenu[0].couleur)
+                else:
+                    self.dessineMarqueur(int(self.pos[0]+self.taille-tMarqueur), int(self.pos[1]+self.taille-tMarqueur), self.contenu[0].id, self.contenu[0].couleur)
                 self.contenu[0].dessine()
-            """for i in range(len(self.contenu)):
-                draw_rectangle_rounded_lines([int(self.pos[0]+ecart), int(self.pos[1]+ecart), largeur, hauteur], 0.15, 330, 5, self.contenu[i].couleur)
-                self.contenu[i].dessine()
-                if self.contenu[i].actif:
-                    draw_rectangle_lines_ex([self.pos[0], self.pos[1], self.taille, self.taille], 3, WHITE)"""
-            #self.dessineMarqueur()
 
     def setPos(self, x: int, y: int) -> None:
         super().setPos(x, y)
