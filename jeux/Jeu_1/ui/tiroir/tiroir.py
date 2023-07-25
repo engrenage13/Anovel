@@ -2,7 +2,7 @@ from random import shuffle
 from systeme.FondMarin import *
 from jeux.Jeu_1.objets.Bateau import Bateau
 from museeNoyee import corail1, corail2, poisson, coeur, fleche, marin, degats
-from jeux.Jeu_1.ui.attribut import Attribut
+from jeux.Jeu_1.ui.tiroir.attribut import Attribut
 
 class Tiroir:
     def __init__(self, bateaux: list[Bateau], couleur: Color = WHITE) -> None:

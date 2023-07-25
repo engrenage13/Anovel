@@ -223,6 +223,12 @@ class Plateau:
             for j in range(self.nbCases):
                 self.cases[i][j].vide()
         self.elementsPrioritaires = []
+
+    def rejouer(self) -> None:
+        for i in range(self.nbCases):
+            for j in range(len(self.nbCases)):
+                self.cases[i][j].rejouer()
+        self.elementsPrioritaires = []
     
     def __getitem__(self, key) -> list[Case]:
         return self.cases[key]

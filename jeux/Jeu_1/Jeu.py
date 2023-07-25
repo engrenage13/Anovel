@@ -7,7 +7,7 @@ from jeux.Jeu_1.pageCarte import PageCarte
 from jeux.Jeu_1.objets.bases.fenetre import Fenetre
 from jeux.Jeu_1.objets.plateau.zone import Zone
 from jeux.Jeu_1.config import config, joueurs as lijo
-from jeux.Jeu_1.ui.tiroir import Tiroir
+from jeux.Jeu_1.ui.tiroir.tiroir import Tiroir
 from jeux.Jeu_1.ui.selecBat import SelecBat
 from jeux.Jeu_1.ui.editTeleco import Cible, EditTeleco
 from jeux.Jeu_1.action.Placement import Placement
@@ -108,7 +108,7 @@ class Jeu:
                 self.fen[fenetre].rejouer()
         self.actif = self.phase = 'intro'
         self.plateau.bloque = True
-        self.plateau.vide()
+        self.plateau.rejouer()
         self.indiqueTour = 0
         # Joueurs 
         self.actuel = 0

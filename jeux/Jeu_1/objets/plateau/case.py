@@ -10,6 +10,9 @@ class Case(Bougeable):
         self.couleurs = couleurs
         self.largeurBordure = bordure
         self.contenu = []
+        # Iles
+        self.typeIle = -1
+        self.aMarqueur = False
 
     def dessine(self, grise: bool = False) -> None:
         draw_rectangle(self.pos[0], self.pos[1], self.taille, self.taille, self.couleurs[0])
@@ -137,6 +140,13 @@ class Case(Bougeable):
                 self.contenu[i].droite()
         self.setPos(self.pos[0], self.pos[1])
 
+    def rejouer(self) -> None:
+        if len(self.contenu) > 0:
+            self.vide()
+        if self.typeIle > -1:
+            self.typeIle = -1
+            self.aMarqueur = False
+
     def contient(self, element: Bateau) -> bool:
         return element in self.contenu
         
@@ -151,3 +161,9 @@ class Case(Bougeable):
     
     def __len__(self) -> int:
         return len(self.contenu)
+    
+    def __pos__(self) -> None:
+        self.aMarqueur = True
+
+    def __neg__(self) -> None:
+        self.aMarqueur = False
