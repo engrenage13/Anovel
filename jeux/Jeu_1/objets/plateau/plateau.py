@@ -1,7 +1,7 @@
 import random
 from systeme.FondMarin import *
 from jeux.Jeu_1.objets.plateau.case import Case
-from jeux.Jeu_1.fonctions.bases import TAILLECASE, EAUX
+from jeux.Jeu_1.fonctions.bases import TAILLECASE, EAUX, marqueCases
 from jeux.Jeu_1.fonctions.deplacement import glisse
 
 class Plateau:
@@ -43,6 +43,8 @@ class Plateau:
         # Dessin
         self.elementsPrioritaires = []
         self.grise = False
+        # Iles
+        marqueCases(self, 20, 40)
 
     def dessine(self) -> None:
         self.dessineEnvirronement()
@@ -229,6 +231,7 @@ class Plateau:
             for j in range(len(self.nbCases)):
                 self.cases[i][j].rejouer()
         self.elementsPrioritaires = []
+        marqueCases(self, 20, 40)
     
     def __getitem__(self, key) -> list[Case]:
         return self.cases[key]
