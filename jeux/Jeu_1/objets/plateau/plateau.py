@@ -45,6 +45,7 @@ class Plateau:
         self.grise = False
         # Iles
         marqueCases(self, 20, 40)
+        self.setIles()
 
     def dessine(self) -> None:
         self.dessineEnvirronement()
@@ -226,12 +227,22 @@ class Plateau:
                 self.cases[i][j].vide()
         self.elementsPrioritaires = []
 
+    def setIles(self) -> None:
+        for i in range(self.nbCases):
+            for j in range(self.nbCases):
+                case = self.cases[i][j]
+                if case.marqueur:
+                    case.typeIle = 0
+                    case.orienteIle = random.randint(0, 3)
+                    case.setIle()
+
     def rejouer(self) -> None:
         for i in range(self.nbCases):
-            for j in range(len(self.nbCases)):
+            for j in range(self.nbCases):
                 self.cases[i][j].rejouer()
         self.elementsPrioritaires = []
         marqueCases(self, 20, 40)
+        self.setIles()
     
     def __getitem__(self, key) -> list[Case]:
         return self.cases[key]

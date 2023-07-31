@@ -1,7 +1,10 @@
+import os
+import random
 from systeme.FondMarin import *
 from jeux.Jeu_1.fonctions.bases import TAILLECASE
 from jeux.Jeu_1.objets.Bateau import Bateau
 from jeux.Jeu_1.objets.bases.bougeable import Bougeable
+from jeux.Jeu_1.chargeIles import chargeSegment
 
 class Case(Bougeable):
     def __init__(self, x: int = 0, y: int = 0, taille: int = TAILLECASE, couleurs: tuple[Color] = (WHITE, BLACK), bordure: float = 1.5) -> None:
@@ -12,11 +15,15 @@ class Case(Bougeable):
         self.contenu = []
         # Iles
         self.typeIle = -1
+        self.orienteIle = 0
+        self.imaIle = None
         self.marqueur = False
 
     def dessine(self, grise: bool = False) -> None:
         draw_rectangle(self.pos[0], self.pos[1], self.taille, self.taille, self.couleurs[0])
         draw_rectangle_lines_ex([self.pos[0], self.pos[1], self.taille, self.taille], self.largeurBordure, self.couleurs[1])
+        if self.marqueur:
+            draw_texture(self.imaIle, self.pos[0], self.pos[1], WHITE)
         if grise:
             draw_rectangle(self.pos[0], self.pos[1], self.taille, self.taille, [50, 50, 50, 160])
 
@@ -145,10 +152,22 @@ class Case(Bougeable):
             self.vide()
         if self.typeIle > -1:
             self.typeIle = -1
+            self.orienteIle = 0
+            self.imaIle = None
             self.marqueur = False
 
     def contient(self, element: Bateau) -> bool:
         return element in self.contenu
+    
+    def setIle(self, preciseDos: str = "a") -> None:
+        if self.marqueur:
+            if self.typeIle == 2:
+                dossier = "2"+preciseDos
+            else:
+                dossier = str(self.typeIle)
+            lifichiers = os.listdir(f"jeux/Jeu_1/images/iles/{dossier}")
+            segment = random.choice(lifichiers)
+            self.imaIle = chargeSegment(f"jeux/Jeu_1/images/iles/{dossier}/{segment}", dossier, f"{segment}{self.orienteIle}", self.orienteIle)
         
     def __add__(self, element):
         return self.ajoute(element)

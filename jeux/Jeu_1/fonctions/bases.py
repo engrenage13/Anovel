@@ -12,7 +12,7 @@ def marqueCases(plateau: list[list], pourcentMin: int, pourcentMax: int) -> None
         x = randint(0, plateau.nbCases-1)
         y = randint(0, plateau.nbCases-1)
         if not plateau.cases[x][y].marqueur:
-            plateau.cases[x][y].marqueur
+            +plateau.cases[x][y]
 
 def definiNombreTour(plateau: list[list], pourcentMin: int, pourcentMax: int) -> int:
     nbCases = plateau.nbCases*plateau.nbCases
