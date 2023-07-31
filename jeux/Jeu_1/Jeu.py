@@ -44,7 +44,7 @@ class Jeu:
                 self.actif = 'placement'
             else:
                 self.actif = config['dev'].lower()
-            if self.actif != 'intro' or self.actif != 'choix_zone':
+            if self.actif != 'intro' and self.actif != 'choix_zone':
                 self.fen['choix_zone'].action.passe()
         else:
             self.actif = 'intro'

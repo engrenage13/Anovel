@@ -23,7 +23,10 @@ class Case(Bougeable):
         draw_rectangle(self.pos[0], self.pos[1], self.taille, self.taille, self.couleurs[0])
         draw_rectangle_lines_ex([self.pos[0], self.pos[1], self.taille, self.taille], self.largeurBordure, self.couleurs[1])
         if self.marqueur:
-            draw_texture(self.imaIle, self.pos[0], self.pos[1], WHITE)
+            if self.couleurs == ([0, 0, 0, 150], BLACK):
+                draw_rectangle(self.pos[0], self.pos[1], self.taille, self.taille, [65, 150, 39, 150])
+            else:
+                draw_texture(self.imaIle, self.pos[0], self.pos[1], WHITE)
         if grise:
             draw_rectangle(self.pos[0], self.pos[1], self.taille, self.taille, [50, 50, 50, 160])
 
