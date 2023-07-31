@@ -103,16 +103,19 @@ class Case(Bougeable):
 
     def ajoute(self, contenu) -> bool:
         rep = True
-        if len(self.contenu) > 0:
-            if len(self.contenu) >= 2:
-                rep = False
-            elif self.contenu[0].direction%2 != contenu.direction%2:
-                self.tourneBateaux()
-                self.contenu.append(contenu)
+        if not self.marqueur:
+            if len(self.contenu) > 0:
+                if len(self.contenu) >= 2:
+                    rep = False
+                elif self.contenu[0].direction%2 != contenu.direction%2:
+                    self.tourneBateaux()
+                    self.contenu.append(contenu)
+                else:
+                    self.contenu.append(contenu)
             else:
                 self.contenu.append(contenu)
         else:
-            self.contenu.append(contenu)
+            rep = False
         if rep:
             contenu.place = True
             self.setPos(self.pos[0], self.pos[1])

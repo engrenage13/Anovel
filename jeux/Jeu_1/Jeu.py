@@ -694,15 +694,15 @@ class Jeu:
             devant = voisines[pointsCardinaux[bateau.direction]]
             gauche = voisines[pointsCardinaux[(bateau.direction-1)%len(pointsCardinaux)]]
             droite = voisines[pointsCardinaux[(bateau.direction+1)%len(pointsCardinaux)]]
-            if devant and not self.plateau[devant[0]][devant[1]].estPleine():
+            if devant and not self.plateau[devant[0]][devant[1]].estPleine() and not self.plateau[devant[0]][devant[1]].marqueur:
                 self.zoneDep.cases.append(devant)
                 if progression < bateau.pm:
                     self.setZonePortee(bateau, self.plateau[devant[0]][devant[1]], progression+1)
-            if gauche and not self.plateau[gauche[0]][gauche[1]].estPleine():
+            if gauche and not self.plateau[gauche[0]][gauche[1]].estPleine() and not self.plateau[gauche[0]][gauche[1]].marqueur:
                 self.zoneDep.cases.append(gauche)
                 if progression < bateau.pm:
                     self.setZonePortee(bateau, self.plateau[gauche[0]][gauche[1]], progression+1)
-            if droite and not self.plateau[droite[0]][droite[1]].estPleine():
+            if droite and not self.plateau[droite[0]][droite[1]].estPleine() and not self.plateau[droite[0]][droite[1]].marqueur:
                 self.zoneDep.cases.append(droite)
                 if progression < bateau.pm:
                     self.setZonePortee(bateau, self.plateau[droite[0]][droite[1]], progression+1)
@@ -710,7 +710,7 @@ class Jeu:
             for i in range(len(pointsCardinaux)):
                 if voisines[pointsCardinaux[i]] and not voisines[pointsCardinaux[i]] in self.zoneDep.cases:
                     ncase = self.plateau[voisines[pointsCardinaux[i]][0]][voisines[pointsCardinaux[i]][1]]
-                    if not ncase.estPleine():
+                    if not ncase.estPleine() and not ncase.marqueur:
                         casebat = self.trouveCase(bateau)
                         if voisines[pointsCardinaux[i]] != casebat:
                             self.zoneDep.cases.append(voisines[pointsCardinaux[i]])

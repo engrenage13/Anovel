@@ -195,7 +195,8 @@ class Scene(Jeu):
             cases = []
             for j in range(len(lcase)):
                 if not self.plateau[lcase[j][0]][lcase[j][1]].estPleine():
-                    cases.append(self.plateau[lcase[j][0]][lcase[j][1]])
+                    if not self.plateau[lcase[j][0]][lcase[j][1]].marqueur:
+                        cases.append(self.plateau[lcase[j][0]][lcase[j][1]])
             c1 = choice(cases)
             c2 = choice([0, 1, 2, 3])
             for k in range(c2):

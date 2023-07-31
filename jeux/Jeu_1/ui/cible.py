@@ -9,7 +9,7 @@ class Cible:
         self.play = True
 
     def dessine(self) -> None:
-        if not self.case.estPleine():
+        if not self.case.estPleine() and not self.case.marqueur:
             draw_rectangle(self.case.pos[0], self.case.pos[1], self.case.taille, self.case.taille, [255, 255, 255, 130])
             draw_rectangle_lines_ex([self.case.pos[0], self.case.pos[1], self.case.taille, self.case.taille], 
                                     int(self.case.largeurBordure*2), WHITE)
