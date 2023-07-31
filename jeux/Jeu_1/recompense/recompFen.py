@@ -3,7 +3,7 @@ from ui.bouton.bouton import Bouton
 from ui.blocTexte import BlocTexte
 from jeux.Jeu_1.objets.Bateau import Bateau
 from jeux.Jeu_1.recompense.vignette import Vignette
-from museeNoyee import coeur, marin, fleche, degats
+from jeux.Jeu_1.icones import coeur, marin, fleche, degats
 
 class RecompFen:
     def __init__(self, allie: Bateau = Bateau("", "jeux/Jeu_1/images/Bateaux/gbb.png", 5, 10, 0, 1, [0, 0, 0, 0]), ennemi: Bateau = Bateau("", "jeux/Jeu_1/images/Bateaux/gbb.png", 4, 1, 0, 0, [0, 0, 0, 0])) -> None:

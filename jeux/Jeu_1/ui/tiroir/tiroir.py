@@ -1,7 +1,8 @@
 from random import shuffle
 from systeme.FondMarin import *
 from jeux.Jeu_1.objets.Bateau import Bateau
-from museeNoyee import corail1, corail2, poisson, coeur, fleche, marin, degats
+from museeNoyee import corail1, corail2, poisson
+from jeux.Jeu_1.icones import coeur, fleche, marin, degats
 from jeux.Jeu_1.ui.tiroir.attribut import Attribut
 
 class Tiroir:

@@ -1,7 +1,7 @@
 from systeme.FondMarin import *
 from jeux.Jeu_1.objets.bases.pivote import Pivote
 from jeux.Jeu_1.ui.infoBulle import InfoBulle
-from museeNoyee import coeur, marin, degats as explosion
+from jeux.Jeu_1.icones import coeur, marin, degats as explosion
 
 class Bateau(Pivote):
     def __init__(self, nom: str, image: str, pv: int, marins: int, pm: int, degats: int, couleur: Color):

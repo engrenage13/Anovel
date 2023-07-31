@@ -16,7 +16,7 @@ from jeux.Jeu_1.ui.barreAction import BarreAction
 from jeux.Jeu_1.orgaFen import OrgaFen
 from jeux.Jeu_1.recompense.recompFen import RecompFen
 from jeux.Jeu_1.fenFin.fin import Fin
-from museeNoyee import orga, miniorga, abordage, miniabordage
+from jeux.Jeu_1.icones import orga, miniorga, abordage, miniabordage
 
 TOURMAX = 40
 

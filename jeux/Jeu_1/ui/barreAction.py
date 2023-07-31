@@ -1,7 +1,7 @@
 from systeme.FondMarin import *
 from ui.bouton.bouton import Bouton
 from jeux.Jeu_1.objets.Bateau import Bateau
-from museeNoyee import minicoeur, minimarin
+from jeux.Jeu_1.icones import minicoeur, minimarin
 
 class BarreAction:
     def __init__(self, joueurs: list, passe) -> None:
