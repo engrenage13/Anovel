@@ -232,9 +232,72 @@ class Plateau:
             for j in range(self.nbCases):
                 case = self.cases[i][j]
                 if case.marqueur:
-                    case.typeIle = 0
-                    case.orienteIle = random.randint(0, 3)
-                    case.setIle()
+                    dossierSpecifique = self.definiOriNomb(self.getIlesVoisines(case), case)
+                    case.setIle(dossierSpecifique)
+
+    def getIlesVoisines(self, centre: Case) -> dict[bool]:
+        ilesVoisines = {'n': False, 'e': False, 's': False, 'o': False}
+        voisines = self.getVoisines(centre)
+        if voisines['n']:
+            if self.cases[voisines['n'][0]][voisines['n'][1]].marqueur:
+                ilesVoisines['n'] = True
+        if voisines['e']:
+            if self.cases[voisines['e'][0]][voisines['e'][1]].marqueur:
+                ilesVoisines['e'] = True
+        if voisines['s']:
+            if self.cases[voisines['s'][0]][voisines['s'][1]].marqueur:
+                ilesVoisines['s'] = True
+        if voisines['o']:
+            if self.cases[voisines['o'][0]][voisines['o'][1]].marqueur:
+                ilesVoisines['o'] = True
+        return ilesVoisines
+    
+    def definiOriNomb(self, ilesVoisines: dict[bool], case: Case) -> None:
+        dossier = 'a'
+        compte = 0
+        orientations = ['n', 'e', 's', 'o']
+        for i in range(len(orientations)):
+            if ilesVoisines[orientations[i]]:
+                compte += 1
+        j = 0
+        stop = False
+        while j < len(orientations) and not stop:
+            if ilesVoisines[orientations[j]]:
+                stop = True
+            else:
+                j += 1
+        case.typeIle = compte
+        if compte == 0 or compte == 4:
+            case.orienteIle = random.randint(0, 3)
+        elif compte == 1:
+            case.orienteIle = j
+        elif compte == 3:
+            if not ilesVoisines['n']:
+                case.orienteIle = 0
+            elif not ilesVoisines['e']:
+                case.orienteIle = 1
+            elif not ilesVoisines['s']:
+                case.orienteIle = 2
+            elif not ilesVoisines['o']:
+                case.orienteIle = 3
+        elif compte == 2:
+            if (ilesVoisines['n'] and ilesVoisines['s']) or (ilesVoisines['e'] and ilesVoisines['o']):
+                dossier = 'b'
+                if ilesVoisines['n']:
+                    possibilites = [0, 2]
+                else:
+                    possibilites = [1, 3]
+                case.orienteIle = random.choice(possibilites)
+            else:
+                if ilesVoisines['n'] and ilesVoisines['e']:
+                    case.orienteIle = 0
+                elif ilesVoisines['e'] and ilesVoisines['s']:
+                    case.orienteIle = 1
+                elif ilesVoisines['s'] and ilesVoisines['o']:
+                    case.orienteIle = 2
+                elif ilesVoisines['o'] and ilesVoisines['n']:
+                    case.orienteIle = 3
+        return dossier
 
     def rejouer(self) -> None:
         for i in range(self.nbCases):
