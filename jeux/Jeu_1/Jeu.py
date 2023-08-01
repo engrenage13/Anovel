@@ -137,7 +137,7 @@ class Jeu:
             while self.phase == phase:
                 self.passeTour()
                 if self.actuel == 1 and self.phase == 'placement':
-                    self.zoneDep.cases = self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+int(len(self.fen['choix_zone'].zones)/1))%len(self.fen['choix_zone'].zones)].cases
+                    self.zoneDep.cases = self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+int(len(self.fen['choix_zone'].zones)/2))%len(self.fen['choix_zone'].zones)].cases
         elif self.phase == 'jeu':
             self.switch()
 
@@ -298,8 +298,8 @@ class Jeu:
                 if self.actuel == 0 and self.zoneDep.cases != self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases:
                     self.zoneDep.cases = self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases
                     self.setPlateauEnPLace()
-                elif self.actuel == 1 and self.zoneDep.cases != self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+int(len(self.fen['choix_zone'].zones)/1))%len(self.fen['choix_zone'].zones)].cases:
-                    self.zoneDep.cases = self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+int(len(self.fen['choix_zone'].zones)/1))%len(self.fen['choix_zone'].zones)].cases
+                elif self.actuel == 1 and self.zoneDep.cases != self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+int(len(self.fen['choix_zone'].zones)/2))%len(self.fen['choix_zone'].zones)].cases:
+                    self.zoneDep.cases = self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+int(len(self.fen['choix_zone'].zones)/2))%len(self.fen['choix_zone'].zones)].cases
                     self.setPlateauEnPLace()
                 if self.pause > 0:
                     self.pause -= 1
