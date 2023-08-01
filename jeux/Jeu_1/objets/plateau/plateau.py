@@ -306,6 +306,12 @@ class Plateau:
         self.elementsPrioritaires = []
         marqueCases(self, 20, 40)
         self.setIles()
+
+    def copieContenu(self, plateau) -> None:
+        for i in range(len(self.cases)):
+            for j in range(len(self.cases[i])):
+                if i < plateau.nbCases and j < plateau.nbCases:
+                    self.cases[i][j].marqueur = plateau[i][j].marqueur
     
     def __getitem__(self, key) -> list[Case]:
         return self.cases[key]

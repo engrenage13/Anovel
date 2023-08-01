@@ -44,6 +44,8 @@ class Jeu:
                 self.actif = 'placement'
             else:
                 self.actif = config['dev'].lower()
+                if self.actif == 'choix_zone':
+                    self.fen['choix_zone'].plateau.copieContenu(self.plateau)
             if self.actif != 'intro' and self.actif != 'choix_zone':
                 self.fen['choix_zone'].action.passe()
         else:
@@ -91,6 +93,7 @@ class Jeu:
     def switch(self) -> None:
         if self.actif == 'intro':
             self.actif = 'choix_zone'
+            self.fen['choix_zone'].plateau.copieContenu(self.plateau)
             self.setPhase('placement')
         elif self.actif == 'choix_zone':
             self.actif = 'placement'
@@ -110,6 +113,7 @@ class Jeu:
         self.plateau.bloque = True
         self.plateau.rejouer()
         self.indiqueTour = 0
+        self.zoneDep.setCouleurs([255, 161, 0, 60], ORANGE, [255, 161, 0, 60], ORANGE)
         # Joueurs 
         self.actuel = 0
         for i in range(len(self.joueurs)):
