@@ -42,6 +42,8 @@ class Scene(Jeu):
         if self.play:
             if config[self.actif]['interface']:
                 self.g1.dessine(int(xf-self.g1.largeur), 0)
+                if is_key_pressed(256):
+                    self.openMenu()
                 if config['dev']:
                     self.gDev.dessine(int(xf-self.gDev.largeur), self.g1.hauteur)
             if fenetre == self.plateau:
@@ -78,6 +80,10 @@ class Scene(Jeu):
                     self.btAlea.dessine(int(ecart+self.btAlea.getDims()[0]/2), y)
                     if len(self.tiroir) == 0:
                         self.btValid.dessine(int(xf*0.99-self.btValid.getDims()[0]/2), int(yf-xf*0.01-self.btValid.getDims()[1]/2))
+                    if is_key_pressed(261):
+                        self.tousAuTiroir()
+                    if is_key_pressed(82):
+                        self.placementAleatoire()
         elif self.actif == 'jeu' and self.phase == 'jeu':
             self.tour()
             if self.play:
@@ -234,4 +240,8 @@ class Scene(Jeu):
 
     def nouveauMessage(self, message: str) -> None:
         self.message = message
+        self.lu = False
+
+    def openMenu(self) -> None:
+        self.message = "J1_MENU"
         self.lu = False

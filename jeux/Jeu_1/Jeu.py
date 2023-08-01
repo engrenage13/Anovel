@@ -410,7 +410,7 @@ class Jeu:
         li2 = ["nord", "est", "sud", "ouest"]
         for i in range(len(li1)):
             if voisines[li1[i]] and voisines[li1[i]] in self.zoneDep.cases:
-                if not self.plateau[voisines[li1[i]][0]][voisines[li1[i]][1]].estPleine():
+                if not self.plateau[voisines[li1[i]][0]][voisines[li1[i]][1]].estPleine() and not self.plateau[voisines[li1[i]][0]][voisines[li1[i]][1]].marqueur:
                     self.teleco.activeDep[li2[i]] = True
                 else:
                     self.teleco.activeDep[li2[i]] = False

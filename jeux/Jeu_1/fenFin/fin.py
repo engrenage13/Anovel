@@ -8,7 +8,7 @@ class Fin:
     def __init__(self, joueurs: list[Joueur]) -> None:
         self.setJoueurs(joueurs)
         # Boutons
-        self.opt = [Bouton(TB1o, BTV, "MENU", '', [self.quitte]),
+        self.opt = [Bouton(TB1o, BTV, "QUITTER", '', [self.quitte]),
                     Bouton(TB1o, BTV, "REJOUER", '', [self.reset])]
         self.gm1 = Grille(int(xf*0.44), [False])
         self.gm1.ajouteElement(self.opt[0], 0, 0)
@@ -32,6 +32,10 @@ class Fin:
         draw_line_ex((int(xf/2-xf*0.22), y), (int(xf/2+xf*0.22), y), 2, GRAY)
         y += 2 + ecart
         self.gm1.dessine(int(xf/2-self.gm1.largeur/2), y)
+        if is_key_pressed(32):
+            self.quitte()
+        elif is_key_pressed(82):
+            self.reset()
         if self.playAnim:
             if not self.ok:
                 self.anims(True)

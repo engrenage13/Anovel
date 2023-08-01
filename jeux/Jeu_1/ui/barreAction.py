@@ -39,20 +39,34 @@ class BarreAction:
                 draw_text_ex(police2i, "AUCUNE", (x, int(yf-self.hauteur*0.75)), self.hauteur*0.5, 0, WHITE)
             elif self.actionsPossibles["deplacement"]:
                 self.btDep.dessine(int(x+self.btDep.getDims()[0]/2), int(yf-self.hauteur/2))
+                if is_key_pressed(90):
+                    self.activeDeplacement()
                 if self.actionsPossibles["attaque"]:
                     x += int(self.btDep.getDims()[0]+espace)
                     self.btAt.dessine(int(x+self.btAt.getDims()[0]/2), int(yf-self.hauteur/2))
+                    if is_key_pressed(88):
+                        self.activeAttaque()
             elif self.actionsPossibles["attaque"]:
                 self.btAt.dessine(int(x+self.btAt.getDims()[0]/2), int(yf-self.hauteur/2))
+                if is_key_pressed(88):
+                    self.activeAttaque()
             self.passe.dessine(int(xf-self.passe.getDims()[0]*0.7), int(yf-self.hauteur/2))
         else:
             self.btv.dessine(int(xf-self.btv.getDims()[0]*0.7), int(yf-self.hauteur/2))
+            if is_key_pressed(32):
+                self.valideAction()
             self.btx.dessine(int(xf-self.btv.getDims()[0]*2), int(yf-self.hauteur/2))
+            if is_key_pressed(261):
+                self.annuleAction()
             if self.deplacement:
                 if self.actionsPossibles["organisation"]:
                     self.btOrga.dessine(int(xf-self.btv.getDims()[0]*2.8-self.btOrga.getDims()[0]/2), int(yf-self.hauteur/2))
+                    if is_key_pressed(90):
+                        self.activeOrga()
                 if self.actionsPossibles["abordage"]:
                     self.btAbordage.dessine(int(xf-self.btv.getDims()[0]*2.8-self.btAbordage.getDims()[0]/2), int(yf-self.hauteur/2))
+                    if is_key_pressed(90):
+                        self.activeAbordage()
             if self.attaque:
                 bateau = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
                 tda1 = "INFLIGER "

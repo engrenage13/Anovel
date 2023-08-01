@@ -1,4 +1,4 @@
-from systeme.FondMarin import xf, yf, draw_rectangle_rounded, draw_texture, BTANNULE, TB2n
+from systeme.FondMarin import xf, yf, draw_rectangle_rounded, draw_texture, BTANNULE, TB2n, is_key_pressed
 from jeux.Jeu_1.objets.Bateau import Bateau
 from museeNoyee import poisson
 from ui.bouton.bouton import Bouton
@@ -21,6 +21,8 @@ class SelecBat:
         self.contenu.dessine()
         if self.lum >= 1 and self.play:
             self.btstop.dessine(int(self.pos[0]+self.dims[0]*0.98), int(self.pos[1]-self.dims[1]*0.97))
+            if is_key_pressed(261):
+                self.annulation()
         self.apparition()
 
     def setContenu(self, contenu: Bateau) -> None:

@@ -4,9 +4,9 @@ from ui.bouton.grille import Grille
 
 class Menu:
     def __init__(self) -> None:
-        self.opt = [[Bouton(TB1o, BTV, "CONTINUER", '', [self.portailAustral]), "JEU"],
+        self.opt = [[Bouton(TB1o, BTV, "REPRENDRE", '', [self.portailAustral]), "JEU"],
                     [Bouton(TB1o, BTNOIR, "PARAMETRES", '', [self.portailAustral]), "ANOVEL_OPTIONS"],
-                    [Bouton(TB1o, BTNOIR, "MENU PRINCIPAL", '', [self.portailAustral]), "ANOVEL_MENU"],
+                    [Bouton(TB1o, BTNOIR, "MENU", '', [self.portailAustral]), "ANOVEL_MENU"],
                     [Bouton(TB1o, BTDANGER, "QUITTER", '', [self.portailAustral]), "QUITTE"]]
         self.gm1 = Grille(int(xf*0.25), [False])
         self.gm1.ajouteElement(self.opt[0][0], 0, 0)
@@ -42,6 +42,8 @@ class Menu:
         self.dessineLigne(int(xf/2), y)
         y += ecart
         self.gm3.dessine(int(xf/2-self.gm3.largeur/2), y)
+        if is_key_pressed(256):
+            self.closeMenu()
         if self.playAnim:
             if not self.ok:
                 self.anims(True)
@@ -87,4 +89,8 @@ class Menu:
 
     def nouveauMessage(self, message: str) -> None:
         self.message = message
+        self.lu = False
+
+    def closeMenu(self) -> None:
+        self.message = "JEU"
         self.lu = False
