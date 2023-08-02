@@ -5,7 +5,7 @@ from systeme.fenetre import Fenetre
 from menu.menu import Menu
 from parametres.parametres import Parametres
 from jeux.BN.partie import Partie
-from jeux.Jeu_1.J1 import J1
+from jeux.archipel.archipel import Archipel
 
 if not fichierExiste():
     verifSauvegarde()
@@ -16,8 +16,8 @@ fen = Fenetre()
 menu = Menu()
 param = Parametres()
 bataille = Partie()
-j1 = J1()
-fenetre = {"menu": menu, "param": param, "bn": bataille, "j1": j1}
+archipel = Archipel()
+fenetre = {"menu": menu, "param": param, "bn": bataille, "archipel": archipel}
 
 menu.play = True
 if config_sys['dev']:
@@ -27,7 +27,7 @@ else:
     precedent = menu
     actif = menu
 
-if type(actif) == J1:
+if type(actif) == Archipel:
     actif.initialise()
 
 while not fen.jeuDoitFermer():
@@ -56,9 +56,9 @@ while not fen.jeuDoitFermer():
                     bataille.rejouer()
             elif actif.message == "BN":
                 actif = bataille
-            elif actif.message == "J1":
-                j1.initialise()
-                actif = j1
+            elif actif.message == "ARCHIPEL":
+                archipel.initialise()
+                actif = archipel
             actif.play = True
     end_drawing()
 

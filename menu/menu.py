@@ -8,7 +8,7 @@ class Menu:
     def __init__(self) -> None:
         # Boutons
         self.opt = [[Bouton(TB1o, BTV, "Jouer", '', [self.portailBoreal]), "BN"], 
-                    [Bouton(TB1o, BTV, "Jouer", '', [self.portailBoreal]), "J1"],
+                    [Bouton(TB1o, BTV, "Jouer", '', [self.portailBoreal]), "ARCHIPEL"],
                     [Bouton(TB1n, PTIBT1, "Parametres", 'images/ui/rouage.png', [self.portailBoreal]), "ANOVEL_OPTIONS"],
                     [Bouton(TB1o, BTDANGER, "Quitter", 'images/ui/quitte.png', [self.portailBoreal]), "QUITTE"]]
         self.Gstart = Grille(int(xf*0.15), [False])
@@ -24,10 +24,10 @@ class Menu:
         image_resize(bn, int(bn.width*ratio), int(bn.height*ratio))
         self.ibn = load_texture_from_image(bn)
         unload_image(bn)
-        j1 = load_image('images/menu/j1.png')
-        image_resize(j1, int(j1.width*ratio), int(j1.height*ratio))
-        self.ij1 = load_texture_from_image(j1)
-        unload_image(j1)
+        archipel = load_image('images/menu/archipel.png')
+        image_resize(archipel, int(archipel.width*ratio), int(archipel.height*ratio))
+        self.iarchi = load_texture_from_image(archipel)
+        unload_image(archipel)
         # Animations
         self.etincelles = Etincelles([0, yf, xf, int(yf*0.005)], [YELLOW, BLUE, WHITE])
         self.alpha = 0
@@ -52,13 +52,13 @@ class Menu:
         ttbn = measure_text_ex(police1, "BATAILLE NAVALE", ttit, 0)
         draw_rectangle_rounded((int(xbn-ttbn.x*0.5-cote), int(yf*0.54-ttbn.y*0.6), int(ttbn.x+cote*2), int(ttbn.y*1.2)), 0.2, 30, [30, 30, 30, 255])
         draw_text_pro(police1, "BATAILLE NAVALE", (int(xbn-ttbn.x*0.5), int(yf*0.54-ttbn.y*0.5)), (0, 0), 0, ttit, 0, WHITE)
-        xj1 = int(xf*0.67)
-        draw_texture(self.ij1, int(xj1-self.ij1.width/2), int(yf*0.4-self.ij1.height/2), WHITE)
-        ttj1 = measure_text_ex(police1, "JEU #1", ttit, 0)
-        draw_rectangle_rounded((int(xj1-ttj1.x*0.5-cote), int(yf*0.54-ttj1.y*0.6), int(ttj1.x+cote*2), int(ttj1.y*1.2)), 0.2, 30, [30, 30, 30, 255])
-        draw_text_pro(police1, "JEU #1", (int(xj1-ttj1.x*0.5), int(yf*0.54-ttj1.y*0.5)), (0, 0), 0, ttit, 0, WHITE)
+        xarchi = int(xf*0.67)
+        draw_texture(self.iarchi, int(xarchi-self.iarchi.width/2), int(yf*0.4-self.iarchi.height/2), WHITE)
+        ttarchi = measure_text_ex(police1, "ARCHIPEL", ttit, 0)
+        draw_rectangle_rounded((int(xarchi-ttarchi.x*0.5-cote), int(yf*0.54-ttarchi.y*0.6), int(ttarchi.x+cote*2), int(ttarchi.y*1.2)), 0.2, 30, [30, 30, 30, 255])
+        draw_text_pro(police1, "ARCHIPEL", (int(xarchi-ttarchi.x*0.5), int(yf*0.54-ttarchi.y*0.5)), (0, 0), 0, ttit, 0, WHITE)
         self.Gstart.dessine(int(xbn-self.Gstart.largeur/2), int(yf*0.65-self.Gstart.hauteur/2))
-        self.Gstart2.dessine(int(xj1-self.Gstart.largeur/2), int(yf*0.65-self.Gstart.hauteur/2))
+        self.Gstart2.dessine(int(xarchi-self.Gstart.largeur/2), int(yf*0.65-self.Gstart.hauteur/2))
         self.Gopt.dessine(int(xf*0.98-self.Gopt.largeur), int(yf*0.07-self.Gopt.hauteur/2))
 
     def animeFond(self):
