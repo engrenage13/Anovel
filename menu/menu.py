@@ -5,7 +5,11 @@ from animations.etincelles import Etincelles
 from random import randint
 
 class Menu:
+    """Le menu principal.
+    """
     def __init__(self) -> None:
+        """Crée le menu.
+        """
         # Boutons
         self.opt = [[Bouton(TB1o, BTV, "Jouer", '', [self.portailBoreal]), "BN"], 
                     [Bouton(TB1o, BTV, "Jouer", '', [self.portailBoreal]), "ARCHIPEL"],
@@ -39,6 +43,8 @@ class Menu:
         self.lu = True
 
     def dessine(self):
+        """Dessine le menu.
+        """
         self.animeFond()
         draw_rectangle_gradient_v(0, 0, xf, yf, BLACK, [0, 82, 172, 150])
         taille = int(yf*0.02)
@@ -62,6 +68,8 @@ class Menu:
         self.Gopt.dessine(int(xf*0.98-self.Gopt.largeur), int(yf*0.07-self.Gopt.hauteur/2))
 
     def animeFond(self):
+        """Joue l'animation sur le fond.
+        """
         self.etincelles.dessine()
         draw_rectangle(0, 0, xf, yf, [0, 117, 44, self.alpha])
         max = 100
@@ -83,6 +91,8 @@ class Menu:
 
     # Between the worlds
     def portailBoreal(self) -> None:
+        """Vérifie quel bouton a été exécuté pour lancer son action.
+        """
         i = 0
         v = False
         while i < len(self.opt) and not v:
@@ -93,5 +103,10 @@ class Menu:
                 i += 1
 
     def nouveauMessage(self, message: str) -> None:
+        """Rédige un message un système d'Anovel.
+
+        Args:
+            message (str): Le message à transmettre.
+        """
         self.message = message
         self.lu = False

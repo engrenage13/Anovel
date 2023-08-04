@@ -21,6 +21,15 @@ def affichErreur(erreur: tuple, dims: list, y: int, espace: int) -> None:
         texteErreur.dessine([[int(dims[0]+dims[1]/2), y], 'c'], checkCouleurErreur(ebis))
 
 def erreursFichier(fichier: str, limites: list) -> bool:
+    """Génère une erreur sur la lecture d'un fichier.
+
+    Args:
+        fichier (str): Le chemin du fichier à lire.
+        limites (list): Taille maximale de l'erreur.
+
+    Returns:
+        bool: True s'il y a une erreur.
+    """
     rep = []
     if not file_exists(fichier):
         texte = f"Le fichier \"{fichier}\" n'existe pas, ou n'est pas au bon endroit."

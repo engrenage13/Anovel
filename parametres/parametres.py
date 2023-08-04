@@ -129,7 +129,7 @@ class Parametres:
         self.charge = True
 
     def dessinErreur(self) -> int:
-        """Definit ce qui s'affiche dans la fenêtre quand le fichier ne peut pas être lu.
+        """Définit ce qui s'affiche dans la fenêtre quand le fichier ne peut pas être lu.
         """
         taillePolice = int(yf*0.035)
         y = self.oyc-int(yf*0.08)
@@ -194,6 +194,8 @@ class Parametres:
 
     # Between the worlds
     def portailBoreal(self) -> None:
+        """Ferme les paramètres.
+        """
         self.message = 'PRECEDENT'
         self.lu = False
         sauvegarde()

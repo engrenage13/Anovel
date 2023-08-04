@@ -4,6 +4,14 @@ from ui.blocTexte import BlocTexte
 from ui.interrupteur import Interrupteur
 
 def cadre(ligne: str) -> list:
+    """Décodes les instructions pour créer un cadre.
+
+    Args:
+        ligne (str): La ligne lue.
+
+    Returns:
+        list: Les paramètres du cadre.
+    """
     couleur = []
     sequence = ""
     set = ""
@@ -41,6 +49,14 @@ def cadre(ligne: str) -> list:
     return [couleur]
 
 def checkFinCadre(ligne: str) -> bool:
+    """Vérifie si le cadre est terminé.
+
+    Args:
+        ligne (str): Ligne lue.
+
+    Returns:
+        bool: True si c'est la fin du cadre.
+    """
     rep = False
     if "]" in ligne:
         position = ligne.index("]")
@@ -57,6 +73,14 @@ def checkFinCadre(ligne: str) -> bool:
     return rep
 
 def interrupteur(ligne: str) -> Interrupteur:
+    """Extrait les informations pour créer un interrupteur.
+
+    Args:
+        ligne (str): Ligne lue.
+
+    Returns:
+        Interrupteur: L'interrupteur créé.
+    """
     sequence = ""
     for i in range(len(ligne)):
         car = ligne[i]
@@ -68,6 +92,14 @@ def interrupteur(ligne: str) -> Interrupteur:
     return Interrupteur(sequence)
 
 def posiJauge(ligne: str) -> PosiJauge:
+    """Extrait les instructions d'une ligne pour créer une PosiJauge.
+
+    Args:
+        ligne (str): Ligne lue.
+
+    Returns:
+        PosiJauge: La PosiJauge créée.
+    """
     longueur = 1
     points = []
     set = ""
@@ -115,6 +147,15 @@ def posiJauge(ligne: str) -> PosiJauge:
     return PosiJauge(points, longueur)
 
 def texte(ligne: str, largeurMax: int) -> BlocTexte:
+    """Extrait les instructions d'une ligne pour créer un bloc de texte.
+
+    Args:
+        ligne (str): Ligne lue.
+        largeurMax (int): largeur maximale du bloc.
+
+    Returns:
+        BlocTexte: Le bloc de texte généré.
+    """
     sequence = ""
     mode = 1
     for i in range(len(ligne)):
@@ -137,6 +178,14 @@ def texte(ligne: str, largeurMax: int) -> BlocTexte:
     return BlocTexte(sequence.upper(), police, t, [largeurMax, ''])
 
 def widget(ligne: str) -> list:
+    """Extrait les informations d'une ligne pour créer un widget.
+
+    Args:
+        ligne (str): Ligne lue.
+
+    Returns:
+        list: Le ou les widgets créés.
+    """
     sequence = ""
     i = 0
     rep = None

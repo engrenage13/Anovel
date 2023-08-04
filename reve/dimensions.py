@@ -4,6 +4,15 @@ from ui.interrupteur import Interrupteur
 from museeNoyee import cadreCodeErreur
 
 def getDimsCadre(cadre: list, espace: int) -> list:
+    """Renvoie les dimensions d'un cadre.
+
+    Args:
+        cadre (list): Le cadre dont on cherche les dimensions.
+        espace (int): L'espace entre les composants internes.
+
+    Returns:
+        list: (largeur, hauteur).
+    """
     largeur = cadre[0][0]
     hauteur = int(espace/2)
     for i in range(len(cadre)-1):
