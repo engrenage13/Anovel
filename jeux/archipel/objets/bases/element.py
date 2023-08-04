@@ -5,6 +5,13 @@ class Element(Bougeable):
     """L'objet de base pour générer n'importe quel élément du jeu.
     """
     def __init__(self, image: Texture, x: int = 0, y: int = 0) -> None:
+        """Crée un élément.
+
+        Args:
+            image (Texture): L'image représentant l'élément.
+            x (int, optional): Abscisse initial de l'élément. Defaults to 0.
+            y (int, optional): Ordonnée initial de l'élément. Defaults to 0.
+        """
         super().__init__(x, y)
         self.setImage(image)
         self.actif = False
@@ -60,7 +67,11 @@ class Element(Bougeable):
         self.coords = [int(x-self.dims[0]/2), int(y-self.dims[1]/2), self.image.width, self.image.height]
 
     def __pos__(self) -> None:
+        """Rend l'élément actif.
+        """
         self.actif = True
 
     def __neg__(self) -> None:
+        """Rend l'élément inactif.
+        """
         self.actif = False

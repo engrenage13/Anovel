@@ -5,7 +5,15 @@ from ui.blocTexte import BlocTexte
 from jeux.archipel.objets.Bateau import Bateau
 
 class OrgaFen:
+    """La fenêtre d'organisation.
+    """
     def __init__(self, bateau1: Bateau, bateau2: Bateau) -> None:
+        """Crée la fenêtre.
+
+        Args:
+            bateau1 (Bateau): L'un des deux bateaux nécessaire.
+            bateau2 (Bateau): L'autre bateau nécessaire.
+        """
         self.setBateaux(bateau1, bateau2)
         m = load_image("jeux/archipel/images/Icones/marin.png")
         image_resize(m, int(xf*0.065), int(xf*0.065))
@@ -42,6 +50,8 @@ class OrgaFen:
         self.hauteurContenu = [int(yf*1.1), int(yf/2-self.hauteur/2)]
 
     def dessine(self) -> None:
+        """Dessine la fenêtre.
+        """
         couleurFondRec = [243, 123, 123, 255]
         draw_rectangle(0, 0, xf, yf, [41, 35, 45, self.opac[0]])
         ecart = int(yf*0.03)
@@ -66,6 +76,16 @@ class OrgaFen:
                 self.anims(False)
 
     def dessineBateau(self, y: int, idBat: int, gauche: bool = True) -> int:
+        """Dessine un bloc bateau + options de pour l'organisation.
+
+        Args:
+            y (int): Ordonnée du bateau.
+            idBat (int): Indice du bateau.
+            gauche (bool, optional): Alignement à gauche ou à droite. Defaults to True.
+
+        Returns:
+            int: La hauteur du bloc bateau.
+        """
         total = self.bat[0].marins + self.bat[1].marins
         espace = int(yf*0.03)
         hbarre = int(yf*0.26)
@@ -119,6 +139,11 @@ class OrgaFen:
         return int(y + self.gm1.hauteur + espace)
 
     def anims(self, mode: bool) -> None:
+        """Animation d'apparition et de disparition de la fenêtre.
+
+        Args:
+            mode (bool): True pour disparaître, False pour apparaître.
+        """
         if mode:
             if self.opac[0] < self.opac[1]:
                 self.opac[0] += 2
@@ -137,39 +162,59 @@ class OrgaFen:
                 self.ok = False
 
     def setBateaux(self, bateau1: Bateau, bateau2: Bateau) -> None:
+        """Modifie les bateaux gérés par la fenêtre.
+
+        Args:
+            bateau1 (Bateau): L'un des deux bateaux.
+            bateau2 (Bateau): L'autre bateau.
+        """
         self.bat = [bateau1, bateau2]
         self.valeursInitiales = [str(bateau1.marins), str(bateau2.marins)]
         self.valide = 1
 
     def plusGauche(self) -> None:
+        """Ajoute un marin dans le bateau de gauche et en supprime un du bateau de droite.
+        """
         if self.bat[1].marins > 0:
             self.bat[1] - 1
             self.bat[0] + 1
 
     def plusDroite(self) -> None:
+        """Ajoute un marin dans le bateau de droite et en supprime un du bateau de gauche.
+        """
         if self.bat[0].marins > 0:
             self.bat[0] - 1
             self.bat[1] + 1
 
     def moinsGauche(self) -> None:
+        """Supprime un marin dans le bateau de gauche et en ajoute un du bateau de droite.
+        """
         if self.bat[0].marins > 0:
             self.bat[0] - 1
             self.bat[1] + 1
 
     def moinsDroite(self) -> None:
+        """Supprime un marin dans le bateau de droite et en ajoute un du bateau de gauche.
+        """
         if self.bat[1].marins > 0:
             self.bat[1] - 1
             self.bat[0] + 1
 
     def reset(self) -> None:
+        """Réinitialise les bateaux à leurs nombre de marins qu'ils avaient quand la fenêtre est apparue.
+        """
         self.bat[0].marins = int(self.valeursInitiales[0])
         self.bat[1].marins = int(self.valeursInitiales[1])
 
     def annule(self) -> None:
+        """Annule l'organisation.
+        """
         self.valide = 0
         self.reset()
         self.playAnim = True
 
     def confirme(self) -> None:
+        """Confirme l'organisation.
+        """
         self.valide = 2
         self.playAnim = True

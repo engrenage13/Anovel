@@ -6,7 +6,14 @@ from jeux.archipel.action.Choix import Choix
 from ui.blocTexte import BlocTexte
 
 class PageCarte(Fenetre):
+    """La page de la mini-carte du début de la partie.
+
+    Args:
+        Fenetre (Fenetre): Hérite de la structure de l'entité fenêtre.
+    """
     def __init__(self) -> None:
+        """Crée la fenêtre.
+        """
         super().__init__()
         # Calcul de la taille des cases
         nbCases = 14
@@ -33,6 +40,8 @@ class PageCarte(Fenetre):
         self.rejouer()
 
     def dessine(self) -> None:
+        """Dessine la fenêtre.
+        """
         super().dessine()
         draw_rectangle(0, 0, xf, yf, [144, 132, 78, 85])
         self.plateau.dessine()
@@ -45,7 +54,14 @@ class PageCarte(Fenetre):
         self.action.verifClic()
 
     def rejouer(self) -> None:
+        """Réinitialise le choix pour rejouer une nouvelle partie.
+        """
         self.action = Choix(self.zones)
     
     def estFini(self) -> bool:
+        """Vérifie si l'action de la fenêtre est terminée.
+
+        Returns:
+            bool: True si l'action est terminée.
+        """
         return self.action.estFinie()

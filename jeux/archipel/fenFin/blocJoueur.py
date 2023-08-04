@@ -3,7 +3,15 @@ from jeux.archipel.objets.Joueur import Joueur
 from ui.blocTexte import BlocTexte
 
 class BlocJoueur:
+    """Bloc affichant le nom et les statistiques de fin de partie de l'un des joueurs.
+    """
     def __init__(self, joueur: Joueur, classement: int) -> None:
+        """Crée le bloc.
+
+        Args:
+            joueur (Joueur): Le joueur dont les informations seront affichées.
+            classement (int): Son rang au classement final de la partie.
+        """
         self.joueur = joueur
         self.classement = classement
         # contenu
@@ -17,6 +25,12 @@ class BlocJoueur:
         self.hauteur = self.tailleIcone+self.espace*2
 
     def dessine(self, x: int, y: int) -> None:
+        """Dessine le bloc.
+
+        Args:
+            x (int): Abscisse du coin supérieur gauche du bloc.
+            y (int): Ordonnée du coin supérieur gauche du bloc.
+        """
         px = int(str(x))
         py = int(str(y))
         draw_rectangle(px, py, self.largeur, self.hauteur, BLACK)
@@ -46,5 +60,10 @@ class BlocJoueur:
         tv = measure_text_ex(police2i, f"x{self.joueur.compteBateau()}", int(yf*0.028), 0)
         draw_text_ex(police2i, f"x{self.joueur.compteBateau()}", (int(px-tv.x*0.9), int(py+self.tailleIcone-tv.y*0.8)), int(yf*0.028), 0, WHITE)
 
-    def getDims(self) -> tuple:
+    def getDims(self) -> tuple[int]:
+        """Renvoie les dimensions du bloc.
+
+        Returns:
+            tuple[int]: Largeur x hauteur.
+        """
         return (self.largeur, self.hauteur)

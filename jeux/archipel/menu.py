@@ -3,7 +3,11 @@ from ui.bouton.bouton import Bouton
 from ui.bouton.grille import Grille
 
 class Menu:
+    """Le menu pour mettre la partie en pause.
+    """
     def __init__(self) -> None:
+        """Crée le menu.
+        """
         self.opt = [[Bouton(TB1o, BTV, "REPRENDRE", '', [self.portailAustral]), "JEU"],
                     [Bouton(TB1o, BTNOIR, "PARAMETRES", '', [self.portailAustral]), "ANOVEL_OPTIONS"],
                     [Bouton(TB1o, BTNOIR, "MENU", '', [self.portailAustral]), "ANOVEL_MENU"],
@@ -28,6 +32,8 @@ class Menu:
         self.lu = True
 
     def dessine(self) -> None:
+        """Dessine le menu.
+        """
         if not self.ok and not self.playAnim:
             self.playAnim = True
         draw_rectangle(0, 0, xf, yf, [41, 35, 45, self.opac[0]])
@@ -51,6 +57,12 @@ class Menu:
                 self.anims(False)
 
     def dessineLigne(self, x: int, y: int) -> None:
+        """Dessine les lignes qui séparent chaque groupe de boutons.
+
+        Args:
+            x (int): Abscisse du centre de la ligne.
+            y (int): Ordonnée du centre de la ligne.
+        """
         l = 0.43
         l2 = int(yf*0.02)
         draw_line_ex((int(x-self.gm1.largeur*l), y), (int(x-l2*2), y), 2, GRAY)
@@ -59,6 +71,11 @@ class Menu:
         draw_poly((x, y), 4, int(yf*0.01), 0, GRAY)
 
     def anims(self, mode: bool) -> None:
+        """Gère les animation d'apparition et de disparition du menu.
+
+        Args:
+            mode (bool): True pour disparaître, False pour apparaître.
+        """
         if mode:
             if self.opac[0] < self.opac[1]:
                 self.opac[0] += 2
@@ -78,6 +95,8 @@ class Menu:
 
     # Between the worlds
     def portailAustral(self) -> None:
+        """Vérifie lequel des boutons a été appuyé pour lancer la résolution de son action.
+        """
         i = 0
         v = False
         while i < len(self.opt) and not v:
@@ -88,9 +107,16 @@ class Menu:
                 i += 1
 
     def nouveauMessage(self, message: str) -> None:
+        """Rédige un message au système d'Archipel.
+
+        Args:
+            message (str): Le message à transmettre.
+        """
         self.message = message
         self.lu = False
 
     def closeMenu(self) -> None:
+        """Ferme le menu et reprend la partie.
+        """
         self.message = "JEU"
         self.lu = False

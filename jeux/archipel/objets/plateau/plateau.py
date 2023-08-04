@@ -5,7 +5,19 @@ from jeux.archipel.fonctions.bases import TAILLECASE, EAUX, marqueCases
 from jeux.archipel.fonctions.deplacement import glisse
 
 class Plateau:
+    """Le plateau de jeu.
+    """
     def __init__(self, nbCases: int, tailleCases: int = TAILLECASE, bordure: float = int(yf*0.05), envirronement: bool = True, plan: bool = False, accroche: tuple[int] = (0, 0)) -> None:
+        """Crée le plateau au début de chaque première partie.
+
+        Args:
+            nbCases (int): Le nombre de cases que doit comporter le plateau sur ses côtés.
+            tailleCases (int, optional): La taille des cases du plateau. Defaults to TAILLECASE.
+            bordure (float, optional): L'épaisseur de la bordure. La bordure est l'élément du décors qui est le plus proche du plateau. Defaults to int(yf*0.05).
+            envirronement (bool, optional): Est-ce qu'il faut afficher l'envirronement ou non ? Defaults to True.
+            plan (bool, optional): Le plateau est-il utilisé comme un plan ? Defaults to False.
+            accroche (tuple[int], optional): L'origine du plateau pour la caméra (c'est technique). Defaults to (0, 0).
+        """
         self.nbCases = nbCases
         self.largeurBordure = bordure
         if envirronement:
@@ -48,6 +60,8 @@ class Plateau:
         self.setIles()
 
     def dessine(self) -> None:
+        """Dessine le plateau.
+        """
         self.dessineEnvirronement()
         self.dessineBordure()
         if len(self.elementsPrioritaires) > 0:
@@ -68,6 +82,8 @@ class Plateau:
             self.rePlace()
 
     def dessineBordure(self) -> None:
+        """Dessine la bordure du plateau.
+        """
         p = self.cases[0][0].pos
         l = self.largeurBordure
         tCase = self.tailleCase
@@ -80,6 +96,8 @@ class Plateau:
         draw_rectangle(p[0]-l+tCase*self.nbCases, p[1]-l+tCase*self.nbCases, l*2, l*2, OR)
 
     def dessineEnvirronement(self) -> None:
+        """Dessine l'envirronement.
+        """
         p = self.cases[0][0].pos
         l = self.largeurEnvirronement+self.largeurBordure
         tCase = self.tailleCase
@@ -88,6 +106,12 @@ class Plateau:
             draw_rectangle(p[0]-l, p[1]-l, tCase*self.nbCases+ajustFin, tCase*self.nbCases+ajustFin, [11, 23, 62, 255])
 
     def deplace(self, x: int, y: int) -> None:
+        """Permet de déplacer le plateau à l'écran (scroll).
+
+        Args:
+            x (int): Valeur à ajouter aux abscisses du plateau et de toutes ses cases.
+            y (int): Valeur à ajouter aux ordonnées du plateau et de toutes ses cases.
+        """
         if not self.passeFrontiereHorizontale(x) and self.passeFrontiereVerticale(y):
             y = 0
         elif self.passeFrontiereHorizontale(x) and not self.passeFrontiereVerticale(y):
@@ -99,6 +123,13 @@ class Plateau:
                 self.cases[i][j].deplace(x, y)
 
     def place(self, x: int, y: int, glisse: bool = False) -> None:
+        """Permet de démarrer une glissade du plateau.
+
+        Args:
+            x (int): L'abscisse cible.
+            y (int): L'ordonnée cible.
+            glisse (bool, optional): Est-ce que le plateau doit s'arrêter pile sur ces coordonnées ou peut-il glisser un peu plus loin ? Defaults to False.
+        """
         self.positionCible = (x, y)
         self.glisse = glisse
         if not glisse:
@@ -113,6 +144,8 @@ class Plateau:
                 px = x
 
     def rePlace(self) -> None:
+        """Execute le déplacement par glissade du plateau.
+        """
         px = self.cases[0][0].pos[0]
         py = self.cases[0][0].pos[1]
         dep = glisse((px, py), self.positionCible, int(xf*0.01))
@@ -129,6 +162,15 @@ class Plateau:
             self.glisse = False
 
     def passeFrontiereHorizontale(self, x: int, absolue: bool = False) -> bool:
+        """Vérifie si les frontières horizontales du plateau ne se décrochent pas du bord de l'écran.
+
+        Args:
+            x (int): Le point à vérifier.
+            absolue (bool, optional): Est-ce une position absolue ? Defaults to False.
+
+        Returns:
+            bool: True si aucune des frontières ne dépassent leurs limites.
+        """
         rep = False
         tCase = self.tailleCase
         if absolue:
@@ -144,6 +186,15 @@ class Plateau:
         return rep
     
     def passeFrontiereVerticale(self, y: int, absolue: bool = False) -> bool:
+        """Vérifie si les frontières verticales du plateau ne se décrochent pas du bord de l'écran.
+
+        Args:
+            y (int): Le point à vérifier.
+            absolue (bool, optional): Est-ce une position absolue ? Defaults to False.
+
+        Returns:
+            bool: True si aucune des frontières ne dépassent leurs limites.
+        """
         rep = False
         tCase = self.tailleCase
         if absolue:
@@ -159,6 +210,14 @@ class Plateau:
         return rep
     
     def trouveCoordsCase(self, case: Case) -> tuple[int]|bool:
+        """Renvoie les coordonnées d'une case par rapport à la structure du plateau.
+
+        Args:
+            case (Case): La case dont on cherche les coordonnées.
+
+        Returns:
+            tuple[int]|bool: (position de sa ligne, position dans sa ligne) ou False si la case n'est pas sur le plateau.
+        """
         trouve = False
         i = 0
         while i < self.nbCases and not trouve:
@@ -176,6 +235,14 @@ class Plateau:
             return False
     
     def getVoisines(self, case: Case) -> dict[tuple|bool]:
+        """Retourne les coordonnées des cases voisines de la cible.
+
+        Args:
+            case (Case): La case dont on cherhche les voisines.
+
+        Returns:
+            dict[tuple|bool]: Renvoie les voisines nord, sud, est et ouest de la case si elle en a, sinon, renvoie False.
+        """
         voisines = {'n': False, 's': False, 'o': False, 'e': False}
         pos = self.trouveCoordsCase(case)
         if pos:
@@ -190,6 +257,11 @@ class Plateau:
         return voisines
     
     def focusCase(self, case: tuple) -> None:
+        """Permet à la caméra de positionner une case précise du plateau au centre de l'écran.
+
+        Args:
+            case (tuple): La case qui doit être sous les feux de la rampe.
+        """
         if type(case) != bool:
             x = self.cases[0][0].pos[0]
             y = self.cases[0][0].pos[1]
@@ -222,12 +294,16 @@ class Plateau:
             self.place(nx, ny, True)
     
     def vide(self) -> None:
+        """Permet de vider le plateau.
+        """
         for i in range(self.nbCases):
             for j in range(self.nbCases):
                 self.cases[i][j].vide()
         self.elementsPrioritaires = []
 
     def setIles(self) -> None:
+        """Modifie la présence et la structure des îles sur le plateau.
+        """
         for i in range(self.nbCases):
             for j in range(self.nbCases):
                 case = self.cases[i][j]
@@ -236,6 +312,14 @@ class Plateau:
                     case.setIle(dossierSpecifique)
 
     def getIlesVoisines(self, centre: Case) -> dict[bool]:
+        """Permet de vérifier si les cases alentours ont également un marqueur d'île.
+
+        Args:
+            centre (Case): La case d'où on commence les recherches.
+
+        Returns:
+            dict[bool]: Vérifie pour les cases nord, sud, est et ouest (si elles existent) si elles possèdent un marqueur d'île.
+        """
         ilesVoisines = {'n': False, 'e': False, 's': False, 'o': False}
         voisines = self.getVoisines(centre)
         if voisines['n']:
@@ -252,7 +336,16 @@ class Plateau:
                 ilesVoisines['o'] = True
         return ilesVoisines
     
-    def definiOriNomb(self, ilesVoisines: dict[bool], case: Case) -> None:
+    def definiOriNomb(self, ilesVoisines: dict[bool], case: Case) -> str:
+        """Définit de quel type de segment d'île puis duquel précisément la case doit se munir.
+
+        Args:
+            ilesVoisines (dict[bool]): dictionnaire précisant pour chaque case voisines si elles ont ou non un marqueur d'île.
+            case (Case): La case sur laquelle la méthode travaille.
+
+        Returns:
+            str: précision sur le dossier du segment choisi.
+        """
         dossier = 'a'
         compte = 0
         orientations = ['n', 'e', 's', 'o']
@@ -300,6 +393,8 @@ class Plateau:
         return dossier
 
     def rejouer(self) -> None:
+        """Modifie certaines informations pour rejouer une nouvelle partie.
+        """
         for i in range(self.nbCases):
             for j in range(self.nbCases):
                 self.cases[i][j].rejouer()
@@ -308,22 +403,50 @@ class Plateau:
         self.setIles()
 
     def copieContenu(self, plateau) -> None:
+        """Permet de copier la répartition des îles sur les cases d'un plateau sur celles du plateau actuel.
+
+        Args:
+            plateau (Plateau): Le plateau d'où la méthode doit tirer les informations.
+        """
         for i in range(len(self.cases)):
             for j in range(len(self.cases[i])):
                 if i < plateau.nbCases and j < plateau.nbCases:
                     self.cases[i][j].marqueur = plateau[i][j].marqueur
     
-    def __getitem__(self, key) -> list[Case]:
+    def __getitem__(self, key: int) -> list[Case]:
+        """Retourne l'une des lignes de case du plateau.
+
+        Args:
+            key (int): L'indice de la ligne recherchée.
+
+        Returns:
+            list[Case]: La ligne retournée.
+        """
         return self.cases[key]
     
     def __len__(self) -> int:
+        """Retourne le nombre de cases sur un côté du plateau.
+
+        Returns:
+            int: Nombre de cases sur le côté du plateau.
+        """
         return self.nbCases
     
     def __add__(self, element) -> None:
+        """Ajoute un élément dans la liste des éléments prioritaires.
+
+        Args:
+            element (_type_): L'élément à ajouter à la liste des éléments prioritaires.
+        """
         if element not in self.elementsPrioritaires:
             self.elementsPrioritaires.append(element)
 
     def __sub__(self, element) -> None:
+        """Supprime un élément de la liste des éléments prioritaires.
+
+        Args:
+            element (_type_): L'élément à supprimer de la liste des éléments prioritaires.
+        """
         if element in self.elementsPrioritaires:
             pos = self.elementsPrioritaires.index(element)
             del self.elementsPrioritaires[pos]

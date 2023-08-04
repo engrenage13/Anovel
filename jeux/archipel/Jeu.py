@@ -21,7 +21,11 @@ from jeux.archipel.icones import orga, miniorga, abordage, miniabordage
 TOURMAX = 40
 
 class Jeu:
+    """L'intégralité du jeu.
+    """
     def __init__(self) -> None:
+        """Met en place tous les éléments du jeu.
+        """
         self.plateau = Plateau(14)
         self.plateau.bloque = True
         self.joueurs = []
@@ -77,6 +81,8 @@ class Jeu:
         self.play = False
 
     def dessine(self) -> None:
+        """Dessine ce qui doit l'être au bon moment de la partie.
+        """
         fenetre = self.fen[self.actif]
         fenetre.dessine()
         if self.actif != 'organisation':
@@ -91,6 +97,8 @@ class Jeu:
                 self.tourJoueur()
 
     def switch(self) -> None:
+        """Passe d'une fenêtre ou d'une phase à l'autre en fonction de l'avancé de la partie.
+        """
         if self.actif == 'intro':
             self.actif = 'choix_zone'
             self.fen['choix_zone'].plateau.copieContenu(self.plateau)
@@ -106,6 +114,8 @@ class Jeu:
             self.fen[self.actif].setJoueurs(self.joueurs)
 
     def rejouer(self) -> None:
+        """Réinitialise certaines valeurs pour rejouer une nouvelle partie.
+        """
         for fenetre in self.fen:
             if isinstance(self.fen[fenetre], Fenetre):
                 self.fen[fenetre].rejouer()
@@ -123,6 +133,8 @@ class Jeu:
         self.resetPlacement()
 
     def resetPlacement(self) -> None:
+        """Réinitialise le placement des bateaux.
+        """
         self.deplaPlacement = self.affRec = self.affTeleco = False
         self.pause = 100
         self.tiroir.setListe(self.joueurs[self.actuel].bateaux)
@@ -132,6 +144,8 @@ class Jeu:
         self.rectangle.disparition()
 
     def passePhase(self) -> None:
+        """Passe une phase complète du jeu.
+        """
         if self.phase == 'placement':
             phase = self.phase
             while self.phase == phase:
@@ -142,6 +156,8 @@ class Jeu:
             self.switch()
 
     def passeTour(self) -> None:
+        """Passe un tour de jeu.
+        """
         j = self.actuel
         if self.phase == 'placement':
             while self.actuel == j:
@@ -156,6 +172,8 @@ class Jeu:
                 self.setParamFleche()
 
     def passeAction(self) -> None:
+        """Passe une action du jeu.
+        """
         if isinstance(self.fen[self.actif], Fenetre):
             fenetre = self.fen[self.actif]
             if fenetre.action != None:
@@ -227,6 +245,8 @@ class Jeu:
                 self.passe()
 
     def attaPasse(self) -> None:
+        """Attaque un bateau au hasard.
+        """
         attaquant = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
         if self.verifAttaquePossible():
             stop = False
@@ -260,6 +280,8 @@ class Jeu:
                                 self.joueurs[1] - cible
 
     def passe(self) -> None:
+        """Passe le tour d'un bateau.
+        """
         self.joueurs[self.actuel].bateauSuivant()
         self.deplaPlacement = self.setDeplacement = False
         if not self.joueurs[self.actuel].actif:
@@ -268,6 +290,8 @@ class Jeu:
     # Placement
 
     def passePlacement(self) -> None:
+        """Place les bateaux d'un joueur de manière aléatoire.
+        """
         cases = []
         for i in range(len(self.zoneDep.cases)):
             tuile = self.plateau[self.zoneDep[i][0]][self.zoneDep[i][1]]
@@ -293,6 +317,8 @@ class Jeu:
             self.joueurSuivant()
 
     def placement(self) -> None:
+        """Gère l'action de placement du joueur actif.
+        """
         if self.actif == 'placement':
             if not self.deplaPlacement:
                 if self.actuel == 0 and self.zoneDep.cases != self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases:
@@ -350,11 +376,15 @@ class Jeu:
                         self.setFleches(ncase)
 
     def setPlateauEnPLace(self) -> None:
+        """Dit que le plateau est fin prêt.
+        """
         self.plateau.bloque = True
         self.plateau + self.zoneDep
         self.plateau.grise = True
 
     def deplaceCible(self) -> None:
+        """Déplace la cible sur le plateau.
+        """
         if self.cible.play:
             bonnePlace = False
             i = 0
@@ -380,6 +410,8 @@ class Jeu:
                         i += 1
 
     def verifEditPlacement(self) -> None:
+        """Vérifi si le joueur veut modifier son placement.
+        """
         if is_mouse_button_pressed(0):
             trouve = False
             i = 0
@@ -404,7 +436,12 @@ class Jeu:
                 else:
                     i += 1
 
-    def setFleches(self, case) -> None:
+    def setFleches(self, case: Case) -> None:
+        """Modifie les flèches qui doivent apparaîtrent sur la télécommande.
+
+        Args:
+            case (Case): La case sur laquelle est le bateau.
+        """
         voisines = self.plateau.getVoisines(case)
         li1 = ["n", "e", "s", "o"]
         li2 = ["nord", "est", "sud", "ouest"]
@@ -418,6 +455,11 @@ class Jeu:
                 self.teleco.activeDep[li2[i]] = False
 
     def setPhase(self, phase: str) -> None:
+        """Modifie la phase active.
+
+        Args:
+            phase (str): La nouvelle phase active.
+        """
         self.phase = phase
         for i in range(len(self.joueurs)):
             self.joueurs[i].setPhase(phase)
@@ -433,6 +475,8 @@ class Jeu:
             self.fleche.setCase(case)
 
     def joueurSuivant(self) -> None:
+        """Passe au joueur suivant.
+        """
         if self.joueurs[self.actuel].compteBateau() == 0:
             self.switch()
         else:
@@ -457,6 +501,8 @@ class Jeu:
     # Partie
 
     def tourJoueur(self) -> None:
+        """Gère toute les actions possibles d'un joueur pendant son tour.
+        """
         if not self.setDeplacement:
             self.setParamFleche()
         elif not self.barre.deplacement and not self.barre.attaque:
@@ -560,6 +606,8 @@ class Jeu:
                 self.fleche.reset()
 
     def dessineMarqueur(self) -> None:
+        """Dessine les marqueur affichant les abordages et organisations possibles.
+        """
         bateau = self.fleche.bateau
         ptBtOrga = 0
         ptBtAbordage = 0
@@ -592,6 +640,15 @@ class Jeu:
             self.barre.actionsPossibles["abordage"] = False
 
     def abordage(self, bat1: Bateau, bat2: Bateau) -> int:
+        """Calcul le résultat d'un abordage.
+
+        Args:
+            bat1 (Bateau): Le bateau de l'attaquant.
+            bat2 (Bateau): Le bateau du défenseur.
+
+        Returns:
+            int: L'indice du bateau victorieu.
+        """
         vainqueur = -1
         if bat1.marins > bat2.marins:
             bat2.setNbPV(bat2.vie-1)
@@ -631,6 +688,8 @@ class Jeu:
         return vainqueur
     
     def attaque(self) -> None:
+        """Gère une action d'attaque.
+        """
         origine = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
         victime = None
         i = 0
@@ -674,6 +733,8 @@ class Jeu:
                         self.switch()
 
     def setParamFleche(self) -> None:
+        """Modifie les paramètres de la flèche (composant de déplacement).
+        """
         bat = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
         if bat.pm > 0:
             ncase = self.trouveCase(bat)
@@ -692,6 +753,13 @@ class Jeu:
                 self.setDeplacement = True
 
     def setZonePortee(self, bateau: Bateau, case: Case, progression: int) -> None:
+        """Modifie la zone affichant la portée de déplacement.
+
+        Args:
+            bateau (Bateau): Le bateau qui veut se déplacer.
+            case (Case): La case de départ du déplacement.
+            progression (int): La progression actuelle du déplacement.
+        """
         voisines = self.plateau.getVoisines(case)
         pointsCardinaux = ['e', 's', 'o', 'n']
         if progression == 1:
@@ -722,6 +790,12 @@ class Jeu:
                                 self.setZonePortee(bateau, ncase, progression+1)
 
     def setZoneAttaque(self, centre: Case, equiv: tuple) -> None:
+        """Modifie la zone d'attaque des bateaux.
+
+        Args:
+            centre (Case): La case d'origine de l'attaque.
+            equiv (tuple): Les cases voisines de la case d'origine.
+        """
         self.zoneAt.cases = []
         self.zoneAt.cases.append(equiv)
         voisines = self.plateau.getVoisines(centre)
@@ -749,6 +823,11 @@ class Jeu:
                     self.zoneAt.cases.append(voisines['e'])
 
     def verifAttaquePossible(self) -> bool:
+        """Vérifie s'il y a des bateaux à attaquer dans la zone.
+
+        Returns:
+            bool: True si une attaque est possible.
+        """
         stop = False
         i = 0
         while i < len(self.zoneAt) and not stop:
@@ -762,7 +841,15 @@ class Jeu:
                 i += 1
         return stop
 
-    def trouveCase(self, bateau) -> tuple|bool:
+    def trouveCase(self, bateau: Bateau) -> tuple|bool:
+        """Trouve la case occupée par un bateau.
+
+        Args:
+            bateau (Bateau)): Le bateau dont on recherche la case.
+
+        Returns:
+            tuple|bool: Les coordonnées de la case ou False si le bateau n'est pas sur le plateau.
+        """
         trouve = False
         i = 0
         while i < len(self.plateau) and not trouve:

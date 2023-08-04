@@ -8,7 +8,14 @@ from jeux.archipel.Jeu import Jeu, config
 from systeme.set import trouveParam
 
 class Scene(Jeu):
+    """La scène de jeu.
+
+    Args:
+        Jeu (Jeu): Hérite de toute la structure du jeu.
+    """
     def __init__(self) -> None:
+        """Met en place la scène.
+        """
         super().__init__()
         self.opt = [[Bouton(TB2n, PTIBT1, "MENU", 'images/ui/pause.png', [self.portailAustral]), "ARCHIPEL_MENU"]]
         self.optDev = [Bouton(TB2n, BTDEV, "REJOUER", 'images/ui/reset.png', [self.rejouer]), 
@@ -37,6 +44,8 @@ class Scene(Jeu):
         self.lu = True
 
     def dessine(self) -> None:
+        """Dessine le jeu est la scène.
+        """
         fenetre = self.fen[self.actif]
         super().dessine()
         if self.play:
@@ -97,6 +106,8 @@ class Scene(Jeu):
                     self.nouveauMessage("ANOVEL_MENU")
 
     def deplace(self) -> None:
+        """Déplace la caméra.
+        """
         x = get_mouse_x()
         y = get_mouse_y()
         if is_mouse_button_down(0):
@@ -111,6 +122,8 @@ class Scene(Jeu):
         self.posCurseur = (x, y)
 
     def glisse(self) -> None:
+        """Fait glisser la caméra.
+        """
         if self.move:
             self.trajet = (int(self.trajet[0]/7), int(self.trajet[1]/7))
             self.move = False
@@ -129,6 +142,11 @@ class Scene(Jeu):
             self.trajet = (x, y)
 
     def afficheSecteur(self, secteur: str) -> None:
+        """Affiche un secteur particulier du plateau.
+
+        Args:
+            secteur (str): Le secteur qui a le focus.
+        """
         secteur = secteur.lower()
         if secteur == 'c':
             px = int(-(len(self.plateau)*TAILLECASE)/2+xf/2)
@@ -163,16 +181,25 @@ class Scene(Jeu):
             self.plateau.place(px, py, True)
 
     def focusBat(self) -> None:
+        """Centre le bateau dont le tour vient de commencer.
+        """
         bat = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
         case = self.trouveCase(bat)
         self.plateau.focusCase(case)
 
     def rejouer(self) -> None:
+        """Réinitialise certains paramètres afin de pouvoir rejouer une autre partie.
+        """
         super().rejouer()
         self.afficheSecteur('c')
         self.delaiDepart = 70
 
     def setPlay(self, etat: bool) -> None:
+        """Bloque/Débloque la caméra.
+
+        Args:
+            etat (bool): True pour débloquer, False pour bloquer.
+        """
         self.play = etat
         self.tiroir.play = etat
         self.cible.play = etat
@@ -183,11 +210,15 @@ class Scene(Jeu):
     # Placement
 
     def tousAuTiroir(self) -> None:
+        """Remet tous les bateaux placés du joueur actif dans le tiroir.
+        """
         for i in range(len(self.zoneDep)):
             self.plateau[self.zoneDep[i][0]][self.zoneDep[i][1]].vide()
         self.tiroir.setListe(self.joueurs[self.actuel].bateaux)
 
     def placementAleatoire(self) -> None:
+        """Place tous les bateaux du joueur actif de manière aléatoire.
+        """
         if len(self.tiroir) == 0:
             self.tousAuTiroir()
             shuffle(self.joueurs[self.actuel].bateaux)
@@ -213,6 +244,8 @@ class Scene(Jeu):
     # Jeu
 
     def tour(self) -> None:
+        """Définit certains paramètres pour la gestion de l'interface pendant la partie.
+        """
         if not self.deplaPlacement:
             self.focusBat()
             self.deplaPlacement = True
@@ -223,11 +256,15 @@ class Scene(Jeu):
             self.setDeplacement = False
 
     def joueurSuivant(self) -> None:
+        """Passe au joueur suivant.
+        """
         super().joueurSuivant()
         self.barre.setActuel(self.actuel)
 
     # Between the worlds
     def portailAustral(self) -> None:
+        """Recherche quel bouton a était cliqué pour savoir quel action exécuter.
+        """
         if self.play:
             i = 0
             v = False
@@ -239,9 +276,16 @@ class Scene(Jeu):
                     i += 1
 
     def nouveauMessage(self, message: str) -> None:
+        """Rédige un message au système d'Archipel.
+
+        Args:
+            message (str): Le message à transmettre.
+        """
         self.message = message
         self.lu = False
 
     def openMenu(self) -> None:
+        """Ouvre le menu.
+        """
         self.message = "ARCHIPEL_MENU"
         self.lu = False

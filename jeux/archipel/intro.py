@@ -1,4 +1,4 @@
-from systeme.FondMarin import clear_background, BLACK, yf, xf, police1
+from systeme.FondMarin import yf, xf, police1
 from jeux.archipel.ui.banniere import Banniere
 from jeux.archipel.objets.Joueur import Joueur
 from jeux.archipel.ui.fagnon import Fagnon
@@ -7,7 +7,17 @@ from jeux.archipel.objets.bases.fenetre import Fenetre
 from ui.blocTexte import BlocTexte
 
 class Intro(Fenetre):
+    """La fenêtre d'introduction.
+
+    Args:
+        Fenetre (Fenetre): Hérite du système de fenêtre.
+    """
     def __init__(self, joueurs: list[Joueur]) -> None:
+        """Crée la fenêtre.
+
+        Args:
+            joueurs (list[Joueur]): Les joueurs participant au jeu.
+        """
         super().__init__()
         self.bannieres = []
         y = int(yf*0.15)
@@ -26,6 +36,8 @@ class Intro(Fenetre):
         self.chrono.run()
 
     def dessine(self) -> None:
+        """Dessine la fenêtre.
+        """
         super().dessine()
         for i in range(len(self.bannieres)):
             self.bannieres[i].dessine()
@@ -34,12 +46,19 @@ class Intro(Fenetre):
         self.chrono.dessine()
 
     def estFini(self) -> bool:
+        """Vérifie si l'animation d'introduction est terminée.
+
+        Returns:
+            bool: True si le chrono atteint 0.
+        """
         if self.chrono.aFini():
             return True
         else:
             return False
         
     def rejouer(self) -> None:
+        """Remet à 0 certains paramètres pour rejouer l'animation.
+        """
         for i in range(len(self.bannieres)):
             self.bannieres[i].reset()
         self.chrono.reset()

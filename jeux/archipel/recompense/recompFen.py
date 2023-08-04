@@ -6,7 +6,15 @@ from jeux.archipel.recompense.vignette import Vignette
 from jeux.archipel.icones import coeur, marin, fleche, degats
 
 class RecompFen:
+    """La fenêtre de récompenses pour un abordage réussi.
+    """
     def __init__(self, allie: Bateau = Bateau("", "jeux/archipel/images/Bateaux/gbb.png", 5, 10, 0, 1, [0, 0, 0, 0]), ennemi: Bateau = Bateau("", "jeux/archipel/images/Bateaux/gbb.png", 4, 1, 0, 0, [0, 0, 0, 0])) -> None:
+        """Crée la fenêtre.
+
+        Args:
+            allie (Bateau, optional): Le bateau qui a gagné l'abordage. Defaults to Bateau("", "jeux/archipel/images/Bateaux/gbb.png", 5, 10, 0, 1, [0, 0, 0, 0]).
+            ennemi (Bateau, optional): Le bateau qui a perdu l'abordage. Defaults to Bateau("", "jeux/archipel/images/Bateaux/gbb.png", 4, 1, 0, 0, [0, 0, 0, 0]).
+        """
         # Dimensions
         self.largeur = int(xf*0.7)
         self.hauteur = int(yf*0.8)
@@ -36,6 +44,8 @@ class RecompFen:
         self.hauteurContenu = [int(yf*1.1), int(yf/2-self.hauteur/2)]
 
     def dessine(self) -> None:
+        """Dessine la fenêtre à l'écran.
+        """
         if self.ok and self.valide == -1 and self.playAnim:
             self.playAnim = False
         draw_rectangle(0, 0, xf, yf, [41, 35, 45, self.opac[0]])
@@ -61,6 +71,11 @@ class RecompFen:
                 self.anims(False)
 
     def dessineVignettes(self, y: int) -> None:
+        """Dessine les vignettes (récompenses disponibles).
+
+        Args:
+            y (int): La hauteur à laquelle les vignettes doivent être déssinés.
+        """
         actions = self.act
         x = int(xf/2)
         espace = int(xf*0.02)
@@ -83,6 +98,8 @@ class RecompFen:
                 self.clicSurVignette(j)
 
     def dessinePasse(self, x: int, y: int) -> None:
+        """Dessine le bloc avec le bouton pour passer.
+        """
         couleurFondRec = [255, 180, 196, 235]
         draw_rectangle_rounded([x, y, self.largeurPasse, self.hauteurPasse], 0.15, 300, couleurFondRec)
         px = int(int(str(x))+self.largeurPasse*0.03)
@@ -92,6 +109,12 @@ class RecompFen:
         self.opt[1].dessine(int(x+self.largeurPasse/2), int(y+self.hauteurPasse*0.6))
 
     def dessineBateauAdverse(self, x: int, y: int) -> None:
+        """Dessine le bloc avec le bateau adverse.
+
+        Args:
+            x (int): abscisse du coin supérieur gauche.
+            y (int): ordonnée du coin supérieur gauche.
+        """
         couleurFondRec = [180, 215, 255, 235]
         draw_rectangle_rounded([x, y, self.largeurCadBat, self.hauteurPasse], 0.15, 300, couleurFondRec)
         px = int(int(str(x))+self.largeurPasse*0.03)
@@ -119,6 +142,11 @@ class RecompFen:
                 py += hsta + ecarty
 
     def verifActionsPossibles(self) -> list[Vignette]:
+        """Met en place la liste des récompenses possibles pour le vainqueur.
+
+        Returns:
+            list[Vignette]: Les récompenses accessibles.
+        """
         actions = []
         if self.bat[1].marins > 0:
             actions.append(self.actions[0])
@@ -132,6 +160,11 @@ class RecompFen:
         return actions
 
     def anims(self, mode: bool) -> None:
+        """Animation d'entrée et de sortie de la fenêtre.
+
+        Args:
+            mode (bool): False pour l'entrée, True pour la sortie.
+        """
         if mode:
             if self.opac[0] < self.opac[1]:
                 self.opac[0] += 2
@@ -150,16 +183,29 @@ class RecompFen:
                 self.ok = False
 
     def setBateaux(self, allie: Bateau, ennemi: Bateau) -> None:
+        """Modifie les bateaux utilisés pour le calcul des récompenses.
+
+        Args:
+            allie (Bateau): Le bateau vainqueur.
+            ennemi (Bateau): Le bateau perdant.
+        """
         self.bat = [allie, ennemi]
         self.valide = -1
         self.act = self.verifActionsPossibles()
         self.playAnim = True
 
     def passe(self) -> None:
+        """Passe le choix d'une récompense.
+        """
         self.valide = 0
         self.playAnim = True
 
     def clicSurVignette(self, vignette: int) -> None:
+        """Met fin à l'affichage de la fenêtre si une vignette est cliquée.
+
+        Args:
+            vignette (int): La vignette testée.
+        """
         indice = self.actions.index(self.act[vignette])
         if indice <= 2:
             self.valide = indice+1

@@ -8,7 +8,20 @@ from jeux.archipel.objets.Bateau import Bateau
 from jeux.archipel.ui.editTeleco import EditTeleco
 
 class Fleche(EditTeleco):
+    """Gestionnaire de déplacement du bateau.
+
+    Args:
+        EditTeleco (EditTeleco): Hérite de la télécommande à bateaux.
+    """
     def __init__(self, depart: Case, bateau: Bateau, zone: Zone, plateau: Plateau) -> None:
+        """Crée la télécommande.
+
+        Args:
+            depart (Case): La case de départ du bateau.
+            bateau (Bateau): Le bateau qui se déplace.
+            zone (Zone): La zone représentant toutes les cases sur les-quelles le bateau peut se déplacer.
+            plateau (Plateau): Le plateau de jeu.
+        """
         super().__init__(depart, bateau)
         self.zone = zone
         self.depart = depart
@@ -21,6 +34,8 @@ class Fleche(EditTeleco):
         self.setBoutons()
 
     def dessine(self) -> None:
+        """Dessine le gestionnaire à l'écran.
+        """
         draw_rectangle_lines_ex([self.case.pos[0], self.case.pos[1], self.case.taille, self.case.taille], 
                                 int(self.case.largeurBordure*2), WHITE)
         if self.play:
@@ -44,6 +59,8 @@ class Fleche(EditTeleco):
         self.dessineProgression()
 
     def dessineChemin(self) -> None:
+        """Dessine le chemin parcourue par le bateau à l'écran.
+        """
         for i in range(len(self.cases)-1):
             case = self.cases[i]
             draw_circle(int(case.pos[0]+case.taille/2), int(case.pos[1]+case.taille/2), case.taille*0.1, WHITE)
@@ -52,6 +69,12 @@ class Fleche(EditTeleco):
             #self.dessineFleche()
 
     def dessineRectangle(self, case: Case, indice: int) -> None:
+        """Dessine les rectangles des flèches.
+
+        Args:
+            case (Case): La case dans laquelle il faut dessiner.
+            indice (int): L'orientation du rectangle.
+        """
         x = case.pos[0]
         y = case.pos[1]
         t = case.taille
@@ -70,6 +93,11 @@ class Fleche(EditTeleco):
                     draw_rectangle(int(x+t*0.43), y, int(t*0.14), int(t*0.38), WHITE)
 
     def dessineFleche(self, direction: int) -> None:
+        """Dessine le pointe de la flèche.
+
+        Args:
+            direction (int): L'orientation de la pointe.
+        """
         case = self.cases[-2]
         x = case.pos[0]
         y = case.pos[1]
@@ -88,6 +116,8 @@ class Fleche(EditTeleco):
             draw_triangle((int(x+t*0.67), int(y+t*0.17)), (int(x+t*0.5), int(y+t*0.01)), (int(x+t*0.33), int(y+t*0.17)), WHITE)
 
     def dessineProgression(self) -> None:
+        """L'indicateur de progression du parcours effectué par le bateau.
+        """
         texte = f"{len(self.cases)-1}/{self.bateau.pm}"
         taille = self.case.taille*0.09
         tt = measure_text_ex(police2, texte, taille, 0)
@@ -101,6 +131,8 @@ class Fleche(EditTeleco):
         draw_text_ex(police2, texte, (x, y), taille, 0, BLACK)
     
     def setBoutons(self) -> None:
+        """Modifie l'agancement des boutons de déplacement en fonction de la position du bateau.
+        """
         if len(self.cases)-1 < self.bateau.pm:
             for i in range(len(self.pointsCardinaux)):
                 self.activeDep[self.pointsCardinaux[i]] = True
@@ -119,6 +151,11 @@ class Fleche(EditTeleco):
                 self.activeDep[self.pointsCardinaux[i]] = False
 
     def setBateau(self, bateau: Bateau) -> None:
+        """Modifie le bateau qui est doit se déplacer.
+
+        Args:
+            bateau (Bateau): Le nouveau bateau qui se déplace.
+        """
         super().setBateau(bateau)
         self.setBoutons()
         self.cases = [self.depart]
@@ -126,6 +163,11 @@ class Fleche(EditTeleco):
         self.origiDir = self.pointsCardinaux[self.bateau.direction][:]
 
     def setCase(self, case: Case) -> None:
+        """Modifie la case de départ du déplacement.
+
+        Args:
+            case (Case): La nouvelle case de départ.
+        """
         super().setCase(case)
         self.depart = case
         self.setBoutons()
@@ -133,18 +175,31 @@ class Fleche(EditTeleco):
         self.chemin = [[]]
     
     def auNord(self) -> None:
+        """Déplacement vers la case située au nord de celle actuellement occupée par le bateau.
+        """
         self.deplace("n")
 
     def aLEst(self) -> None:
+        """Déplacement vers la case située à l'est de celle actuellement occupée par le bateau.
+        """
         self.deplace("e")
 
     def auSud(self) -> None:
+        """Déplacement vers la case située au sud de celle actuellement occupée par le bateau.
+        """
         self.deplace("s")
 
     def aLOuest(self) -> None:
+        """Déplacement vers la case située à l'ouest de celle actuellement occupée par le bateau.
+        """
         self.deplace("o")
 
     def deplace(self, direction: str) -> None:
+        """Déplace le bateau dans la direction souhaitée.
+
+        Args:
+            direction (str): Nord, sud, est ou ouest.
+        """
         pc = ['e', 's', 'o', 'n']
         voisines = self.plateau.getVoisines(self.case)
         self.case - self.bateau
@@ -160,6 +215,8 @@ class Fleche(EditTeleco):
         self.setBoutons()
 
     def reset(self) -> None:
+        """Réinitialise certains paramètres du déplacement pour en mettre en place un nouveau.
+        """
         if self.cases[-1] != self.depart:
             self.case - self.bateau
             while self.pointsCardinaux[self.bateau.direction] != self.origiDir:
@@ -171,6 +228,8 @@ class Fleche(EditTeleco):
             self.setBoutons()
 
     def passe(self) -> None:
+        """Déplacement aléatoire dans la zone possible.
+        """
         pas = randint(1, self.bateau.pm)
         for i in range(pas):
             pc = ['e', 's', 'o', 'n']

@@ -3,13 +3,19 @@ from jeux.archipel.menu import Menu
 from jeux.archipel.config import config
 
 class Archipel:
+    """La porte d'entrée vers le jeu.
+    """
     def __init__(self) -> None:
+        """Initialise le système de lien entre les différentes fenêtres.
+        """
         # Between the worlds
         self.play = False
         self.message = ""
         self.lu = True
 
     def dessine(self) -> None:
+        """Dessine la partie active du jeu.
+        """
         self.scene.dessine()
         if self.actif != self.scene:
             self.actif.dessine()
@@ -35,6 +41,8 @@ class Archipel:
                         self.actif.setPlay(True)
 
     def initialise(self) -> None:
+        """Crée les différentes fenêtres du jeu et désigne laquelle doit s'activer en première.
+        """
         self.scene = Scene()
         self.menu = Menu()
         self.scene.setPlay(True)
@@ -45,5 +53,10 @@ class Archipel:
 
     # Between the worlds
     def nouveauMessage(self, message: str) -> None:
+        """Rédige un message addressé au système d'Anovel.
+
+        Args:
+            message (str): Le message à envoyer.
+        """
         self.message = message
         self.lu = False

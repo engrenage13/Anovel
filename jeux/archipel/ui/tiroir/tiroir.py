@@ -11,6 +11,7 @@ class Tiroir:
 
         Args:
             bateaux (list[Bateau]): les bateaux à afficher.
+            couleur (Color): La couleur d'accentuation utilisé sur le fond et la bordure du tiroir.
         """
         self.liste = []
         self.soulevement = []
@@ -123,6 +124,8 @@ class Tiroir:
             self.soulevement[self.liste.index(bateau)][2] -= addit
 
     def positioneBateaux(self) -> None:
+        """Repositionne les bateaux dans le tiroir.
+        """
         tailley = int(self.tCase*len(self.liste))
         segment = 100/(len(self.liste)+1)/100
         y = int(self.originey-tailley/2+tailley*segment)
@@ -139,7 +142,7 @@ class Tiroir:
             y += int(tailley*segment)
 
     def setListe(self, liste: list[Bateau]) -> None:
-        """Permet de changer la liste de bateaux exploitée par le tiroir.
+        """Permet de changer la liste de bateaux exploités par le tiroir.
 
         Args:
             liste (list[Bateau]): Nouvelle liste pour le tiroir.
@@ -240,13 +243,31 @@ class Tiroir:
             self.liste[bateau].deplace(-pas, 0)
 
     def estApparu(self) -> bool:
+        """Vérifie si le tiroir est totalement apparu à l'écran (animation terminée).
+
+        Returns:
+            bool: True si le tiroir a terminé son animation d'apparition.
+        """
         if self.lumCadre[0] >= 50:
             return True
         else:
             return False
 
-    def __getitem__(self, key) -> Bateau:
+    def __getitem__(self, key: int) -> Bateau:
+        """Renvoie l'un des éléments présent dans le tiroir.
+
+        Args:
+            key (int): L'indice de l'élément recherché.
+
+        Returns:
+            Bateau: Le bateau correspondant à l'indice.
+        """
         return self.liste[key]
     
     def __len__(self) -> int:
+        """Renvoie le nombre de bateaux présents dans le tiroir.
+
+        Returns:
+            int: Le nombre de bateaux du tiroir.
+        """
         return len(self.liste)

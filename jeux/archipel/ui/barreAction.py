@@ -4,7 +4,15 @@ from jeux.archipel.objets.Bateau import Bateau
 from jeux.archipel.icones import minicoeur, minimarin
 
 class BarreAction:
+    """La barre contenant les actions proposées aux joueurs.
+    """
     def __init__(self, joueurs: list, passe) -> None:
+        """Crée la barre.
+
+        Args:
+            joueurs (list[Joueur]): Les joueurs présents dans la partie.
+            passe (function): La méthode à exécuter quand un joueur passe son tour.
+        """
         self.joueurs = joueurs
         self.actuel = 0
         # boutons
@@ -25,6 +33,11 @@ class BarreAction:
         self.actionsPossibles = {"deplacement": True, "organisation": False, "abordage": False, "attaque": True}
 
     def dessine(self, tour: int) -> None:
+        """Dessine la barre à l'écran
+
+        Args:
+            tour (int): Tour actuel de la partie.
+        """
         draw_rectangle(0, yf-self.hauteur, xf, yf, [80, 80, 80, 150])
         self.dessineInfoBat(tour)
         #self.dessineProgression()
@@ -83,6 +96,11 @@ class BarreAction:
                 draw_text_ex(police2, tda3, (x, int(yf-self.hauteur*0.75)), taille, 0, WHITE)
 
     def dessineInfoBat(self, tour: int) -> None:
+        """Dessine les infos relatives au bateau actif.
+
+        Args:
+            tour (int): Tour actuel de la partie.
+        """
         bateau = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
         if isinstance(bateau, Bateau):
             colFond = [24, 22, 22, 170]
@@ -179,25 +197,44 @@ class BarreAction:
     # /Choix bateau - désactivé
     
     def rejouer(self) -> None:
+        """Réinitialise certains paramètres pour pouvoir rejouer une partie.
+        """
         self.actuel = 0
     
     def setActuel(self, actuel: int) -> None:
+        """Modifie le joueur actuel.
+
+        Args:
+            actuel (int): Indice du joueur actuel.
+        """
         self.actuel = actuel
 
     def activeDeplacement(self) -> None:
+        """Annonce que le joueur a choisi l'action de déplacement.
+        """
         self.deplacement = self.choixAction = True
 
     def activeAttaque(self) -> None:
+        """Annoce que le joueur a choisi l'action d'attaque.
+        """
         self.attaque = self.choixAction = True
 
     def valideAction(self) -> None:
+        """Valide l'action effectuée par le joueur.
+        """
         self.valide = True
 
     def annuleAction(self) -> None:
+        """Annule l'action effectuée par le joueur.
+        """
         self.annule = True
 
     def activeOrga(self) -> None:
+        """Active l'organisation.
+        """
         self.orga = True
 
     def activeAbordage(self) -> None:
+        """Active l'abordage.
+        """
         self.abordage = True

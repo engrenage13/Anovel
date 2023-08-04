@@ -4,6 +4,11 @@ from jeux.archipel.ui.infoBulle import InfoBulle
 from jeux.archipel.icones import coeur, marin, degats as explosion
 
 class Bateau(Pivote):
+    """Un bateau est l'un des éléments du jeu.
+
+    Args:
+        Pivote (Pivote): Le bateau est un élément pivotable.
+    """
     def __init__(self, nom: str, image: str, pv: int, marins: int, pm: int, degats: int, couleur: Color):
         """Crée un bateau.
 
@@ -13,6 +18,7 @@ class Bateau(Pivote):
             pv (int): Points de vie du bateau.
             marins (int): Nombre de marins présents sur le bateau.
             pm (int): Portée de déplacement du bateau.
+            degats (int): Les dégâts que le bateau peut infliger.
             couleur (Color): Couleur du bateau.
         """
         super().__init__(image)
@@ -51,42 +57,87 @@ class Bateau(Pivote):
         self.degats = int(str(self.degi))
 
     def estEnPlace(self) -> bool:
+        """Vérifie si le bateau est en place.
+
+        Returns:
+            bool: True s'il est placé.
+        """
         return self.place
     
     def aFini(self) -> bool:
+        """Vérifie si le tour du bateau est terminé.
+
+        Returns:
+            bool: True si l'action est terminée.
+        """
         rep = self.coule
         if not rep:
             rep = self.finiTour
         return rep
     
     def estEnVie(self) -> bool:
+        """Vérifie si le bateau nest pas coulé.
+
+        Returns:
+            bool: True si le bateau flotte.
+        """
         if self.coule:
             return False
         else:
             return True
         
     def setNbPV(self, vie: int) -> None:
+        """Modifie les PV actuel du bateau.
+
+        Args:
+            vie (int): Le nouveau nombre de PV du bateau.
+        """
         self.vie = vie
         self.infoBulle.setValeurElement("coeur", self.vie)
         if self.vie <= 0:
             self.coule = True
 
     def __pos__(self) -> None:
+        """Rend le bateau actif.
+        """
         super().__pos__()
     
     def __neg__(self) -> None:
+        """Rend le bateau inactif.
+        """
         super().__neg__()
         self.finiTour = True
 
     def __add__(self, valeur: int) -> int:
+        """Ajoute des marins sur le bateau.
+
+        Args:
+            valeur (int): Le nombre de marins à ajouter.
+
+        Returns:
+            int: Le nouveau total de marins présents sur le bateau.
+        """
         self.marins += valeur
         self.infoBulle.setValeurElement("marin", self.marins)
         return self.marins
     
     def __sub__(self, valeur: int) -> int:
+        """Retire des marins du bateau.
+
+        Args:
+            valeur (int): Nombre de marins à supprimer.
+
+        Returns:
+            int: Le nouveau total de marins présents sur le bateau.
+        """
         self.marins -= valeur
         self.infoBulle.setValeurElement("marin", self.marins)
         return self.marins
     
     def __bool__(self) -> bool:
+        """Retourne un booléen changeant de valeur en fonction du fait que le bateau soit coulé ou non.
+
+        Returns:
+            bool: True si le bateau flotte.
+        """
         return self.estEnVie()

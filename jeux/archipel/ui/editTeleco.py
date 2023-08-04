@@ -4,7 +4,18 @@ from jeux.archipel.ui.cible import Cible, Case, Bateau
 from ui.bouton.bouton import Bouton
 
 class EditTeleco(Cible):
+    """La télécommande qui permet de modifier l'orientation et la position d'un bateau.
+
+    Args:
+        Cible (Cible): Hérite de la cible.
+    """
     def __init__(self, case: Case, bateau: Bateau) -> None:
+        """Crée la télécommande.
+
+        Args:
+            case (Case): La case sur laquelle s'affiche la télécommande.
+            bateau (Bateau): Le bateau sur lequel elle agît.
+        """
         super().__init__(case, bateau)
         self.fini = False
         self.retire = False
@@ -20,6 +31,8 @@ class EditTeleco(Cible):
         self.veutBouger = False
 
     def dessine(self) -> None:
+        """Déssine la télécommande.
+        """
         draw_rectangle_lines_ex([self.case.pos[0], self.case.pos[1], self.case.taille, self.case.taille], 
                                 int(self.case.largeurBordure*2), WHITE)
         if self.play:
@@ -53,40 +66,66 @@ class EditTeleco(Cible):
                     self.aLOuest()
 
     def setCase(self, case: Case) -> None:
+        """Modifie la case de structure.
+
+        Args:
+            case (Case): La nouvelle case mère de la télécommande.
+        """
         super().setCase(case)
         self.fini = self.veutBouger = False
 
     def setBateau(self, bateau: Bateau) -> None:
+        """Modifie le bateau sur lequel agît la télécommande.
+
+        Args:
+            bateau (Bateau): Le nouveau bateau.
+        """
         super().setBateau(bateau)
         self.retire = self.veutBouger = False
 
     def valide(self) -> None:
+        """Désactive la télécommande.
+        """
         self.fini = True
 
     def supBat(self) -> None:
+        """Supprime le bateau pour le replacer dans le tiroir.
+        """
         self.retire = True
         self.fini = True
 
     def tourneHoraire(self) -> None:
+        """Tourne le bateau dans le sens horaire de 90°.
+        """
         if self.case.estPleine():
             self.case.tourneBateaux(False)
         else:
             self.bateau.droite()
 
     def tourneAntiHoraire(self) -> None:
+        """Tourne le bateau dans le sens anti-horaire de 90°.
+        """
         if self.case.estPleine():
             self.case.tourneBateaux()
         else:
             self.bateau.gauche()
 
     def auNord(self) -> None:
+        """Déplace le bateau sur la case située au nord de la case mère.
+        """
         self.veutBouger = "n"
 
     def aLEst(self) -> None:
+        """Déplace le bateau sur la case située à l'est de la case mère.
+        """
         self.veutBouger = "e"
 
     def auSud(self) -> None:
+        """Déplace le bateau sur la case située au sud de la case mère.
+        """
         self.veutBouger = "s"
 
     def aLOuest(self) -> None:
+        """Déplace le bateau sur la case située à l'ouest de la case mère.
+        """
         self.veutBouger = "o"

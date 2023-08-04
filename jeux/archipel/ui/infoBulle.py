@@ -1,7 +1,14 @@
 from systeme.FondMarin import *
 
 class InfoBulle:
+    """Les infobulles qui apparaissent au dessus des bateaux.
+    """
     def __init__(self, contenu: list[list[str, int, Image]]) -> None:
+        """Génère l'infobulle.
+
+        Args:
+            contenu (list[list[str, int, Image]]): Les attributs du bateau qu'il faut afficher.
+        """
         self.contenu = {contenu[i][0]: [contenu[i][1], contenu[i][2]] for i in range(len(contenu))}
         self.cles = [contenu[i][0] for i in range(len(contenu))]
         # dims
@@ -10,6 +17,12 @@ class InfoBulle:
         self.ecarty = int(yf*0.01)
 
     def dessine(self, x: int, y: int) -> None:
+        """Dessine l'infobulle à l'écran.
+
+        Args:
+            x (int): Abscisse de l'origine de l'infobulle.
+            y (int): Ordonnée de l'origine de l'infobulle.
+        """
         decalx = int(xf*0.007)
         decaly = int(yf*0.02)
         dims = self.mesureTaille()
@@ -28,6 +41,11 @@ class InfoBulle:
             px += int(tt.x + self.ecartx)
 
     def mesureTaille(self) -> tuple:
+        """Mesure la taille du contenu de l'infobulle.
+
+        Returns:
+            tuple: (largeur, hauteur).
+        """
         l = self.ecartx*2
         h = 0
         for i in range(len(self.cles)):
@@ -40,6 +58,14 @@ class InfoBulle:
         return (l, h)
 
     def mesureTailleElement(self, element: int) -> tuple:
+        """Renvoie les dimensions d'un des éléments à afficher.
+
+        Args:
+            element (int): L'élément dont on souhaite connaître les dimensions.
+
+        Returns:
+            tuple: (largeur, hauteur).
+        """
         l = h = 0
         if element < len(self.cles):
             cle = self.cles[element]
@@ -50,5 +76,11 @@ class InfoBulle:
         return (l, h)
     
     def setValeurElement(self, element: str, valeur: int) -> None:
+        """Modifie les valeurs d'un élément.
+
+        Args:
+            element (str): L'élément dont la valeur doit changer.
+            valeur (int): La nouvelle valeur de l'élément.
+        """
         if element in self.cles:
             self.contenu[element][0] = valeur

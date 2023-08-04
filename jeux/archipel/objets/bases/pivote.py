@@ -9,6 +9,13 @@ class Pivote(Element):
         Element (Class): La structure de base de tout élément
     """
     def __init__(self, image: str, x: int = 0, y: int = 0) -> None:
+        """Crée un élément pivotable.
+
+        Args:
+            image (str): L'image utilisée par l'élément.
+            x (int, optional): L'abscisse initial de l'élément. Defaults to 0.
+            y (int, optional): L'ordonnée initial de l'élément. Defaults to 0.
+        """
         self.direction = 0
         self.images = []
         # Travail des images

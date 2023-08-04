@@ -5,7 +5,14 @@ from jeux.archipel.objets.Joueur import Joueur
 from jeux.archipel.fenFin.blocJoueur import BlocJoueur
 
 class Fin:
+    """Fenêtre de fin d'Archipel.
+    """
     def __init__(self, joueurs: list[Joueur]) -> None:
+        """Crée la fenêtre.
+
+        Args:
+            joueurs (list[Joueur]): Les joueurs ayant participés au jeu.
+        """
         self.setJoueurs(joueurs)
         # Boutons
         self.opt = [Bouton(TB1o, BTV, "QUITTER", '', [self.quitte]),
@@ -20,6 +27,8 @@ class Fin:
         self.resetAnim()
 
     def dessine(self) -> None:
+        """Dessine la page à l'écran.
+        """
         draw_rectangle(0, 0, xf, yf, [14, 27, 63, self.opac[0]])
         ecart = int(yf*0.03)
         y = self.hauteurContenu[0]
@@ -43,6 +52,11 @@ class Fin:
                 self.anims(False)
 
     def anims(self, mode: bool) -> None:
+        """Gère les animations d'entrée et de sortie de la page.
+
+        Args:
+            mode (bool): Définit si la fenêtre doit apparaître ou disparaître.
+        """
         if mode:
             if self.opac[0] < self.opac[1]:
                 self.opac[0] += 2
@@ -61,6 +75,11 @@ class Fin:
                 self.ok = False
 
     def setJoueurs(self, joueurs: list[Joueur]) -> None:
+        """Modifie la liste des joueurs ayant participés à la partie.
+
+        Args:
+            joueurs (list[Joueur]): Les joueurs de la partie.
+        """
         self.joueurs = [joueurs[0]]
         for i in range(len(joueurs)-1):
             j1 = self.joueurs[0]
@@ -83,22 +102,33 @@ class Fin:
                     classement += 1
 
     def resetAnim(self) -> None:
+        """Réinitialise les animations de la fenêtre.
+        """
         self.playAnim = True
         self.ok = False
         self.opac = [0, 254]
         self.hauteurContenu = [int(yf*1.1), int(yf*0.11)]
 
     def reset(self) -> None:
+        """Lance le redémarrage de la partie.
+        """
         self.message = 1
         self.lu = False
         self.resetAnim()
 
     def quitte(self) -> None:
+        """Lance l'opération de retour au menu.
+        """
         self.message = 2
         self.lu = False
         self.resetAnim()
 
     def regarde(self) -> int:
+        """Vérifie quelle option l'utilisateur a sélectionnée.
+
+        Returns:
+            int: L'option sélectionnée.
+        """
         if not self.lu:
             self.lu = True
             rep = self.message
