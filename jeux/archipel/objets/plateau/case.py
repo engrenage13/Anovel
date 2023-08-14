@@ -39,7 +39,8 @@ class Case(Bougeable):
         Args:
             grise (bool, optional): Permet d'appliquer un déformateur grisant la case. Defaults to False.
         """
-        draw_rectangle(self.pos[0], self.pos[1], self.taille, self.taille, self.couleurs[0])
+        if not self.marqueur:
+            draw_rectangle(self.pos[0], self.pos[1], self.taille, self.taille, self.couleurs[0])
         draw_rectangle_lines_ex([self.pos[0], self.pos[1], self.taille, self.taille], self.largeurBordure, self.couleurs[1])
         if self.marqueur:
             if self.couleurs == ([0, 0, 0, 150], BLACK):

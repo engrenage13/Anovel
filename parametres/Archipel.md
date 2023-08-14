@@ -1,4 +1,4 @@
-# Placement.
+# Placement
 
 *>hasard
 interrupteur> Conserver les positions avec le placement aleatoire
