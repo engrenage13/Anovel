@@ -32,6 +32,11 @@ class Case(Bougeable):
         self.orienteIle = 0
         self.imaIle = None
         self.marqueur = False
+        # Mer
+        mer = load_image("jeux/archipel/images/mer.png")
+        image_resize(mer, self.taille, self.taille)
+        self.mer = load_texture_from_image(mer)
+        unload_image(mer)
 
     def dessine(self, grise: bool = False) -> None:
         """Dessine la case à l'écran.
@@ -40,13 +45,16 @@ class Case(Bougeable):
             grise (bool, optional): Permet d'appliquer un déformateur grisant la case. Defaults to False.
         """
         if not self.marqueur:
-            draw_rectangle(self.pos[0], self.pos[1], self.taille, self.taille, self.couleurs[0])
-        draw_rectangle_lines_ex([self.pos[0], self.pos[1], self.taille, self.taille], self.largeurBordure, self.couleurs[1])
-        if self.marqueur:
+            if self.couleurs == ([0, 0, 0, 150], BLACK):
+                draw_rectangle(self.pos[0], self.pos[1], self.taille, self.taille, self.couleurs[0])
+            else:
+                draw_texture(self.mer, self.pos[0], self.pos[1], WHITE)
+        else:
             if self.couleurs == ([0, 0, 0, 150], BLACK):
                 draw_rectangle(self.pos[0], self.pos[1], self.taille, self.taille, [65, 150, 39, 150])
             else:
                 draw_texture(self.imaIle, self.pos[0], self.pos[1], WHITE)
+        draw_rectangle_lines_ex([self.pos[0], self.pos[1], self.taille, self.taille], self.largeurBordure, self.couleurs[1])
         if grise:
             draw_rectangle(self.pos[0], self.pos[1], self.taille, self.taille, [50, 50, 50, 160])
 

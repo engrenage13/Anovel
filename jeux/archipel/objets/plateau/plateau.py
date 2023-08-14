@@ -37,7 +37,7 @@ class Plateau:
                     couleur = ([0, 0, 0, 150], BLACK)
                     largeur = 1
                 else:
-                    couleur = (random.choice(EAUX), [80, 80, 80, 150])
+                    couleur = (EAUX[0], [80, 80, 80, 150])
                     largeur = 1.5
                 cases.append(Case(x, y, self.tailleCase, couleur, largeur))
                 x += self.tailleCase
