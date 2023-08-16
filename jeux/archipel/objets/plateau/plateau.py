@@ -7,29 +7,27 @@ from jeux.archipel.fonctions.deplacement import glisse
 class Plateau:
     """Le plateau de jeu.
     """
-    def __init__(self, nbCases: int, tailleCases: int = TAILLECASE, bordure: float = int(yf*0.05), envirronement: bool = True, plan: bool = False, accroche: tuple[int] = (0, 0)) -> None:
+    def __init__(self, nbCases: int, tailleCases: int = TAILLECASE, envirronement: bool = True, plan: bool = False, accroche: tuple[int] = (0, 0)) -> None:
         """Crée le plateau au début de chaque première partie.
 
         Args:
             nbCases (int): Le nombre de cases que doit comporter le plateau sur ses côtés.
             tailleCases (int, optional): La taille des cases du plateau. Defaults to TAILLECASE.
-            bordure (float, optional): L'épaisseur de la bordure. La bordure est l'élément du décors qui est le plus proche du plateau. Defaults to int(yf*0.05).
             envirronement (bool, optional): Est-ce qu'il faut afficher l'envirronement ou non ? Defaults to True.
             plan (bool, optional): Le plateau est-il utilisé comme un plan ? Defaults to False.
             accroche (tuple[int], optional): L'origine du plateau pour la caméra (c'est technique). Defaults to (0, 0).
         """
         self.nbCases = nbCases
-        self.largeurBordure = bordure
         if envirronement:
-            self.largeurEnvirronement = int(yf*0.2)
+            self.largeurEnvirronement = TAILLECASE
         else:
             self.largeurEnvirronement = 0
         self.tailleCase = tailleCases
         self.isPlan = plan
         self.env = envirronement
         self.cases = []
-        x = accroche[0]+self.largeurBordure+self.largeurEnvirronement
-        y = accroche[1]+self.largeurBordure+self.largeurEnvirronement
+        x = accroche[0]+self.largeurEnvirronement
+        y = accroche[1]+self.largeurEnvirronement
         for i in range(nbCases):
             cases = []
             for j in range(nbCases):
@@ -42,7 +40,7 @@ class Plateau:
                 cases.append(Case(x, y, self.tailleCase, couleur, largeur))
                 x += self.tailleCase
             self.cases.append(cases)
-            x = accroche[0]+self.largeurBordure+self.largeurEnvirronement
+            x = accroche[0]+self.largeurEnvirronement
             y += self.tailleCase
         # Défilement du plateau
         if plan:
@@ -58,12 +56,16 @@ class Plateau:
         # Iles
         marqueCases(self, 20, 40)
         self.setIles()
+        # Décors
+        carreau = load_image("jeux/archipel/images/carrelage.png")
+        image_resize(carreau, self.tailleCase, self.tailleCase)
+        self.carrelage = load_texture_from_image(carreau)
+        unload_image(carreau)
 
     def dessine(self) -> None:
         """Dessine le plateau.
         """
         self.dessineEnvirronement()
-        self.dessineBordure()
         if len(self.elementsPrioritaires) > 0:
             for i in range(self.nbCases):
                 for j in range(self.nbCases):
@@ -81,29 +83,21 @@ class Plateau:
         if self.glisse and self.cases[0][0].pos != self.positionCible:
             self.rePlace()
 
-    def dessineBordure(self) -> None:
-        """Dessine la bordure du plateau.
-        """
-        p = self.cases[0][0].pos
-        l = self.largeurBordure
-        tCase = self.tailleCase
-        ajustFin = l*2
-        OR = [169, 142, 23, 255]
-        draw_rectangle_lines_ex([p[0]-l, p[1]-l, tCase*self.nbCases+ajustFin, tCase*self.nbCases+ajustFin], l, BLACK)
-        draw_rectangle(p[0]-l, p[1]-l, l*2, l*2, OR)
-        draw_rectangle(p[0]-l+tCase*self.nbCases, p[1]-l, l*2, l*2, OR)
-        draw_rectangle(p[0]-l, p[1]-l+tCase*self.nbCases, l*2, l*2, OR)
-        draw_rectangle(p[0]-l+tCase*self.nbCases, p[1]-l+tCase*self.nbCases, l*2, l*2, OR)
-
     def dessineEnvirronement(self) -> None:
         """Dessine l'envirronement.
         """
         p = self.cases[0][0].pos
-        l = self.largeurEnvirronement+self.largeurBordure
-        tCase = self.tailleCase
-        ajustFin = l*2
+        l = self.largeurEnvirronement
         if self.env:
-            draw_rectangle(p[0]-l, p[1]-l, tCase*self.nbCases+ajustFin, tCase*self.nbCases+ajustFin, [11, 23, 62, 255])
+            x = p[0]-l
+            y = p[1]-l
+            for i in range(self.nbCases+2):
+                for j in range(self.nbCases+2):
+                    draw_texture(self.carrelage, x, y, WHITE)
+                    x += self.carrelage.width
+                y += self.carrelage.height
+                x = p[0]-l
+            draw_rectangle(p[0]-l, p[1]-l, int(self.carrelage.width*(self.nbCases+2)), int(self.carrelage.height*(self.nbCases+2)), [11, 23, 62, 150])
 
     def deplace(self, x: int, y: int) -> None:
         """Permet de déplacer le plateau à l'écran (scroll).
@@ -179,9 +173,9 @@ class Plateau:
         else:
             xcomp1 = self.cases[0][0].pos[0]+x
             xcomp2 = self.cases[0][self.nbCases-1].pos[0]+tCase+x
-        if xcomp1 > self.largeurBordure+self.largeurEnvirronement:
+        if xcomp1 > self.largeurEnvirronement:
             rep = True
-        elif xcomp2 < xf-self.largeurBordure-self.largeurEnvirronement:
+        elif xcomp2 < xf-self.largeurEnvirronement:
             rep = True
         return rep
     
@@ -203,9 +197,9 @@ class Plateau:
         else:
             xcomp1 = self.cases[0][0].pos[1]+y
             xcomp2 = self.cases[self.nbCases-1][0].pos[1]+tCase+y
-        if xcomp1 > self.largeurBordure+self.largeurEnvirronement:
+        if xcomp1 > self.largeurEnvirronement:
             rep = True
-        elif xcomp2 < yf-self.largeurBordure-self.largeurEnvirronement:
+        elif xcomp2 < yf-self.largeurEnvirronement:
             rep = True
         return rep
     
@@ -283,14 +277,14 @@ class Plateau:
             ny = y+(dy*muly)
             if self.passeFrontiereHorizontale(nx, True):
                 if mulx > 0:
-                    nx = self.largeurBordure+self.largeurEnvirronement
+                    nx = self.largeurEnvirronement
                 else:
-                    nx = xf-(len(self.cases)*self.tailleCase)-self.largeurBordure-self.largeurEnvirronement
+                    nx = xf-(len(self.cases)*self.tailleCase)-self.largeurEnvirronement
             if self.passeFrontiereVerticale(ny, True):
                 if muly > 0:
-                    ny = self.largeurBordure+self.largeurEnvirronement
+                    ny = self.largeurEnvirronement
                 else:
-                    ny = yf-(len(self.cases)*self.tailleCase)-self.largeurBordure-self.largeurEnvirronement
+                    ny = yf-(len(self.cases)*self.tailleCase)-self.largeurEnvirronement
             self.place(nx, ny, True)
     
     def vide(self) -> None:

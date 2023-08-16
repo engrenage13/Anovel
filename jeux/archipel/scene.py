@@ -153,28 +153,28 @@ class Scene(Jeu):
             py = int(-(len(self.plateau)*TAILLECASE)/2+yf/2)
         elif secteur == 'n':
             px = int(-(len(self.plateau)*TAILLECASE)/2+xf/2)
-            py = int(self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2)
+            py = int(self.plateau.largeurEnvirronement/2)
         elif secteur == 'ne':
-            px = -int(len(self.plateau)*TAILLECASE+self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2-xf)
-            py = int(self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2)
+            px = -int(len(self.plateau)*TAILLECASE+self.plateau.largeurEnvirronement/2-xf)
+            py = int(self.plateau.largeurEnvirronement/2)
         elif secteur == 'e':
-            px = -int(len(self.plateau)*TAILLECASE+self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2-xf)
+            px = -int(len(self.plateau)*TAILLECASE+self.plateau.largeurEnvirronement/2-xf)
             py = int(-(len(self.plateau)*TAILLECASE)/2+yf/2)
         elif secteur == 'se':
-            px = -int(len(self.plateau)*TAILLECASE+self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2-xf)
-            py = -int(len(self.plateau)*TAILLECASE+self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2-yf)
+            px = -int(len(self.plateau)*TAILLECASE+self.plateau.largeurEnvirronement/2-xf)
+            py = -int(len(self.plateau)*TAILLECASE+self.plateau.largeurEnvirronement/2-yf)
         elif secteur == 's':
             px = int(-(len(self.plateau)*TAILLECASE)/2+xf/2)
-            py = -int(len(self.plateau)*TAILLECASE+self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2-yf)
+            py = -int(len(self.plateau)*TAILLECASE+self.plateau.largeurEnvirronement/2-yf)
         elif secteur == 'so':
-            px = int(self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2)
-            py = -int(len(self.plateau)*TAILLECASE+self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2-yf)
+            px = int(self.plateau.largeurEnvirronement/2)
+            py = -int(len(self.plateau)*TAILLECASE+self.plateau.largeurEnvirronement/2-yf)
         elif secteur == 'o':
-            px = int(self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2)
+            px = int(self.plateau.largeurEnvirronement/2)
             py = int(-(len(self.plateau)*TAILLECASE)/2+yf/2)
         elif secteur == 'no':
-            px = int(self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2)
-            py = int(self.plateau.largeurBordure+self.plateau.largeurEnvirronement/2)
+            px = int(self.plateau.largeurEnvirronement/2)
+            py = int(self.plateau.largeurEnvirronement/2)
         else:
             px = py = 0
         if px != 0 and py != 0:

@@ -19,7 +19,7 @@ class PageCarte(Fenetre):
         nbCases = 14
         tCase = int(yf*0.95/nbCases)
         # /
-        self.plateau = Plateau(14, tCase, 3, False, True, (int(xf*0.6-yf*0.95/2), int(yf/2-yf*0.95/2)))
+        self.plateau = Plateau(14, tCase, False, True, (int(xf*0.6-yf*0.95/2), int(yf/2-yf*0.95/2)))
         self.titre = BlocTexte("CARTE", police1, int(yf*0.05))
         self.banniere = BlocTexte("JOUEUR 1", police2i, int(yf*0.04))
         tex = "Choisis une zone de depart. Ton adversaire commencera dans la zone opposee."
