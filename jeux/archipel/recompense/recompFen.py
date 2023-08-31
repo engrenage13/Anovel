@@ -8,7 +8,7 @@ from jeux.archipel.icones import coeur, marin, fleche, degats
 class RecompFen:
     """La fenêtre de récompenses pour un abordage réussi.
     """
-    def __init__(self, allie: Bateau = Bateau("", "jeux/archipel/images/Bateaux/gbb.png", 5, 10, 0, 1, [0, 0, 0, 0]), ennemi: Bateau = Bateau("", "jeux/archipel/images/Bateaux/gbb.png", 4, 1, 0, 0, [0, 0, 0, 0])) -> None:
+    def __init__(self, allie: Bateau = Bateau("", "jeux/archipel/images/Bateaux/gafteur.png", 5, 10, 0, 1, [0, 0, 0, 0]), ennemi: Bateau = Bateau("", "jeux/archipel/images/Bateaux/gafteur.png", 4, 1, 0, 0, [0, 0, 0, 0])) -> None:
         """Crée la fenêtre.
 
         Args:
