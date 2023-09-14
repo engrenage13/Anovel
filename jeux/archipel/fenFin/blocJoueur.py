@@ -1,6 +1,7 @@
 from systeme.FondMarin import *
 from jeux.archipel.objets.Joueur import Joueur
 from ui.blocTexte import BlocTexte
+from jeux.archipel.icones import bateau, epave
 
 class BlocJoueur:
     """Bloc affichant le nom et les statistiques de fin de partie de l'un des joueurs.
@@ -19,7 +20,7 @@ class BlocJoueur:
         self.num = BlocTexte(str(self.classement), police1i, int(xf*0.021))
         # dimensions
         self.largeurVignette = int(yf*0.06)
-        self.tailleIcone = int(yf*0.07)
+        self.tailleIcone = bateau.height
         self.espace = int(yf*0.015)
         self.largeur = int(xf*0.5)
         self.hauteur = self.tailleIcone+self.espace*2
@@ -52,11 +53,13 @@ class BlocJoueur:
         # bateaux
         px = int(str(x))+self.largeur-self.espace
         py = int(str(y))+self.espace
-        draw_rectangle(px-self.tailleIcone, py, self.tailleIcone, self.tailleIcone, [90, 18, 18, 120])
+        #draw_rectangle(px-self.tailleIcone, py, self.tailleIcone, self.tailleIcone, [90, 18, 18, 120])
+        draw_texture(epave, px-self.tailleIcone, py, WHITE)
         tm = measure_text_ex(police2i, f"x{self.joueur.nbelimination}", int(yf*0.028), 0)
         draw_text_ex(police2i, f"x{self.joueur.nbelimination}", (int(px-tm.x*0.9), int(py+self.tailleIcone-tm.y*0.8)), int(yf*0.028), 0, WHITE)
         px -= self.tailleIcone+self.espace
-        draw_rectangle(px-self.tailleIcone, py, self.tailleIcone, self.tailleIcone, [21, 20, 20, 155])
+        #draw_rectangle(px-self.tailleIcone, py, self.tailleIcone, self.tailleIcone, [21, 20, 20, 155])
+        draw_texture(bateau, px-self.tailleIcone, py, WHITE)
         tv = measure_text_ex(police2i, f"x{self.joueur.compteBateau()}", int(yf*0.028), 0)
         draw_text_ex(police2i, f"x{self.joueur.compteBateau()}", (int(px-tv.x*0.9), int(py+self.tailleIcone-tv.y*0.8)), int(yf*0.028), 0, WHITE)
 

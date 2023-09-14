@@ -25,15 +25,22 @@ class Fin:
         self.lu = False
         # Animations
         self.resetAnim()
+        # Fond d'écran
+        image = load_image('images/backgrounds/epave.png')
+        ratio = yf/image.height
+        image_resize(image, int(image.width*ratio), int(image.height*ratio))
+        self.fond = load_texture_from_image(image)
+        unload_image(image)
 
     def dessine(self) -> None:
         """Dessine la page à l'écran.
         """
-        draw_rectangle(0, 0, xf, yf, [14, 27, 63, self.opac[0]])
+        #draw_rectangle(0, 0, xf, yf, [14, 27, 63, self.opac[0]])
+        draw_texture(self.fond, 0, 0, [255, 255, 255, 200])
         ecart = int(yf*0.03)
         y = self.hauteurContenu[0]
         tt = measure_text_ex(police1i, "CLASSEMENT FINAL", yf*0.06, 0)
-        draw_text_ex(police1i, "CLASSEMENT FINAL", (int(xf/2-tt.x/2), int(yf*0.015)), yf*0.06, 0, [250, 248, 220, self.opac[0]])
+        draw_text_ex(police1i, "CLASSEMENT FINAL", (int(xf/2-tt.x/2), int(yf*0.015)), yf*0.06, 0, [255, 255, 255, self.opac[0]])
         for i in range(len(self.blocs)):
             bloc = self.blocs[i]
             bloc.dessine(int(xf/2-bloc.getDims()[0]/2), y)
