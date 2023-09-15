@@ -82,13 +82,13 @@ class Scene(Jeu):
                 self.pause = 100
             elif not self.affRec and not self.affTeleco:
                 ecart = int(yf*0.01)
-                y = int(yf*0.81)
+                y = int(yf-ecart-self.btAlea.getDims()[1]/2)
                 if self.tiroir.estApparu() or len(self.tiroir) == 0:
-                    self.btSup.dessine(int(ecart+self.btSup.getDims()[0]/2), y)
-                    y += int(self.btSup.getDims()[1]/2+self.btAlea.getDims()[1]/2+ecart)
                     self.btAlea.dessine(int(ecart+self.btAlea.getDims()[0]/2), y)
+                    y -= int(self.btAlea.getDims()[1]/2+self.btSup.getDims()[1]/2+ecart)
+                    self.btSup.dessine(int(ecart+self.btSup.getDims()[0]/2), y)
                     if len(self.tiroir) == 0:
-                        self.btValid.dessine(int(xf*0.99-self.btValid.getDims()[0]/2), int(yf-xf*0.01-self.btValid.getDims()[1]/2))
+                        self.btValid.dessine(int(xf-ecart-self.btValid.getDims()[0]/2), int(yf-ecart-self.btValid.getDims()[1]/2))
                     if is_key_pressed(261):
                         self.tousAuTiroir()
                     if is_key_pressed(82):
