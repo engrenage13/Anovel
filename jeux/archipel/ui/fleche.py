@@ -63,10 +63,10 @@ class Fleche(EditTeleco):
         """
         for i in range(len(self.cases)-1):
             case = self.cases[i]
-            draw_circle(int(case.pos[0]+case.taille/2), int(case.pos[1]+case.taille/2), case.taille*0.1, WHITE)
+            draw_ring((int(case.pos[0]+case.taille/2), int(case.pos[1]+case.taille/2)), case.taille*0.08, case.taille*0.1, 0, 360, 360, WHITE)
+            tt = measure_text_ex(police1, str(i+1), case.taille*0.1, 0)
+            draw_text_ex(police1, str(i+1), (int(case.pos[0]+case.taille/2-tt.x/2), int(case.pos[1]+case.taille/2-tt.y/2)), case.taille*0.1, 0, WHITE)
             self.dessineRectangle(case, i)
-        #if len(self.chemin) > 1:
-            #self.dessineFleche()
 
     def dessineRectangle(self, case: Case, indice: int) -> None:
         """Dessine les rectangles des flèches.
@@ -78,19 +78,21 @@ class Fleche(EditTeleco):
         x = case.pos[0]
         y = case.pos[1]
         t = case.taille
+        longueur = 0.38
+        largeur = 0.04
         for i in range(len(self.chemin[indice])):
             trait = self.chemin[indice][i]
             if indice == len(self.chemin)-2 and i == len(self.chemin[indice])-1:
                 self.dessineFleche(trait)
             else:
                 if trait == 0:
-                    draw_rectangle(int(x+t*0.62), int(y+t*0.43), int(t*0.38), int(t*0.14), WHITE)
+                    draw_rectangle(int(x+t*0.62), int(y+t*(0.5-largeur/2)), int(t*longueur), int(t*largeur), WHITE)
                 elif trait == 1:
-                    draw_rectangle(int(x+t*0.43), int(y+t*0.62), int(t*0.14), int(t*0.38), WHITE)
+                    draw_rectangle(int(x+t*(0.5-largeur/2)), int(y+t*0.62), int(t*largeur), int(t*longueur), WHITE)
                 elif trait == 2:
-                    draw_rectangle(x, int(y+t*0.43), int(t*0.38), int(t*0.14), WHITE)
+                    draw_rectangle(x, int(y+t*(0.5-largeur/2)), int(t*longueur), int(t*largeur), WHITE)
                 else:
-                    draw_rectangle(int(x+t*0.43), y, int(t*0.14), int(t*0.38), WHITE)
+                    draw_rectangle(int(x+t*(0.5-largeur/2)), y, int(t*largeur), int(t*longueur), WHITE)
 
     def dessineFleche(self, direction: int) -> None:
         """Dessine le pointe de la flèche.
@@ -102,18 +104,22 @@ class Fleche(EditTeleco):
         x = case.pos[0]
         y = case.pos[1]
         t = case.taille
+        largeur = 0.04
+        longueur = 0.3
+        largFle = 0.08
+        longFle = 0.08
         if direction == 0:
-            draw_rectangle(int(x+t*0.62), int(y+t*0.43), int(t*0.25), int(t*0.14), WHITE)
-            draw_triangle((int(x+t*0.83), int(y+t*0.67)), (int(x+t*0.99), int(y+t*0.5)), (int(x+t*0.83), int(y+t*0.33)), WHITE)
+            draw_rectangle(int(x+t*0.62), int(y+t*(0.5-largeur/2)), int(t*longueur), int(t*largeur), WHITE)
+            draw_triangle((int(x+t*(0.98-longFle)), int(y+t*(0.5+largFle))), (int(x+t*0.98), int(y+t*0.5)), (int(x+t*(0.98-longFle)), int(y+t*(0.5-largFle))), WHITE)
         elif direction == 1:
-            draw_rectangle(int(x+t*0.43), int(y+t*0.62), int(t*0.14), int(t*0.25), WHITE)
-            draw_triangle((int(x+t*0.5), int(y+t*0.99)), (int(x+t*0.67), int(y+t*0.83)), (int(x+t*0.33), int(y+t*0.83)), WHITE)
+            draw_rectangle(int(x+t*(0.5-largeur/2)), int(y+t*0.62), int(t*largeur), int(t*longueur), WHITE)
+            draw_triangle((int(x+t*0.5), int(y+t*0.98)), (int(x+t*(0.5+largFle)), int(y+t*(0.98-longFle))), (int(x+t*(0.5-largFle)), int(y+t*(0.98-longFle))), WHITE)
         elif direction == 2:
-            draw_rectangle(int(x+t*0.13), int(y+t*0.43), int(t*0.25), int(t*0.14), WHITE)
-            draw_triangle((int(x+t*0.17), int(y+t*0.67)), (int(x+t*0.17), int(y+t*0.33)), (int(x+t*0.01), int(y+t*0.5)), WHITE)
+            draw_rectangle(int(x+t*(0.38-longueur)), int(y+t*(0.5-largeur/2)), int(t*longueur), int(t*largeur), WHITE)
+            draw_triangle((int(x+t*(0.02+longFle)), int(y+t*(0.5+largFle))), (int(x+t*(0.02+longFle)), int(y+t*(0.5-largFle))), (int(x+t*0.02), int(y+t*0.5)), WHITE)
         else:
-            draw_rectangle(int(x+t*0.43), int(y+t*0.13), int(t*0.14), int(t*0.25), WHITE)
-            draw_triangle((int(x+t*0.67), int(y+t*0.17)), (int(x+t*0.5), int(y+t*0.01)), (int(x+t*0.33), int(y+t*0.17)), WHITE)
+            draw_rectangle(int(x+t*(0.5-largeur/2)), int(y+t*(0.38-longueur)), int(t*largeur), int(t*longueur), WHITE)
+            draw_triangle((int(x+t*(0.5+largFle)), int(y+t*(0.02+longFle))), (int(x+t*0.5), int(y+t*0.02)), (int(x+t*(0.5-largFle)), int(y+t*(0.02+longFle))), WHITE)
 
     def dessineProgression(self) -> None:
         """L'indicateur de progression du parcours effectué par le bateau.
