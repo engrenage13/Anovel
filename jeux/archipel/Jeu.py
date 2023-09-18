@@ -2,7 +2,6 @@ from random import choice, randint
 from systeme.FondMarin import *
 from jeux.archipel.objets.plateau.plateau import Plateau, Case
 from jeux.archipel.objets.Joueur import Joueur, Bateau
-from jeux.archipel.intro import Intro
 from jeux.archipel.pageCarte import PageCarte
 from jeux.archipel.objets.bases.fenetre import Fenetre
 from jeux.archipel.objets.plateau.zone import Zone
@@ -36,8 +35,7 @@ class Jeu:
         +self.joueurs[self.actuel]
         self.tiroir = Tiroir(self.joueurs[self.actuel].bateaux, self.joueurs[self.actuel].couleur)
         # Phases
-        self.fen = {"intro": Intro(self.joueurs), 
-                    "choix_zone": PageCarte(), 
+        self.fen = {"choix_zone": PageCarte(), 
                     "placement": self.plateau, 
                     "jeu": self.plateau, 
                     "organisation": OrgaFen(self.joueurs[self.actuel][0], self.joueurs[self.actuel][1]), 
@@ -50,10 +48,11 @@ class Jeu:
                 self.actif = config['dev'].lower()
                 if self.actif == 'choix_zone':
                     self.fen['choix_zone'].plateau.copieContenu(self.plateau)
-            if self.actif != 'intro' and self.actif != 'choix_zone':
+            if self.actif != 'choix_zone':
                 self.fen['choix_zone'].action.passe()
         else:
-            self.actif = 'intro'
+            self.actif = 'choix_zone'
+            self.fen['choix_zone'].plateau.copieContenu(self.plateau)
         self.phase = config[self.actif]["phase"]
         # /
         self.cible = Cible(self.plateau[0][0], self.joueurs[self.actuel][0])
@@ -99,11 +98,7 @@ class Jeu:
     def switch(self) -> None:
         """Passe d'une fenêtre ou d'une phase à l'autre en fonction de l'avancé de la partie.
         """
-        if self.actif == 'intro':
-            self.actif = 'choix_zone'
-            self.fen['choix_zone'].plateau.copieContenu(self.plateau)
-            self.setPhase('placement')
-        elif self.actif == 'choix_zone':
+        if self.actif == 'choix_zone':
             self.actif = 'placement'
         elif self.actif == 'placement':
             self.actif = 'jeu'
@@ -119,11 +114,13 @@ class Jeu:
         for fenetre in self.fen:
             if isinstance(self.fen[fenetre], Fenetre):
                 self.fen[fenetre].rejouer()
-        self.actif = self.phase = 'intro'
+        self.actif = 'choix_zone'
+        self.phase = 'placement'
         self.plateau.bloque = True
         self.plateau.rejouer()
         self.indiqueTour = 0
         self.zoneDep.setCouleurs([255, 161, 0, 60], ORANGE, [255, 161, 0, 60], ORANGE)
+        self.fen['choix_zone'].plateau.copieContenu(self.plateau)
         # Joueurs 
         self.actuel = 0
         for i in range(len(self.joueurs)):

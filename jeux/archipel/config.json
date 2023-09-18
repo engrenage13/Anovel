@@ -1,7 +1,6 @@
 {
     "placement": {"interface": true, "phase": "placement"},
     "jeu": {"interface": true, "phase": "jeu"},
-    "intro": {"interface": false, "phase": "intro"},
     "choix_zone": {"interface": true, "phase": "placement"},
     "organisation": {"interface": true, "phase": "jeu"},
     "fin": {"interface": false, "phase": "fin"},
