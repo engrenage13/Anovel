@@ -1,26 +1,36 @@
 from systeme.FondMarin import *
 
 # Interface
-cruzoff = load_image('images/ui/CroSom.png')
-image_resize(cruzoff, int(hbarre*0.9), int(hbarre*0.9))
-croixSombre = load_texture_from_image(cruzoff)
-cruzon = load_image('images/ui/CroLum.png')
-image_resize(cruzon, int(hbarre*0.9), int(hbarre*0.9))
-croixLumineuse = load_texture_from_image(cruzon)
-pointe = load_image('images/bataille/viseur.png')
-image_resize(pointe, int(tailleCase*0.96), int(tailleCase*0.96))
-viseur = load_texture_from_image(pointe)
+fum = load_image("images/decors/vapeur.png")
+prop = int(yf*0.06)/fum.height
+image_resize(fum, int(fum.width*prop), int(fum.height*prop))
+vapeurD = load_texture_from_image(fum)
+image_flip_horizontal(fum)
+vapeurG = load_texture_from_image(fum)
+unload_image(fum)
 
-# Marqueurs
-marqueX = load_image('images/bataille/croix.png')
-image_resize(marqueX, tailleCase, tailleCase)
-croix = load_texture_from_image(marqueX)
-marqueO = load_image('images/bataille/rond.png')
-image_resize(marqueO, tailleCase, tailleCase)
-rond = load_texture_from_image(marqueO)
+# Erreurs
+poiscaille = load_image('images/decors/arretedor.png')
+prop = int(yf*0.17)/poiscaille.height
+image_resize(poiscaille, int(poiscaille.width*prop), int(poiscaille.height*prop))
+cadreCodeErreur = load_texture_from_image(poiscaille)
+unload_image(poiscaille)
+demon = load_image('images/decors/cauchemar.png')
+prop = int(yf*0.12)/demon.height
+image_resize(demon, int(demon.width*prop), int(demon.height*prop))
+cauchemar = load_texture_from_image(demon)
+unload_image(demon)
 
-# Environnement
-env = load_image('images/envs/mer.png')
-reduc = yf/env.height
-image_resize(env, int(env.width*reduc), int(env.height*reduc))
-mer = load_texture_from_image(env)
+# Décors
+deco1 = load_image('jeux/BN/images/ui/coraux.png')
+ratio = int(xf*0.16)/deco1.width
+image_resize(deco1, int(deco1.width*ratio), int(deco1.height*ratio))
+corail1 = load_texture_from_image(deco1)
+image_flip_vertical(deco1)
+corail2 = load_texture_from_image(deco1)
+unload_image(deco1)
+deco2 = load_image('images/decors/poissons.png')
+ratio = int(tailleCase*1.2)/deco2.height
+image_resize(deco2, int(deco2.width*ratio), int(deco2.height*ratio))
+poisson = load_texture_from_image(deco2)
+unload_image(deco2)

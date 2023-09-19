@@ -1,0 +1,4 @@
+{
+    "j1": {"nom": "Joueur 1", "bateaux": ["ferpasseur", "gafteur", "gafteur", "gafteur"], "couleur": [0, 121, 241, 255]},
+    "j2": {"nom": "Joueur 2", "bateaux": ["ferpasseur", "gafteur", "gafteur", "gafteur"], "couleur": [230, 41, 55, 255]}
+}

@@ -1,0 +1,10 @@
+{
+    "placement": {"interface": true, "phase": "placement"},
+    "jeu": {"interface": true, "phase": "jeu"},
+    "choix_zone": {"interface": true, "phase": "placement"},
+    "organisation": {"interface": true, "phase": "jeu"},
+    "fin": {"interface": false, "phase": "fin"},
+    "recomp_abo": {"interface": true, "phase": "jeu"},
+
+    "dev": false
+}
