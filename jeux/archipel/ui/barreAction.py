@@ -32,15 +32,15 @@ class BarreAction:
         # Capteurs
         self.actionsPossibles = {"deplacement": True, "organisation": False, "abordage": False, "attaque": True}
 
-    def dessine(self, tour: int) -> None:
+    def dessine(self, tour: int, dernierTour: int) -> None:
         """Dessine la barre à l'écran
 
         Args:
             tour (int): Tour actuel de la partie.
+            dernierTour (int): Tour final.
         """
         draw_rectangle(0, yf-self.hauteur, xf, yf, [80, 80, 80, 150])
-        self.dessineInfoBat(tour)
-        #self.dessineProgression()
+        self.dessineInfoBat(tour, dernierTour)
         if not self.deplacement and not self.attaque:
             texte = "ACTIONS POSSIBLES : "
             x = int(xf*0.31)
@@ -95,11 +95,12 @@ class BarreAction:
                 x += int(tt2.x)
                 draw_text_ex(police2, tda3, (x, int(yf-self.hauteur*0.75)), taille, 0, WHITE)
 
-    def dessineInfoBat(self, tour: int) -> None:
+    def dessineInfoBat(self, tour: int, tourmax: int) -> None:
         """Dessine les infos relatives au bateau actif.
 
         Args:
             tour (int): Tour actuel de la partie.
+            tourmax (int): Tour final.
         """
         bateau = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
         if isinstance(bateau, Bateau):
@@ -123,7 +124,7 @@ class BarreAction:
             y += int(yf*0.003)
             draw_text_ex(police1, str(bateau.marins), (x, int(y+yf*0.001)), int(yf*0.02), 0, WHITE)
             x += int(xf*0.025)
-            draw_text_ex(police2, "TOUR "+str(tour), (x, y), yf*0.02, 0, WHITE)
+            draw_text_ex(police2, f"TOUR {str(tour)}/{str(tourmax)}", (x, y), yf*0.02, 0, WHITE)
 
     # Choix bateau - Désactivé
     def dessineProgression(self) -> None:

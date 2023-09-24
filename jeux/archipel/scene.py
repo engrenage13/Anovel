@@ -96,7 +96,7 @@ class Scene(Jeu):
         elif self.actif == 'jeu' and self.phase == 'jeu':
             self.tour()
             if self.play:
-                self.barre.dessine(self.indiqueTour)
+                self.barre.dessine(self.indiqueTour, self.tourmax)
         elif self.actif == 'fin' and self.phase == 'fin':
             if fenetre != self.plateau and not fenetre.lu:
                 message = fenetre.regarde()
@@ -249,7 +249,6 @@ class Scene(Jeu):
         if not self.deplaPlacement:
             self.focusBat()
             self.deplaPlacement = True
-            #self.barre.deplacement = True
         if self.barre.chabat:
             self.deplaPlacement = False
             self.barre.chabat = False

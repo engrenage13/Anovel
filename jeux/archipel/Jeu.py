@@ -17,7 +17,7 @@ from jeux.archipel.recompense.recompFen import RecompFen
 from jeux.archipel.fenFin.fin import Fin
 from jeux.archipel.icones import orga, miniorga, abordage, miniabordage
 
-TOURMAX = 40
+TOURMAX = 20
 
 class Jeu:
     """L'intégralité du jeu.
@@ -25,6 +25,7 @@ class Jeu:
     def __init__(self) -> None:
         """Met en place tous les éléments du jeu.
         """
+        self.tourmax = TOURMAX
         self.plateau = Plateau(14)
         self.plateau.bloque = True
         self.joueurs = []
@@ -35,7 +36,7 @@ class Jeu:
         +self.joueurs[self.actuel]
         self.tiroir = Tiroir(self.joueurs[self.actuel].bateaux, self.joueurs[self.actuel].couleur)
         # Phases
-        self.fen = {"choix_zone": PageCarte(), 
+        self.fen = {"choix_zone": PageCarte(self.joueurs[0]), 
                     "placement": self.plateau, 
                     "jeu": self.plateau, 
                     "organisation": OrgaFen(self.joueurs[self.actuel][0], self.joueurs[self.actuel][1]), 
