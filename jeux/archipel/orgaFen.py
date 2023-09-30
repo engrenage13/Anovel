@@ -26,11 +26,11 @@ class OrgaFen:
         self.titre = BlocTexte("ORGANISATION", police1, int(yf*0.04), [self.largeur, ''])
         self.avertissement = BlocTexte("ATTENTION ! Cette action va mettre fin au deplacement.", police2, int(yf*0.03), [int(xf*0.94), ''])
         # Boutons
-        self.opt = [Bouton(TB2n, PTIBT2, "PLUS", 'images/ui/plus.png', [self.plusGauche]),
-                    Bouton(TB2n, PTIBT2, "MOINS", 'images/ui/moins.png', [self.moinsGauche]),
-                    Bouton(TB2n, PTIBT2, "PLUS", 'images/ui/plus.png', [self.plusDroite]),
-                    Bouton(TB2n, PTIBT2, "MOINS", 'images/ui/moins.png', [self.moinsDroite]),
-                    Bouton(TB2n, PTIBT2, "REINITIALISER", 'images/ui/reset.png', [self.reset]),
+        self.opt = [Bouton(TB2n, PTIBT1, "PLUS", 'images/ui/plus.png', [self.plusGauche]),
+                    Bouton(TB2n, PTIBT1, "MOINS", 'images/ui/moins.png', [self.moinsGauche]),
+                    Bouton(TB2n, PTIBT1, "PLUS", 'images/ui/plus.png', [self.plusDroite]),
+                    Bouton(TB2n, PTIBT1, "MOINS", 'images/ui/moins.png', [self.moinsDroite]),
+                    Bouton(TB2n, PTIBT1, "REINITIALISER", 'images/ui/reset.png', [self.reset]),
                     Bouton(TB2n, PTIBT2, "ANNULER", 'images/ui/CroSom.png', [self.annule]),
                     Bouton(TB1o, BTX, "ANNULER", '', [self.annule]),
                     Bouton(TB1o, BTV, "CONFIRMER", '', [self.confirme])]
@@ -57,8 +57,8 @@ class OrgaFen:
         ecart = int(yf*0.03)
         y = self.hauteurContenu[0]
         draw_rectangle(int(xf/2-self.largeur/2-2), y-2, self.largeur+4, self.hauteur+4, [192, 150, 9, 255])
-        draw_rectangle(int(xf/2-self.largeur/2), y, self.largeur, self.hauteur, WHITE)
-        self.titre.dessine([[int(xf/2), int(y+self.opt[5].largeur/2+yf*0.005)], 'c'], BLACK)
+        draw_rectangle(int(xf/2-self.largeur/2), y, self.largeur, self.hauteur, [45, 46, 60, 255])
+        self.titre.dessine([[int(xf/2), int(y+self.opt[5].largeur/2+yf*0.005)], 'c'], WHITE)
         self.opt[5].dessine(int(xf/2+self.largeur/2-yf*0.005-self.opt[5].largeur/2), int(y+self.opt[5].largeur/2+yf*0.005))
         y += int(self.titre.getDims()[1] + ecart)
         self.dessineBateau(y, 0)
@@ -74,6 +74,21 @@ class OrgaFen:
                 self.anims(True)
             else:
                 self.anims(False)
+        else:
+            if is_key_pressed(257) or is_key_pressed(32):
+                self.confirme()
+            elif is_key_pressed(81):
+                self.plusGauche()
+            elif is_key_pressed(65):
+                self.moinsGauche()
+            elif is_key_pressed(80):
+                self.plusDroite()
+            elif is_key_pressed(44):
+                self.moinsDroite()
+            elif is_key_pressed(261):
+                self.reset()
+            elif is_key_pressed(259):
+                self.annule()
 
     def dessineBateau(self, y: int, idBat: int, gauche: bool = True) -> int:
         """Dessine un bloc bateau + options de pour l'organisation.
@@ -86,6 +101,7 @@ class OrgaFen:
         Returns:
             int: La hauteur du bloc bateau.
         """
+        tp = int(yf*0.025)
         total = self.bat[0].marins + self.bat[1].marins
         espace = int(yf*0.03)
         hbarre = int(yf*0.26)
@@ -93,10 +109,12 @@ class OrgaFen:
         bat = self.bat[idBat]
         y += int(espace/2)
         texte = f"{bat.marinsi} marins en\ndebut de partie"
-        tt = measure_text_ex(police2, texte, int(yf*0.025), 0)
+        tt = measure_text_ex(police2, texte, tp, 0)
         h = int(bat.marins*hbarre/total)
         tm = measure_text_ex(police2, str(bat.marins), int(yf*0.03), 0)
-        ta = measure_text_ex(police1i, "ACTIF", int(yf*0.025), 0)
+        ta = measure_text_ex(police1i, "ACTIF", tp, 0)
+        ti = measure_text_ex(police1, str(bat.id), tp, 0)
+        lc = int(xf*0.02)
         couleurFondRec = [182, 231, 247, 255]
         couleurJauge = [12, 106, 156, 255]
         couleurContenu = [80, 224, 250, 255]
@@ -107,7 +125,12 @@ class OrgaFen:
             if bat.actif:
                 draw_rectangle_rounded([x, int(y+yf*0.04-ta.y*0.55), int(ta.x*1.2), int(ta.y*1.1)], 0.15, 30, GOLD)
                 draw_text_ex(police1i, "ACTIF", (int(x+ta.x*0.1), int(y+yf*0.04-ta.y*0.5)), int(yf*0.025), 0, WHITE)
-            draw_texture(bat.images[0], x, int(y+hbarre*0.7-bat.images[0].height/2), WHITE)
+            # Id
+            draw_rectangle_rounded([x, int(y+hbarre*0.9-bat.images[0].height), lc, lc], 0.2, 30, bat.couleur)
+            draw_text_ex(police1, str(bat.id), (int(x+lc/2-ti.x/2), int(y+hbarre*0.9-bat.images[0].height+lc/2-ti.y/2)), tp, 0, WHITE)
+            # Bateau
+            draw_texture(bat.images[0], x, int(y+hbarre*0.83-bat.images[0].height/2), WHITE)
+            # Info
             draw_rectangle_rounded([x, int(y+hbarre*0.7+bat.images[0].height*0.9), int(tt.x*1.1), int(tt.y*1.1)], 0.15, 30, couleurFondRec)
             draw_text_ex(police2, texte, (int(x+tt.x*0.05), int(y+hbarre*0.7+bat.images[0].height*0.9+tt.y*0.05)), int(yf*0.025), 0, couleurTexteRec)
             x += bat.images[0].width + espace
@@ -124,10 +147,16 @@ class OrgaFen:
             if bat.actif:
                 draw_rectangle_rounded([int(x-ta.x*1.2), int(y+yf*0.04-ta.y*0.55), int(ta.x*1.2), int(ta.y*1.1)], 0.15, 30, GOLD)
                 draw_text_ex(police1i, "ACTIF", (int(x-ta.x*1.1), int(y+yf*0.04-ta.y*0.5)), int(yf*0.025), 0, WHITE)
-            draw_texture(bat.images[0], int(x-bat.images[0].width), int(y+hbarre*0.7-bat.images[0].height/2), WHITE)
-            draw_rectangle_rounded([int(x-bat.images[0].width), int(y+hbarre*0.7+bat.images[0].height*0.9), int(tt.x*1.1), int(tt.y*1.1)], 0.15, 30, couleurFondRec)
-            draw_text_ex(police2, texte, (int(x-bat.images[0].width+tt.x*0.05), int(y+hbarre*0.7+bat.images[0].height*0.9+tt.y*0.05)), int(yf*0.025), 0, couleurTexteRec)
-            x -= bat.images[0].width + espace
+            x -= bat.images[0].width
+            # Id
+            draw_rectangle_rounded([x, int(y+hbarre*0.9-bat.images[0].height), lc, lc], 0.2, 30, bat.couleur)
+            draw_text_ex(police1, str(bat.id), (int(x+lc/2-ti.x/2), int(y+hbarre*0.9-bat.images[0].height+lc/2-ti.y/2)), tp, 0, WHITE)
+            # Bateau
+            draw_texture(bat.images[0], x, int(y+hbarre*0.83-bat.images[0].height/2), WHITE)
+            # Info
+            draw_rectangle_rounded([x, int(y+hbarre*0.7+bat.images[0].height*0.9), int(tt.x*1.1), int(tt.y*1.1)], 0.15, 30, couleurFondRec)
+            draw_text_ex(police2, texte, (int(x+tt.x*0.05), int(y+hbarre*0.7+bat.images[0].height*0.9+tt.y*0.05)), int(yf*0.025), 0, couleurTexteRec)
+            x -= espace
             draw_texture(self.marin, int(x-lbarre/2-self.marin.width/2), y, WHITE)
             y += self.marin.height
             draw_rectangle(x-lbarre, y, lbarre, hbarre, couleurJauge)

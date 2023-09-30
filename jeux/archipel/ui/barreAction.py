@@ -66,7 +66,7 @@ class BarreAction:
             self.passe.dessine(int(xf-self.passe.getDims()[0]*0.7), int(yf-self.hauteur/2))
         else:
             self.btv.dessine(int(xf-self.btv.getDims()[0]*0.7), int(yf-self.hauteur/2))
-            if is_key_pressed(32):
+            if is_key_pressed(32) or is_key_pressed(257):
                 self.valideAction()
             self.btx.dessine(int(xf-self.btv.getDims()[0]*2), int(yf-self.hauteur/2))
             if is_key_pressed(261):
