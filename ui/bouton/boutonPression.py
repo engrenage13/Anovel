@@ -3,9 +3,24 @@ from ui.bouton.taille import Taille
 from ui.bouton.apparence import Apparence
 from ui.blocTexte import BlocTexte
 from animations.Paillette import Paillette
+#from animations.etincelles import Etincelles
+#from datetime import datetime
+#from math import floor
 
 class BoutonPression:
-    def __init__(self, taille: Taille, apparence: Apparence, texte: str, icone: str, fonctions: list) -> None:
+    """Un bouton sur lequel il faut rester appuyé un certain temps pour que l'action soit validée.
+    """
+    def __init__(self, taille: Taille, apparence: Apparence, texte: str, icone: str, fonctions: list, temps: float=1.1) -> None:
+        """Crée le bouton
+
+        Args:
+            taille (Taille): Taille du bouton.
+            apparence (Apparence): Apparence du bouton.
+            texte (str): Texte à afficher à l'intérieur.
+            icone (str): Icône à afficher.
+            fonctions (list): Fonctions exécutée et éventuellement une fonction de vérification.
+            temps (float): Le temps de préssion nécessaire pour valider l'action (secondes). !disabled!
+        """
         self.taille = taille
         self.apparence = apparence
         # Icône
@@ -32,11 +47,20 @@ class BoutonPression:
             self.verifFonction = self.verification
         # jauge
         self.pourcentage = 0.0
+        """self.secondes = floor(temps)
+        self.checkSec = False
+        self.millisecondes = temps-self.secondes
+        self.checkMilli = False
+        self.balise = datetime.now()
+        self.enclanche = False
+        self.total = 999999*self.secondes+(999999*self.millisecondes)"""
         # Largeur
         self.setLargeur()
         # Paillettes
         self.paillettes = []
+        #self.etincelles = Etincelles([0, yf, xf, int(yf*0.005)], [(104, 235, 100, 255), (131, 222, 62, 255), (25, 181, 20, 255)])
         self.tEtoiles = 0
+        #self.setPosEtincelle = False
 
     def dessine(self, x: int, y: int) -> None:
         """Dessine le bouton à l'écran aux coordonnées passées en paramètre.
@@ -48,6 +72,9 @@ class BoutonPression:
         h = self.taille.hauteur
         l = self.largeur
         self.coords = [x-int(l/2), y-int(h/2), x+int(l/2), y+int(h/2)]
+        """if not self.setPosEtincelle:
+            self.setPosEtincelle = True
+            self.etincelles.source = self.coords"""
         couleur = self.apparence.couleur1
         if self.getContact() and self.apparence.couleur2:
             couleur = self.apparence.couleur2
@@ -78,7 +105,8 @@ class BoutonPression:
         if self.actif:
             for i in range(len(self.paillettes)):
                 self.paillettes[i].dessine()
-            if self.tEtoiles < 90:
+            #self.etincelles.dessine()
+            if self.tEtoiles < 50:
                 self.tEtoiles += 1
             else:
                 self.actif = False
@@ -111,8 +139,12 @@ class BoutonPression:
         """Gère ce qui se passe quand on appuie sur le bouton.
         """
         if self.getContact() and is_mouse_button_down(0):
+            #if not self.enclanche:
+            #    self.balise = datetime.now()
+            #    self.enclanche = True
+            #if not self.estFini():
             if self.pourcentage < 1.0:
-                self.pourcentage += 0.015
+                self.pourcentage += 0.04
                 if self.pourcentage > 1.0:
                     self.pourcentage = 1.0
             else:
@@ -122,10 +154,31 @@ class BoutonPression:
                             [(104, 235, 100, 255), (131, 222, 62, 255), (25, 181, 20, 255)]))
                 self.actif = True
         else:
+            """if self.enclanche:
+                self.enclanche = False
+                self.checkSec = False
+                self.checkMilli = False"""
             if self.pourcentage > 0.0:
-                self.pourcentage -= 0.02
+                self.pourcentage -= 0.05
                 if self.pourcentage < 0.0:
                     self.pourcentage = 0.0
+
+    """def estFini(self) -> bool:
+        rep = False
+        actu = datetime.now()
+        if not self.checkSec:
+            actuel = 999999*(actu.second-self.balise.second)+actu.microsecond
+            if (actu.second-self.balise.second) >= self.secondes:
+                self.checkSec = True
+        elif not self.checkMilli:
+            actuel = 999999*self.secondes+actu.microsecond
+            if (actu.microsecond-self.balise.microsecond) >= (999999*self.millisecondes):
+                self.checkMilli = True
+        if self.checkSec and self.checkMilli:
+            actuel = self.total
+            rep = True
+        self.pourcentage = 1*actuel/self.total
+        return rep"""
 
     def verification(self) -> bool:
         """Fonction par défaut pour la vérification d'instruction spéciale.

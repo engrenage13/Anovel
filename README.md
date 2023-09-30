@@ -4,14 +4,14 @@
 C'est un jeu vidéo composé de jeux de société dématérialisés.
 
 # Petite histoire
-C'est un projet qui a débuté à la fin du mois du novembre 2021 et qui consistait à implémenter une **bataille navale** (le célèbre jeu de plateau) en python, avec une interface graphique.
+C'est un projet qui a débuté à la fin du mois du novembre 2021 et qui consistait à implémenter une **bataille navale** (le célèbre jeu de plateau), en python, avec une interface graphique.
 
-Aujourd'hui, septembre 2022, le projet a évolué et vise à créer un nouveau jeu baptisé ***Archipel***.
+Aujourd'hui, septembre 2023, le projet a évolué pour créer **Anovel** Un jeu plus grand regroupant la bataille navale et ***Archipel***, un nouveau jeu.
 
 # Comment y jouer ?
-1. Télécharger le zip de la dernième mise à jour *(v0.2 ou ultérieur)* ou de la version en cours de développement **(:warning: risque de bugs :warning:)**.
+1. Télécharger le zip de la dernième mise à jour *(v0.2 ou ultérieur)* ou de la version en cours de développement *(beta)*.
 2. Dézipper le dossier du jeu.
-3. Ouvrir le fichier **anovel.py** ou **Navale.py** (selon la version) avec un ide ou l'interpréteur Python.
+3. Ouvrir le fichier **anovel.py** avec un ide ou l'interpréteur Python.
 4. Télécharger les bibliothèques **pyray** et **raylib** pour python avec les commandes:
 
         pip install pyray
