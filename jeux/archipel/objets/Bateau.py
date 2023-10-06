@@ -39,7 +39,7 @@ class Bateau(Pivote):
         super().dessine()
         if self.getContact():
             if not self.bloqueInfoBulle:
-                self.infoBulle.dessine(self.pos[0], int(self.pos[1]-self.dims[1]/2))
+                self.infoBulle.dessine(self.pos[0], int(self.pos[1]-self.images[1].height/2))
 
     def rejouer(self) -> None:
         """Réinitialise certains paramètres du bateau pour rejouer une nouvelle partie.
