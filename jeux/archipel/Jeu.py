@@ -76,7 +76,7 @@ class Jeu:
         # Abordage
         self.caseAbordage = None
         self.recompAbordage = False
-        self.vainqueur = None
+        self.vainqueur = False
         # Between the world
         self.play = False
 
@@ -85,7 +85,7 @@ class Jeu:
         """
         fenetre = self.fen[self.actif]
         fenetre.dessine()
-        if self.actif != 'organisation':
+        if self.actif != 'organisation' and self.actif != 'recomp_abo':
             if isinstance(fenetre, Fenetre) and fenetre.estFini():
                 self.switch()
             if self.phase == 'placement':
@@ -542,13 +542,13 @@ class Jeu:
                 recomp = self.fen["recomp_abo"]
                 if not self.recompAbordage:
                     self.vainqueur = self.abordage(case[0], case[1])
-                    if self.vainqueur > -1:
+                    if self.vainqueur:
                         self.recompAbordage = True
                         if len(case) > 1:
-                            if self.vainqueur == 0:
-                                recomp.setBateaux(case[0], case[1])
+                            if case[0] in self.joueurs[0].bateaux:
+                                recomp.setBateaux([case[0], self.joueurs[0].nom], [case[1], self.joueurs[1].nom])
                             else:
-                                recomp.setBateaux(case[1], case[0])
+                                recomp.setBateaux([case[0], self.joueurs[1].nom], [case[1], self.joueurs[0].nom])
                     else:
                         self.barre.abordage = False
                         self.barre.valide = True
@@ -637,7 +637,7 @@ class Jeu:
         else:
             self.barre.actionsPossibles["abordage"] = False
 
-    def abordage(self, bat1: Bateau, bat2: Bateau) -> int:
+    def abordage(self, bat1: Bateau, bat2: Bateau) -> bool:
         """Calcul le résultat d'un abordage.
 
         Args:
@@ -645,44 +645,33 @@ class Jeu:
             bat2 (Bateau): Le bateau du défenseur.
 
         Returns:
-            int: L'indice du bateau victorieu.
+            bool: True s'il faut invoquer la fenêtre de récompense.
         """
-        vainqueur = -1
-        if bat1.marins > bat2.marins:
-            bat2.setNbPV(bat2.vie-1)
-            vainqueur = 0
-        elif bat2.marins > bat1.marins:
-            bat1.setNbPV(bat1.vie-1)
-            vainqueur = 1
+        if bat1.marins != bat2.marins:
+            vainqueur = True
+            if bat1.marins < bat2.marins:
+                bat1.setNbPV(bat1.vie-1)
+            else:
+                bat2.setNbPV(bat2.vie-1)
         else:
+            vainqueur = False
             bat1.setNbPV(bat1.vie-1)
             bat2.setNbPV(bat2.vie-1)
-        if bat1.coule:
-            vainqueur = -1
-            self.caseAbordage - bat1
-            if bat1 in self.joueurs[0].bateaux:
-                self.joueurs[1].nbelimination += 1
-                self.joueurs[0] - bat1
-                if self.joueurs[0].compteBateau() == 0:
-                    self.switch()
-            else:
-                self.joueurs[0].nbelimination += 1
-                self.joueurs[1] - bat1
-                if self.joueurs[1].compteBateau() == 0:
-                    self.switch()
-        if bat2.coule:
-            vainqueur = -1
-            self.caseAbordage - bat2
-            if bat2 in self.joueurs[0].bateaux:
-                self.joueurs[1].nbelimination += 1
-                self.joueurs[0] - bat2
-                if self.joueurs[0].compteBateau() == 0:
-                    self.switch()
-            else:
-                self.joueurs[0].nbelimination += 1
-                self.joueurs[1] - bat2
-                if self.joueurs[1].compteBateau() == 0:
-                    self.switch()
+        bateaux = [bat1, bat2]
+        for i in range(len(bateaux)):
+            if bateaux[i].coule:
+                vainqueur = False
+                self.caseAbordage - bateaux[i]
+                if bateaux[i] in self.joueurs[0].bateaux:
+                    self.joueurs[1].nbelimination += 1
+                    self.joueurs[0] - bateaux[i]
+                    if self.joueurs[0].compteBateau() == 0:
+                        self.switch()
+                else:
+                    self.joueurs[0].nbelimination += 1
+                    self.joueurs[1] - bateaux[i]
+                    if self.joueurs[1].compteBateau() == 0:
+                        self.switch()
         return vainqueur
     
     def attaque(self) -> None:

@@ -28,13 +28,14 @@ class Vignette:
             y (int): Ordonnée du coin supérieur gauche.
         """
         if check_collision_point_rec(get_mouse_position(), [x, y, self.largeur, self.hauteur]):
-            draw_rectangle(x, y, self.largeur, self.hauteur, [210, 210, 210, 255])
+            couleur = [21, 21, 23, 255]
             if is_mouse_button_pressed(0):
                 self.check = True
         else:
-            draw_rectangle_lines_ex([x, y, self.largeur, self.hauteur], 2, BLACK)
+            couleur = [31, 31, 33, 255]
+        draw_rectangle(x, y, self.largeur, self.hauteur, couleur)
         draw_texture(self.icone, int(x+self.largeur/2-self.icone.width/2), int(y+self.hauteur*0.09), WHITE)
-        self.titre.dessine([[int(x+self.largeur/2), int(y+self.hauteur*0.75)], 'c'], BLACK)
+        self.titre.dessine([[int(x+self.largeur/2), int(y+self.hauteur*0.75)], 'c'], WHITE)
 
     def getDims(self) -> tuple[int]:
         """Renvoie les dimensions de la vignette.

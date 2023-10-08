@@ -4,7 +4,7 @@ from jeux.archipel.config import bateaux as libat
 from ui.blocTexte import BlocTexte
 
 class Joueur:
-    """L'entité joueur est se qui symbolise tout ce qui est lié à ce qu'un joueur peut faire lors de la partie.
+    """L'entité joueur est ce qui symbolise tout ce qui est lié à ce qu'un joueur peut faire lors de la partie.
     """
     def __init__(self, nom: str, bateaux: list[Bateau], couleur: Color):
         """Crée un joueur.
