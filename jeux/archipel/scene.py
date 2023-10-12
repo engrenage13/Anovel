@@ -72,12 +72,12 @@ class Scene(Jeu):
                 self.plateau.bloque = True
         if self.actif == 'placement' and self.phase == 'placement':
             if not self.deplaPlacement and self.pause <= 0:
-                secteurs = ['no', 'n', 'ne', 'e', 'se', 's', 'so', 'o']
-                #secteurs = ['n', 'e', 's', 'o']
+                #secteurs = ['no', 'n', 'ne', 'e', 'se', 's', 'so', 'o']
+                secteurs = ['n', 'e', 's', 'o']
                 if self.actuel == 0:
                     self.afficheSecteur(secteurs[self.fen['choix_zone'].action.resultat])
                 elif self.actuel == 1:
-                    self.afficheSecteur(secteurs[(self.fen['choix_zone'].action.resultat+int(len(self.fen['choix_zone'].zones)/2))%len(self.fen['choix_zone'].zones)])
+                    self.afficheSecteur(secteurs[(self.fen['choix_zone'].action.resultat+int(len(self.fen['choix_zone'].zones)))%len(self.fen['choix_zone'].zones)])
                 self.deplaPlacement = True
                 self.pause = 100
             elif not self.affRec and not self.affTeleco:

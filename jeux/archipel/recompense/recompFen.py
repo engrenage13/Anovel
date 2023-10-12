@@ -2,44 +2,46 @@ from systeme.FondMarin import *
 from ui.bouton.bouton import Bouton
 from ui.blocTexte import BlocTexte
 from jeux.archipel.objets.Bateau import Bateau
+from jeux.archipel.objets.Joueur import Joueur
 from jeux.archipel.recompense.vignette import Vignette
 from jeux.archipel.icones import minicoeur, minimarin, minifleche, minidegats
-from random import randint
+from jeux.archipel.recompense.creeJoueur import creeJoueur
 
 class RecompFen:
     """La fenêtre de récompenses pour un abordage réussi.
     """
-    def __init__(self, b1: list[Bateau, str] = [Bateau("", "jeux/archipel/images/Bateaux/gafteur.png", randint(1, 8), randint(0, 21), randint(0, 3), randint(1, 3), BLUE), "Lyra"], b2: list[Bateau, str] = [Bateau("", "jeux/archipel/images/Bateaux/gafteur.png", randint(1, 8), randint(0, 21), randint(0, 3), randint(1, 3), RED), "Will"]) -> None:
+    def __init__(self, b1: list[Bateau, Joueur] = creeJoueur(0), b2: list[Bateau, Joueur] = creeJoueur(1)) -> None:
         """Crée la fenêtre.
 
         Args:
-            j1 (list[Bateau, str], optional): Le premier bateau qui participe et le nom de son propriétaire. Defaults to Bateau("", "jeux/archipel/images/Bateaux/gbb.png", randint(1, 8), randint(0, 21), randint(0, 3), randint(1, 3), BLUE).
-            j2 (list[Bateau, str], optional): Le deuxième bateau qui participe et le nom de son propriétaire. Defaults to Bateau("", "jeux/archipel/images/Bateaux/gbb.png", randint(1, 8), randint(0, 21), randint(0, 3), randint(1, 3), RED).
+            j1 (list[Bateau, Joueur], optional): Le premier bateau qui participe et son propriétaire.
+            j2 (list[Bateau, Joueur], optional): Le deuxième bateau qui participe et son propriétaire.
         """
         # Dimensions
         self.largeur = int(xf*0.7)
         self.hauteur = int(yf*0.77)
         self.hauteurTab = int(self.hauteur*0.35)
         self.largeurCadBat = int(self.largeur*0.5)
+        self.fini = False
         # Animations
         self.playAnim = False
         self.ok = False
         self.opac = [0, 170]
         self.hauteurContenu = [int(yf*1.1), int(yf/2-self.hauteur/2)]
         # Bateaux
-        self.vainqueur: list[Bateau, str] = None
-        self.perdant: list[Bateau, str] = None
+        self.vainqueur: list[Bateau, Joueur] = None
+        self.perdant: list[Bateau, Joueur] = None
         self.setBateaux(b1, b2)
         # Vignettes
+        self.degats = self.vainqueur[0].marins-self.perdant[0].marins-1
         self.vivm = Vignette("VOLER 1 MARIN", "jeux/archipel/images/Icones/marin.png")
         self.vivbm = Vignette("VOLER LE BATEAU ET SON EQUIPAGE", "jeux/archipel/images/Icones/cle.png")
-        degats = self.vainqueur[0].marins-self.perdant[0].marins-1
-        self.viex = Vignette(f"INFLIGER {degats} {'DEGAT' if degats == 1 else 'DEGATS'}", "jeux/archipel/images/Icones/explosif.png")
+        self.viex = Vignette(f"INFLIGER {self.degats} {'DEGAT' if self.degats == 1 else 'DEGATS'}", "jeux/archipel/images/Icones/explosif.png")
         self.vivb = Vignette("VOLER LE BATEAU", "jeux/archipel/images/Icones/cle.png")
         self.actions = (self.vivm, self.vivbm, self.viex, self.vivb)
         self.act = self.verifActionsPossibles()
         # Titres
-        self.tt1_1 = self.vainqueur[1].upper()
+        self.tt1_1 = self.vainqueur[1].nom.upper()
         self.tt1_2 = " GAGNE L'ABORDAGE"
         self.mt1_1 = measure_text_ex(police1, self.tt1_1, yf*0.04, 0)
         self.titre2 = BlocTexte("ET DOIT CHOISIR UNE RECOMPENSE", police1, int(yf*0.04))
@@ -57,7 +59,7 @@ class RecompFen:
     def dessine(self) -> None:
         """Dessine la fenêtre à l'écran.
         """
-        if self.ok and self.valide == -1 and self.playAnim:
+        if self.ok and not self.fini and self.playAnim:
             self.playAnim = False
         draw_rectangle(0, 0, xf, yf, [41, 35, 45, self.opac[0]])
         ecart = int(yf*0.03)
@@ -65,7 +67,7 @@ class RecompFen:
         draw_rectangle(int(xf/2-self.largeur/2-2), y-2, self.largeur+4, self.hauteur+4, [192, 150, 9, 255])
         draw_rectangle(int(xf/2-self.largeur/2), y, self.largeur, self.hauteur, [45, 46, 60, 255])
         y += int(ecart/4)
-        draw_text_ex(police1, self.tt1_1, (int(xf/2-self.largeur/2+ecart/2), int(y)), yf*0.04, 0, self.vainqueur[0].couleur)
+        draw_text_ex(police1, self.tt1_1, (int(xf/2-self.largeur/2+ecart/2), int(y)), yf*0.04, 0, self.vainqueur[1].couleur)
         draw_text_ex(police1, self.tt1_2, (int(xf/2-self.largeur/2+ecart/2+self.mt1_1.x), int(y)), yf*0.04, 0, WHITE)
         y -= int(ecart/4)
         self.titre3.dessine([[int(xf/2+self.largeur/2-yf*0.005-self.croix.largeur-self.fleche.width*1.35-self.titre3.getDims()[0]), int(y+self.croix.largeur/2+yf*0.005-self.titre3.getDims()[1]/2)], 'no'], WHITE)
@@ -186,12 +188,12 @@ class RecompFen:
                 self.playAnim = False
                 self.ok = False
 
-    def setBateaux(self, b1: list[Bateau, str], b2: list[Bateau, str]) -> None:
+    def setBateaux(self, b1: list[Bateau, Joueur], b2: list[Bateau, Joueur]) -> None:
         """Modifie les bateaux utilisés pour le calcul des récompenses.
 
         Args:
-            b1 (list[Bateau, str]): Le premier bateau et le nom de son propriétaire.
-            b2 (list[Bateau, str]): Le deuxième bateau et le nom de son propriétaire.
+            b1 (list[Bateau, Joueur]): Le premier bateau et son propriétaire.
+            b2 (list[Bateau, Joueur]): Le deuxième bateau et son propriétaire.
         """
         passe = False
         if b1[0].marins > b2[0].marins:
@@ -204,13 +206,13 @@ class RecompFen:
                 passe = True
                 self.passe()
         if not passe:
-            self.valide = -1
             self.playAnim = True
+        print(self.vainqueur[0], self.perdant[0])
 
     def passe(self) -> None:
         """Passe le choix d'une récompense.
         """
-        self.valide = 0
+        self.fini = True
         if self.opac[0] > 0:
             self.playAnim = True
 
@@ -220,10 +222,17 @@ class RecompFen:
         Args:
             vignette (int): La vignette testée.
         """
-        indice = self.actions.index(self.act[vignette])
-        if indice <= 2:
-            self.valide = indice+1
-        else:
-            self.valide = 2
-        self.actions[indice].check = False
+        action = self.actions.index(self.act[vignette])
+        if self.actions[action] == self.vivm:
+            self.vainqueur[0] + 1
+            self.perdant[0] - 1
+        elif self.actions[action] == self.vivb or self.actions[action] == self.vivbm:
+            self.perdant[1] - self.perdant[0]
+            self.vainqueur[1] + self.perdant[0]
+        elif self.actions[action] == self.viex:
+            self.perdant[0].setNbPV(self.perdant[0].vie - self.degats)
+            if self.perdant[0].coule:
+                self.vainqueur[1].nbelimination += 1
+        self.fini = True
+        self.actions[action].check = False
         self.playAnim = True

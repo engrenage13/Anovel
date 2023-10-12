@@ -141,3 +141,15 @@ class Bateau(Pivote):
             bool: True si le bateau flotte.
         """
         return self.estEnVie()
+    
+    def __str__(self) -> str:
+        """Affiche le bateau dans le terminal.
+
+        Returns:
+            str: Description du bateau.
+        """
+        rep = ""
+        stats = [["Type", self.nom], ["PV", self.vie], ["Marins", self.marins], ["Dégâts", self.degats], ["PM", self.pm]]
+        for i in range(len(stats)):
+            rep += f"{stats[i][0]} : {stats[i][1]}\n"
+        return rep

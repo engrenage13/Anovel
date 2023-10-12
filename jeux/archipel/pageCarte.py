@@ -39,8 +39,8 @@ class PageCarte(Fenetre):
         z6 = Zone((milieu-1, end-1), (milieu+2, end), self.plateau)
         z7 = Zone((0, end-1), (2, end), self.plateau) + Zone((0, end-2), (1, end-2), self.plateau)
         z8 = Zone((0, milieu-1), (1, milieu+2), self.plateau)
-        self.zones = [z1, z2, z3, z4, z5, z6, z7, z8]
-        #self.zones = [z2, z4, z6, z8]
+        #self.zones = [z1, z2, z3, z4, z5, z6, z7, z8]
+        self.zones = [z2, z4, z6, z8]
         for i in range(len(self.zones)):
             self.zones[i].setCouleurs([255, 161, 0, 150], ORANGE, [229, 165, 56, 170], [255, 186, 66, 255])
         self.rejouer()

@@ -6,5 +6,5 @@
     "fin": {"interface": false, "phase": "fin"},
     "recomp_abo": {"interface": true, "phase": "jeu"},
 
-    "dev": "recomp_abo"
+    "dev": false
 }

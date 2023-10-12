@@ -41,7 +41,7 @@ class Jeu:
                     "jeu": self.plateau, 
                     "organisation": OrgaFen(self.joueurs[self.actuel][0], self.joueurs[self.actuel][1]), 
                     "fin": Fin(self.joueurs), 
-                    "recomp_abo": RecompFen()}
+                    "recomp_abo": RecompFen([self.joueurs[0][0], self.joueurs[0]], [self.joueurs[1][0], self.joueurs[1]])}
         if config['dev']:
             if config['dev'].lower() == 'jeu':
                 self.actif = 'placement'
@@ -76,7 +76,6 @@ class Jeu:
         # Abordage
         self.caseAbordage = None
         self.recompAbordage = False
-        self.vainqueur = False
         # Between the world
         self.play = False
 
@@ -322,8 +321,8 @@ class Jeu:
                 if self.actuel == 0 and self.zoneDep.cases != self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases:
                     self.zoneDep.cases = self.fen['choix_zone'].zones[self.fen['choix_zone'].action.resultat].cases
                     self.setPlateauEnPLace()
-                elif self.actuel == 1 and self.zoneDep.cases != self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+int(len(self.fen['choix_zone'].zones)/2))%len(self.fen['choix_zone'].zones)].cases:
-                    self.zoneDep.cases = self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+int(len(self.fen['choix_zone'].zones)/2))%len(self.fen['choix_zone'].zones)].cases
+                elif self.actuel == 1 and self.zoneDep.cases != self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+int(len(self.fen['choix_zone'].zones)))%len(self.fen['choix_zone'].zones)].cases:
+                    self.zoneDep.cases = self.fen['choix_zone'].zones[(self.fen['choix_zone'].action.resultat+int(len(self.fen['choix_zone'].zones)))%len(self.fen['choix_zone'].zones)].cases
                     self.setPlateauEnPLace()
                 if self.pause > 0:
                     self.pause -= 1
@@ -541,14 +540,13 @@ class Jeu:
                 case = self.caseAbordage
                 recomp = self.fen["recomp_abo"]
                 if not self.recompAbordage:
-                    self.vainqueur = self.abordage(case[0], case[1])
-                    if self.vainqueur:
+                    if self.abordage(case[0], case[1]):
                         self.recompAbordage = True
                         if len(case) > 1:
                             if case[0] in self.joueurs[0].bateaux:
-                                recomp.setBateaux([case[0], self.joueurs[0].nom], [case[1], self.joueurs[1].nom])
+                                recomp.setBateaux([case[0], self.joueurs[0]], [case[1], self.joueurs[1]])
                             else:
-                                recomp.setBateaux([case[0], self.joueurs[1].nom], [case[1], self.joueurs[0].nom])
+                                recomp.setBateaux([case[0], self.joueurs[1]], [case[1], self.joueurs[0]])
                     else:
                         self.barre.abordage = False
                         self.barre.valide = True
@@ -556,43 +554,18 @@ class Jeu:
                     if self.play:
                         self.play = False
                     if len(case) > 1:
-                        if self.vainqueur == 0:
-                            bat = case[0]
-                            op = case[1]
-                        else:
-                            bat = case[1]
-                            op = case[0]
-                        if bat in self.joueurs[0].bateaux:
-                            j1 = self.joueurs[0]
-                            j2 = self.joueurs[1]
-                        else:
-                            j1 = self.joueurs[1]
-                            j2 = self.joueurs[0]
                         recomp.dessine()
-                        if recomp.valide != -1 and not recomp.playAnim:
-                            if recomp.valide == 1:
-                                op - 1
-                                bat + 1
-                            elif recomp.valide == 2:
-                                j1 + op
-                                j2 - op
-                            elif recomp.valide == 3:
-                                if bat.marins > op.marins:
-                                    dif = bat.marins-op.marins
-                                else:
-                                    dif = op.marins-bat.marins
-                                if dif-1 > 0:
-                                    op.setNbPV(op.vie-(dif-1))
-                                    if op.coule:
-                                        self.caseAbordage - op
-                                        j1.nbelimination += 1
-                            self.barre.abordage = False
-                            self.barre.valide = True
-                            self.recompAbordage = False
-                            recomp.valide = -1
-                            self.play = True
-                            if j2.compteBateau() == 0:
-                                self.switch()
+                        if recomp.fini:
+                            if not recomp.playAnim:
+                                if recomp.perdant[0].coule:
+                                    case - recomp.perdant[0]
+                                self.barre.abordage = False
+                                self.barre.valide = True
+                                self.recompAbordage = False
+                                recomp.fini = False
+                                self.play = True
+                                if recomp.perdant[1].compteBateau() == 0:
+                                    self.switch()
             if self.barre.attaque:
                 if self.zoneAt.getContact() and is_mouse_button_pressed(0):
                     self.attaque()
@@ -648,19 +621,19 @@ class Jeu:
             bool: True s'il faut invoquer la fenêtre de récompense.
         """
         if bat1.marins != bat2.marins:
-            vainqueur = True
+            fenetre = True
             if bat1.marins < bat2.marins:
                 bat1.setNbPV(bat1.vie-1)
             else:
                 bat2.setNbPV(bat2.vie-1)
         else:
-            vainqueur = False
+            fenetre = False
             bat1.setNbPV(bat1.vie-1)
             bat2.setNbPV(bat2.vie-1)
         bateaux = [bat1, bat2]
         for i in range(len(bateaux)):
             if bateaux[i].coule:
-                vainqueur = False
+                fenetre = False
                 self.caseAbordage - bateaux[i]
                 if bateaux[i] in self.joueurs[0].bateaux:
                     self.joueurs[1].nbelimination += 1
@@ -672,7 +645,7 @@ class Jeu:
                     self.joueurs[1] - bateaux[i]
                     if self.joueurs[1].compteBateau() == 0:
                         self.switch()
-        return vainqueur
+        return fenetre
     
     def attaque(self) -> None:
         """Gère une action d'attaque.

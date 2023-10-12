@@ -207,3 +207,15 @@ class Joueur:
             del self.bateaux[self.bateaux.index(bateau)]
         self.setIds()
         return len(self.bateaux)
+    
+    def __str__(self) -> str:
+        """Affiche le joueur dans le terminal.
+
+        Returns:
+            str: Description du joueur.
+        """
+        rep = f"{self.nom}\nNb bat : {len(self.bateaux)}\n"
+        for i in range(len(self.bateaux)):
+            rep += f"bat{i+1} /////////////////\n{self.bateaux[i]}"
+        rep += "-----------------\n"
+        return rep
