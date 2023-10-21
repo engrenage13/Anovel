@@ -1,5 +1,4 @@
 from systeme.FondMarin import *
-from systeme.erreurs import e100
 from systeme.set import trouveParam
 from ui.blocTexte import BlocTexte
 
@@ -15,7 +14,6 @@ class PosiJauge:
         self.hauteur = int(yf*0.01)
         self.prop = prop
         self.longueur = int(xf*prop)
-        self.erreurs = []
         self.lu = True
         # Curseur
         self.posMin = self.hauteur
@@ -166,9 +164,6 @@ class PosiJauge:
             self.points.append([BlocTexte(points[len(points)-1], police2, 20), len(points)-1, self.posMax])
             self.valeur = self.points[0][1]
             self.lu = False
-        else:
-            self.erreurs.append([BlocTexte(e100[0], police1, int(yf*0.035*1.2)), 
-                BlocTexte("Une \"PosiJauge\" doit posseder au moins 2 points.", police2, int(yf*0.035))])
 
     def changePosCurseur(self) -> None:
         """Permet de déplacer le curseur sur la jauge.

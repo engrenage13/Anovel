@@ -3,15 +3,11 @@ from systeme.FondMarin import *
 from systeme.set import trouveParam, sauvegarde, setParam
 from systeme.verif import verifSauvegarde
 from ui.PosiJauge import PosiJauge
-from ui.blocTexte import BlocTexte
-from ui.scrollBarre import ScrollBarre
 from ui.interrupteur import Interrupteur
 from ui.bouton.bouton import Bouton
 from ui.bouton.grille import Grille
 from parametres.menu import Menu
 from reve.Reve import Reve
-from reve.erreurs import affichErreur
-from reve.dimensions import getDimsErreur, mesureTailleErreurs
 from reve.OZ import NOMREVE, VERSIONREVE
 from random import choice
 
@@ -23,18 +19,9 @@ class Parametres:
         self.fichierMenu = "parametres/Categories.md"
         self.htBanniere = int(yf*0.078)
         self.menu = Menu(self.fichierMenu, (0, self.htBanniere, self.largeurLat, int(yf*0.92)))
-        repMenu = self.menu.checkFichier()
-        if len(repMenu) == 0:
-            self.page = Reve(self.menu.contenu[self.menu.actif][1], 
-                             (self.largeurLat, espaceBt+TB2n.hauteur, xf-self.largeurLat, 
-                              yf-espaceBt+TB2n.hauteur))
-            self.bug = False
-        else:
-            self.bug = True
-            self.erreurs = repMenu
-            self.scroll = ScrollBarre([0, int(yf*0.08), xf, yf], int(yf*0.9), [[1, 8, 38], [12, 37, 131]])
-            self.oyc = self.scroll.getPos()
-            self.setHt = False
+        print(self.menu.actif)
+        self.page = Reve(self.menu.contenu[self.menu.actif][1], 
+                         (self.largeurLat, espaceBt+TB2n.hauteur, xf-self.largeurLat, yf-espaceBt+TB2n.hauteur))
         self.grOpt = Grille(int(xf*0.15), [False])
         self.grOpt.ajouteElement(Bouton(TB2o, BTDANGER, "REINITIALISER", '', [self.reset]), 0, 0)
         self.grOpt.ajouteElement(Bouton(TB2n, PTIBT1, "FERMER", 'images/ui/CroSom.png', [self.portailBoreal]), 1, 0)
@@ -51,7 +38,7 @@ class Parametres:
     def dessine(self) -> None:
         """Dessine la fenêtre à l'écran.
         """
-        if not self.bug and self.page.fichier != self.menu.contenu[self.menu.actif][1]:
+        if self.page.fichier != self.menu.contenu[self.menu.actif][1]:
             self.page.changeFichier(self.menu.contenu[self.menu.actif][1])
             self.copieValeur = []
             sauvegarde()
@@ -60,29 +47,16 @@ class Parametres:
             self.chargeElement()
         if self.fond != None:
             draw_texture(self.fond, 0, 0, WHITE)
-        if not self.bug:
-            self.dessineMenu()
-            self.page.dessine()
-            self.lset = self.page.liSetWidge
-            self.InitialiseWidget()
-            if len(self.page.erreurs) == 0:
-                draw_rectangle(self.largeurLat, 0, xf-self.largeurLat, espaceBt+TB2n.hauteur, [0, 0, 0, 170])
-            else:
-                draw_rectangle(self.largeurLat, 0, xf-self.largeurLat, espaceBt+TB2n.hauteur, BLACK)
-            draw_rectangle_gradient_ex((0, 0, self.largeurLat, self.htBanniere), 
-                                    [51, 7, 144, 255], [145, 104, 235, 255], BLACK, BLACK)
-            draw_text_pro(police1i, "PARAMETRES", (int(yf*0.02), int(yf*0.02)), (0, 0), 0, int(yf*0.06), 
-                          0, WHITE)
-            self.dessineVersion()
-            self.setValeurWidgets()
-        else:
-            self.dessinErreur()
-            if self.scroll.htContenu > yf:
-                self.scroll.dessine()
-                self.oyc = self.scroll.getPos()
-            if not self.setHt:
-                self.scroll.setHtContenu(self.dessinErreur()+mesureTailleErreurs(self.erreurs, int(yf*0.05)))
-                self.setHt = True
+        self.dessineMenu()
+        self.page.dessine()
+        self.lset = self.page.liSetWidge
+        self.InitialiseWidget()
+        draw_rectangle(self.largeurLat, 0, xf-self.largeurLat, espaceBt+TB2n.hauteur, [0, 0, 0, 170])
+        draw_rectangle_gradient_ex((0, 0, self.largeurLat, self.htBanniere), 
+                                [51, 7, 144, 255], [145, 104, 235, 255], BLACK, BLACK)
+        draw_text_pro(police1i, "PARAMETRES", (int(yf*0.02), int(yf*0.02)), (0, 0), 0, int(yf*0.06), 0, WHITE)
+        self.dessineVersion()
+        self.setValeurWidgets()
         self.grOpt.dessine(int(xf-self.grOpt.largeur), 0)
 
     def dessineMenu(self) -> None:
@@ -114,38 +88,12 @@ class Parametres:
     def chargeElement(self) -> None:
         """Permet de charger certains éléments nécessaire au fonctionnement de la fenêtre lors de son démarrage.
         """
-        if not self.bug:
-            tableau = load_image(f"images/backgrounds/{choice(['boussole', 'machinerie'])}.png")
-            ratio = yf/tableau.height
-        else:
-            tableau = load_image('images/ui/erreur.png')
-            ratio = yf/2/tableau.height
+        tableau = load_image(f"images/backgrounds/{choice(['boussole', 'machinerie'])}.png")
+        ratio = yf/tableau.height
         image_resize(tableau, int(tableau.width*ratio), int(tableau.height*ratio))
-        if not self.bug:
-            self.fond = load_texture_from_image(tableau)
-        else:
-            self.iErreur = load_texture_from_image(tableau)
+        self.fond = load_texture_from_image(tableau)
         unload_image(tableau)
         self.charge = True
-
-    def dessinErreur(self) -> int:
-        """Définit ce qui s'affiche dans la fenêtre quand le fichier ne peut pas être lu.
-        """
-        taillePolice = int(yf*0.035)
-        y = self.oyc-int(yf*0.08)
-        draw_texture(self.iErreur, int(xf/2-self.iErreur.width/2), y, WHITE)
-        y += int(self.iErreur.height*1.1)
-        titre = BlocTexte("Un probleme est survenu !", police2, taillePolice*1.2, [xf, ''])
-        sousTitre = BlocTexte("Chargement interrompue.", police2, taillePolice, [xf, ''])
-        titre.dessine([[int(xf/2), y], 'c'])
-        y += int(yf*0.05)
-        sousTitre.dessine([[int(xf/2), y], 'c'])
-        y += int(yf*0.05)
-        ph = y
-        for i in range(len(self.erreurs)):
-            affichErreur(self.erreurs[i], [0, xf], y, int(yf*0.05))
-            y += getDimsErreur(self.erreurs[i], int(yf*0.05))[1] + int(yf*0.05)
-        return ph
 
     def InitialiseWidget(self) -> None:
         """Permet de rétablir les valeurs actuelles des paramètres sur les widgets.
