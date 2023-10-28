@@ -13,4 +13,5 @@ class Bateau:
         self.degats = degats
         # Autres variables
         self.position = None
-        self.est_en_place = False
+        self.est_en_jeu = False
+        self.coule = False

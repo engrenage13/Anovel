@@ -4,6 +4,7 @@ class Joueur:
     def __init__(self, nom: str, bateaux: list[Bateau]) -> None:
         self.nom = nom
         self.bateaux = bateaux
+        self.a_perdu = False
 
     def copie_joueur(self, bateaux: list[Bateau] = None) -> object:
         if bateaux == None or len(bateaux) == 0:
@@ -16,9 +17,20 @@ class Joueur:
         rep = True
         i = 0
         while rep and i < len(self.bateaux):
-            rep = self.bateaux[i].est_en_place
+            rep = self.bateaux[i].est_en_jeu
             i += 1
         return rep
+    
+    def check_defaite(self) -> bool:
+        defaite = True
+        if not self.a_perdu:
+            i = 0
+            while defaite and i < len(self.bateaux):
+                defaite = self.bateaux[i].coule
+                i += 1
+            if defaite:
+                self.a_perdu = True
+        return defaite
     
     def __getitem__(self, key: int) -> Bateau|bool:
         if key < len(self.bateaux):
@@ -33,3 +45,5 @@ class Joueur:
         if element in self.bateaux:
             position = self.bateaux.index(element)
             del self.bateaux[position]
+            if len(self.bateaux) == 0:
+                self.a_perdu = True
