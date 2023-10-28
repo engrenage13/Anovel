@@ -20,3 +20,9 @@ class Plateau:
                     typIle = TypeCase.MER
                 ligne.append(Case(typIle))
             self.cases.append(ligne)
+
+    def __getitem__(self, key: int) -> list[Case]|bool:
+        if key < len(self.cases):
+            return self.cases[key]
+        else:
+            return False

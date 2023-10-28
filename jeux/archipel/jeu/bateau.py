@@ -11,3 +11,6 @@ class Bateau:
         self.marins = marins
         self.pm = pm
         self.degats = degats
+        # Autres variables
+        self.position = None
+        self.est_en_place = False

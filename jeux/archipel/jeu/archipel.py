@@ -3,7 +3,6 @@ from jeux.archipel.jeu.plateau.plateau import Plateau
 from jeux.archipel.jeu.bateau import Bateau
 from jeux.archipel.config import bateaux as libat, joueurs as lijo
 from jeux.archipel.jeu.joueur import Joueur
-from jeux.archipel.jeu.phase import Phase, TypePhase
 
 class Archipel(Jeu):
     def __init__(self, plateau: tuple[int, float]) -> None:
@@ -18,7 +17,11 @@ class Archipel(Jeu):
         for i in range(len(lijo)):
             joueur = lijo[i]
             self.joueurs.append(Joueur(joueur["nom"], self.contenu["bateaux"][i]))
-        self.phases = [Phase("mise_en_place", TypePhase.MISE_EN_PLACE), [(self.contenu["plateau"], "mep")]]
+        # Phases
+        mise_en_place = [self.contenu["plateau"].mise_en_place]
+        partie = []
+        fin_de_partie = []
+        self.phases = [mise_en_place, partie, fin_de_partie]
 
     def charge_set_bateaux(self) -> list[Bateau]:
         contenuSet = ["gafteur" for i in range(3)] + ["ferpasseur"]
@@ -27,3 +30,20 @@ class Archipel(Jeu):
             ibat = libat[contenuSet[i]]
             liste.append(Bateau(ibat["nom"], ibat["vie"], ibat["marins"], ibat["pm"], ibat["degats"]))
         return liste
+    
+    def place_bateau(self, joueur: Joueur|int, bateau: Bateau|int, case: tuple[int]) -> None:
+        ok_joueur = True if type(joueur) == Joueur else False
+        if type(joueur) == int:
+            joueur = self.joueurs[self.joueurs.index(joueur)]
+            ok_joueur = True
+        if ok_joueur:
+            ok_bateau = True if type(bateau) == Bateau else False
+            if type(bateau) == int:
+                bateau = joueur[bateau]
+                ok_bateau = True
+            if ok_bateau:
+                if type(case) == tuple[int] and len(case) >= 2:
+                    case_plateau = self.contenu["plateau"][case[0]][case[1]]
+                    bateau.position = case
+                    case_plateau + bateau
+                    bateau.est_en_place = True

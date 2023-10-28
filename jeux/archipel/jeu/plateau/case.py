@@ -9,3 +9,11 @@ class Case:
         self.contenu = []
         self.contenuMax = 2
         self.type = typeIle
+
+    def __add__(self, element: any) -> bool:
+        if len(self.contenu) < self.contenuMax:
+            self.contenu.append(element)
+            valide = True
+        else:
+            valide = False
+        return valide

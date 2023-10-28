@@ -11,3 +11,25 @@ class Joueur:
         else:
             bats = bateaux
         return Joueur(self.nom, bats)
+    
+    def check_fin_mise_en_place(self) -> bool:
+        rep = True
+        i = 0
+        while rep and i < len(self.bateaux):
+            rep = self.bateaux[i].est_en_place
+            i += 1
+        return rep
+    
+    def __getitem__(self, key: int) -> Bateau|bool:
+        if key < len(self.bateaux):
+            return self.bateaux[key]
+        else:
+            return False
+        
+    def __add__(self, element: Bateau) -> None:
+        self.bateaux.append(element)
+
+    def __sub__(self, element: Bateau) -> None:
+        if element in self.bateaux:
+            position = self.bateaux.index(element)
+            del self.bateaux[position]
