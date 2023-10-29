@@ -17,3 +17,11 @@ class Case:
         else:
             valide = False
         return valide
+    
+    def __sub__(self, element: any) -> bool:
+        if element in self.contenu:
+            del self.contenu[self.contenu.index(element)]
+            valide = True
+        else:
+            valide = False
+        return valide

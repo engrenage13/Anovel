@@ -26,3 +26,6 @@ class Plateau:
             return self.cases[key]
         else:
             return False
+        
+    def __len__(self) -> int:
+        return len(self.cases)

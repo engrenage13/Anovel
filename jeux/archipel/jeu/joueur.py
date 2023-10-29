@@ -47,3 +47,6 @@ class Joueur:
             del self.bateaux[position]
             if len(self.bateaux) == 0:
                 self.a_perdu = True
+
+    def __len__(self) -> int:
+        return len(self.bateaux)
