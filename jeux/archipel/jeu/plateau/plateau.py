@@ -21,6 +21,13 @@ class Plateau:
                 ligne.append(Case(typIle))
             self.cases.append(ligne)
 
+    def check_case_existe(self, case: tuple[int]) -> bool:
+        existe = False
+        if type(case) == tuple[int] and len(case) >= 2:
+            if case[0] < self.taille and case[1] < len(self.cases[case[0]]):
+                existe = True
+        return existe
+
     def __getitem__(self, key: int) -> list[Case]|bool:
         if key < len(self.cases):
             return self.cases[key]

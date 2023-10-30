@@ -31,9 +31,41 @@ class Archipel(Jeu):
     def trouve_case(self, case: tuple[int]) -> Case|bool:
         retour = False
         if type(case) == tuple[int] and len(case) >= 2:
-            if case[0] < len(self.contenu["plateau"]) and case[1] < len(self.contenu["plateau"][case[0]]):
+            if self.contenu["plateau"].check_case_existe(case):
                 retour = self.contenu["plateau"][case[0]][case[1]]
         return retour
+    
+    def trouve_cases_atteignables(self, bateau: Bateau|int) -> list[tuple[int]]:
+        cases_atteignables = []
+        if type(bateau) == int:
+            bateau = self.trouve_bateau(bateau)
+        if type(bateau) == Bateau:
+            plateau = self.contenu["plateau"]
+            pm = 0
+            fin = False
+            cases_adajencentes = [(bateau.position, bateau.direction)]
+            while not fin and pm < bateau.get_pm():
+                cases = []
+                for i in range(len(cases_adajencentes)):
+                    if pm > 0 and cases_adajencentes[i][0] not in cases_atteignables:
+                        cases_atteignables.append(cases_adajencentes[i][0])
+                    depart = cases_adajencentes[i][0]
+                    direction = cases_adajencentes[i][1]
+                    choix = [direction, (direction+1)%4, (direction+3)%4]
+                    for j in range(len(choix)):
+                        if direction == 0:
+                            c = (depart[0]+1, depart[1])
+                        elif direction == 1:
+                            c = (depart[0], depart[1]+1)
+                        elif direction == 2:
+                            c = (depart[0]-1, depart[1])
+                        elif direction == 3:
+                            c = (depart[0], depart[1]-1)
+                        if plateau.check_case_existe(c):
+                            cases.append((c, choix[j]))
+                cases_adajencentes = cases
+                pm += 1
+        return cases_atteignables
     
     # /utilitaires
     # Vérificateurs
@@ -57,11 +89,6 @@ class Archipel(Jeu):
         if fin:
             self.phase = Phases.FIN
         return fin
-    
-    def check_deplacement_possible(self, bateau: Bateau, destination: tuple[int]) -> bool:
-        reponse = False
-        depart = bateau.position
-        pm = bateau.pm
     
     # /vérificateurs
 
@@ -111,7 +138,7 @@ class Archipel(Jeu):
                 elif self.phase == Phases.MISE_EN_PLACE:
                     self.phase = Phases.PARTIE
 
-    def deplacement(self, bateau: Bateau|int, destination: tuple[int]) -> bool:
+    def deplacement(self, bateau: Bateau|int, destination: tuple[int], direction: int = None) -> bool:
         ok = False
         if type(bateau) == int:
             bateau = self.trouve_bateau(bateau)
@@ -119,9 +146,32 @@ class Archipel(Jeu):
             case_dep = self.contenu["plateau"][bateau.position[0]][bateau.position[1]]
             case_dest = self.trouve_case(destination)
             if type(case_dest) == Case and case_dest.type == TypeCase.MER:
-                bateau.position = destination
-                case_dep - bateau
-                case_dest + bateau
+                deplacements_possibles = self.trouve_cases_atteignables(bateau)
+                if destination in deplacements_possibles:
+                    bateau.position = destination
+                    case_dep - bateau
+                    if type(direction) == int:
+                        bateau.direction = direction%4
+                    case_dest + bateau
+                    ok = True
+        return ok
+    
+    def organisation(self, bateaux: tuple[Bateau], nouvel_agencement: tuple[int]) -> bool:
+        ok = False
+        if len(bateaux) == len(nouvel_agencement):
+            total_actuel = 0
+            nouveau_total = 0
+            for i in range(len(bateaux)):
+                total_actuel += bateaux[i].get_marins()
+                nouveau_total += nouvel_agencement[i]
+            if total_actuel == nouveau_total:
+                for i in range(len(bateaux)):
+                    if bateaux[i].marins < nouvel_agencement[i]:
+                        bateaux[i].marins + (nouvel_agencement[i]-bateaux[i].marins)
+                    elif bateaux[i].marins > nouvel_agencement[i]:
+                        bateaux[i].marins + (bateaux[i].marins-nouvel_agencement[i])
                 ok = True
         return ok
     
+    def abordage(self, bateaux: tuple[Bateau|int]) -> bool:
+        pass

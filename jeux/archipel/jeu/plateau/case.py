@@ -10,6 +10,9 @@ class Case:
         self.contenuMax = 2
         self.type = typeIle
 
+    def check_case_pleine(self) -> bool:
+        return True if (self.type == TypeCase.ILE or len(self.contenu) == self.contenuMax) else False
+
     def __add__(self, element: any) -> bool:
         if len(self.contenu) < self.contenuMax:
             self.contenu.append(element)
