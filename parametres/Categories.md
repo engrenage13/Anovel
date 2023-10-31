@@ -1,3 +1,2 @@
 - [General] (parametres/General.md)
 - [Bataille Navale] (parametres/BN.md)
-- [Archipel] (parametres/Archipel.md)

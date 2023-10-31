@@ -222,9 +222,6 @@ class Scene(Jeu):
         if len(self.tiroir) == 0:
             self.tousAuTiroir()
             shuffle(self.joueurs[self.actuel].bateaux)
-        elif trouveParam('hasard') == 0:
-            self.tousAuTiroir()
-            shuffle(self.joueurs[self.actuel].bateaux)
         while len(self.tiroir) > 0:
             bat = self.tiroir[0]
             self.tiroir.supValListe(0)
