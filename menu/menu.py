@@ -48,8 +48,8 @@ class Menu:
         self.animeFond()
         draw_rectangle_gradient_v(0, 0, xf, yf, BLACK, [0, 82, 172, 150])
         taille = int(yf*0.02)
-        tv = measure_text_ex(police3i, version, taille, 0)
-        draw_text_pro(police2i, f"{version} - {etatVersion.lower()}", (int(xf*0.005), int(yf-tv.y*1.1)), 
+        tv = measure_text_ex(police3i, config_sys['version'], taille, 0)
+        draw_text_pro(police2i, f"{config_sys['version']} - {config_sys['type_version'].lower()}", (int(xf*0.005), int(yf-tv.y*1.1)), 
                     (0, 0), 0, taille, 0, GRAY)
         xbn = int(xf*0.33)
         cote = int(xf*0.007)
