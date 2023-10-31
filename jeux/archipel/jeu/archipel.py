@@ -186,6 +186,18 @@ class Archipel(Jeu):
                 ok = True
         if ok:
             vainqueur = False
-            return vainqueur
+            for i in range(len(bateaux)-1):
+                if bateaux[i].get_vie() < bateaux[i+1].get_vie():
+                    vainqueur = i+1
+                elif bateaux[i].get_vie() > bateaux[i+1].get_vie():
+                    vainqueur = i
+            if not vainqueur:
+                for i in range(len(bateaux)):
+                    bateaux[i].vie - 1
+                resultat = []
+            else:
+                for i in range(len(bateaux)):
+                    if i != vainqueur:
+                        bateaux[i].vie - 1
         else:
             return ok

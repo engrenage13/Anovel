@@ -1,6 +1,5 @@
 from enum import Enum, auto
 from jeux.archipel.jeu.ressource import Ressource
-from systeme.FondMarin import RED, BLUE, GREEN, YELLOW
 
 class TypeBateau(Enum):
     GAFTEUR = auto()
@@ -9,10 +8,10 @@ class TypeBateau(Enum):
 class Bateau:
     def __init__(self, nom: str, vie: int, marins: int, pm: int, degats: int) -> None:
         self.nom = nom
-        self.vie = Ressource(vie, RED, "")
-        self.marins = Ressource(marins, BLUE, "")
-        self.pm = Ressource(pm, GREEN, "")
-        self.degats = Ressource(degats, YELLOW, "")
+        self.vie = Ressource(vie, "")
+        self.marins = Ressource(marins, "")
+        self.pm = Ressource(pm, "")
+        self.degats = Ressource(degats, "")
         # Autres variables
         self.position = None
         self.direction = 0
@@ -30,4 +29,13 @@ class Bateau:
     
     def get_degats(self) -> int:
         return self.degats.valeur
+    
+    def __add__(self, valeur: int) -> None:
+        self.vie + valeur
+
+    def __sub__(self, valeur: int) -> bool:
+        mort = self.vie - valeur
+        if mort:
+            self.coule = True
+        return mort
     
