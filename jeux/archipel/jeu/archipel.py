@@ -173,5 +173,19 @@ class Archipel(Jeu):
                 ok = True
         return ok
     
-    def abordage(self, bateaux: tuple[Bateau|int]) -> bool:
-        pass
+    def abordage(self, bateaux: tuple[Bateau|int]) -> list|bool:
+        ok = False
+        if len(bateaux) > 1:
+            meme_case = True
+            i = 0
+            while meme_case and i < len(bateaux)-1:
+                if bateaux[i].position != bateaux[i+1].position:
+                    meme_case = False
+                i += 1
+            if meme_case:
+                ok = True
+        if ok:
+            vainqueur = False
+            return vainqueur
+        else:
+            return ok
