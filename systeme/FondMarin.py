@@ -6,8 +6,9 @@ from ui.bouton.taille import Taille
 from ui.bouton.apparence import Apparence
 
 # Configuration système
-fichier = open("systeme/sys.json")
+fichier = open("systeme/config.json")
 config_sys = json.loads(fichier.read())
+fichier.close()
 
 init_window(get_monitor_width(0), get_monitor_height(0), config_sys["nom"])
 set_target_fps(60)
