@@ -1,6 +1,9 @@
 from jeux.archipel.scene import Scene
 from jeux.archipel.menu import Menu
 from jeux.archipel.config import config
+from jeux.archipel.jeu.archipel import Archipel
+
+arch = Archipel
 
 class Archipel:
     """La porte d'entrée vers le jeu.

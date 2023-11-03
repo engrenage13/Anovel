@@ -5,7 +5,7 @@ from systeme.fenetre import Fenetre
 from menu.menu import Menu
 from parametres.parametres import Parametres
 from jeux.BN.partie import Partie
-from jeux.archipel.archipel import Archipel
+from jeux.archipel.index import Archipel
 
 if not fichierExiste():
     verifSauvegarde()
