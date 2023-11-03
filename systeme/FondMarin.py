@@ -5,19 +5,15 @@ from raylib.colors import *
 from ui.bouton.taille import Taille
 from ui.bouton.apparence import Apparence
 
-TITRE_F = 'ANOVEL'
-etatVersion = "alpha"
-version = "0.2"
+# Configuration système
+fichier = open("systeme/config.json")
+config_sys = json.loads(fichier.read())
+fichier.close()
 
-init_window(get_monitor_width(0), get_monitor_height(0), TITRE_F)
+init_window(get_monitor_width(0), get_monitor_height(0), config_sys["nom"])
 set_target_fps(60)
 toggle_fullscreen()
 set_exit_key(0)
-
-# Configuration système
-
-fichier = open("systeme/sys.json")
-config_sys = json.loads(fichier.read())
 
 # Dimensions
 xf = get_screen_width()

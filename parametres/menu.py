@@ -1,5 +1,4 @@
 from systeme.FondMarin import *
-from systeme.erreurs import e000, e001
 from ui.blocTexte import BlocTexte
 from ui.scrollBarre import ScrollBarre
 
@@ -30,6 +29,9 @@ class Menu:
         self.destBarre = self.posBarre
         # Autres
         self.taillePolice = int(yf*0.045)
+        # Calcul
+        self.decodeur()
+        self.mesureTaille()
 
     def dessine(self) -> None:
         """Permet de dessiner l'interpréteur à l'écran.
@@ -63,55 +65,37 @@ class Menu:
             self.scrollBarre.dessine()
             self.pos = self.scrollBarre.getPos()
 
-    def checkFichier(self) -> list:
-        """Vérifie si le fichier existe et lance le décodage.
-
-        Return:
-            list : Renvoie une liste comportant toutes les erreurs relatives au fichier, qui ont étaint trouvées.
-        """
-        rep = []
-        if file_exists(self.fichier):
-            if get_file_extension(self.fichier) == self.extension:
-                self.decodeur()
-                self.mesureTaille()
-            else:
-                rep.append([BlocTexte(e001[0], police2, int(self.taillePolice*1.2)), 
-                            BlocTexte(e001[1], police2, self.taillePolice, [int(xf*0.9), ''])])
-        else:
-            rep.append([BlocTexte(e000[0], police2, int(self.taillePolice*1.2)), 
-                        BlocTexte(e000[1], police2, self.taillePolice, [int(xf*0.9), ''])])
-        return rep
-
     def decodeur(self) -> None:
         """Permet de décoder le texte du fichier traiter.
         """
-        fic = load_file_text(self.fichier)
-        fil = fic.split("\n")
-        while len(fil) > 0:
-            if len(fil[0]) > 0 and fil[0][0] == '-':
-                li = fil[0]
-                titre = ""
-                fichier = ""
-                go = False
-                for i in range(len(li)):
-                    if go == 't':
-                        if li[i] == ']':
-                            go = False
+        if file_exists(self.fichier):
+            fic = load_file_text(self.fichier)
+            fil = fic.split("\n")
+            while len(fil) > 0:
+                if len(fil[0]) > 0 and fil[0][0] == '-':
+                    li = fil[0]
+                    titre = ""
+                    fichier = ""
+                    go = False
+                    for i in range(len(li)):
+                        if go == 't':
+                            if li[i] == ']':
+                                go = False
+                            else:
+                                titre = titre + li[i]
+                        elif go == 'f':
+                            if li[i] == ')':
+                                go = False
+                            else:
+                                fichier = fichier + li[i]
                         else:
-                            titre = titre + li[i]
-                    elif go == 'f':
-                        if li[i] == ')':
-                            go = False
-                        else:
-                            fichier = fichier + li[i]
-                    else:
-                        if li[i] == '[':
-                            go = 't'
-                        elif li[i] == '(':
-                            go = 'f'
-                self.contenu.append([BlocTexte(titre.upper(), police1, self.taillePolice, 
-                                    [int(self.largeurContenu*0.9), '']), fichier])
-            del fil[0]
+                            if li[i] == '[':
+                                go = 't'
+                            elif li[i] == '(':
+                                go = 'f'
+                    self.contenu.append([BlocTexte(titre.upper(), police1, self.taillePolice, 
+                                        [int(self.largeurContenu*0.9), '']), fichier])
+                del fil[0]
 
     def bougeBarre(self) -> None:
         """Permet de déplacer la barre qui affiche quel onglet est sélectionné.

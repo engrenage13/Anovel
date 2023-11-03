@@ -1,6 +1,6 @@
 from systeme.FondMarin import *
 
-defaut = [('anims', "2"), ('hasard', "1"), ("stats", "1")]
+defaut = [('anims', "2"), ("stats", "1")]
 actuel = []
 
 def fichierExiste() -> bool:

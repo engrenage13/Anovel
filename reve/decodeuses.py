@@ -204,6 +204,4 @@ def widget(ligne: str) -> list:
         else:
             sequence += car
         i = i + 1
-    if rep != None:
-        rep = [rep, rep.erreurs]
     return rep
