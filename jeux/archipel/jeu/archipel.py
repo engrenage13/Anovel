@@ -28,6 +28,38 @@ class Archipel(Jeu):
             retour = self.joueurs[self.joueur_actuel][bateau]
         return retour
     
+    def trouve_joueur(self, bateau: Bateau) -> Joueur|bool:
+        retour = False
+        if type(bateau) == Bateau:
+            i = 0
+            while not retour and i < len(self.joueurs):
+                if bateau in self.joueurs[i]:
+                    retour = self.joueurs[i]
+                else:
+                    i += 1
+        return retour
+    
+    def trouve_liste_bateaux_et_joueur(self, bateaux: list[Bateau|int]) -> list[tuple[Bateau, Joueur]]|bool:
+        retour = False
+        liste = []
+        i = 0
+        ok = True
+        while ok and i < len(bateaux):
+            bateau = bateaux[i]
+            if type(bateau) == int:
+                bateau = self.trouve_bateau(bateau)
+            if type(bateau) == Bateau:
+                joueur = self.trouve_joueur(bateau)
+                if type(joueur) == Joueur:
+                    liste.append([bateau, joueur])
+                else:
+                    ok = False
+            else:
+                ok = False
+        if ok and len(liste) == len(bateaux):
+            retour = liste
+        return retour
+    
     def trouve_case(self, case: tuple[int]) -> Case|bool:
         retour = False
         if type(case) == tuple[int] and len(case) >= 2:
@@ -41,30 +73,26 @@ class Archipel(Jeu):
             bateau = self.trouve_bateau(bateau)
         if type(bateau) == Bateau:
             plateau = self.contenu["plateau"]
+            cases_adjacentes = [bateau.position]
             pm = 0
-            fin = False
-            cases_adajencentes = [(bateau.position, bateau.direction)]
-            while not fin and pm < bateau.get_pm():
+            while len(cases_adjacentes > 0):
                 cases = []
-                for i in range(len(cases_adajencentes)):
-                    if pm > 0 and cases_adajencentes[i][0] not in cases_atteignables:
-                        cases_atteignables.append(cases_adajencentes[i][0])
-                    depart = cases_adajencentes[i][0]
-                    direction = cases_adajencentes[i][1]
-                    choix = [direction, (direction+1)%4, (direction+3)%4]
-                    for j in range(len(choix)):
-                        if direction == 0:
-                            c = (depart[0]+1, depart[1])
-                        elif direction == 1:
-                            c = (depart[0], depart[1]+1)
-                        elif direction == 2:
-                            c = (depart[0]-1, depart[1])
-                        elif direction == 3:
-                            c = (depart[0], depart[1]-1)
-                        if plateau.check_case_existe(c):
-                            cases.append((c, choix[j]))
-                cases_adajencentes = cases
+                for i in range(len(cases_adjacentes)):
+                    depart = cases_adjacentes[i]
+                    cn = (depart[0], depart[1]-1)
+                    ce = (depart[0]+1, depart[1])
+                    cs = (depart[0], depart[1]+1)
+                    co = (depart[0]-1, depart[1])
+                    directions = [ce, cs, co, cn]
+                    for j in range(len(directions)):
+                        if plateau.check_case_existe(directions[j]):
+                            tuile = plateau[directions[j][0]][directions[j][1]]
+                            if not tuile.check_case_pleine():
+                                cases_atteignables.append(directions[j])
+                                if pm < bateau.get_pm():
+                                    cases.append(directions[j])
                 pm += 1
+                cases_adjacentes = cases
         return cases_atteignables
     
     # /utilitaires
@@ -138,6 +166,14 @@ class Archipel(Jeu):
                 elif self.phase == Phases.MISE_EN_PLACE:
                     self.phase = Phases.PARTIE
 
+    def fait_mal(self, victime: Bateau, proprietaire: Joueur, degats: int) -> bool:
+        coule = False
+        if victime in proprietaire.bateaux:
+            coule = victime - degats
+            if coule:
+                proprietaire - victime
+        return coule
+
     def deplacement(self, bateau: Bateau|int, destination: tuple[int], direction: int = None) -> bool:
         ok = False
         if type(bateau) == int:
@@ -175,29 +211,36 @@ class Archipel(Jeu):
     
     def abordage(self, bateaux: tuple[Bateau|int]) -> list|bool:
         ok = False
-        if len(bateaux) > 1:
-            meme_case = True
-            i = 0
-            while meme_case and i < len(bateaux)-1:
-                if bateaux[i].position != bateaux[i+1].position:
-                    meme_case = False
-                i += 1
-            if meme_case:
-                ok = True
-        if ok:
-            vainqueur = False
-            for i in range(len(bateaux)-1):
-                if bateaux[i].get_vie() < bateaux[i+1].get_vie():
-                    vainqueur = i+1
-                elif bateaux[i].get_vie() > bateaux[i+1].get_vie():
-                    vainqueur = i
-            if not vainqueur:
-                for i in range(len(bateaux)):
-                    bateaux[i].vie - 1
-                resultat = []
-            else:
-                for i in range(len(bateaux)):
-                    if i != vainqueur:
-                        bateaux[i].vie - 1
-        else:
-            return ok
+        bats = self.trouve_liste_bateaux_et_joueur(bateaux)
+        if type(bats) == list and len(bats) >= 2:
+            if bats[0][1] != bats[1][1] and bats[0][0].position == bats[1][0].position:
+                # Conditions réspéctées, l'abordage a lieu
+                gagnant = None
+                recompenses = []
+                if bats[0][0].get_marins() == bats[1][0].get_marins():
+                    # Egalité
+                    self.fait_mal(bats[0][0], bats[0][1], 1)
+                    self.fait_mal(bats[1][0], bats[1][1], 1)
+                    vainqueur = False
+                else:
+                    # Cas contraire, il y a un vainqueur
+                    vainqueur = True
+                    if bats[0][0].get_marins() > bats[1][0].get_marins():
+                        gagnant = bats[0]
+                        perdant = bats[1]
+                        coule = self.fait_mal(bats[1][0], bats[1][1], 1)
+                    else:
+                        gagnant = bats[1]
+                        perdant = bats[0]
+                        coule = self.fait_mal(bats[0][0], bats[0][1], 1)
+                    if not coule:
+                        if perdant[0].get_marins() > 0:
+                            recompenses.append(0)
+                            if gagnant[0].get_marins() - perdant[0].get_marins() >= 5:
+                                recompenses.append(1)
+                        else:
+                            recompenses.append(2)
+                        if gagnant[0].get_marins() - perdant[0].get_marins() - 1 > 0:
+                            recompenses.append(3)
+                ok = [vainqueur, gagnant, recompenses]
+        return ok

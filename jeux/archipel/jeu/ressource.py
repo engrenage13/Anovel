@@ -17,9 +17,11 @@ class Ressource:
     def __sub__(self, valeur: int) -> bool:
         if self.valeur - valeur < self.min:
             self.valeur -= (self.valeur-self.min)
-            est_a_zero = True
         else:
             self.valeur -= valeur
+        if self.valeur == 0:
+            est_a_zero = True
+        else:
             est_a_zero = False
         return est_a_zero
         
