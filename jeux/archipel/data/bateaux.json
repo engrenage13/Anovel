@@ -1,4 +1,20 @@
 {
-  "gafteur": {"nom": "Gafteur", "image": "jeux/archipel/images/Bateaux/gafteur.png", "vie": 8, "marins": 5, "pm": 3, "degats": 2},
-  "ferpasseur": {"nom": "Ferpasseur", "image": "jeux/archipel/images/Bateaux/ferpasseur.png", "vie": 10, "marins": 6, "pm": 2, "degats": 3}
+  "gafteur": {
+    "nom": "Gafteur", 
+    "image": "jeux/archipel/images/Bateaux/gafteur.png", 
+    "vie": 8, 
+    "marins": 5, 
+    "pm": 3, 
+    "degats": 2,
+    "portee": 1
+  },
+  "ferpasseur": {
+    "nom": "Ferpasseur", 
+    "image": "jeux/archipel/images/Bateaux/ferpasseur.png", 
+    "vie": 10, 
+    "marins": 6, 
+    "pm": 2, 
+    "degats": 3,
+    "portee": 2
+  }
 }

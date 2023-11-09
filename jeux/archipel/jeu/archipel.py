@@ -3,6 +3,12 @@ from jeux.archipel.jeu.plateau.plateau import Plateau, TypeCase, Case
 from jeux.archipel.jeu.bateau import Bateau
 from jeux.archipel.config import bateaux as libat, joueurs as lijo
 from jeux.archipel.jeu.joueur import Joueur
+from jeux.archipel.jeu.actions import vole_marin, vole_bateau, inflige_dommage
+
+recompenses = [("Voler 1 marin", vole_marin), 
+               ("Voler le bateau et son equipage", vole_bateau),
+               ("Voler le bateau", vole_bateau),
+               ("Infliger ? dommages", inflige_dommage)]
 
 class Archipel(Jeu):
     def __init__(self, plateau: tuple[int, float]) -> None:
@@ -95,6 +101,30 @@ class Archipel(Jeu):
                 cases_adjacentes = cases
         return cases_atteignables
     
+    def trouve_cases_a_portee(self, bateau: Bateau|int) -> list[tuple[int]]:
+        a_portee = []
+        if type(bateau) == int:
+            bateau = self.trouve_bateau(bateau)
+        if type(bateau) == Bateau:
+            plateau = self.contenu["plateau"]
+            for i in range(bateau.portee+1):
+                depart = bateau.position
+                cases_possibles = [(depart[0], depart[1]-i), (depart[0]+i, depart[1]), (depart[0], depart[1]+i), (depart[0]-i, depart[1])]
+                for j in range(len(cases_possibles)):
+                    if plateau.check_case_existe(cases_possibles[j]):
+                        if (cases_possibles[j]) not in a_portee: a_portee.append(cases_possibles[j])
+        return a_portee
+    
+    def trouve_bateaux_dans_secteur(self, secteur: list[tuple[int]]) -> list[Bateau]:
+        bateaux = []
+        plateau = self.contenu["plateau"]
+        for i in range(len(secteur)):
+            tuile = plateau[secteur[i][0]][secteur[i][1]]
+            if not tuile.type == TypeCase.ILE and tuile.contenu > 0:
+                for j in range(len(tuile)):
+                    bateaux.append(tuile[j])
+        return bateaux
+    
     # /utilitaires
     # Vérificateurs
 
@@ -125,7 +155,7 @@ class Archipel(Jeu):
         liste = []
         for i in range(len(contenuSet)):
             ibat = libat[contenuSet[i]]
-            liste.append(Bateau(ibat["nom"], ibat["vie"], ibat["marins"], ibat["pm"], ibat["degats"]))
+            liste.append(Bateau(ibat["nom"], ibat["vie"], ibat["marins"], ibat["pm"], ibat["degats"], ibat["portee"]))
         return liste
     
     def mise_en_place(self) -> None:
@@ -165,14 +195,6 @@ class Archipel(Jeu):
                         self.phase = Phases.FIN
                 elif self.phase == Phases.MISE_EN_PLACE:
                     self.phase = Phases.PARTIE
-
-    def fait_mal(self, victime: Bateau, proprietaire: Joueur, degats: int) -> bool:
-        coule = False
-        if victime in proprietaire.bateaux:
-            coule = victime - degats
-            if coule:
-                proprietaire - victime
-        return coule
 
     def deplacement(self, bateau: Bateau|int, destination: tuple[int], direction: int = None) -> bool:
         ok = False
@@ -219,8 +241,8 @@ class Archipel(Jeu):
                 recompenses = []
                 if bats[0][0].get_marins() == bats[1][0].get_marins():
                     # Egalité
-                    self.fait_mal(bats[0][0], bats[0][1], 1)
-                    self.fait_mal(bats[1][0], bats[1][1], 1)
+                    inflige_dommage(bats[0][0], bats[0][1], 1)
+                    inflige_dommage(bats[1][0], bats[1][1], 1)
                     vainqueur = False
                 else:
                     # Cas contraire, il y a un vainqueur
@@ -228,11 +250,11 @@ class Archipel(Jeu):
                     if bats[0][0].get_marins() > bats[1][0].get_marins():
                         gagnant = bats[0]
                         perdant = bats[1]
-                        coule = self.fait_mal(bats[1][0], bats[1][1], 1)
+                        coule = inflige_dommage(bats[1][0], bats[1][1], 1)
                     else:
                         gagnant = bats[1]
                         perdant = bats[0]
-                        coule = self.fait_mal(bats[0][0], bats[0][1], 1)
+                        coule = inflige_dommage(bats[0][0], bats[0][1], 1)
                     if not coule:
                         if perdant[0].get_marins() > 0:
                             recompenses.append(0)
@@ -241,6 +263,18 @@ class Archipel(Jeu):
                         else:
                             recompenses.append(2)
                         if gagnant[0].get_marins() - perdant[0].get_marins() - 1 > 0:
-                            recompenses.append(3)
+                            recompenses.append((3, gagnant[0].get_marins() - perdant[0].get_marins() - 1))
                 ok = [vainqueur, gagnant, recompenses]
+        return ok
+    
+    def attaque(self, attaquant: Bateau|int, victime: Bateau|int) -> int:
+        ok = -1
+        bats = self.trouve_liste_bateaux_et_joueur([attaquant, victime])
+        if type(bats) == list and len(bats) == 2:
+            if bats[1][0] in self.trouve_bateaux_dans_secteur(self.trouve_cases_a_portee(bats[0][0])):
+                coule = inflige_dommage(bats[1][0], bats[1][1], bats[0][0].degats)
+                if coule:
+                    ok = 1
+                else:
+                    ok = 0
         return ok

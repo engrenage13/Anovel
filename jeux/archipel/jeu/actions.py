@@ -16,3 +16,11 @@ def vole_bateau(victime: Joueur, voleur: Joueur, cible: Bateau) -> bool:
         victime - cible
         voleur + cible
     return retour
+
+def inflige_dommage(victime: Bateau, proprietaire: Joueur, degats: int) -> bool:
+    coule = False
+    if victime in proprietaire.bateaux:
+        coule = victime - degats
+        if coule:
+            proprietaire - victime
+    return coule

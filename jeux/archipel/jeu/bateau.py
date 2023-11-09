@@ -6,12 +6,13 @@ class TypeBateau(Enum):
     FERPASSEUR = auto()
 
 class Bateau:
-    def __init__(self, nom: str, vie: int, marins: int, pm: int, degats: int) -> None:
+    def __init__(self, nom: str, vie: int, marins: int, pm: int, degats: int, portee: int) -> None:
         self.nom = nom
         self.vie = Ressource(vie, "")
         self.marins = Ressource(marins, "")
         self.pm = Ressource(pm, "")
         self.degats = Ressource(degats, "")
+        self.portee = portee
         # Autres variables
         self.position = None
         self.direction = 0
