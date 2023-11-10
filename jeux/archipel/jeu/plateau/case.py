@@ -12,6 +12,17 @@ class Case:
 
     def check_case_pleine(self) -> bool:
         return True if (self.type == TypeCase.ILE or len(self.contenu) == self.contenuMax) else False
+    
+    def get_autre_bateau(self, bateau: any) -> any|bool:
+        retour = False
+        if bateau in self.contenu and len(self.contenu) > 1:
+            i = 0
+            while not retour and i < len(self.contenu):
+                if self.contenu[i] != bateau:
+                    retour = self.contenu[i]
+                else:
+                    i += 1
+        return retour
 
     def __add__(self, element: any) -> bool:
         if len(self.contenu) < self.contenuMax:

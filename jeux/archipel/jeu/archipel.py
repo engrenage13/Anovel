@@ -196,6 +196,34 @@ class Archipel(Jeu):
                 elif self.phase == Phases.MISE_EN_PLACE:
                     self.phase = Phases.PARTIE
 
+    def check_actions_possible(self, bateau: Bateau|int) -> list[tuple[str, function]]:
+        actions = []
+        if type(bateau) == int:
+            bateau = self.trouve_bateau(bateau)
+        if type(bateau) == Bateau:
+            if len(self.trouve_cases_atteignables(bateau)) > 0:
+                actions.append(("Deplacement", self.deplacement))
+            if len(self.trouve_bateaux_dans_secteur(self.trouve_cases_a_portee(bateau))) > 0:
+                actions.append(("Attaque", self.attaque))
+        return actions
+
+    def check_actions_possible_via_position(self, bateau: Bateau|int) -> list[tuple[str, function]]:
+        actions = []
+        if type(bateau) == int:
+            bateau = self.trouve_bateau(bateau)
+        if type(bateau) == Bateau:
+            joueur = self.trouve_joueur(bateau)
+            plateau = self.contenu["plateau"]
+            tuile = plateau[bateau.position[0]][bateau.position[1]]
+            voisin = tuile.get_autre_bateau(bateau)
+            if type(voisin) == Bateau:
+                proprio = self.trouve_joueur(voisin)
+                if joueur == proprio:
+                    actions.append(("Organisation", self.organisation))
+                else:
+                    actions.append(("Abordage", self.abordage))
+        return actions
+
     def deplacement(self, bateau: Bateau|int, destination: tuple[int], direction: int = None) -> bool:
         ok = False
         if type(bateau) == int:
@@ -278,3 +306,17 @@ class Archipel(Jeu):
                 else:
                     ok = 0
         return ok
+    
+    def defini_vainqueur(self) -> Joueur:
+        vainqueur = None
+        if self.joueurs[0].check_defaite() and self.joueurs[1].check_defaite():
+            if self.joueurs[0].nb_elimination > self.joueurs[1].nb_elimination:
+                vainqueur = vainqueur = self.joueurs[0]
+            elif self.joueurs[1].nb_elimination > self.joueurs[0].nb_elimination:
+                vainqueur = vainqueur = self.joueurs[1]
+        else:
+            if self.joueurs[0].check_defaite():
+                vainqueur = self.joueurs[1]
+            elif self.joueurs[1].check_defaite():
+                vainqueur = self.joueurs[0]
+        return vainqueur

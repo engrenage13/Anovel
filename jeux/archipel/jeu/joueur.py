@@ -5,6 +5,7 @@ class Joueur:
         self.nom = nom
         self.bateaux = bateaux
         self.a_perdu = False
+        self.nb_elimination = 0
 
     def copie_joueur(self, bateaux: list[Bateau] = None) -> object:
         if bateaux == None or len(bateaux) == 0:
