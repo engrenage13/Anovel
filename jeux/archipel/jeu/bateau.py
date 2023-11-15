@@ -7,6 +7,16 @@ class TypeBateau(Enum):
 
 class Bateau:
     def __init__(self, nom: str, vie: int, marins: int, pm: int, degats: int, portee: int) -> None:
+        """Crée un bateau.
+
+        Args:
+            nom (str): Le nom du bateau.
+            vie (int): La vie du bateau.
+            marins (int): Le nombre de marins du bateau.
+            pm (int): La distance maximale que peut parcourir le bateau en un déplacement.
+            degats (int): Les dégâts qu'inflige le bateau lorsqu'il attaque.
+            portee (int): La portée maximale des attaques du bateau.
+        """
         self.nom = nom
         self.vie = Ressource(vie, "")
         self.marins = Ressource(marins, "")
@@ -20,21 +30,54 @@ class Bateau:
         self.coule = False
 
     def get_vie(self) -> int:
+        """Renvoie le nombre de PV actuel du bateau.
+
+        Returns:
+            int: PV du bateau.
+        """
         return self.vie.valeur
     
     def get_marins(self) -> int:
+        """Renvoie le nombre de marins présents sur le bateau.
+
+        Returns:
+            int: Nombre de marins du bateau.
+        """
         return self.marins.valeur
     
     def get_pm(self) -> int:
+        """Renvoie le nombre de PM du bateau.
+
+        Returns:
+            int: PM du bateau.
+        """
         return self.pm.valeur
     
     def get_degats(self) -> int:
+        """Renvoie les dégâts qu'inflige le bateau.
+
+        Returns:
+            int: Les dégâts du bateau.
+        """
         return self.degats.valeur
     
     def __add__(self, valeur: int) -> None:
+        """Ajoute des PV au bateau.
+
+        Args:
+            valeur (int): Nombre de PV à ajouter.
+        """
         self.vie + valeur
 
     def __sub__(self, valeur: int) -> bool:
+        """Retire des PV au bateau.
+
+        Args:
+            valeur (int): Nombre de PV à retirer.
+
+        Returns:
+            bool: True si le bateau a coulé, False dans le cas contraire.
+        """
         mort = self.vie - valeur
         if mort:
             self.coule = True

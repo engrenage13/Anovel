@@ -12,5 +12,7 @@ class Etats(Enum):
 
 class Jeu:
     def __init__(self) -> None:
+        """Crée les variables de base du jeu.
+        """
         self.contenu = {}
         self.joueurs = []

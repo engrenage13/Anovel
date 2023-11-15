@@ -12,6 +12,11 @@ recompenses = [("Voler 1 marin", vole_marin),
 
 class Archipel(Jeu):
     def __init__(self, plateau: tuple[int, float]) -> None:
+        """Initialise le jeu, ses constantes, ses variables et son état initial.
+
+        Args:
+            plateau (tuple[int, float]): (Nombre de cases sur la longueur, Pourcentage maximal d'ile)
+        """
         self.contenu = {
             "plateau": Plateau(plateau[0], int(plateau[0]*plateau[0]*plateau[1])),
             "bateaux": {
@@ -29,12 +34,28 @@ class Archipel(Jeu):
     # Utilitaires
 
     def trouve_bateau(self, bateau: int) -> Bateau|bool:
+        """Retourne le bateau du joueur actif situé à l'indice passé en paramètre.
+
+        Args:
+            bateau (int): L'indice du bateau recherché.
+
+        Returns:
+            Bateau|bool: Le bateau situé à l'indice ou False si l'indice n'est pas trouvé.
+        """
         retour = False
         if bateau < len(self.joueurs[self.joueur_actuel]):
             retour = self.joueurs[self.joueur_actuel][bateau]
         return retour
     
     def trouve_joueur(self, bateau: Bateau) -> Joueur|bool:
+        """Renvoie le propriétaire d'un bateau.
+
+        Args:
+            bateau (Bateau): Le bateau sur lequel on investigue.
+
+        Returns:
+            Joueur|bool: Le propriétaire du bateau s'il en a un ou False dans le cas contraire.
+        """
         retour = False
         if type(bateau) == Bateau:
             i = 0
@@ -46,6 +67,14 @@ class Archipel(Jeu):
         return retour
     
     def trouve_liste_bateaux_et_joueur(self, bateaux: list[Bateau|int]) -> list[tuple[Bateau, Joueur]]|bool:
+        """Retourne une liste composée de tuple (Bateau, Propriétaire du bateau).
+
+        Args:
+            bateaux (list[Bateau | int]): Liste des bateaux recherchés (recherche sur le joueur actif).
+
+        Returns:
+            list[tuple[Bateau, Joueur]]|bool: Liste de tuples (Bateau, Joueur) ou False si la liste est vide ou les bateaux n'existent pas.
+        """
         retour = False
         liste = []
         i = 0
@@ -67,6 +96,14 @@ class Archipel(Jeu):
         return retour
     
     def trouve_case(self, case: tuple[int]) -> Case|bool:
+        """Renvoie une case du plateau grâçe à ses coordonnées.
+
+        Args:
+            case (tuple[int]): Tuple composé de deux int (x, y).
+
+        Returns:
+            Case|bool: La case correspondante aux coordonnées ou False si elle n'existe pas.
+        """
         retour = False
         if type(case) == tuple[int] and len(case) >= 2:
             if self.contenu["plateau"].check_case_existe(case):
@@ -74,6 +111,14 @@ class Archipel(Jeu):
         return retour
     
     def trouve_cases_atteignables(self, bateau: Bateau|int) -> list[tuple[int]]:
+        """Renvoie la liste des cases que le bateau passé en paramètre peut atteindre en 1 déplacement.
+
+        Args:
+            bateau (Bateau | int): Le bateau pour lequel on cherche l'info.
+
+        Returns:
+            list[tuple[int]]: Liste des coordonnées (tuple[x, y]) des cases atteignables.
+        """
         cases_atteignables = []
         if type(bateau) == int:
             bateau = self.trouve_bateau(bateau)
@@ -102,6 +147,14 @@ class Archipel(Jeu):
         return cases_atteignables
     
     def trouve_cases_a_portee(self, bateau: Bateau|int) -> list[tuple[int]]:
+        """Renvoie les cases à porté de tir pour le bateau passé en paramètre.
+
+        Args:
+            bateau (Bateau | int): Le bateau pour lequel on cherche l'info.
+
+        Returns:
+            list[tuple[int]]: Liste des coordonnées (tuple[x, y]) des cases atteignables.
+        """
         a_portee = []
         if type(bateau) == int:
             bateau = self.trouve_bateau(bateau)
@@ -116,6 +169,14 @@ class Archipel(Jeu):
         return a_portee
     
     def trouve_bateaux_dans_secteur(self, secteur: list[tuple[int]]) -> list[Bateau]:
+        """Renvoie les bateaux présents dans un ensemble de cases (secteur).
+
+        Args:
+            secteur (list[tuple[int]]): Liste de coordonnées de cases (tuple[x, y]).
+
+        Returns:
+            list[Bateau]: Renvoie les bateaux trouvés sous forme d'une liste (peut être vide).
+        """
         bateaux = []
         plateau = self.contenu["plateau"]
         for i in range(len(secteur)):
@@ -129,6 +190,11 @@ class Archipel(Jeu):
     # Vérificateurs
 
     def check_fin_mise_en_place(self) -> bool:
+        """Vérifie si tous les joueurs sont en place.
+
+        Returns:
+            bool: True si tous les joueurs sont parés à jouer, sinon, False.
+        """
         fin = True
         i = 0
         while fin and i < len(self.joueurs):
@@ -139,6 +205,11 @@ class Archipel(Jeu):
         return fin
     
     def check_fin_partie(self) -> bool:
+        """Vérifie si la partie est terminée.
+
+        Returns:
+            bool: True si la partie est terminée, sinon, False.
+        """
         fin = True
         i = 0
         while fin and i < len(self.joueurs):
@@ -151,6 +222,11 @@ class Archipel(Jeu):
     # /vérificateurs
 
     def charge_set_bateaux(self) -> list[Bateau]:
+        """Charge le set initial de bateaux d'un joueur.
+
+        Returns:
+            list[Bateau]: Les bateaux du set dans une liste.
+        """
         contenuSet = ["gafteur" for i in range(3)] + ["ferpasseur"]
         liste = []
         for i in range(len(contenuSet)):
@@ -159,12 +235,24 @@ class Archipel(Jeu):
         return liste
     
     def mise_en_place(self) -> None:
+        """Effectue la mise en place du plateau et crée les joueurs.
+        """
         for i in range(len(lijo)):
             joueur = lijo[i]
             self.joueurs.append(Joueur(joueur["nom"], self.contenu["bateaux"][i]))
         self.contenu["plateau"].mise_en_place()
     
     def place_bateau(self, joueur: Joueur|int, bateau: Bateau|int, case: tuple[int]) -> bool:
+        """Permet de placer le bateau du joueur (passés en paramètre) sur la case ciblée.
+
+        Args:
+            joueur (Joueur | int): Le propriétaire du bateau.
+            bateau (Bateau | int): Le bateau à placer.
+            case (tuple[int]): La case sur laquelle on veut positionner le bateau.
+
+        Returns:
+            bool: True si le bateau a pu être placé, False dans le cas contraire.
+        """
         ok = False
         ok_joueur = True if type(joueur) == Joueur else False
         if type(joueur) == int:
@@ -183,6 +271,8 @@ class Archipel(Jeu):
         return ok
     
     def passe_au_joueur_suivant(self) -> None:
+        """Automatise le passage au joueur suivant peut importe la phase du jeu.
+        """
         if not self.check_fin_partie():
             if self.joueur_actuel < len(self.joueurs):
                 self.joueur_actuel += 1
@@ -196,7 +286,15 @@ class Archipel(Jeu):
                 elif self.phase == Phases.MISE_EN_PLACE:
                     self.phase = Phases.PARTIE
 
-    def check_actions_possible(self, bateau: Bateau|int) -> list[tuple[str, function]]:
+    def check_actions_possible(self, bateau: Bateau|int) -> list[tuple]:
+        """Vérifie les actions réalisables pour le bateau passé en paramètres.
+
+        Args:
+            bateau (Bateau | int): Le bateau testé.
+
+        Returns:
+            list[tuple]: Liste des actions possibles sous la forme de tuples (nom, fonction).
+        """
         actions = []
         if type(bateau) == int:
             bateau = self.trouve_bateau(bateau)
@@ -207,7 +305,15 @@ class Archipel(Jeu):
                 actions.append(("Attaque", self.attaque))
         return actions
 
-    def check_actions_possible_via_position(self, bateau: Bateau|int) -> list[tuple[str, function]]:
+    def check_actions_possible_via_position(self, bateau: Bateau|int) -> list[tuple]:
+        """Renvoie les actions que le bateau en paramètre peut faire, via sa position.
+
+        Args:
+            bateau (Bateau | int): Le bateau testé.
+
+        Returns:
+            list[tuple]: Liste des actions possibles sous la forme de tuples (nom, fonction).
+        """
         actions = []
         if type(bateau) == int:
             bateau = self.trouve_bateau(bateau)
@@ -225,6 +331,16 @@ class Archipel(Jeu):
         return actions
 
     def deplacement(self, bateau: Bateau|int, destination: tuple[int], direction: int = None) -> bool:
+        """Permet de déplacer le bateau passé en paramètre vers la destination souhaitée.
+
+        Args:
+            bateau (Bateau | int): Le bateau à déplacer.
+            destination (tuple[int]): Les coordonnées de la case sur laquelle le bateau doit être déplacé.
+            direction (int, optional): La direction souhaité pour le bateau. None par défaut pour conserver la direction actuelle.
+
+        Returns:
+            bool: True si le déplacement a été fait, False dans le cas contraire.
+        """
         ok = False
         if type(bateau) == int:
             bateau = self.trouve_bateau(bateau)
@@ -243,6 +359,15 @@ class Archipel(Jeu):
         return ok
     
     def organisation(self, bateaux: tuple[Bateau], nouvel_agencement: tuple[int]) -> bool:
+        """Permet de réaliser une organisation entre deux bateaux.
+
+        Args:
+            bateaux (tuple[Bateau]): Tuple comprenant les deux bateaux de l'organisation.
+            nouvel_agencement (tuple[int]): Tuple contenant le nouveau nombre de marins pour chacun des deux bateaux.
+
+        Returns:
+            bool: True si l'organisation a pu être faite, sinon, False.
+        """
         ok = False
         if len(bateaux) == len(nouvel_agencement):
             total_actuel = 0
@@ -260,6 +385,14 @@ class Archipel(Jeu):
         return ok
     
     def abordage(self, bateaux: tuple[Bateau|int]) -> list|bool:
+        """Permet de réaliser un abordage en deux bateaux.
+
+        Args:
+            bateaux (tuple[Bateau | int]): Les deux bateaux qui prennent part à l'abordage.
+
+        Returns:
+            list|bool: [Bateau gagnant, joueur gagnant, liste des récompenses possibles pour le gagnant] ([False, None, []] si égalité) ou False s'il y a un problème.
+        """
         ok = False
         bats = self.trouve_liste_bateaux_et_joueur(bateaux)
         if type(bats) == list and len(bats) >= 2:
@@ -296,6 +429,15 @@ class Archipel(Jeu):
         return ok
     
     def attaque(self, attaquant: Bateau|int, victime: Bateau|int) -> int:
+        """Permet de réaliser une attaque entre deux bateaux.
+
+        Args:
+            attaquant (Bateau | int): Le bateau qui attaque.
+            victime (Bateau | int): Le bateau attaqué.
+
+        Returns:
+            int: -1 si l'attaque n'a pas pu ce faire. Dans le cas contraire, 0 si la victime n'a pas coulée et 1 si elle a coulée.
+        """
         ok = -1
         bats = self.trouve_liste_bateaux_et_joueur([attaquant, victime])
         if type(bats) == list and len(bats) == 2:
@@ -308,6 +450,11 @@ class Archipel(Jeu):
         return ok
     
     def defini_vainqueur(self) -> Joueur:
+        """Désigne le joueur ayant remporté la victoire.
+
+        Returns:
+            Joueur: Le vainqueur.
+        """
         vainqueur = None
         if self.joueurs[0].check_defaite() and self.joueurs[1].check_defaite():
             if self.joueurs[0].nb_elimination > self.joueurs[1].nb_elimination:
