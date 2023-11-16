@@ -1,5 +1,5 @@
 from systeme.FondMarin import load_image, image_rotate_cw, image_resize, load_texture_from_image
-from jeux.archipel.objets.bases.element import Element
+from jeux.archipel.ui.objets.bases.element import Element
 from jeux.archipel.fonctions.bases import TAILLECASE
 
 class Pivote(Element):

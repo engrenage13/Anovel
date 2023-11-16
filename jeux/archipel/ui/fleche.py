@@ -1,10 +1,10 @@
 from random import randint, choice
 from jeux.archipel.ui.cible import Bateau, Case
 from systeme.FondMarin import *
-from jeux.archipel.objets.plateau.zone import Zone
-from jeux.archipel.objets.plateau.case import Case
-from jeux.archipel.objets.plateau.plateau import Plateau
-from jeux.archipel.objets.Bateau import Bateau
+from jeux.archipel.ui.objets.plateau.zone import Zone
+from jeux.archipel.ui.objets.plateau.case import Case
+from jeux.archipel.ui.objets.plateau.plateau import Plateau
+from jeux.archipel.ui.objets.Bateau import Bateau
 from jeux.archipel.ui.editTeleco import EditTeleco
 
 class Fleche(EditTeleco):

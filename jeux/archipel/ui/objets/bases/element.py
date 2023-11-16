@@ -1,5 +1,5 @@
 from systeme.FondMarin import Texture, draw_texture, WHITE, get_mouse_x, get_mouse_y
-from jeux.archipel.objets.bases.bougeable import Bougeable
+from jeux.archipel.ui.objets.bases.bougeable import Bougeable
 
 class Element(Bougeable):
     """L'objet de base pour générer n'importe quel élément du jeu.

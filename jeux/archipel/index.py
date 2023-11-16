@@ -1,9 +1,9 @@
-from jeux.archipel.scene import Scene
-from jeux.archipel.menu import Menu
+from jeux.archipel.ui.scene import Scene
+from jeux.archipel.ui.fen.menu import Menu
 from jeux.archipel.config import config
 from jeux.archipel.jeu.archipel import Archipel as archi
 
-arch = archi
+jeu = archi((14, 0.4))
 
 class Archipel:
     """La porte d'entrée vers le jeu.

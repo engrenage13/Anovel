@@ -1,6 +1,6 @@
 from systeme.FondMarin import draw_rectangle, draw_rectangle_lines_ex, WHITE, is_mouse_button_pressed
-from jeux.archipel.objets.plateau.case import Case
-from jeux.archipel.objets.Bateau import Bateau
+from jeux.archipel.ui.objets.plateau.case import Case
+from jeux.archipel.ui.objets.Bateau import Bateau
 
 class Cible:
     """Le carré qui permet de placer un bateau sur le plateau.

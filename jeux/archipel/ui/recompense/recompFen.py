@@ -1,9 +1,9 @@
 from systeme.FondMarin import *
 from ui.bouton.bouton import Bouton
 from ui.blocTexte import BlocTexte
-from jeux.archipel.objets.Bateau import Bateau
-from jeux.archipel.recompense.vignette import Vignette
-from jeux.archipel.icones import coeur, marin, fleche, degats
+from jeux.archipel.ui.objets.Bateau import Bateau
+from jeux.archipel.ui.recompense.vignette import Vignette
+from jeux.archipel.ui.icones import coeur, marin, fleche, degats
 
 class RecompFen:
     """La fenêtre de récompenses pour un abordage réussi.

@@ -2,9 +2,9 @@ import os
 import random
 from systeme.FondMarin import *
 from jeux.archipel.fonctions.bases import TAILLECASE
-from jeux.archipel.objets.Bateau import Bateau
-from jeux.archipel.objets.bases.bougeable import Bougeable
-from jeux.archipel.chargeIles import chargeSegment
+from jeux.archipel.ui.objets.Bateau import Bateau
+from jeux.archipel.ui.objets.bases.bougeable import Bougeable
+from jeux.archipel.ui.chargeIles import chargeSegment
 
 class Case(Bougeable):
     """Une case est une portion du plateau.

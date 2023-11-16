@@ -1,10 +1,10 @@
 from random import choice, randint
 from systeme.FondMarin import *
-from jeux.archipel.objets.plateau.plateau import Plateau, Case
-from jeux.archipel.objets.Joueur import Joueur, Bateau
-from jeux.archipel.pageCarte import PageCarte
-from jeux.archipel.objets.bases.fenetre import Fenetre
-from jeux.archipel.objets.plateau.zone import Zone
+from jeux.archipel.ui.objets.plateau.plateau import Plateau, Case
+from jeux.archipel.ui.objets.Joueur import Joueur, Bateau
+from jeux.archipel.ui.fen.pageCarte import PageCarte
+from jeux.archipel.ui.objets.bases.fenetre import Fenetre
+from jeux.archipel.ui.objets.plateau.zone import Zone
 from jeux.archipel.config import config, joueurs as lijo
 from jeux.archipel.ui.tiroir.tiroir import Tiroir
 from jeux.archipel.ui.selecBat import SelecBat
@@ -12,10 +12,10 @@ from jeux.archipel.ui.editTeleco import Cible, EditTeleco
 from jeux.archipel.action.Placement import Placement
 from jeux.archipel.ui.fleche import Fleche
 from jeux.archipel.ui.barreAction import BarreAction
-from jeux.archipel.orgaFen import OrgaFen
-from jeux.archipel.recompense.recompFen import RecompFen
+from jeux.archipel.ui.fen.orgaFen import OrgaFen
+from jeux.archipel.ui.recompense.recompFen import RecompFen
 from jeux.archipel.fenFin.fin import Fin
-from jeux.archipel.icones import orga, miniorga, abordage, miniabordage
+from jeux.archipel.ui.icones import orga, miniorga, abordage, miniabordage
 
 TOURMAX = 20
 

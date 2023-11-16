@@ -1,7 +1,7 @@
 from systeme.FondMarin import *
-from jeux.archipel.objets.bases.pivote import Pivote
+from jeux.archipel.ui.objets.bases.pivote import Pivote
 from jeux.archipel.ui.infoBulle import InfoBulle
-from jeux.archipel.icones import coeur, marin, degats as explosion
+from jeux.archipel.ui.icones import coeur, marin, degats as explosion
 
 class Bateau(Pivote):
     """Un bateau est l'un des éléments du jeu.

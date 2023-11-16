@@ -1,7 +1,7 @@
 from systeme.FondMarin import *
 from ui.bouton.bouton import Bouton
 from ui.bouton.grille import Grille
-from jeux.archipel.objets.Joueur import Joueur
+from jeux.archipel.ui.objets.Joueur import Joueur
 from jeux.archipel.fenFin.blocJoueur import BlocJoueur
 
 class Fin:

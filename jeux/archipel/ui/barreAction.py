@@ -1,7 +1,7 @@
 from systeme.FondMarin import *
 from ui.bouton.bouton import Bouton
-from jeux.archipel.objets.Bateau import Bateau
-from jeux.archipel.icones import minicoeur, minimarin
+from jeux.archipel.ui.objets.Bateau import Bateau
+from jeux.archipel.ui.icones import minicoeur, minimarin
 
 class BarreAction:
     """La barre contenant les actions proposées aux joueurs.

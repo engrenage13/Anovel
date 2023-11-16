@@ -1,10 +1,10 @@
 from systeme.FondMarin import police1, police2, police2i, BLUE, ORANGE
-from jeux.archipel.objets.bases.fenetre import Fenetre, xf, yf, draw_rectangle
-from jeux.archipel.objets.plateau.plateau import Plateau
-from jeux.archipel.objets.plateau.zone import Zone
+from jeux.archipel.ui.objets.bases.fenetre import Fenetre, xf, yf, draw_rectangle
+from jeux.archipel.ui.objets.plateau.plateau import Plateau
+from jeux.archipel.ui.objets.plateau.zone import Zone
 from jeux.archipel.action.Choix import Choix
 from ui.blocTexte import BlocTexte
-from jeux.archipel.objets.Joueur import Joueur
+from jeux.archipel.ui.objets.Joueur import Joueur
 
 class PageCarte(Fenetre):
     """La page de la mini-carte du début de la partie.

@@ -1,6 +1,6 @@
 import random
 from systeme.FondMarin import *
-from jeux.archipel.objets.plateau.case import Case
+from jeux.archipel.ui.objets.plateau.case import Case
 from jeux.archipel.fonctions.bases import TAILLECASE, EAUX, marqueCases
 from jeux.archipel.fonctions.deplacement import glisse
 

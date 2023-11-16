@@ -1,8 +1,8 @@
 import random
 from systeme.FondMarin import is_mouse_button_pressed
 from jeux.archipel.action.Action import Action
-from jeux.archipel.objets.plateau.case import Case
-from jeux.archipel.objets.Bateau import Bateau
+from jeux.archipel.ui.objets.plateau.case import Case
+from jeux.archipel.ui.objets.Bateau import Bateau
 
 class Placement(Action):
     """Action permettant de placer des éléments en jeu.

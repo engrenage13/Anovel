@@ -4,8 +4,7 @@ from ui.bouton.bouton import Bouton
 from ui.bouton.boutonPression import BoutonPression
 from ui.bouton.grille import Grille
 from jeux.archipel.fonctions.bases import TAILLECASE
-from jeux.archipel.Jeu import Jeu, config
-from systeme.set import trouveParam
+from jeux.archipel.ui.Jeu import Jeu, config
 
 class Scene(Jeu):
     """La scène de jeu.

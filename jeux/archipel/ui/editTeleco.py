@@ -1,4 +1,4 @@
-from jeux.archipel.objets.Bateau import Bateau
+from jeux.archipel.ui.objets.Bateau import Bateau
 from systeme.FondMarin import draw_rectangle_lines_ex, WHITE, TB2n, PTIBT3, BTANNULE, is_key_pressed
 from jeux.archipel.ui.cible import Cible, Case, Bateau
 from ui.bouton.bouton import Bouton

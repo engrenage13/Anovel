@@ -1,7 +1,7 @@
 from systeme.FondMarin import *
-from jeux.archipel.objets.Joueur import Joueur
+from jeux.archipel.ui.objets.Joueur import Joueur
 from ui.blocTexte import BlocTexte
-from jeux.archipel.icones import bateau, epave
+from jeux.archipel.ui.icones import bateau, epave
 
 class BlocJoueur:
     """Bloc affichant le nom et les statistiques de fin de partie de l'un des joueurs.

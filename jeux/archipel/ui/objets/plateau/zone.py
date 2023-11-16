@@ -1,5 +1,5 @@
 from systeme.FondMarin import *
-from jeux.archipel.objets.plateau.plateau import Plateau
+from jeux.archipel.ui.objets.plateau.plateau import Plateau
 
 class Zone:
     """Une zone de positionnement ou de choix.

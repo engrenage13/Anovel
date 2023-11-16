@@ -1,5 +1,5 @@
 from systeme.FondMarin import *
-from jeux.archipel.objets.Bateau import Bateau
+from jeux.archipel.ui.objets.Bateau import Bateau
 from jeux.archipel.config import bateaux as libat
 from ui.blocTexte import BlocTexte
 

@@ -2,7 +2,7 @@ from systeme.FondMarin import *
 from ui.bouton.bouton import Bouton
 from ui.bouton.grille import Grille
 from ui.blocTexte import BlocTexte
-from jeux.archipel.objets.Bateau import Bateau
+from jeux.archipel.ui.objets.Bateau import Bateau
 
 class OrgaFen:
     """La fenêtre d'organisation.

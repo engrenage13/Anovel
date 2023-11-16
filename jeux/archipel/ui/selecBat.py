@@ -1,5 +1,5 @@
 from systeme.FondMarin import xf, yf, draw_rectangle_rounded, draw_texture, BTANNULE, TB2n, is_key_pressed
-from jeux.archipel.objets.Bateau import Bateau
+from jeux.archipel.ui.objets.Bateau import Bateau
 from museeNoyee import poisson
 from ui.bouton.bouton import Bouton
 
