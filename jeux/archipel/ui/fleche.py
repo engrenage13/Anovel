@@ -139,7 +139,7 @@ class Fleche(EditTeleco):
     def setBoutons(self) -> None:
         """Modifie l'agancement des boutons de déplacement en fonction de la position du bateau.
         """
-        if len(self.cases)-1 < self.bateau.pm:
+        if len(self.cases)-1 < self.bateau.get_pm():
             for i in range(len(self.pointsCardinaux)):
                 self.activeDep[self.pointsCardinaux[i]] = True
             self.activeDep[self.pointsCardinaux[(self.bateau.direction+2)%len(self.pointsCardinaux)]] = False

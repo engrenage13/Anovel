@@ -734,7 +734,7 @@ class Jeu:
         """Modifie les paramètres de la flèche (composant de déplacement).
         """
         bat = self.joueurs[self.actuel][self.joueurs[self.actuel].actuel]
-        if bat.pm > 0:
+        if bat.get_pm() > 0:
             ncase = self.trouveCase(bat)
             if not isinstance(ncase, bool):
                 case = self.plateau[ncase[0]][ncase[1]]
@@ -766,15 +766,15 @@ class Jeu:
             droite = voisines[pointsCardinaux[(bateau.direction+1)%len(pointsCardinaux)]]
             if devant and not self.plateau[devant[0]][devant[1]].estPleine() and not self.plateau[devant[0]][devant[1]].marqueur:
                 self.zoneDep.cases.append(devant)
-                if progression < bateau.pm:
+                if progression < bateau.get_pm():
                     self.setZonePortee(bateau, self.plateau[devant[0]][devant[1]], progression+1)
             if gauche and not self.plateau[gauche[0]][gauche[1]].estPleine() and not self.plateau[gauche[0]][gauche[1]].marqueur:
                 self.zoneDep.cases.append(gauche)
-                if progression < bateau.pm:
+                if progression < bateau.get_pm():
                     self.setZonePortee(bateau, self.plateau[gauche[0]][gauche[1]], progression+1)
             if droite and not self.plateau[droite[0]][droite[1]].estPleine() and not self.plateau[droite[0]][droite[1]].marqueur:
                 self.zoneDep.cases.append(droite)
-                if progression < bateau.pm:
+                if progression < bateau.get_pm():
                     self.setZonePortee(bateau, self.plateau[droite[0]][droite[1]], progression+1)
         else:
             for i in range(len(pointsCardinaux)):
@@ -784,7 +784,7 @@ class Jeu:
                         casebat = self.trouveCase(bateau)
                         if voisines[pointsCardinaux[i]] != casebat:
                             self.zoneDep.cases.append(voisines[pointsCardinaux[i]])
-                            if progression < bateau.pm:
+                            if progression < bateau.get_pm():
                                 self.setZonePortee(bateau, ncase, progression+1)
 
     def setZoneAttaque(self, centre: Case, equiv: tuple) -> None:

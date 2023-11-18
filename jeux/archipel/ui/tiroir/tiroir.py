@@ -82,10 +82,10 @@ class Tiroir:
         """
         x = 0
         y = int(bateau.pos[1])
-        self.etiCoeur.setValeur(bateau.pvi)
-        self.etiFleche.setValeur(bateau.pmi)
-        self.etiMarin.setValeur(bateau.marins)
-        self.etiDeg.setValeur(bateau.degats)
+        self.etiCoeur.setValeur(bateau.get_vie())
+        self.etiFleche.setValeur(bateau.get_pm())
+        self.etiMarin.setValeur(bateau.get_marins())
+        self.etiDeg.setValeur(bateau.get_degats())
         tt1 = measure_text_ex(police1, bateau.nom.upper(), int(self.hauteur_rect*0.37), 0)
         ttiret = measure_text_ex(police2i, " - ", int(self.hauteur_rect*0.27), 0)
         tt2 = self.etiCoeur.getDims()[0]+self.etiFleche.getDims()[0]+self.etiMarin.getDims()[0]+ttiret.x*3+self.etiDeg.getDims()[0]

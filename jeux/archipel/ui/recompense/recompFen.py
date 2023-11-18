@@ -8,7 +8,7 @@ from jeux.archipel.ui.icones import coeur, marin, fleche, degats
 class RecompFen:
     """La fenêtre de récompenses pour un abordage réussi.
     """
-    def __init__(self, allie: Bateau = Bateau("", "jeux/archipel/images/Bateaux/gafteur.png", 5, 10, 0, 1, [0, 0, 0, 0]), ennemi: Bateau = Bateau("", "jeux/archipel/images/Bateaux/gafteur.png", 4, 1, 0, 0, [0, 0, 0, 0])) -> None:
+    def __init__(self, allie: Bateau = Bateau("", 5, 10, 0, 1, 1, "jeux/archipel/images/Bateaux/gafteur.png", [0, 0, 0, 0]), ennemi: Bateau = Bateau("", 4, 1, 0, 0, 2, "jeux/archipel/images/Bateaux/gafteur.png", [0, 0, 0, 0])) -> None:
         """Crée la fenêtre.
 
         Args:
@@ -126,7 +126,7 @@ class RecompFen:
         ecartx = int(self.largeurCadBat*0.09)
         draw_texture(img, int(x+self.largeurCadBat-ecartx-img.width), int(y+self.hauteurPasse/2-img.height/2), WHITE)
         # stats
-        stats = [[coeur, self.bat[1].vie], [marin, self.bat[1].marins], [fleche, self.bat[1].pm], [degats, self.bat[1].degats]]
+        stats = [[coeur, self.bat[1].vie], [marin, self.bat[1].get_marins()], [fleche, self.bat[1].pm], [degats, self.bat[1].degats]]
         lsta = int(self.largeurCadBat*0.2)
         hsta = int(coeur.height*1.2)
         px += int(self.largeurCadBat*0.03)
@@ -148,14 +148,14 @@ class RecompFen:
             list[Vignette]: Les récompenses accessibles.
         """
         actions = []
-        if self.bat[1].marins > 0:
+        if self.bat[1].get_marins() > 0:
             actions.append(self.actions[0])
-            if self.bat[0].marins != self.bat[1].marins:
-                if (self.bat[0].marins > self.bat[1].marins and self.bat[0].marins-self.bat[1].marins >= 5) or (self.bat[0].marins < self.bat[1].marins and self.bat[1].marins-self.bat[0].marins >= 5):
+            if self.bat[0].get_marins() != self.bat[1].get_marins():
+                if (self.bat[0].get_marins() > self.bat[1].get_marins() and self.bat[0].get_marins()-self.bat[1].get_marins() >= 5) or (self.bat[0].get_marins() < self.bat[1].get_marins() and self.bat[1].get_marins()-self.bat[0].get_marins() >= 5):
                     actions.append(self.actions[1])
         else:
             actions.append(self.actions[3])
-        if (self.bat[0].marins > self.bat[1].marins and self.bat[0].marins-self.bat[1].marins-1 > 0) or (self.bat[0].marins < self.bat[1].marins and self.bat[1].marins-self.bat[0].marins-1 > 0):
+        if (self.bat[0].get_marins() > self.bat[1].get_marins() and self.bat[0].get_marins()-self.bat[1].get_marins()-1 > 0) or (self.bat[0].get_marins() < self.bat[1].get_marins() and self.bat[1].get_marins()-self.bat[0].get_marins()-1 > 0):
             actions.append(self.actions[2])
         return actions
 

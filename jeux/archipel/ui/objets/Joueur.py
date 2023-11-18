@@ -36,7 +36,7 @@ class Joueur:
         # bateaux
         for i in range(len(self.btx)):
             bateau = libat[self.btx[i]]
-            bat = Bateau(bateau["nom"], bateau["image"], bateau["vie"], bateau["marins"], bateau["pm"], bateau["degats"], self.couleur)
+            bat = Bateau(bateau["nom"], bateau["vie"], bateau["marins"], bateau["pm"], bateau["degats"], bateau["portee"], bateau["image"], self.couleur)
             self.bateaux.append(bat)
         # Phase
         self.setPhase("placement")
@@ -63,7 +63,7 @@ class Joueur:
         place = True
         i = 0
         while i < len(self.bateaux) and place:
-            if not self.bateaux[i].estEnPlace():
+            if not self.bateaux[i].est_en_jeu:
                 place = False
             else:
                 i += 1
@@ -102,7 +102,7 @@ class Joueur:
         compteur = 0
         for i in range(len(self.bateaux)):
             bat = self.bateaux[i]
-            if bat.estEnVie():
+            if bat:
                 compteur += 1
         return compteur
     
@@ -113,7 +113,7 @@ class Joueur:
             places = []
             autres = []
             for i in range(len(self.bateaux)):
-                if self.bateaux[i].place:
+                if self.bateaux[i].est_en_jeu:
                     places.append(self.bateaux[i])
                 else:
                     autres.append(self.bateaux[i])

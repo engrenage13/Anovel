@@ -86,16 +86,16 @@ class OrgaFen:
         Returns:
             int: La hauteur du bloc bateau.
         """
-        total = self.bat[0].marins + self.bat[1].marins
+        total = self.bat[0].get_marins() + self.bat[1].get_marins()
         espace = int(yf*0.03)
         hbarre = int(yf*0.26)
         lbarre = int(xf*0.02)
         bat = self.bat[idBat]
         y += int(espace/2)
-        texte = f"{bat.marinsi} marins en\ndebut de partie"
+        texte = f"{bat.sauvegarde["marins"]} marins en\ndebut de partie"
         tt = measure_text_ex(police2, texte, int(yf*0.025), 0)
-        h = int(bat.marins*hbarre/total)
-        tm = measure_text_ex(police2, str(bat.marins), int(yf*0.03), 0)
+        h = int(bat.get_marins()*hbarre/total)
+        tm = measure_text_ex(police2, str(bat.get_marins()), int(yf*0.03), 0)
         ta = measure_text_ex(police1i, "ACTIF", int(yf*0.025), 0)
         couleurFondRec = [182, 231, 247, 255]
         couleurJauge = [12, 106, 156, 255]
@@ -116,7 +116,7 @@ class OrgaFen:
             draw_rectangle(x, y, lbarre, hbarre, couleurJauge)
             draw_rectangle(x, int(y+hbarre-h), lbarre, h, couleurContenu)
             draw_circle(int(x+lbarre*1.9), int(y+hbarre*0.32), int(lbarre/2), couleurJauge)
-            draw_text_ex(police2, str(bat.marins), (int(x+lbarre*1.9-tm.x/2), int(y+hbarre*0.32-tm.y/2)), int(yf*0.03), 0, couleurTexteJauge)
+            draw_text_ex(police2, str(bat.get_marins()), (int(x+lbarre*1.9-tm.x/2), int(y+hbarre*0.32-tm.y/2)), int(yf*0.03), 0, couleurTexteJauge)
             y += hbarre
             self.gm1.dessine(int(x+lbarre/2-self.gm1.largeur/2), y)
         else:
@@ -133,7 +133,7 @@ class OrgaFen:
             draw_rectangle(x-lbarre, y, lbarre, hbarre, couleurJauge)
             draw_rectangle(x-lbarre, int(y+hbarre-h), lbarre, h, couleurContenu)
             draw_circle(int(x-lbarre*1.9), int(y+hbarre*0.32), int(lbarre/2), couleurJauge)
-            draw_text_ex(police2, str(bat.marins), (int(x-lbarre*1.9-tm.x*0.55), int(y+hbarre*0.32-tm.y/2)), int(yf*0.03), 0, couleurTexteJauge)
+            draw_text_ex(police2, str(bat.get_marins()), (int(x-lbarre*1.9-tm.x*0.55), int(y+hbarre*0.32-tm.y/2)), int(yf*0.03), 0, couleurTexteJauge)
             y += hbarre
             self.gm2.dessine(int(x-lbarre/2-self.gm1.largeur/2), y)
         return int(y + self.gm1.hauteur + espace)
@@ -169,42 +169,42 @@ class OrgaFen:
             bateau2 (Bateau): L'autre bateau.
         """
         self.bat = [bateau1, bateau2]
-        self.valeursInitiales = [str(bateau1.marins), str(bateau2.marins)]
+        self.valeursInitiales = [str(bateau1.get_marins()), str(bateau2.get_marins())]
         self.valide = 1
 
     def plusGauche(self) -> None:
         """Ajoute un marin dans le bateau de gauche et en supprime un du bateau de droite.
         """
-        if self.bat[1].marins > 0:
-            self.bat[1] - 1
-            self.bat[0] + 1
+        if self.bat[1].get_marins() > 0:
+            self.bat[1].marins - 1
+            self.bat[0].marins + 1
 
     def plusDroite(self) -> None:
         """Ajoute un marin dans le bateau de droite et en supprime un du bateau de gauche.
         """
-        if self.bat[0].marins > 0:
-            self.bat[0] - 1
-            self.bat[1] + 1
+        if self.bat[0].get_marins() > 0:
+            self.bat[0].marins - 1
+            self.bat[1].marins + 1
 
     def moinsGauche(self) -> None:
         """Supprime un marin dans le bateau de gauche et en ajoute un du bateau de droite.
         """
-        if self.bat[0].marins > 0:
-            self.bat[0] - 1
-            self.bat[1] + 1
+        if self.bat[0].get_marins() > 0:
+            self.bat[0].marins - 1
+            self.bat[1].marins + 1
 
     def moinsDroite(self) -> None:
         """Supprime un marin dans le bateau de droite et en ajoute un du bateau de gauche.
         """
-        if self.bat[1].marins > 0:
-            self.bat[1] - 1
-            self.bat[0] + 1
+        if self.bat[1].get_marins() > 0:
+            self.bat[1].marins - 1
+            self.bat[0].marins + 1
 
     def reset(self) -> None:
         """Réinitialise les bateaux à leurs nombre de marins qu'ils avaient quand la fenêtre est apparue.
         """
-        self.bat[0].marins = int(self.valeursInitiales[0])
-        self.bat[1].marins = int(self.valeursInitiales[1])
+        self.bat[0].marins.valeur = int(self.valeursInitiales[0])
+        self.bat[1].marins.valeur = int(self.valeursInitiales[1])
 
     def annule(self) -> None:
         """Annule l'organisation.

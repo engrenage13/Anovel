@@ -28,6 +28,16 @@ class Bateau:
         self.direction = 0
         self.est_en_jeu = False
         self.coule = False
+        # Sauvegarde
+        self.sauvegarde = {"vie": vie, "marins": marins, "pm": pm, "degats": degats}
+
+    def reinitialise(self) -> None:
+        """Réinitialise la valeur des ressources
+        """
+        self.vie.valeur = self.sauvegarde["vie"]
+        self.marins.valeur = self.sauvegarde["marins"]
+        #self.pm.valeur = self.sauvegarde["pm"]
+        #self.degats = self.sauvegarde["degats"]
 
     def get_vie(self) -> int:
         """Renvoie le nombre de PV actuel du bateau.
