@@ -1,19 +1,24 @@
 from jeux.archipel.jeu.bateau import Bateau
+from systeme.FondMarin import Color
 
 class Joueur:
-    def __init__(self, nom: str, bateaux: list[Bateau]) -> None:
+    def __init__(self, nom: str, bateaux: list[Bateau], couleur: Color) -> None:
         """Crée un joueur.
 
         Args:
             nom (str): Le nom du joueur.
             bateaux (list[Bateau]): Les bateaux du joueur.
+            couleur (Color): Couleur du joueur.
         """
         self.nom = nom
         self.bateaux = bateaux
         self.a_perdu = False
         self.nb_elimination = 0
+        self.couleur = couleur
+        self.sauvegarde = {"bateaux": bateaux[:]}
+        self.deja_jouer = []
 
-    def copie_joueur(self, bateaux: list[Bateau] = None) -> object:
+    def copie_joueur(self, bateaux: list[Bateau] = None) -> object: # On verra
         """Crée un nouveau joueur à partir des informations du joueur actuel.
 
         Args:
@@ -27,6 +32,16 @@ class Joueur:
         else:
             bats = bateaux
         return Joueur(self.nom, bats)
+    
+    def reinitialise(self) -> None:
+        """Réinitialise certains paramètres du joueur.
+        """
+        self.bateaux = self.sauvegarde["bateaux"]
+        for i in range(self.bateaux):
+            self.bateaux[i].reinitialise()
+        self.deja_jouer = []
+        self.a_perdu = False
+        self.nb_elimination = 0
     
     def check_fin_mise_en_place(self) -> bool:
         """Vérifie si la mise en place du joueur est terminée.
@@ -57,6 +72,21 @@ class Joueur:
                 self.a_perdu = True
         return defaite
     
+    def bateau_suivant(self) -> bool:
+        """Passe au bateau suivant s'il y en a qui n'ont pas étaient joués, sinon elle met fin au tour du joueur.
+
+        Returns:
+            True si le joueur a fini son tour, c'est à dire qu'il n'a plus de bateaux à jouer.
+        """
+        actuel = len(self.deja_jouer)
+        if actuel < len(self.bateaux):
+            self.deja_jouer.append(actuel)
+            rep = False
+        else:
+            self.deja_jouer = []
+            rep = True
+        return rep
+    
     def __getitem__(self, key: int) -> Bateau|bool:
         """Retourne le bateau avec l'indice key.
 
@@ -72,15 +102,16 @@ class Joueur:
             return False
         
     def __add__(self, element: Bateau) -> None:
-        """Ajoute un bateau au joueur.
+        """Ajoute un bateau à la flotte du joueur.
 
         Args:
             element (Bateau): Le bateau à ajouter.
         """
+        element.couleur = self.couleur
         self.bateaux.append(element)
 
     def __sub__(self, element: Bateau) -> None:
-        """Retire un bateau au joueur.
+        """Retire un bateau de la flotte du joueur.
 
         Args:
             element (Bateau): Le bateau à retirer au joueur.

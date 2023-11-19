@@ -1,10 +1,12 @@
-from systeme.FondMarin import *
+from systeme.FondMarin import Color
 from jeux.archipel.ui.objets.bases.pivote import Pivote
 from jeux.archipel.ui.infoBulle import InfoBulle
 from jeux.archipel.ui.icones import coeur, marin, degats as explosion
 from jeux.archipel.jeu.bateau import Bateau as Bato
 
 class Bateau(Bato, Pivote):
+    """Une coque, (un mat), des canons... Que du bonheur.
+    """
     def __init__(self, nom: str, vie: int, marins: int, pm: int, degats: int, portee: int, image: str, couleur: Color):
         """Crée un bateau.
 
@@ -18,10 +20,9 @@ class Bateau(Bato, Pivote):
             image (str): Chemin d'accès à l'image du bateau.
             couleur (Color): Couleur du bateau.
         """
-        Bato.__init__(self, nom, vie, marins, pm, degats, portee)
+        Bato.__init__(self, nom, vie, marins, pm, degats, portee, couleur)
         Pivote.__init__(self, image)
-        self.couleur = couleur
-        self.rejouer()
+        self.bloqueInfoBulle = False
         # InfoBulle
         self.infoBulle = InfoBulle([["coeur", self.get_vie(), coeur], ["marin", self.get_marins(), marin], ["flamme", self.get_degats(), explosion]])
 
@@ -33,21 +34,12 @@ class Bateau(Bato, Pivote):
             if not self.bloqueInfoBulle:
                 self.infoBulle.dessine(self.pos[0], int(self.pos[1]-self.dims[1]/2))
 
-    def rejouer(self) -> None:
+    def reinitialise(self) -> None:
         """Réinitialise certains paramètres du bateau pour rejouer une nouvelle partie.
         """
         self.reset()
-        self.reinitialise()
-        self.id = 0
+        super().reinitialise()
         self.bloqueInfoBulle = False
-    
-    def aFini(self) -> bool: # A delete
-        """Vérifie si le tour du bateau est terminé.
-
-        Returns:
-            bool: True si l'action est terminée.
-        """
-        return True
     
     def est_en_vie(self) -> bool:
         """Vérifie si le bateau nest pas coulé.
@@ -59,24 +51,6 @@ class Bateau(Bato, Pivote):
             return False
         else:
             return True
-        
-    def setNbPV(self, vie: int) -> None: # à delete
-        """Modifie les PV actuel du bateau.
-
-        Args:
-            vie (int): Le nouveau nombre de PV du bateau.
-        """
-        pass
-
-    def __pos__(self) -> None: # à supprimer
-        """Rend le bateau actif.
-        """
-        super().__pos__()
-    
-    def __neg__(self) -> None: # à supprimer
-        """Rend le bateau inactif.
-        """
-        super().__neg__()
 
     def __add__(self, valeur: int) -> None:
         """Ajoute des PV au bateau.
@@ -100,10 +74,3 @@ class Bateau(Bato, Pivote):
         self.infoBulle.setValeurElement("coeur", self.get_vie())
         return mort
     
-    def __bool__(self) -> bool:
-        """Booléen signifiant que le bateau a coulé ou non.
-
-        Returns:
-            bool: True si le bateau flotte.
-        """
-        return self.est_en_vie()

@@ -1,12 +1,13 @@
 from enum import Enum, auto
 from jeux.archipel.jeu.ressource import Ressource
+from systeme.FondMarin import Color
 
 class TypeBateau(Enum):
     GAFTEUR = auto()
     FERPASSEUR = auto()
 
 class Bateau:
-    def __init__(self, nom: str, vie: int, marins: int, pm: int, degats: int, portee: int) -> None:
+    def __init__(self, nom: str, vie: int, marins: int, pm: int, degats: int, portee: int, couleur: Color) -> None:
         """Crée un bateau.
 
         Args:
@@ -16,6 +17,7 @@ class Bateau:
             pm (int): La distance maximale que peut parcourir le bateau en un déplacement.
             degats (int): Les dégâts qu'inflige le bateau lorsqu'il attaque.
             portee (int): La portée maximale des attaques du bateau.
+            couleur (Color): La couleur du propriétaire.
         """
         self.nom = nom
         self.vie = Ressource(vie, "")
@@ -23,13 +25,14 @@ class Bateau:
         self.pm = Ressource(pm, "")
         self.degats = Ressource(degats, "")
         self.portee = portee
+        self.couleur = couleur
         # Autres variables
         self.position = None
         self.direction = 0
         self.est_en_jeu = False
         self.coule = False
         # Sauvegarde
-        self.sauvegarde = {"vie": vie, "marins": marins, "pm": pm, "degats": degats}
+        self.sauvegarde = {"vie": vie, "marins": marins, "pm": pm, "degats": degats, "couleur": couleur}
 
     def reinitialise(self) -> None:
         """Réinitialise la valeur des ressources
@@ -38,6 +41,7 @@ class Bateau:
         self.marins.valeur = self.sauvegarde["marins"]
         #self.pm.valeur = self.sauvegarde["pm"]
         #self.degats = self.sauvegarde["degats"]
+        self.couleur = self.sauvegarde["couleur"]
 
     def get_vie(self) -> int:
         """Renvoie le nombre de PV actuel du bateau.
@@ -92,4 +96,12 @@ class Bateau:
         if mort:
             self.coule = True
         return mort
+    
+    def __bool__(self) -> bool:
+        """Booléen signifiant que le bateau a coulé ou non.
+
+        Returns:
+            bool: True si le bateau flotte.
+        """
+        return self.est_en_vie()
     
