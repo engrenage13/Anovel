@@ -2,10 +2,11 @@ from systeme.FondMarin import begin_drawing, end_drawing, clear_background, BLAC
 from systeme.set import startSet
 from systeme.verif import fichierExiste, verifSauvegarde, scan
 from systeme.fenetre import Fenetre
-from menu.menu import Menu
+from menu.menu import menu
 from parametres.parametres import Parametres
 from jeux.BN.partie import Partie
 from jeux.archipel.archipel import Archipel
+from ice import ice
 
 if not fichierExiste():
     verifSauvegarde()
@@ -13,19 +14,18 @@ scan()
 startSet()
 
 fen = Fenetre()
-menu = Menu()
 param = Parametres()
 bataille = Partie()
 archipel = Archipel()
-fenetre = {"menu": menu, "param": param, "bn": bataille, "archipel": archipel}
+fenetre = {"ice": ice, "menu": menu, "param": param, "bn": bataille, "archipel": archipel}
 
 menu.play = True
 if config_sys['dev']:
     precedent = fenetre[config_sys['dev'].lower()]
     actif = fenetre[config_sys['dev'].lower()]
 else:
-    precedent = menu
-    actif = menu
+    precedent = ice
+    actif = ice
 
 if type(actif) == Archipel:
     actif.initialise()

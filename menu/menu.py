@@ -33,7 +33,7 @@ class Menu:
         self.iarchi = load_texture_from_image(archipel)
         unload_image(archipel)
         # Animations
-        self.etincelles = Etincelles([0, yf, xf, int(yf*0.005)], [YELLOW, BLUE, WHITE])
+        self.etincelles = Etincelles([0, yf, xf, int(yf*0.005)], [WHITE])
         self.alpha = 0
         self.monte = True
         self.timer = 0
@@ -47,10 +47,7 @@ class Menu:
         """
         self.animeFond()
         draw_rectangle_gradient_v(0, 0, xf, yf, BLACK, [0, 82, 172, 150])
-        taille = int(yf*0.02)
-        tv = measure_text_ex(police3i, config_sys['version'], taille, 0)
-        draw_text_pro(police2i, f"{config_sys['version']} - {config_sys['type_version'].lower()}", (int(xf*0.005), int(yf-tv.y*1.1)), 
-                    (0, 0), 0, taille, 0, GRAY)
+        self.etincelles.dessine()
         xbn = int(xf*0.33)
         cote = int(xf*0.007)
         draw_texture(self.ibn, int(xbn-self.ibn.width/2), int(yf*0.4-self.ibn.height/2), WHITE)
@@ -70,7 +67,6 @@ class Menu:
     def animeFond(self):
         """Joue l'animation sur le fond.
         """
-        self.etincelles.dessine()
         draw_rectangle(0, 0, xf, yf, [0, 117, 44, self.alpha])
         max = 100
         if (self.alpha == max or self.alpha == 0) and self.timer > 0:
@@ -110,3 +106,5 @@ class Menu:
         """
         self.message = message
         self.lu = False
+
+menu = Menu()
