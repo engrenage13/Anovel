@@ -28,7 +28,6 @@ class Bateau:
         self.couleur = couleur
         # Autres variables
         self.position = None
-        self.direction = 0
         self.est_en_jeu = False
         self.coule = False
         # Sauvegarde

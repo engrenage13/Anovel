@@ -21,7 +21,7 @@ class Case:
         Returns:
             bool: True si aucun bateau ne peut être posé sur cette case ou False dans le cas contraire.
         """
-        return True if (self.type == TypeCase.ILE or len(self.contenu) == self.contenuMax) else False
+        return (self.type == TypeCase.ILE or len(self.contenu) == self.contenuMax)
     
     def get_autre_bateau(self, bateau: any) -> object|bool:
         """Renvoie le deuxième bateau que contient la case par rapport à celui passé en paramètres
@@ -41,6 +41,34 @@ class Case:
                 else:
                     i += 1
         return retour
+    
+    def vide(self) -> None:
+        """Vide le contenu de la case.
+        """
+        while len(self.contenu) > 0:
+            self - self.contenu[0]
+
+    def __getitem__(self, key: int) -> object|bool:
+        """Renvoie l'élément situé à l'indice key.
+
+        Args:
+            key (int): Indice de l'élément recherché.
+
+        Returns:
+            object|bool: Element contenu dans la case s'il l'indice existe ou False dans le cas contraire.
+        """
+        if key < len(self.contenu):
+            return self.contenu[key]
+        else:
+            return False
+        
+    def __len__(self) -> int:
+        """Retourne le nombre d'éléments présents sur la case.
+
+        Returns:
+            int: Nombre d'éléments présents sur la case.
+        """
+        return len(self.contenu)
 
     def __add__(self, element: any) -> bool:
         """Ajoute un élément sur cette case.
