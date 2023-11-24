@@ -1,61 +1,44 @@
-import random
+from random import choice, randint
 from systeme.FondMarin import *
-from jeux.archipel.ui.objets.plateau.case import Case
+from jeux.archipel.ui.objets.plateau.case import Case, TypeCase
 from jeux.archipel.fonctions.bases import TAILLECASE, EAUX, marqueCases
 from jeux.archipel.fonctions.deplacement import glisse
+from jeux.archipel.jeu.plateau.plateau import Plateau as P
 
-class Plateau:
+class Plateau(P):
     """Le plateau de jeu.
     """
-    def __init__(self, nbCases: int, tailleCases: int = TAILLECASE, envirronement: bool = True, plan: bool = False, accroche: tuple[int] = (0, 0)) -> None:
-        """Crée le plateau au début de chaque première partie.
+    def __init__(self, taille: int, nb_iles: int, taille_cases: int = TAILLECASE, envirronement: bool = True, plan: bool = False, accroche: tuple[int] = (0, 0)) -> None:
+        """Crée le plateau.
 
         Args:
-            nbCases (int): Le nombre de cases que doit comporter le plateau sur ses côtés.
-            tailleCases (int, optional): La taille des cases du plateau. Defaults to TAILLECASE.
+            taille (int): Nombre de cases dans une ligne (plateau carré).
+            nb_iles (int): Nombre maximal de cases pouvant être des îles.
+            taille_cases (int, optional): La taille des cases du plateau. Defaults to TAILLECASE.
             envirronement (bool, optional): Est-ce qu'il faut afficher l'envirronement ou non ? Defaults to True.
             plan (bool, optional): Le plateau est-il utilisé comme un plan ? Defaults to False.
             accroche (tuple[int], optional): L'origine du plateau pour la caméra (c'est technique). Defaults to (0, 0).
         """
-        self.nbCases = nbCases
+        super().__init__(taille, nb_iles)
         if envirronement:
-            self.largeurEnvirronement = TAILLECASE
+            self.largeur_envirronement = TAILLECASE
         else:
-            self.largeurEnvirronement = 0
-        self.tailleCase = tailleCases
-        self.isPlan = plan
+            self.largeur_envirronement = 0
+        self.taille_case = taille_cases
+        self.is_plan = plan
         self.env = envirronement
-        self.cases = []
-        x = accroche[0]+self.largeurEnvirronement
-        y = accroche[1]+self.largeurEnvirronement
-        for i in range(nbCases):
-            cases = []
-            for j in range(nbCases):
-                if plan:
-                    couleur = ([0, 0, 0, 150], BLACK)
-                    largeur = 1
-                else:
-                    couleur = (EAUX[0], [80, 80, 80, 150])
-                    largeur = 1.5
-                cases.append(Case(x, y, self.tailleCase, couleur, largeur))
-                x += self.tailleCase
-            self.cases.append(cases)
-            x = accroche[0]+self.largeurEnvirronement
-            y += self.tailleCase
+        # Position
+        self.accroche = accroche
         # Défilement du plateau
-        if plan:
+        if self.is_plan:
             self.bloque = True
         else:
             self.bloque = False
-        self.positionCible = (x, y)
         self.glisse = False
         # /
         # Dessin
-        self.elementsPrioritaires = []
+        self.elements_prioritaires = []
         self.grise = False
-        # Iles
-        marqueCases(self, 20, 40)
-        self.setIles()
         # Décors
         carreau = load_image("jeux/archipel/images/carrelage.png")
         image_resize(carreau, self.tailleCase, self.tailleCase)
@@ -66,38 +49,60 @@ class Plateau:
         """Dessine le plateau.
         """
         self.dessineEnvirronement()
-        if len(self.elementsPrioritaires) > 0:
-            for i in range(self.nbCases):
-                for j in range(self.nbCases):
+        if len(self.elements_prioritaires) > 0:
+            for i in range(self.taille):
+                for j in range(self.taille):
                     self.cases[i][j].dessine(self.grise)
-            for i in range(len(self.elementsPrioritaires)):
-                self.elementsPrioritaires[i].dessine()
-            for i in range(self.nbCases):
-                for j in range(self.nbCases):
+            for i in range(len(self.elements_prioritaires)):
+                self.elements_prioritaires[i].dessine()
+            for i in range(self.taille):
+                for j in range(self.taille):
                     self.cases[i][j].dessineContenu()
         else:
-            for i in range(self.nbCases):
-                for j in range(self.nbCases):
+            for i in range(self.taille):
+                for j in range(self.taille):
                     self.cases[i][j].dessine(self.grise)
                     self.cases[i][j].dessineContenu()
-        if self.glisse and self.cases[0][0].pos != self.positionCible:
+        if self.glisse and self.cases[0][0].pos != self.position_cible:
             self.rePlace()
+
+    def mise_en_place(self) -> None:
+        """Met le plateau en place.
+        """
+        typIles = [type.value for type in TypeCase]
+        countIle = 0
+        x = self.accroche[0]+self.largeur_envirronement
+        y = self.accroche[1]+self.largeur_envirronement
+        for i in range(self.taille):
+            ligne = []
+            for j in range(self.taille):
+                if countIle < self.nb_iles:
+                    typIle = choice(typIles)
+                    countIle += 1
+                else:
+                    typIle = TypeCase.MER
+                ligne.append(Case(x, y, self.taille_case, [0, 0, 0, 150], typIle))
+                x += self.taille_case
+            self.cases.append(ligne)
+            x = self.accroche[0]+self.largeur_envirronement
+            y += self.taille_case
+        self.position_cible = (x, y)
 
     def dessineEnvirronement(self) -> None:
         """Dessine l'envirronement.
         """
         p = self.cases[0][0].pos
-        l = self.largeurEnvirronement
+        l = self.largeur_envirronement
         if self.env:
             x = p[0]-l
             y = p[1]-l
-            for i in range(self.nbCases+2):
-                for j in range(self.nbCases+2):
+            for i in range(self.taille+2):
+                for j in range(self.taille+2):
                     draw_texture(self.carrelage, x, y, WHITE)
                     x += self.carrelage.width
                 y += self.carrelage.height
                 x = p[0]-l
-            draw_rectangle(p[0]-l, p[1]-l, int(self.carrelage.width*(self.nbCases+2)), int(self.carrelage.height*(self.nbCases+2)), [11, 23, 62, 150])
+            draw_rectangle(p[0]-l, p[1]-l, int(self.carrelage.width*(self.taille+2)), int(self.carrelage.height*(self.taille+2)), [11, 23, 62, 150])
 
     def deplace(self, x: int, y: int) -> None:
         """Permet de déplacer le plateau à l'écran (scroll).
@@ -112,8 +117,8 @@ class Plateau:
             x = 0
         elif self.passeFrontiereHorizontale(x) and self.passeFrontiereVerticale(y):
             x = y = 0
-        for i in range(self.nbCases):
-            for j in range(self.nbCases):
+        for i in range(self.taille):
+            for j in range(self.taille):
                 self.cases[i][j].deplace(x, y)
 
     def place(self, x: int, y: int, glisse: bool = False) -> None:
@@ -124,14 +129,14 @@ class Plateau:
             y (int): L'ordonnée cible.
             glisse (bool, optional): Est-ce que le plateau doit s'arrêter pile sur ces coordonnées ou peut-il glisser un peu plus loin ? Defaults to False.
         """
-        self.positionCible = (x, y)
+        self.position_cible = (x, y)
         self.glisse = glisse
         if not glisse:
             px = x
             py = y
             tCase = TAILLECASE
-            for i in range(self.nbCases):
-                for j in range(self.nbCases):
+            for i in range(self.taille):
+                for j in range(self.taille):
                     self.cases[i][j].setPos(px, py)
                     px += tCase
                 py += tCase
@@ -142,17 +147,17 @@ class Plateau:
         """
         px = self.cases[0][0].pos[0]
         py = self.cases[0][0].pos[1]
-        dep = glisse((px, py), self.positionCible, int(xf*0.01))
+        dep = glisse((px, py), self.position_cible, int(xf*0.01))
         tCase = TAILLECASE
         x = dep[0]
         y = dep[1]
-        for i in range(self.nbCases):
-            for j in range(self.nbCases):
+        for i in range(self.taille):
+            for j in range(self.taille):
                 self.cases[i][j].setPos(x, y)
                 x += tCase
             y += tCase
             x = dep[0]
-        if self.cases[0][0].pos == self.positionCible:
+        if self.cases[0][0].pos == self.position_cible:
             self.glisse = False
 
     def passeFrontiereHorizontale(self, x: int, absolue: bool = False) -> bool:
@@ -166,16 +171,16 @@ class Plateau:
             bool: True si aucune des frontières ne dépassent leurs limites.
         """
         rep = False
-        tCase = self.tailleCase
+        tCase = self.taille_case
         if absolue:
             xcomp1 = x
             xcomp2 = int(x+len(self.cases)*tCase)
         else:
             xcomp1 = self.cases[0][0].pos[0]+x
-            xcomp2 = self.cases[0][self.nbCases-1].pos[0]+tCase+x
-        if xcomp1 > self.largeurEnvirronement:
+            xcomp2 = self.cases[0][self.taille-1].pos[0]+tCase+x
+        if xcomp1 > self.largeur_envirronement:
             rep = True
-        elif xcomp2 < xf-self.largeurEnvirronement:
+        elif xcomp2 < xf-self.largeur_envirronement:
             rep = True
         return rep
     
@@ -190,43 +195,18 @@ class Plateau:
             bool: True si aucune des frontières ne dépassent leurs limites.
         """
         rep = False
-        tCase = self.tailleCase
+        tCase = self.taille_case
         if absolue:
             xcomp1 = y
             xcomp2 = int(y+len(self.cases)*tCase)
         else:
             xcomp1 = self.cases[0][0].pos[1]+y
-            xcomp2 = self.cases[self.nbCases-1][0].pos[1]+tCase+y
-        if xcomp1 > self.largeurEnvirronement:
+            xcomp2 = self.cases[self.taille-1][0].pos[1]+tCase+y
+        if xcomp1 > self.largeur_envirronement:
             rep = True
-        elif xcomp2 < yf-self.largeurEnvirronement:
+        elif xcomp2 < yf-self.largeur_envirronement:
             rep = True
         return rep
-    
-    def trouveCoordsCase(self, case: Case) -> tuple[int]|bool:
-        """Renvoie les coordonnées d'une case par rapport à la structure du plateau.
-
-        Args:
-            case (Case): La case dont on cherche les coordonnées.
-
-        Returns:
-            tuple[int]|bool: (position de sa ligne, position dans sa ligne) ou False si la case n'est pas sur le plateau.
-        """
-        trouve = False
-        i = 0
-        while i < self.nbCases and not trouve:
-            j = 0
-            while j < self.nbCases and not trouve:
-                if self.cases[i][j] == case:
-                    trouve = True
-                else:
-                    j += 1
-            if not trouve:
-                i += 1
-        if trouve:
-            return (j, i)
-        else:
-            return False
     
     def getVoisines(self, case: Case) -> dict[tuple|bool]:
         """Retourne les coordonnées des cases voisines de la cible.
@@ -355,7 +335,7 @@ class Plateau:
                 j += 1
         case.typeIle = compte
         if compte == 0 or compte == 4:
-            case.orienteIle = random.randint(0, 3)
+            case.orienteIle = randint(0, 3)
         elif compte == 1:
             case.orienteIle = j
         elif compte == 3:
@@ -374,7 +354,7 @@ class Plateau:
                     possibilites = [0, 2]
                 else:
                     possibilites = [1, 3]
-                case.orienteIle = random.choice(possibilites)
+                case.orienteIle = choice(possibilites)
             else:
                 if ilesVoisines['n'] and ilesVoisines['e']:
                     case.orienteIle = 0

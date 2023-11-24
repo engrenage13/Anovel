@@ -2,15 +2,15 @@ from jeux.archipel.jeu.plateau.case import Case, TypeCase
 from random import choice
 
 class Plateau:
-    def __init__(self, taille: int, nbIles: int) -> None:
+    def __init__(self, taille: int, nb_iles: int) -> None:
         """Initialise le plateau de jeu.
 
         Args:
             taille (int): Le nombre de cases sur un côté du plateau (plateau carré).
-            nbIles (int): Nombre maximal de cases pouvant être des îles.
+            nb_iles (int): Nombre maximal de cases pouvant être des îles.
         """
         self.taille = taille
-        self.nbIles = nbIles
+        self.nb_iles = nb_iles
         self.cases = []
 
     def mise_en_place(self) -> None:
@@ -21,13 +21,31 @@ class Plateau:
         for i in range(self.taille):
             ligne = []
             for j in range(self.taille):
-                if countIle < self.nbIles:
+                if countIle < self.nb_iles:
                     typIle = choice(typIles)
                     countIle += 1
                 else:
                     typIle = TypeCase.MER
                 ligne.append(Case(typIle))
             self.cases.append(ligne)
+
+    def get_coords_case(self, case: Case) -> tuple[int]|bool:
+        """Renvoie les coordonnées de la case passée en paramètre.
+
+        Args:
+            case (Case): Case recherchée.
+
+        Returns:
+            tuple[int]|bool: Coordonnées de la case. False si la case n'est pas sur le plateau.
+        """
+        ok = False
+        i = 0
+        while not ok and i < len(self.cases):
+            if case in self.cases[i]:
+                ok = (i, self.cases[i].index(case))
+            else:
+                i += 1
+        return ok
 
     def check_case_existe(self, case: tuple[int]) -> bool:
         """Vérifie si une case existe en regardant ses coordonnées.
